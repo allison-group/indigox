@@ -13,11 +13,11 @@
 #include <sstream>
 #include <vector>
 
-#include "api.hpp"
-#include "classes/periodictable.hpp"
-#include "utils/common.hpp"
-#include "utils/filereader.hpp"
-#include "utils/options.hpp"
+#include "indigox/api.hpp"
+#include "indigox/classes/periodictable.hpp"
+#include "indigox/utils/common.hpp"
+#include "indigox/utils/filereader.hpp"
+#include "indigox/utils/options.hpp"
 
 namespace indigox {
   

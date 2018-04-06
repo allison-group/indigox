@@ -15,9 +15,9 @@
 
 #include <boost/dynamic_bitset/dynamic_bitset.hpp>
 
-#include "algorithm/formalbonds/local_optimisation.hpp"
-#include "classes/electron_graph.hpp"
-#include "utils/options.hpp"
+#include "indigox/algorithm/formalbonds/local_optimisation.hpp"
+#include "indigox/classes/electron_graph.hpp"
+#include "indigox/utils/options.hpp"
 
 using namespace indigox;
 using namespace algorithm;
@@ -144,20 +144,21 @@ void LocalOptimisation::Run() {
 
 void LocalOptimisation::GetNeighbourDistributions(ElnDist dist, std::vector<ElnDist>* nbrs) {
   nbrs->clear();
+  typedef boost::dynamic_bitset<>::size_type s_type;
   
   std::map<MolVertPair, ElnDist>::const_iterator srcBIt, srcEIt, tgtBIt, tgtEIt;
   for (srcBIt = locBitmasks_.cbegin(), srcEIt = locBitmasks_.cend(); srcBIt != srcEIt; ++srcBIt) {
-    int srcIdx = (int)srcBIt->second.find_first();
-    int srcLoc = srcIdx + (int)(dist & srcBIt->second).count() - 1;
+    s_type srcIdx = srcBIt->second.find_first();
+    s_type srcLoc = srcIdx + (dist & srcBIt->second).count() - 1;
     if (srcIdx > srcLoc)
       continue;
     
     for (tgtBIt = locBitmasks_.cbegin(), tgtEIt = locBitmasks_.cend(); tgtBIt != tgtEIt; ++tgtBIt) {
       if (tgtBIt == srcBIt)
         continue;
-      int tgtIdx = (int)tgtBIt->second.find_first();
-      int tgtCount = (int)tgtBIt->second.count();
-      int tgtLoc = tgtIdx + (int)(dist & tgtBIt->second).count();
+      s_type tgtIdx = tgtBIt->second.find_first();
+      s_type tgtCount = tgtBIt->second.count();
+      s_type tgtLoc = tgtIdx + (dist & tgtBIt->second).count();
       if ((tgtCount + tgtIdx) == tgtLoc)
         continue;
       

@@ -12,13 +12,13 @@
 
 #include <boost/graph/connected_components.hpp>
 
-#include "classes/atom.hpp"
-#include "classes/bond.hpp"
-#include "classes/iters.hpp"
-#include "classes/molecular_graph.hpp"
-#include "classes/molecule.hpp"
-#include "utils/common.hpp"
-#include "utils/options.hpp"
+#include "indigox/classes/atom.hpp"
+#include "indigox/classes/bond.hpp"
+#include "indigox/classes/iters.hpp"
+#include "indigox/classes/molecular_graph.hpp"
+#include "indigox/classes/molecule.hpp"
+#include "indigox/utils/common.hpp"
+#include "indigox/utils/options.hpp"
 
 using namespace indigox;
 
@@ -62,7 +62,7 @@ Uint MolecularGraph::NumConnectedComponents() {
     boost::put(indexMap, (*mvp.first), i);
   }
   
-  num_components_ = boost::connected_components(*graph_,
+  num_components_ = (Uint)boost::connected_components(*graph_,
                                                 boost::get(&MolVertProp::component, *graph_),
                                                 boost::vertex_index_map(indexMap));
   return num_components_;

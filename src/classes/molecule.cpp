@@ -12,14 +12,14 @@
 #include <map>
 #include <sstream>
 
-#include "api.hpp"
-#include "classes/atom.hpp"
-#include "classes/bond.hpp"
-#include "classes/molecular_graph.hpp"
-#include "classes/molecule.hpp"
-#include "classes/periodictable.hpp"
-#include "utils/counter.hpp"
-#include "utils/options.hpp"
+#include "indigox/api.hpp"
+#include "indigox/classes/atom.hpp"
+#include "indigox/classes/bond.hpp"
+#include "indigox/classes/molecular_graph.hpp"
+#include "indigox/classes/molecule.hpp"
+#include "indigox/classes/periodictable.hpp"
+#include "indigox/utils/counter.hpp"
+#include "indigox/utils/options.hpp"
 
 
 using namespace indigox;

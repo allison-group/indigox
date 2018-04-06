@@ -6,8 +6,8 @@
 //  Copyright © 2018 Hermes Productions. All rights reserved.
 //
 
-#include "api.hpp"
-#include "python/interface.hpp"
+#include "indigox/api.hpp"
+#include "indigox/python/interface.hpp"
 
 
 

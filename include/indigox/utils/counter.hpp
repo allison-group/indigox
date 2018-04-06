@@ -45,7 +45,7 @@ namespace indigox {
     };
     
     template <class T>
-    uid_t CountableObject<T>::__id_generator_ = -1;
+    uid_t CountableObject<T>::__id_generator_ = uid_t(-1);
     
   }
 }

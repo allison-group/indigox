@@ -1371,7 +1371,7 @@ public:
 
         auto m_entries_ptr = m_entries.inc_ref().ptr();
         def("__repr__", [name, m_entries_ptr](Type value) -> pybind11::str {
-            for (const auto &kv : reinterpret_borrow<dict>(m_entries_ptr)) {
+            for (const auto kv : reinterpret_borrow<dict>(m_entries_ptr)) {
                 if (pybind11::cast<Type>(kv.second) == value)
                     return pybind11::str("{}.{}").format(name, kv.first);
             }
@@ -1379,7 +1379,7 @@ public:
         });
         def_property_readonly_static("__members__", [m_entries_ptr](object /* self */) {
             dict m;
-            for (const auto &kv : reinterpret_borrow<dict>(m_entries_ptr))
+            for (const auto kv : reinterpret_borrow<dict>(m_entries_ptr))
                 m[kv.first] = kv.second;
             return m;
         }, return_value_policy::copy);

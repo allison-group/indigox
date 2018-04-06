@@ -6,11 +6,11 @@
 //  Copyright © 2018 Allison Group. All rights reserved.
 //
 
-#include "api.hpp"
-#include "classes/atom.hpp"
-#include "classes/bond.hpp"
-#include "classes/molecule.hpp"
-#include "utils/helpers.hpp"
+#include "indigox/api.hpp"
+#include "indigox/classes/atom.hpp"
+#include "indigox/classes/bond.hpp"
+#include "indigox/classes/molecule.hpp"
+#include "indigox/utils/helpers.hpp"
 
 namespace indigox {
   /// @returns a shared pointer to a new Atom instance.

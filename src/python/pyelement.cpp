@@ -1,11 +1,11 @@
-#include "api.hpp"
+#include "indigox/api.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 
-#include "python/interface.hpp"
+#include "indigox/python/interface.hpp"
 
-#include "classes/periodictable.hpp"
+#include "indigox/classes/periodictable.hpp"
 
 namespace py = pybind11;
 namespace indigox {

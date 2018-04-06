@@ -14,9 +14,8 @@
 #include <set>
 #include <vector>
 
-#include "algorithm/formalbonds/astar.hpp"
-
-#include "utils/options.hpp"
+#include "indigox/algorithm/formalbonds/astar.hpp"
+#include "indigox/utils/options.hpp"
 
 std::ostream& operator<<(std::ostream& os, const indigox::algorithm::p_AStarQueueItem a) {
   os << "Distribution:        " << a->distribution << std::endl;
@@ -67,7 +66,7 @@ void AStarOptimisation::Run() {
   size_t count = 0;
   size_t len_limit;
   if (opt_as::MEGABYTE_LIMIT > 1048576) {
-    len_limit = -1;
+    len_limit = size_t(-1);
   } else {
     size_t test_count = 1024 * 1024;
     size_t _size = (parent_->possibleLocations_.size() / ElnDist::bits_per_block) + 1;
@@ -133,7 +132,7 @@ void AStarOptimisation::PopulateUniqueIDs() {
   for (unsigned int i = 0; i < num; ++i) {
     ElnVertex v = pos2vert_.at(i);
     ElnVertProp *p = parent_->elnGraph_->GetProperties(pos2vert_[i]);
-    size_t count = std::count(parent_->possibleLocations_.begin(),
+    size_t count = (size_t)std::count(parent_->possibleLocations_.begin(),
                               parent_->possibleLocations_.end(),
                               p->id);
     uniqueIDs_.push_back((uint8_t)count);
@@ -373,7 +372,7 @@ void AStarOptimisation::PromiscuousHeuristic(p_AStarQueueItem d) {
         ElnVertProp *a = vertexProperties_.at(*nbr);
         ++nbr;
         ElnVertProp *b = vertexProperties_.at(*nbr);
-        uint32_t mask_root = a->atomic_number + (b->atomic_number << 8);
+        uint32_t mask_root = (uint32_t)a->atomic_number + uint32_t(b->atomic_number << 8);
         for (uint32_t a_charge = 0; a_charge < 3; ++a_charge) {
           for (uint32_t b_charge = 0; b_charge < 3; ++b_charge) {
             for (uint32_t bond_e = 1; bond_e < 9; ++bond_e) {
@@ -456,7 +455,7 @@ void AStarOptimisation::AbstemiousHeuristic(p_AStarQueueItem d) {
         // Determine possible formal charges I could attain
         std::vector<int8_t> attainable;
         attainable.reserve(toPlace+1);
-        for (unsigned int i = 0; i <= toPlace; i += step)
+        for (int i = 0; i <= toPlace; i += step)
           attainable.push_back(p->formal_charge - i);
         attainableCharges.push_back(attainable);
         
@@ -464,7 +463,7 @@ void AStarOptimisation::AbstemiousHeuristic(p_AStarQueueItem d) {
         Score localMin = opt_::INF;
         uint16_t maskBase = p->atomic_number;
         for (int8_t fc : attainable) {
-          uint32_t mask = maskBase + (abs(fc) << 8);
+          uint32_t mask = maskBase + uint32_t(abs(fc) << 8);
           if (fc < 0) mask += (1 << 15);
           if (parent_->scores_.find(mask) != parent_->scores_.end()
               && parent_->scores_.at(mask) < localMin)
@@ -490,7 +489,7 @@ void AStarOptimisation::AbstemiousHeuristic(p_AStarQueueItem d) {
         ElnVertProp* pa = vertexProperties_[*nbr];
         nbr++;
         ElnVertProp* pb = vertexProperties_[*nbr];
-        uint32_t maskBase = pa->atomic_number + (pb->atomic_number << 8);
+        uint32_t maskBase = uint32_t(pa->atomic_number + (pb->atomic_number << 8));
         if (opt_::USE_CHARGED_BOND_ENERGIES){
           if (pa->formal_charge < 0)
             maskBase += (2 << 16);
@@ -512,7 +511,7 @@ void AStarOptimisation::AbstemiousHeuristic(p_AStarQueueItem d) {
           toPlace += toPlace;
         
         for (uint8_t es = 0; es <= toPlace; es += 2) {
-          uint32_t mask = maskBase + ((p->electron_count + p->pre_placed + es) << 20);
+          uint32_t mask = maskBase + uint32_t((p->electron_count + p->pre_placed + es) << 20);
           if (parent_->scores_.find(mask) != parent_->scores_.end()
               && parent_->scores_.at(mask) < localMin)
             localMin = parent_->scores_.at(mask);

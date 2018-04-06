@@ -12,8 +12,8 @@
 #include <sstream>
 #include <vector>
 
-#include "api.hpp"
-#include "utils/filereader.hpp"
+#include "indigox/api.hpp"
+#include "indigox/utils/filereader.hpp"
 
 
 namespace indigox {

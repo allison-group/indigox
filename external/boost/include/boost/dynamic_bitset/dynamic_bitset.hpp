@@ -1635,7 +1635,7 @@ operator<<(std::basic_ostream<Ch, Tr>& os,
             buffer_type * buf = os.rdbuf();
             // careful: os.width() is signed (and can be < 0)
             const bitset_size_type width = (os.width() <= 0) ? 0 : static_cast<bitset_size_type>(os.width());
-            streamsize npad = (width <= b.size()) ? 0 : width - b.size();
+            streamsize npad = (width <= b.size()) ? 0 : (streamsize)(width - b.size());
 
             const Ch fill_char = os.fill();
             const ios_base::fmtflags adjustfield = os.flags() & ios_base::adjustfield;

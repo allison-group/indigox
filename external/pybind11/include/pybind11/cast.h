@@ -1943,7 +1943,7 @@ private:
     }
 
     void process(list &args_list, detail::args_proxy ap) {
-        for (const auto &a : ap)
+        for (const auto a : ap)
             args_list.append(a);
     }
 
@@ -1975,7 +1975,7 @@ private:
     void process(list &/*args_list*/, detail::kwargs_proxy kp) {
         if (!kp)
             return;
-        for (const auto &k : reinterpret_borrow<dict>(kp)) {
+        for (const auto k : reinterpret_borrow<dict>(kp)) {
             if (m_kwargs.contains(k.first)) {
 #if defined(NDEBUG)
                 multiple_values_error();

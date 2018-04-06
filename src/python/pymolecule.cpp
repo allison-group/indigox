@@ -11,13 +11,13 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 
-#include "python/interface.hpp"
+#include "indigox/python/interface.hpp"
 
-#include "classes/atom.hpp"
-#include "classes/bond.hpp"
-#include "classes/molecule.hpp"
-#include "classes/periodictable.hpp"
-#include "utils/helpers.hpp"
+#include "indigox/classes/atom.hpp"
+#include "indigox/classes/bond.hpp"
+#include "indigox/classes/molecule.hpp"
+#include "indigox/classes/periodictable.hpp"
+#include "indigox/utils/helpers.hpp"
 
 namespace py = pybind11;
 namespace indigox {

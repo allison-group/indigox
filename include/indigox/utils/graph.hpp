@@ -380,14 +380,14 @@ namespace indigox {
         if (vert_idxmap_.left.find(v) != vert_idxmap_.left.end()) {
           return vert_idxmap_.left.at(v);
         }
-        return -1;
+        return uid_t(-1);
       }
       
       uid_t GetEdgeIndex(EdgeType e) const {
         if (edge_idxmap_.left.find(e) != edge_idxmap_.left.end()) {
           return edge_idxmap_.left.at(e);
         }
-        return -1;
+        return uid_t(-1);
       }
       
       void ResetIndicies() {

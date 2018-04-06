@@ -11,12 +11,12 @@
 #include <sstream>
 #include <string>
 
-#include "api.hpp"
-#include "algorithm/formalbonds/elimination_ordering.hpp"
-#include "classes/permutablegraph.hpp"
+#include "indigox/api.hpp"
+#include "indigox/algorithm/formalbonds/elimination_ordering.hpp"
+#include "indigox/classes/permutablegraph.hpp"
 
 #ifdef BUILD_JAVA
-#include "utils/java_interface.hpp"
+#include "indigox/utils/java_interface.hpp"
 #endif
 
 namespace indigox {

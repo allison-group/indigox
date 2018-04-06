@@ -7,13 +7,13 @@
 //
 
 #include <iostream>
-#include "classes/electron_graph.hpp"
+#include "indigox/classes/electron_graph.hpp"
 
-#include "classes/atom.hpp"
-#include "classes/bond.hpp"
-#include "algorithm/electron_optimisation.hpp"
-#include "algorithm/formalbonds/electron_optimisation_algorithm.hpp"
-#include "utils/options.hpp"
+#include "indigox/classes/atom.hpp"
+#include "indigox/classes/bond.hpp"
+#include "indigox/algorithm/electron_optimisation.hpp"
+#include "indigox/algorithm/formalbonds/electron_optimisation_algorithm.hpp"
+#include "indigox/utils/options.hpp"
 
 using namespace indigox;
 using namespace algorithm;
@@ -146,7 +146,7 @@ void ElectronOptimisationAlgorithm::DetermineFormalCharges() {
     
     // Preplace code
     //int8_t fc = prop->valence - prop->electron_count;
-    int8_t fc = prop->valence - prop->electron_count - prop->pre_placed;
+    int8_t fc = (int8_t)prop->valence - (int8_t)prop->electron_count - (int8_t)prop->pre_placed;
     // End Preplace code
     
     ElnNbrsIterPair nbrs = parent_->elnGraph_->GetNeighbours(*v);
@@ -240,7 +240,7 @@ ElnDist ElectronOptimisationAlgorithm::CalculateUpperLimit() {
 Score ElectronOptimisationAlgorithm::CalculateVertexEnergy(ElnVertex& vert) {
   ElnVertProp* prop = parent_->elnGraph_->GetProperties(vert);
   MolVertPair id = prop->id;
-  size_t idCount = std::count(parent_->possibleLocations_.begin(),
+  size_t idCount = (size_t)std::count(parent_->possibleLocations_.begin(),
                               parent_->possibleLocations_.end(), id);
   
   if (id.first == id.second) { // Atom energies
@@ -314,7 +314,7 @@ Score ElectronOptimisationAlgorithm::CalculateVertexEnergy(ElnVertex& vert) {
     
     uint32_t k = 0;
     k += u_prop->atomic_number;
-    k += (v_prop->atomic_number << 8);
+    k += uint32_t(v_prop->atomic_number << 8);
     if (opt_::USE_CHARGED_BOND_ENERGIES){
       if (u_prop->formal_charge < 0)
         k += (2 << 16);
@@ -325,7 +325,7 @@ Score ElectronOptimisationAlgorithm::CalculateVertexEnergy(ElnVertex& vert) {
       else if (v_prop->formal_charge > 0)
         k += (1 << 18);
     }
-    k += ((prop->electron_count + prop->pre_placed) << 20);
+    k += uint32_t((prop->electron_count + prop->pre_placed) << 20);
     
     auto pos = parent_->scores_.find(k);
     

@@ -1,13 +1,13 @@
-#include "api.hpp"
+#include "indigox/api.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
 
-#include "python/interface.hpp"
+#include "indigox/python/interface.hpp"
 
-#include "utils/options.hpp"
+#include "indigox/utils/options.hpp"
 
 namespace py = pybind11;
 using namespace indigox;

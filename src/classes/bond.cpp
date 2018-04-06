@@ -8,10 +8,10 @@
  */
 #include <sstream>
 
-#include "api.hpp"
-#include "classes/atom.hpp"
-#include "classes/bond.hpp"
-#include "utils/counter.hpp"
+#include "indigox/api.hpp"
+#include "indigox/classes/atom.hpp"
+#include "indigox/classes/bond.hpp"
+#include "indigox/utils/counter.hpp"
 
 namespace indigox {
   

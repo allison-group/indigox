@@ -15,14 +15,14 @@
 #include <vector>
 
 
-#include "classes/molecular_graph.hpp"
-#include "classes/permutablegraph.hpp"
-#include "classes/treedecomp.hpp"
+#include "indigox/classes/molecular_graph.hpp"
+#include "indigox/classes/permutablegraph.hpp"
+#include "indigox/classes/treedecomp.hpp"
 
-#include "utils/options.hpp"
+#include "indigox/utils/options.hpp"
 
 #ifdef BUILD_JAVA
-#include "utils/java_interface.hpp"
+#include "indigox/utils/java_interface.hpp"
 #endif
 
 namespace indigox {

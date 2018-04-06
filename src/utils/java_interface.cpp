@@ -12,10 +12,10 @@
 #include <jni.h>
 #endif
 
-#include "api.hpp"
+#include "indigox/api.hpp"
 
-#include "utils/java_interface.hpp"
-#include "utils/options.hpp"
+#include "indigox/utils/java_interface.hpp"
+#include "indigox/utils/options.hpp"
 
 namespace indigox {
   namespace utils {

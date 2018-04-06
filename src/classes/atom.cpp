@@ -12,10 +12,10 @@
 #include <memory>
 #include <sstream>
 
-#include "api.hpp"
-#include "classes/atom.hpp"
-#include "classes/periodictable.hpp"
-#include "utils/counter.hpp"
+#include "indigox/api.hpp"
+#include "indigox/classes/atom.hpp"
+#include "indigox/classes/periodictable.hpp"
+#include "indigox/utils/counter.hpp"
 
 namespace indigox {
   

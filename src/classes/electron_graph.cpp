@@ -8,11 +8,11 @@
 #include <iostream>
 #include <unordered_map>
 
-#include "classes/atom.hpp"
-#include "classes/electron_graph.hpp"
-#include "classes/molecular_graph.hpp"
-#include "utils/graph.hpp"
-#include "utils/options.hpp"
+#include "indigox/classes/atom.hpp"
+#include "indigox/classes/electron_graph.hpp"
+#include "indigox/classes/molecular_graph.hpp"
+#include "indigox/utils/graph.hpp"
+#include "indigox/utils/options.hpp"
 
 namespace indigox {
   

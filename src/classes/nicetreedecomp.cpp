@@ -15,12 +15,12 @@
 
 #include <boost/graph/topological_sort.hpp>
 
-#include "api.hpp"
+#include "indigox/api.hpp"
 
-#include "classes/molecular_graph.hpp"
-#include "classes/nicetreedecomp.hpp"
-#include "classes/treedecomp.hpp"
-#include "utils/options.hpp"
+#include "indigox/classes/molecular_graph.hpp"
+#include "indigox/classes/nicetreedecomp.hpp"
+#include "indigox/classes/treedecomp.hpp"
+#include "indigox/utils/options.hpp"
 
 namespace indigox {
   

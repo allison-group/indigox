@@ -11,12 +11,12 @@
 #include <chrono>
 #include <vector>
 
-#include "algorithm/formalbonds/fpt.hpp"
-#include "algorithm/formalbonds/elimination_ordering.hpp"
-#include "utils/options.hpp"
-#include "classes/nicetreedecomp.hpp"
-#include "classes/treedecomp.hpp"
-#include "classes/permutablegraph.hpp"
+#include "indigox/algorithm/formalbonds/fpt.hpp"
+#include "indigox/algorithm/formalbonds/elimination_ordering.hpp"
+#include "indigox/utils/options.hpp"
+#include "indigox/classes/nicetreedecomp.hpp"
+#include "indigox/classes/treedecomp.hpp"
+#include "indigox/classes/permutablegraph.hpp"
 
 using namespace indigox;
 using namespace algorithm;
@@ -241,7 +241,7 @@ void FPTOptimisation::PopulateReferenceVectors()
     MolVertPair vp = p->id;
     VertMask mask(targetSize);
     
-    size_t count = std::count(parent_->possibleLocations_.begin(),
+    size_t count = (size_t)std::count(parent_->possibleLocations_.begin(),
                               parent_->possibleLocations_.end(),
                               vp) + 1;
     for (size_t i = 0; i < count; ++i)
@@ -285,8 +285,8 @@ void FPTOptimisation::DetermineMinMax()
                           parent_->possibleLocations_.end(),
                           id);
     int n_pos_invert = (int)parent_->possibleLocations_.size() - n_pos;
-    score->min_e = std::max(0, (int)parent_->electronsToAdd_ - n_pos_invert);
-    score->max_e = std::min((int)parent_->electronsToAdd_, n_pos);
+    score->min_e = (uint32_t)std::max(0, (int)parent_->electronsToAdd_ - n_pos_invert);
+    score->max_e = (uint32_t)std::min((int)parent_->electronsToAdd_, n_pos);
     scorematrices_.emplace(*v, score);
   }
 }

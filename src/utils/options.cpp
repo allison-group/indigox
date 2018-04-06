@@ -9,8 +9,8 @@
 
 #include <limits>
 
-#include "api.hpp"
-#include "utils/options.hpp"
+#include "indigox/api.hpp"
+#include "indigox/utils/options.hpp"
 
 using namespace indigox;
 

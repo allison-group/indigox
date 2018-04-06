@@ -8,12 +8,12 @@
 #include <map>
 #include <sstream>
 
-#include "api.hpp"
-#include "classes/molecular_graph.hpp"
-#include "classes/permutablegraph.hpp"
-#include "classes/treedecomp.hpp"
-#include "utils/graph.hpp"
-#include "utils/options.hpp"
+#include "indigox/api.hpp"
+#include "indigox/classes/molecular_graph.hpp"
+#include "indigox/classes/permutablegraph.hpp"
+#include "indigox/classes/treedecomp.hpp"
+#include "indigox/utils/graph.hpp"
+#include "indigox/utils/options.hpp"
 
 using namespace indigox;
 typedef Options::AssignElectrons::FPT fpt_;;

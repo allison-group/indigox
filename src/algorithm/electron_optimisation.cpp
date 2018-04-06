@@ -15,16 +15,16 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "algorithm/electron_optimisation.hpp"
-#include "classes/atom.hpp"
-#include "classes/electron_graph.hpp"
-#include "classes/molecular_graph.hpp"
-#include "algorithm/formalbonds/astar.hpp"
-#include "algorithm/formalbonds/fpt.hpp"
-#include "algorithm/formalbonds/local_optimisation.hpp"
-#include "classes/periodictable.hpp"
-#include "utils/filereader.hpp"
-#include "utils/options.hpp"
+#include <indigox/algorithm/electron_optimisation.hpp>
+#include <indigox/classes/atom.hpp>
+#include "indigox/classes/electron_graph.hpp"
+#include "indigox/classes/molecular_graph.hpp"
+#include "indigox/algorithm/formalbonds/astar.hpp"
+#include "indigox/algorithm/formalbonds/fpt.hpp"
+#include "indigox/algorithm/formalbonds/local_optimisation.hpp"
+#include "indigox/classes/periodictable.hpp"
+#include "indigox/utils/filereader.hpp"
+#include "indigox/utils/options.hpp"
 
 namespace indigox {
   enum class SortOrder {
@@ -108,16 +108,16 @@ bool ElectronOpt::ApplyElectronAssigment(Uint i) {
 }
 
 void ElectronOpt::DetermineElectronsToAdd() {
-  electronsToAdd_ = -molGraph_->GetTotalCharge();
+  int ecount = -molGraph_->GetTotalCharge();
   MolVertIterPair vs = molGraph_->GetVertices();
   for (MolVertexIter v = vs.first; v != vs.second; ++v)
-    electronsToAdd_ += molGraph_->GetProperties(*v)->atom->GetElement()->GetValenceElectronCount();
+    ecount += molGraph_->GetProperties(*v)->atom->GetElement()->GetValenceElectronCount();
   // All bonds should have order of at least 1
   // Preplace code
   ElnVertIterPair elnvs = elnGraph_->GetVertices();
   for (; elnvs.first != elnvs.second; ++elnvs.first)
-    electronsToAdd_ -= elnGraph_->GetProperties(*elnvs.first)->pre_placed;
-  //electronsToAdd_ -= 2 * molGraph_->NumEdges();
+    ecount -= elnGraph_->GetProperties(*elnvs.first)->pre_placed;
+  //ecount -= 2 * molGraph_->NumEdges();
   // End Preplace code
   
   if (opt_::AUTO_USE_ELECTRON_PAIRS && electronsToAdd_ % 2)
@@ -128,7 +128,9 @@ void ElectronOpt::DetermineElectronsToAdd() {
   if (opt_::USE_ELECTRON_PAIRS && electronsToAdd_ % 2)
     throw std::runtime_error("Unable to handle odd number of electrons when using electron pairs.");
   else if (opt_::USE_ELECTRON_PAIRS)
-    electronsToAdd_ /= 2;
+    ecount /= 2;
+  
+  electronsToAdd_ = uint32_t(ecount);
 }
 
 void ElectronOpt::DeterminePotentialElectronLocations() {
@@ -136,9 +138,9 @@ void ElectronOpt::DeterminePotentialElectronLocations() {
   for (MolVertexIter v = vs.first; v != vs.second; ++v) {
     int8_t octet;
     if (molGraph_->Degree(*v) > 2)
-      octet = molGraph_->GetProperties(*v)->atom->GetElement()->GetHypervalentOctet();
+      octet = (int8_t)molGraph_->GetProperties(*v)->atom->GetElement()->GetHypervalentOctet();
     else
-      octet = molGraph_->GetProperties(*v)->atom->GetElement()->GetOctet();
+      octet = (int8_t)molGraph_->GetProperties(*v)->atom->GetElement()->GetOctet();
     
     int8_t bondedElectrons = 2 * molGraph_->Degree(*v);
     int8_t missingElectrons = octet - bondedElectrons;
@@ -169,13 +171,13 @@ void ElectronOpt::DeterminePotentialElectronLocations() {
     }
     int8_t u_oct, v_oct, u_bond, v_bond, u_miss, v_miss;
     if (molGraph_->Degree(u) > 2)
-      u_oct = molGraph_->GetProperties(u)->atom->GetElement()->GetHypervalentOctet();
+      u_oct = (int8_t)molGraph_->GetProperties(u)->atom->GetElement()->GetHypervalentOctet();
     else
-      u_oct = molGraph_->GetProperties(u)->atom->GetElement()->GetOctet();
+      u_oct = (int8_t)molGraph_->GetProperties(u)->atom->GetElement()->GetOctet();
     if (molGraph_->Degree(v) > 2)
-      v_oct = molGraph_->GetProperties(v)->atom->GetElement()->GetHypervalentOctet();
+      v_oct = (int8_t)molGraph_->GetProperties(v)->atom->GetElement()->GetHypervalentOctet();
     else
-      v_oct = molGraph_->GetProperties(v)->atom->GetElement()->GetOctet();
+      v_oct = (int8_t)molGraph_->GetProperties(v)->atom->GetElement()->GetOctet();
     u_bond = 2 * molGraph_->Degree(u);
     v_bond = 2 * molGraph_->Degree(v);
     u_miss = u_oct - u_bond;
@@ -298,7 +300,7 @@ void ElectronOpt::LoadScores() {
     } catch (const std::invalid_argument& e) {
       throw std::invalid_argument(at_items[i+1] + std::string(" is not an integer value."));
     }
-    uint32_t k = Z + (std::abs(fc) << 8);
+    uint32_t k = Z + (uint32_t)(std::abs(fc) << 8);
     if (fc < 0) k += (1 << 15);
     Score val = (Score)(std::stoll(at_items[i + 2]) - la_mins.at(at_items[i]));
     scores_.emplace(k, val);
@@ -333,14 +335,14 @@ void ElectronOpt::LoadScores() {
       } else b_sign = '0';
     }
     
-    uint8_t Za = pt->GetElement(bn_items[i])->GetAtomicNumber();
-    uint8_t Zb = pt->GetElement(bn_items[i+1])->GetAtomicNumber();
+    uint32_t Za = pt->GetElement(bn_items[i])->GetAtomicNumber();
+    uint32_t Zb = pt->GetElement(bn_items[i+1])->GetAtomicNumber();
     if (Za == 0) throw std::invalid_argument(at_items[i] + std::string(" is not a valid atomic symbol."));
     if (Zb == 0) throw std::invalid_argument(at_items[i+1] + std::string(" is not a valid atomic symbol."));
     
-    int order;
+    uint32_t order;
     try {
-      order = std::stoi(bn_items[i + 2]);
+      order = (uint32_t)std::stoi(bn_items[i + 2]);
     } catch (const std::invalid_argument& e) {
       throw std::invalid_argument(bn_items[i+2] + std::string(" is not an integer value."));
     }

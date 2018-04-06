@@ -7,9 +7,9 @@
 //
 #include <iostream>
 
-#include "api.hpp"
-#include "classes/iters.hpp"
-#include "classes/molecule.hpp"
+#include "indigox/api.hpp"
+#include "indigox/classes/iters.hpp"
+#include "indigox/classes/molecule.hpp"
 
 using namespace indigox;
 

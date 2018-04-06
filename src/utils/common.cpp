@@ -10,8 +10,8 @@
 #include <algorithm>
 #include <random>
 
-#include "api.hpp"
-#include "utils/common.hpp"
+#include "indigox/api.hpp"
+#include "indigox/utils/common.hpp"
 
 /// Global namespace for all indigoX code.
 namespace indigox {
