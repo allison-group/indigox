@@ -17,7 +17,6 @@ void indigox::GenerateOptions(py::module& m) {
   py::class_<o_, std::shared_ptr<o_>> PyOptions(m, "Options");
   PyOptions.def_static("Reset", &o_::Reset)
   .def_readwrite_static("DATA_DIRECTORY", &o_::DATA_DIRECTORY)
-  .def_readwrite_static("PERIODIC_TABLE_FILE", &o_::PERIODIC_TABLE_FILE)
   ;
   
   // AssignElectrons general options

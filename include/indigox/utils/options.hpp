@@ -81,10 +81,6 @@ namespace indigox {
     /// @brief Default data directory path.
     static std::string DATA_DIRECTORY;
     
-    /// @brief File in \link Options::DATA_DIRECTORY DATA_DIRECTORY \endlink
-    /// containing element information for the periodic table.
-    static std::string PERIODIC_TABLE_FILE;
-    
     /// @brief Reset all attributes to their default values.
     static void Reset();
   };

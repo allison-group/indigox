@@ -27,12 +27,8 @@ typedef assign_::LocalOptimisation lo_;
 //#define DFT_DATA_DIR "data"
 #define DFT_DATA_DIR /Users/iwelsh/GitHub/indigox/indigox/data
 #endif
-#ifndef DFT_PERIODIC_TABLE_FILE
-#define DFT_PERIODIC_TABLE_FILE "periodictable.txt"
-#endif
 
 std::string opt_::DATA_DIRECTORY = QUOTE(DFT_DATA_DIR);
-std::string opt_::PERIODIC_TABLE_FILE = DFT_PERIODIC_TABLE_FILE;
 
 // AssignElectron General
 #ifndef DFT_ASSIGNELECTRON_ALGORITHM
@@ -160,7 +156,6 @@ void Options::Reset() {
   astar_::HEURISTIC = DFT_ASSIGNELECTRON_ASTAR_HEURISTIC;
   astar_::MEGABYTE_LIMIT = DFT_ASSIGNELECTRON_ASTAR_MEGABYTE_LIMIT;
   Options::DATA_DIRECTORY = QUOTE(DFT_DATA_DIR);
-  Options::PERIODIC_TABLE_FILE = DFT_PERIODIC_TABLE_FILE;
   // AssignElectron FPT
   fpt_::LIBTW_JAR_FILE = DFT_ASSIGNELECTRON_FPT_JAR_FILE;
   fpt_::ADD_EDGES_TO_TD = DFT_ASSIGN_ELECTRON_TD_ADD_EDGES;
