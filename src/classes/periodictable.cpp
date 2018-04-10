@@ -65,7 +65,7 @@ namespace indigox {
   Element IXPeriodicTable::GetElement(uint8_t z) {
     if (z_to_.find(z) != z_to_.end())
       return z_to_.at(z);
-    return _null_element;
+    throw std::invalid_argument("Requested element is invalid.");
   }
   
   /** @param name the atomic symbol or name of the element to get.
@@ -77,7 +77,7 @@ namespace indigox {
     if (name_to_.find(u) != name_to_.end()) {
       return name_to_.at(name).lock();
     }
-    return _null_element;
+    throw std::invalid_argument("Requested element is invalid.");
   }
   
   /** @details Loads elemental data from the file pointed to by the
@@ -129,7 +129,7 @@ namespace indigox {
         count = 0;
       } else count++;
     }
-    _null_element = Element(new IXElement(0, "Undefined", "XX", 0.0f, 0,0,0,0,0,
+    _null_element = Element(new IXElement(0,"Undefined","XX",0.0f,0,0,0,0,0,
                                           0.0f,0.0f,0.0f,0.0f));
   }
   

@@ -66,6 +66,8 @@ namespace indigox {
     /// @brief Get the element with the given name or symbol.
     Element GetElement(std::string);
     
+    Element GetUndefinedElement() { return _null_element; }
+    
     /// @returns the total number of elements in the PeriodicTable.
     inline size_t NumElements() const { return z_to_.size(); }
     
