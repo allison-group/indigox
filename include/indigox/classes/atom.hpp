@@ -177,7 +177,7 @@ namespace indigox {
      *  \details The index of an atom should not be considered stable. Use with
      *  caution.
      *  \param i the index to set. */
-    void SetIndex(uid_t i) { _idx = i; }
+    void SetIndex(unsigned int i) { _idx = i; }
     
     /*! \brief Set the molecule this atom is part of.
      *  \details No bookkeeping is performed, meaning the molecule is not
@@ -218,7 +218,7 @@ namespace indigox {
     
     /*! \brief Get the stereochemistry of the atom.
      *  \return the stereochemistry of the atom. */
-    ATOMSTEREO GetSeterochemistry() { return _stereo; }
+    ATOMSTEREO GetStereochemistry() { return _stereo; }
     
     /*! \brief Get the aromaticity of an atom.
      *  \return if the atom is aromatic or not. */

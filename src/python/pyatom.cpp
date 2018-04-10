@@ -9,55 +9,73 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 
-#include "indigox/python/interface.hpp"
+#include <indigox/python/interface.hpp>
+#include <indigox/python/pickle.hpp>
 
-#include "indigox/classes/atom.hpp"
-#include "indigox/classes/molecule.hpp"
-#include "indigox/classes/periodictable.hpp"
+#include <indigox/classes/atom.hpp>
+#include <indigox/classes/bond.hpp>
+#include <indigox/classes/molecule.hpp>
+#include <indigox/classes/periodictable.hpp>
+
 
 namespace py = pybind11;
 
 namespace indigox {
   void GeneratePyAtom(pybind11::module& m) {
     py::class_<IXAtom, Atom>(m, "Atom")
-    // Hidden methods
+    // Constructors
     .def(py::init<>([](){ return Atom(new IXAtom()); }))
+    .def(py::init<>([](Molecule m){ return Atom(new IXAtom(m)); }))
+    // Hidden methods
     .def("__str__", &IXAtom::ToString)
     .def("__repr__", &IXAtom::ToString)
     // Getters
+    .def("GetAromaticity", &IXAtom::GetAromaticity)
     .def("GetElement", &IXAtom::GetElement)
     .def("GetFormalCharge", &IXAtom::GetFormalCharge)
+    .def("GetImplicitCount", &IXAtom::GetImplicitCount)
     .def("GetIndex", &IXAtom::GetIndex)
     .def("GetMolecule", &IXAtom::GetMolecule)
     .def("GetName", &IXAtom::GetName)
+    .def("GetPartialCharge", &IXAtom::GetPartialCharge)
+    .def("GetStereoChemistry", &IXAtom::GetStereochemistry)
+    .def("GetVector", &IXAtom::GetVector)
     .def("GetX", &IXAtom::GetX)
     .def("GetY", &IXAtom::GetY)
     .def("GetZ", &IXAtom::GetZ)
     .def("GetUniqueID", &IXAtom::GetUniqueID)
     // Setters
+    .def("SetAromaticity", &IXAtom::SetAromaticity)
     .def("SetElement", py::overload_cast<Element>(&IXAtom::SetElement))
     .def("SetElement", py::overload_cast<std::string>(&IXAtom::SetElement))
     .def("SetElement", py::overload_cast<unsigned int>(&IXAtom::SetElement))
     .def("SetFormalCharge", &IXAtom::SetFormalCharge)
+    .def("SetImplicitCount", &IXAtom::SetImplicitCount)
     .def("SetIndex", &IXAtom::SetIndex)
     .def("SetMolecule", &IXAtom::SetMolecule)
     .def("SetName", &IXAtom::SetName)
+    .def("SetPartialCharge", &IXAtom::SetPartialCharge)
     .def("SetPosition", &IXAtom::SetPosition)
+    .def("SetStereochemistry", &IXAtom::SetStereochemistry)
+    .def("SetX", &IXAtom::SetX)
+    .def("SetY", &IXAtom::SetY)
+    .def("SetZ", &IXAtom::SetZ)
+    // Modification
+//    .def("AddAngle", &IXAtom::AddAngle)
+    .def("AddBond", &IXAtom::AddBond)
+//    .def("AddDihedral", &IXAtom::AddDihedral)
+    .def("Clear", &IXAtom::Clear)
+//    .def("RemoveAngle", &IXAtom::RemoveAngle)
+    .def("RemoveBond", &IXAtom::RemoveBond)
+//    .def("RemoveDihedral", &IXAtom::RemoveDihedral)
+    // Other
+    .def("ToString", &IXAtom::ToString)
+    // Iterators
+//    .def("IterateAngles", &IXAtom::GetAngleIters)
+    .def("IterateBonds", &IXAtom::GetBondIters)
+//    .def("IterateDihedrals", &IXAtom::GetDihedralIters)
     // Pickle support
-//    .def(py::pickle(// __getstate__
-//                    [](const Atom a) {
-//                      return py::make_tuple(a->GetName(),
-//                                            a->GetElement()->GetAtomicNumber());
-//                    },
-//                    // __setstate__
-//                    [](py::tuple t) {
-//                      if (t.size() != 2)
-//                        throw std::runtime_error("Invalid state!");
-//                      Atom a = Atom(new IXAtom());
-//                      a->SetName(t[0].cast<std::string>());
-//                      a->SetElement(t[1].cast<unsigned int>());
-//                      return a;
-//                    }))
+    .def(py::pickle(&PickleAtom, &UnpickleAtom))
     ;
   }
 }

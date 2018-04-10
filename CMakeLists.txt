@@ -53,7 +53,7 @@ SET(INDIGOX_LIB_SRCS
     src/classes/atom.cpp
     src/classes/bond.cpp
     src/classes/electron_graph.cpp
-    src/classes/iters.cpp
+#    src/classes/iters.cpp
     src/classes/molecular_graph.cpp
     src/classes/molecule.cpp
     src/classes/nicetreedecomp.cpp

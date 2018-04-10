@@ -1,5 +1,6 @@
 SET(INDIGOX_PYTHON_INTERFACE_SRCS
     interface.cpp
+    pickle.cpp
     pyatom.cpp
     pybond.cpp
     pyelement.cpp
