@@ -100,8 +100,8 @@ Bond IXMolecule::GetBond(Atom a, Atom b) const {
   Bond bnd = Bond();
   if (a->GetMolecule()->GetUniqueID() != GetUniqueID()) return bnd;
   if (b->GetMolecule()->GetUniqueID() != GetUniqueID()) return bnd;
-  for (AtomBondIter it = a->BeginBond(); it != a->EndBond(); ++it) {
-    Bond tmp = it->lock();
+  for (auto it = a->GetBondIters(); it.first != it.second; ++it.first) {
+    Bond tmp = it.first->lock();
     if (tmp->GetSourceAtom() == a && tmp->GetTargetAtom() == b) return tmp;
     if (tmp->GetSourceAtom() == b && tmp->GetTargetAtom() == a) return tmp;
   }
@@ -234,8 +234,8 @@ void IXMolecule::RemoveAtom(Atom a) {
   auto it = std::find(atoms_.begin(), atoms_.end(), a);
   if (it != atoms_.end()) {
     Atom hit = *it;
-    for (AtomBondIter bs = hit->BeginBond(); bs != hit->EndBond(); ++bs) {
-      Bond tmp = bs->lock();
+    for (auto bs = hit->GetBondIters(); bs.first != bs.second; ++bs.first) {
+      Bond tmp = bs.first->lock();
       bond_to_edge_.erase(tmp);
       if (tmp->GetSourceAtom() != hit) tmp->GetSourceAtom()->RemoveBond(tmp);
       else tmp->GetTargetAtom()->RemoveBond(tmp);

@@ -9,11 +9,6 @@
 
 using namespace indigox;
 
-/*
- *  Atom implementation
- */
-
-// Initalisation methods
 IXAtom::IXAtom() : utils::CountableObject<IXAtom>(), _mol(), _elem() {
   _idx = GetUniqueID();
 }
@@ -38,7 +33,7 @@ std::string IXAtom::ToString() {
 void IXAtom::RemoveBond(Bond b) {
   AtomBondIter it = _bonds.begin();
   for (; it != _bonds.end(); ++it) {
-    if (it->lock() == b) break;
+    if (!it->expired() && it->lock() == b) break;
   }
   if (it != _bonds.end()) _bonds.erase(it);
 }
@@ -46,35 +41,26 @@ void IXAtom::RemoveBond(Bond b) {
 void IXAtom::RemoveAngle(Angle a) {
   AtomAngleIter it = _angles.begin();
   for (; it != _angles.end(); ++it) {
-    if (it->lock() == a) break;
+    if (!it->expired() && it->lock() == a) break;
   }
   if (it != _angles.end()) _angles.erase(it);
 }
 
+void IXAtom::RemoveDihedral(Dihedral d) {
+  AtomDihedralIter it = _dihedrals.begin();
+  for (; it != _dihedrals.end(); ++it) {
+    if (!it->expired() && it->lock() == d) break;
+  }
+  if (it != _dihedrals.end()) _dihedrals.erase(it);
+}
+
 void IXAtom::Clear() {
   _mol.reset();
-  _elem = IXPeriodicTable::GetInstance()->GetElement(0);
+  _elem.reset();
   _bonds.clear();
   _angles.clear();
   _dihedrals.clear();
   _pos = Vec3();
 }
 
-// Iterator methods
-Bond IXAtom::Begin(AtomBondIter &it) {
-  for (it = _bonds.begin(); it != _bonds.end(); ++it) {
-    if (!it->expired()) break;
-  }
-  return (it == _bonds.end()) ? Bond() : it->lock();
-}
-
-Bond IXAtom::Next(AtomBondIter &it) {
-  for (++it; it != _bonds.end(); ++it) {
-    if (!it->expired()) break;
-  }
-  return (it == _bonds.end()) ? Bond() : it->lock();
-}
-
-AtomBondIter IXAtom::BeginBond() { return _bonds.begin(); }
-AtomBondIter IXAtom::EndBond() { return _bonds.end(); }
 

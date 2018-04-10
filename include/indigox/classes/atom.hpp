@@ -23,6 +23,7 @@
 namespace indigox {
 
   // Related typedefs
+  //! \cond
   class IXAtom;
   class IXBond;
   class IXAngle;
@@ -38,6 +39,7 @@ namespace indigox {
   typedef std::weak_ptr<IXAngle> _Angle;
   typedef std::weak_ptr<IXDihedral> _Dihedral;
   typedef std::weak_ptr<IXMolecule> _Molecule;
+  
   typedef std::vector<_Bond> AtomBonds;
   typedef std::vector<_Angle> AtomAngles;
   typedef std::vector<_Dihedral> AtomDihedrals;
@@ -55,6 +57,7 @@ namespace indigox {
   struct Vec3 {
     double x = 0.0, y = 0.0, z = 0.0;
   };
+  //! \endcond
   
   class IXAtom
   : public utils::CountableObject<IXAtom>,
@@ -82,7 +85,7 @@ namespace indigox {
      *  \return the element of this atom. */
     Element GetElement() const {
       if(_elem.expired())
-        return IXPeriodicTable::GetInstance()->GetElement(0);
+        return IXPeriodicTable::GetInstance()->GetUndefinedElement();
       return _elem.lock();
     }
     
@@ -90,11 +93,19 @@ namespace indigox {
      *  \return the formal charge on the atom. */
     int GetFormalCharge() const { return _fc; }
     
+    /*! \brief Partial atomic charge on the atom.
+     *  \return the partial atomic charge. */
+    double GetPartialCharge() const { return _partial; }
+    
     /*! \brief Index of the atom.
      *  \details This value may be modified without warning. Use with caution.
      *  For a constant identifier to the atom, use IXAtom::GetUniqueID.
      *  \return the index assigned to the atom. */
-    uid_t GetIndex() const { return _idx; };
+    unsigned int GetIndex() const { return _idx; };
+    
+    /*! \brief Get number of implicit hydrogens.
+     *  \return the number of implicit hydrogens in the atom. */
+    unsigned int GetImplicitCount() const { return _implicitH; }
     
     /*! \brief Molecule this atom is associated with.
      *  \return the molecule associated with this atom.
@@ -154,6 +165,14 @@ namespace indigox {
      *  \param q the formal charge value to set. */
     void SetFormalCharge(int q) { _fc = q; }
     
+    /*! \brief Set the partial charge of this atom.
+     *  \param q the partial charge value to set. */
+    void SetPartialCharge(double q) { _partial = q; }
+    
+    /*! \brief Set the number of implicit hydrogens.
+     *  \param h the number of implicit hydrogens to set. */
+    void SetImplicitCount(unsigned int h) { _implicitH = h; }
+    
     /*! \brief Set the index of this atom.
      *  \details The index of an atom should not be considered stable. Use with
      *  caution.
@@ -188,6 +207,22 @@ namespace indigox {
     void SetPosition(double x, double y, double z) {
       _pos.x = x; _pos.y = y; _pos.z = z;
     }
+    
+    /*! \brief Set the stereochemistry of an atomic center.
+     *  \param s the stereochemistry to set. */
+    void SetStereochemistry(ATOMSTEREO s) { _stereo = s; }
+    
+    /*! \brief Set the aromaticity of an atom.
+     *  \param a if the atom is aromatic or not. */
+    void SetAromaticity(bool a) { _aromatic = a; }
+    
+    /*! \brief Get the stereochemistry of the atom.
+     *  \return the stereochemistry of the atom. */
+    ATOMSTEREO GetSeterochemistry() { return _stereo; }
+    
+    /*! \brief Get the aromaticity of an atom.
+     *  \return if the atom is aromatic or not. */
+    bool GetAromaticity() { return _aromatic; }
     
     /*! \brief Add a bond to this atom.
      *  \details No bookkeeping is performed, meaning that the bond is not
@@ -238,33 +273,61 @@ namespace indigox {
      *  \details Erases all information stored on the atom. */
     void Clear();
     
-    /// @name Iterator methods.
+    /*! \brief Get iterator access to the atom's bonds.
+     *  \details Intended primarily for internal use as the iterators are to
+     *  weak_ptrs.
+     *  \returns a pair of iterators for the beginning and end of the bonds. */
+    std::pair<AtomBondIter, AtomBondIter> GetBondIters() {
+      return std::make_pair(_bonds.begin(), _bonds.end());
+    }
     
-    /// @brief Sets the given iterator to the next position in bonds_.
-    Bond Next(AtomBondIter&);
+    /*! \brief Get iterator access to the atom's angles.
+     *  \details Intended primarily for internal use as the iterators are to
+     *  weak_ptrs.
+     *  \returns a pair of iterators for the beginning and end of the angles. */
+    std::pair<AtomAngleIter, AtomAngleIter> GetAngleIters() {
+      return std::make_pair(_angles.begin(), _angles.end());
+    }
     
-    /// @brief Sets the given iterator to the start of bonds_.
-    Bond Begin(AtomBondIter&);
-    
-    /// @brief Sets the given iterator to the end of bonds_.
-    AtomBondIter BeginBond();
-    AtomBondIter EndBond();
+    /*! \brief Get iterator access to the atom's dihedrals.
+     *  \details Intended primarily for internal use as the iterators are to
+     *  weak_ptrs.
+     *  \returns a pair of iterators for the beginning and end of the
+     *  dihedrals. */
+    std::pair<AtomDihedralIter, AtomDihedralIter> GetDihedralIters() {
+      return std::make_pair(_dihedrals.begin(), _dihedrals.end());
+    }
     
   private:
+    //! The molecule this atom is assigned to.
     _Molecule _mol;
+    //! The atoms element.
     _Element _elem;
+    //! Formal charge.
     int _fc = 0;
-    unsigned int _idx = 0, _implicitH = 0;
+    //! Index (unstable).
+    unsigned int _idx = 0;
+    //! Number of implicit hydrogens.
+    unsigned int _implicitH = 0;
+    //! Atoms name.
     std::string _name = "ATOM";
+    //! Position vector.
     Vec3 _pos;
+    //! Partial atomic charge.
     double _partial = 0.0;
+    //! Stereochemistry
     ATOMSTEREO _stereo = ACHIRAL;
+    //! Aromaticity
     bool _aromatic = false;
     
+    //! MM type for atom
     // FFAtom _mmtype;
     
+    //! Bonds the atom is part of
     AtomBonds _bonds;
+    //! Angles the atom is part of
     AtomAngles _angles;
+    //! Dihedrals the atom is part of
     AtomDihedrals _dihedrals;
     
   };
