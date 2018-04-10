@@ -90,19 +90,19 @@ namespace indigox {
   class IXElement {
   public:
     /// @returns the relative atomic mass of the element in daltons.
-    float GetAtomicMass() const { return mass_; }
+    double GetAtomicMass() const { return mass_; }
     
     /// @returns the atomic number of the element.
     uint8_t GetAtomicNumber() const { return Z_; }
     
     /// @returns the atomic radius of the element in angstroms.
-    float GetAtomicRadius() const { return radius_; }
+    double GetAtomicRadius() const { return radius_; }
     
     /// @returns the covalent radius of the element in angstroms.
-    float GetCovalentRadius() const { return cov_; }
+    double GetCovalentRadius() const { return cov_; }
     
     /// @returns the van der Waals radius of the element in angstroms.
-    float GetVanDerWaalsRadius() const { return vdw_; }
+    double GetVanDerWaalsRadius() const { return vdw_; }
     
     /// @returns the name of the element.
     std::string GetName() const { return name_; }
@@ -126,7 +126,7 @@ namespace indigox {
     uint8_t GetHypervalentOctet() const { return hyper_; }
     
     /// @returns the electronegativity of the element on the Pauling scale.
-    float GetElectronegativity() const { return chi_; }
+    double GetElectronegativity() const { return chi_; }
 
     /// @returns a simple string representation of the element.
     std::string ToString() const;
@@ -134,13 +134,13 @@ namespace indigox {
   private:
     const std::string name_, symbol_;
     const uint8_t grp_, period_, Z_, val_, oct_, hyper_;
-    const float mass_, radius_, cov_, vdw_, chi_;
+    const double mass_, radius_, cov_, vdw_, chi_;
     
   private:  // Only create Elements within PeriodicTable
     friend class IXPeriodicTable;
     IXElement();
-    IXElement(uint8_t, std::string, std::string, float, uint8_t, uint8_t, uint8_t,
-            uint8_t, uint8_t, float, float, float, float);
+    IXElement(uint8_t, std::string, std::string, double, uint8_t, uint8_t,
+              uint8_t, uint8_t, uint8_t, double, double, double, double);
   };
   
   std::ostream& operator<<(std::ostream&, Element e);
