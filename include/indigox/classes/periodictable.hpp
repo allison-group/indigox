@@ -1,10 +1,4 @@
-/** @file periodictable.hpp
- *  @brief Element and PeriodicTable declaration
- *  @author Ivan Welsh
- *  @date 5 January 2018
- *  @lastmodify 7 January 2018
- *  @version 0.1
- *  @copyright The MIT License
+/*! \file periodictable.hpp
  */
 
 #ifndef INDIGOX_CLASSES_PERIODIC_TABLE_HPP
@@ -25,10 +19,10 @@ namespace indigox {
   typedef std::weak_ptr<IXElement> _Element;
   
   
-  /** @class IXPeriodicTable periodictable.hpp classes/periodictable.hpp
-   *  @brief Singleton class for storing and access elemental information.
-   *  @details The PeriodicTable class provides the only means to access
-   *  the Element class. Access to the instance should only be obtained
+  /*! \class IXPeriodicTable periodictable.hpp indigox/classes/periodictable.hpp
+   *  \brief Singleton class for storing and access elemental information.
+   *  \details The IXPeriodicTable class provides the only means to access
+   *  the IXElement class. Access to the instance should only be obtained
    *  using the GetInstance() method.
    *
    *  Information for the elements is stored a data file, set by the
@@ -66,7 +60,7 @@ namespace indigox {
     /// @brief Get the element with the given name or symbol.
     Element GetElement(std::string);
     
-    Element GetUndefinedElement() { return _null_element; }
+    Element GetUndefinedElement() { return _null; }
     
     /// @returns the total number of elements in the PeriodicTable.
     inline size_t NumElements() const { return z_to_.size(); }
@@ -79,7 +73,7 @@ namespace indigox {
     
   private:
     IXPeriodicTable() = default;
-    Element _null_element;
+    Element _null;
     
     /// @brief Generates the PeriodicTable data.
     void GeneratePeriodicTable();
