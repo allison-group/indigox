@@ -4,7 +4,7 @@
 
 int main() {
     using namespace indigox;
-
+  Options::DATA_DIRECTORY = "/Users/iwelsh/GitHub/indigox/data";
     // Set the options to use
     Options::AssignElectrons::ALGORITHM = Options::AssignElectrons::Algorithm::FPT;
     Options::AssignElectrons::FPT::ADD_EDGES_TO_TD = false;
@@ -12,33 +12,36 @@ int main() {
     Options::AssignElectrons::USE_ELECTRON_PAIRS = false;
 
     // Prepare elements
-    PeriodicTable_p PT = PeriodicTable::GetInstance();
-    Element_p H = PT->GetElement("H");
-    Element_p C = PT->GetElement("C");
-    Element_p O = PT->GetElement("O");
-    Element_p N = PT->GetElement("N");
+    PeriodicTable PT = IXPeriodicTable::GetInstance();
+    Element H = PT->GetElement("H");
+    Element C = PT->GetElement("C");
+    Element O = PT->GetElement("O");
+    Element N = PT->GetElement("N");
 
     // Build the molecule
-    Molecule_p m = CreateMolecule();
+    Molecule m = Molecule(new IXMolecule());
     m->SetTotalCharge(-1);
 
+  Atom a1 = m->NewAtom();
+  std::cout << a1->ToString() << std::endl;
+  
     // Add the atoms
-    Atom_p c1  = m->NewAtom(C);  c1->SetName("C1") ; 
-    Atom_p c2  = m->NewAtom(C);  c2->SetName("C2") ;
-    Atom_p c3  = m->NewAtom(C);  c3->SetName("C3") ;
-    Atom_p c4  = m->NewAtom(C);  c4->SetName("C4") ;
-    Atom_p c5  = m->NewAtom(C);  c5->SetName("C5") ;
-    Atom_p c6  = m->NewAtom(C);  c6->SetName("C6") ;
-    Atom_p h7  = m->NewAtom(H);  h7->SetName("H7") ;
-    Atom_p h8  = m->NewAtom(H);  h8->SetName("H8") ;
-    Atom_p n9  = m->NewAtom(N);  n9->SetName("N9") ;
-    Atom_p h10 = m->NewAtom(H); h10->SetName("H10");
-    Atom_p h11 = m->NewAtom(H); h11->SetName("H11");
-    Atom_p c12 = m->NewAtom(C); c12->SetName("C12");
-    Atom_p o13 = m->NewAtom(O); o13->SetName("O13");
-    Atom_p o14 = m->NewAtom(O); o14->SetName("O14");
-    Atom_p o15 = m->NewAtom(O); o15->SetName("O15");
-    Atom_p o16 = m->NewAtom(O); o16->SetName("O16");
+    Atom c1  = m->NewAtom(C);  c1->SetName("C1") ;
+    Atom c2  = m->NewAtom(C);  c2->SetName("C2") ;
+    Atom c3  = m->NewAtom(C);  c3->SetName("C3") ;
+    Atom c4  = m->NewAtom(C);  c4->SetName("C4") ;
+    Atom c5  = m->NewAtom(C);  c5->SetName("C5") ;
+    Atom c6  = m->NewAtom(C);  c6->SetName("C6") ;
+    Atom h7  = m->NewAtom(H);  h7->SetName("H7") ;
+    Atom h8  = m->NewAtom(H);  h8->SetName("H8") ;
+    Atom n9  = m->NewAtom(N);  n9->SetName("N9") ;
+    Atom h10 = m->NewAtom(H); h10->SetName("H10");
+    Atom h11 = m->NewAtom(H); h11->SetName("H11");
+    Atom c12 = m->NewAtom(C); c12->SetName("C12");
+    Atom o13 = m->NewAtom(O); o13->SetName("O13");
+    Atom o14 = m->NewAtom(O); o14->SetName("O14");
+    Atom o15 = m->NewAtom(O); o15->SetName("O15");
+    Atom o16 = m->NewAtom(O); o16->SetName("O16");
 
     // Add the bonds
     m->NewBond(c1,c2);
@@ -62,19 +65,19 @@ int main() {
     std::cout << "Number of atoms: " << m->NumAtoms() << ", number of bonds: " << m->NumBonds() << "\n";
 
     // Calculate bond orders and formal charges
-    Uint count = m->AssignElectrons();
+    size_t count = m->AssignElectrons();
     std::cout << count << " resonance structure(s) calculated with a score of " << m->GetMinimumElectronAssignmentScore() << ".\n";
 
     // Print out each of the structures
-    for (Uint i = 0; i < count; ++i) {
+    for (size_t i = 0; i < count; ++i) {
         m->ApplyElectronAssignment(i);
         for (MolAtomIterator it = m->BeginAtom(); it != m->EndAtom(); ++it) {
-            Atom_p at = *it;
+            Atom at = *it;
             if (at->GetFormalCharge() != 0)
                 std::cout << "Atom " << at->GetName() << " has a formal charge of " << at->GetFormalCharge() << ".\n";
         }
         for (MolBondIterator it = m->BeginBond(); it != m->EndBond(); ++it) {
-            Bond_p bt = *it;
+            Bond bt = *it;
             if (bt->GetOrder() != 1)
                 std::cout << "Bond between " << bt->GetSourceAtom()->GetName() << " and " << bt->GetTargetAtom()->GetName() << " has an order of " << bt->GetOrder() << ".\n";
         }

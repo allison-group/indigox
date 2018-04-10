@@ -7,8 +7,9 @@
  *  @copyright The MIT License
  */
 #include <array>
+#include <memory>
+#include <string>
 
-#include "../api.hpp"
 #include "../utils/counter.hpp"
 
 #ifndef INDIGOX_CLASSES_BOND_HPP
@@ -16,8 +17,24 @@
 
 namespace indigox {
   
+  class IXAtom;
+  class IXBond;
+  class IXAngle;
+  class IXDihedral;
+  class IXMolecule;
+  typedef std::shared_ptr<IXAtom> Atom;
+  typedef std::shared_ptr<IXBond> Bond;
+  typedef std::shared_ptr<IXAngle> Angle;
+  typedef std::shared_ptr<IXDihedral> Dihedral;
+  typedef std::shared_ptr<IXMolecule> Molecule;
+  typedef std::weak_ptr<IXAtom> _Atom;
+  typedef std::weak_ptr<IXBond> _Bond;
+  typedef std::weak_ptr<IXAngle> _Angle;
+  typedef std::weak_ptr<IXDihedral> _Dihedral;
+  typedef std::weak_ptr<IXMolecule> _Molecule;
+  
   // Related typedefs
-  typedef std::array<Atom_wp, 2> BondAtoms;
+  typedef std::array<_Atom, 2> BondAtoms;
   typedef BondAtoms::iterator BondAtomIterator;
   typedef BondAtoms::const_iterator const_BondAtomIterator;
   
@@ -32,22 +49,22 @@ namespace indigox {
     UNDEFINED_BOND
   };
   
-  class Bond
-  : public utils::CountableObject<Bond>,
-  public std::enable_shared_from_this<Bond> {
+  class IXBond
+  : public utils::CountableObject<IXBond>,
+  public std::enable_shared_from_this<IXBond> {
   
   public:
     
     /// @name Initialisation methods.
     
     /// @brief Default constructor.
-    Bond();
+    IXBond();
     
     /// @brief Normal use constructor.
-    Bond(Atom_p, Atom_p);
+    IXBond(Atom, Atom);
     
     /// @brief Destructor
-    ~Bond();
+    ~IXBond();
     
     /// @name Data retrival methods
     
@@ -55,19 +72,19 @@ namespace indigox {
     uid_t GetIndex() const;
     
     /// @returns the molecule this bond is part of.
-    Molecule_p GetMolecule() const;
+    Molecule GetMolecule() const;
     
     /// @returns the bond order of this bond.
     BondOrder GetOrder() const;
     
     /// @returns the source atom of this bond.
-    Atom_p GetSourceAtom() const;
+    Atom GetSourceAtom() const;
     
     /// @returns the target atom of this bond.
-    Atom_p GetTargetAtom() const;
+    Atom GetTargetAtom() const;
     
     /// @returns a string representation of this bond.
-    String ToString() const;
+    std::string ToString() const;
     
     /// @name Data modification methods
     
@@ -75,26 +92,26 @@ namespace indigox {
     void SetIndex(uid_t);
     
     /// @brief Sets the molecule this bond is part of.
-    void SetMolecule(Molecule_p);
+    void SetMolecule(Molecule);
     
     /// @brief Sets the bond order of this bond.
     void SetOrder(BondOrder);
     
     /// @brief Sets the source atom of this bond.
-    void SetSourceAtom(Atom_p);
+    void SetSourceAtom(Atom);
     
     /// @brief Sets the target atom of this bond.
-    void SetTargetAtom(Atom_p);
+    void SetTargetAtom(Atom);
     
     void Clear();
     
     /// @name Iterator methods
     
     /// @brief Sets the given iterator to the next position in atoms_.
-    Atom_p Next(BondAtomIterator&);
+    Atom Next(BondAtomIterator&);
     
     /// @brief Sets the given iterator to the start of atoms_.
-    Atom_p Begin(BondAtomIterator&);
+    Atom Begin(BondAtomIterator&);
     
     /// @brief Sets the given iterator to the end of atoms_.
     BondAtomIterator BeginAtom();
@@ -102,10 +119,9 @@ namespace indigox {
     
   private:
     BondAtoms atoms_;
-    Molecule_wp mol_;
+    std::weak_ptr<IXMolecule> mol_;
     BondOrder order_ = UNDEFINED_BOND;
     uid_t idx_;
-    
   };
   
 }

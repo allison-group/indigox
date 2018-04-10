@@ -9,20 +9,18 @@
 
 #include <algorithm>
 #include <random>
+#include <string>
 
-#include "indigox/api.hpp"
 #include "indigox/utils/common.hpp"
 
-/// Global namespace for all indigoX code.
-namespace indigox {
-  /// Nested namespace for some useful utilities.
-  namespace utils {
+//! utils namespace for some useful utilities
+namespace indigox::utils {
     
     /** @param s the string to convert.
      *  @returns the upper case string.
      */
-    String toUpper(const String* s){
-      String t = *s;
+  std::string toUpper(const std::string* s){
+      std::string t = *s;
       std::transform(t.begin(), t.end(), t.begin(), ::toupper);
       return t;
     }
@@ -30,8 +28,8 @@ namespace indigox {
     /** @param s the string to convert.
      *  @returns the lower case string.
      */
-    String toLower(const String* s){
-      String t = *s;
+    std::string toLower(const std::string* s){
+      std::string t = *s;
       std::transform(t.begin(), t.end(), t.begin(), ::tolower);
       return t;
     }
@@ -40,8 +38,8 @@ namespace indigox {
      *  @param s the string to convert.
      *  @returns the lower case string with leading upper case.
      */
-    String toUpperFirst(const String* s){
-      String t = *s;
+    std::string toUpperFirst(const std::string* s){
+      std::string t = *s;
       std::transform(t.begin(), t.begin() + 1, t.begin(), ::toupper);
       std::transform(t.begin() + 1, t.end(), t.begin() + 1, ::tolower);
       return t;
@@ -51,13 +49,11 @@ namespace indigox {
      *  @param length the number of characters in the generated string.
      *  @returns a randomly generated string.
      */
-    String randomString(size_t length) {
-      static auto& chrs = "qwertyuiopasdfghjklzxcvbnmZAQXSWCDEVFRBGTNHYMJUKILOP";
-      
+  std::string randomString(size_t length, const std::string chrs) {
       static std::mt19937 rg{std::random_device{}()};
       static std::uniform_int_distribution<size_t> pick(0, sizeof(chrs) - 2);
       
-      String s;
+      std::string s;
       s.reserve(length + 4);  // no need to copy when adding extensions
       
       while(length--)
@@ -66,5 +62,4 @@ namespace indigox {
       
     }
     
-  }  // namespace utils
-}  // namespace indigox
+}  // namespace indigox::utils

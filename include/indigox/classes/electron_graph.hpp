@@ -45,15 +45,16 @@ namespace indigox {
   typedef _ElnGraph::NbrsIterPair ElnNbrsIterPair;
   
   
-  class ElectronGraph : public _ElnGraph
+  class _ElectronGraph : public _ElnGraph
   {
     
   public:
-    ElectronGraph();// = default;
-    ElectronGraph(const MolecularGraph &G);
+    _ElectronGraph();// = default;
+    _ElectronGraph(const _MolecularGraph &G);
     
     ElnVertex GetVertex(MolVertPair id) const;
   };
+  typedef std::shared_ptr<_ElectronGraph> ElectronGraph;
 }
 
 #endif /* ELECTRON_GRAPH_HPP */

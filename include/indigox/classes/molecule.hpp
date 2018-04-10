@@ -10,8 +10,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../api.hpp"
-
 #include "../algorithm/electron_optimisation.hpp"
 
 #include "molecular_graph.hpp"
@@ -23,8 +21,23 @@
 namespace indigox {
   
   // Related typedefs
-  typedef std::vector<Atom_p> MolAtoms;
-  typedef std::vector<Bond_p> MolBonds;
+  class IXAtom;
+  class IXBond;
+  class IXAngle;
+  class IXDihedral;
+  class IXMolecule;
+  typedef std::shared_ptr<IXAtom> Atom;
+  typedef std::shared_ptr<IXBond> Bond;
+  typedef std::shared_ptr<IXAngle> Angle;
+  typedef std::shared_ptr<IXDihedral> Dihedral;
+  typedef std::shared_ptr<IXMolecule> Molecule;
+  typedef std::weak_ptr<IXAtom> _Atom;
+  typedef std::weak_ptr<IXBond> _Bond;
+  typedef std::weak_ptr<IXAngle> _Angle;
+  typedef std::weak_ptr<IXDihedral> _Dihedral;
+  typedef std::weak_ptr<IXMolecule> _Molecule;
+  typedef std::vector<Atom> MolAtoms;
+  typedef std::vector<Bond> MolBonds;
   typedef MolAtoms::iterator MolAtomIterator;
   typedef MolBonds::iterator MolBondIterator;
   typedef MolAtoms::const_iterator const_MolAtomIterator;
@@ -33,61 +46,61 @@ namespace indigox {
   /** @class Molecule molecule.hpp classes/molecule.hpp
    *  @brief Class for storing and manipulating molecules.
    */
-  class Molecule : public utils::CountableObject<Molecule>,
-  public std::enable_shared_from_this<Molecule> {
+  class IXMolecule : public utils::CountableObject<IXMolecule>,
+  public std::enable_shared_from_this<IXMolecule> {
     
   public:
     /// @name Initialisation methods
     
     /// @brief Default constructor
-    Molecule();
+    IXMolecule();
     
     /// @brief Constructor for pre-named molecule
-    Molecule(String name);
+    IXMolecule(std::string name);
     
     /// @brief Destructor
-    ~Molecule();
+    ~IXMolecule();
     
     /// @name Data retrival methods
     
     /// @returns a shared pointer to an atom with the given index.
-    Atom_p GetAtomIndex(uid_t);
-    Atom_p GetAtomUniqueID(uid_t);
+    Atom GetAtomIndex(uid_t);
+    Atom GetAtomUniqueID(uid_t);
     
     /// @returns a shared pointer to a bond with the given index.
-    Bond_p GetBondIndex(uid_t);
-    Bond_p GetBondUniqueID(uid_t);
+    Bond GetBondIndex(uid_t);
+    Bond GetBondUniqueID(uid_t);
     
     /// @returns a shared pointer to the bond between two atoms, if it exists.
-    Bond_p GetBond(Atom_p, Atom_p) const;
+    Bond GetBond(Atom, Atom) const;
     
     /// @returns the chemical formula of the molecule.
-    String GetFormula() const;
+    std::string GetFormula() const;
     
     /// @returns a shared pointer to a graph representation of the molecule
-    MolecularGraph_p GetMolecularGraph();
+    MolecularGraph GetMolecularGraph();
     
     /// @returns the name of the molecule.
-    String GetName() const;
+    std::string GetName() const;
     
     /// @returns the molecular charge of the molecule
-    Int GetTotalCharge() const;
+    int GetTotalCharge() const;
     
     bool IsModified() const;
     
     /// @returns the number of atoms in the molecule.
-    Uint NumAtoms() const;
+    size_t NumAtoms() const;
     
     /// @returns the number of bonds in the molecule.
-    Uint NumBonds() const;
+    size_t NumBonds() const;
     
     /// @name Data modification methods
     
     /// @brief Sets the name of the molecule
-    void SetName(String);
+    void SetName(std::string);
     
     /// @brief Sets the molecular charge of the molecule.
-    void SetTotalCharge(Int);
+    void SetTotalCharge(int);
     
     /// @brief Resets the indices of contained atoms and bonds.
     void ResetIndices();
@@ -96,27 +109,27 @@ namespace indigox {
     
     /// @brief Adds a new atom to the molecule.
     /// @returns a shared pointer to the new atom.
-    Atom_p NewAtom();
-    Atom_p NewAtom(Element_p);
-    Atom_p NewAtom(uid_t, Element_p);
+    Atom NewAtom();
+    Atom NewAtom(Element);
+    Atom NewAtom(uid_t, Element);
     
     /// @brief Adds a new bond between two atoms to the molecule.
     /// @returns a shared pointer to the new bond.
-    Bond_p NewBond(Atom_p, Atom_p);
+    Bond NewBond(Atom, Atom);
     
     /// @brief Removes a given atom from the molecule.
-    void RemoveAtom(Atom_p);
+    void RemoveAtom(Atom);
     
     /// @brief Removes a given bond from the molecule.
-    void RemoveBond(Bond_p);
+    void RemoveBond(Bond);
     
-    Uint AssignElectrons();
-    bool ApplyElectronAssignment(Uint);
-    Score GetMinimumElectronAssignmentScore();
+    size_t AssignElectrons();
+    bool ApplyElectronAssignment(size_t);
+    FCSCORE GetMinimumElectronAssignmentScore();
     
     /// @name Iterator methods
-    Atom_p Begin(MolAtomIterator&);
-    Atom_p Next(MolAtomIterator&);
+    Atom Begin(MolAtomIterator&);
+    Atom Next(MolAtomIterator&);
     
     MolAtomIterator BeginAtom();
     MolAtomIterator EndAtom();
@@ -125,15 +138,15 @@ namespace indigox {
     
     
   private:
-    String name_;
-    Int q_ = 0;
+    std::string name_;
+    int q_ = 0;
     MolAtoms atoms_;  // own atoms that are part of me
     MolBonds bonds_;  // own bonds that are part of me
-    std::unordered_map<uid_t, Atom_wp> idx_to_atom_;
-    std::unordered_map<uid_t, Bond_wp> idx_to_bond_;
-    std::map<Atom_p, MolVertex> atom_to_vertex_;
-    std::map<Bond_p, MolEdge> bond_to_edge_;
-    MolecularGraph_p graph_;
+    std::unordered_map<uid_t, std::weak_ptr<IXAtom>> idx_to_atom_;
+    std::unordered_map<uid_t, std::weak_ptr<IXBond>> idx_to_bond_;
+    std::map<Atom, MolVertex> atom_to_vertex_;
+    std::map<Bond, MolEdge> bond_to_edge_;
+    MolecularGraph graph_;
     std::unique_ptr<ElectronOpt> elnopt_;
     bool modified_ = true;
   };

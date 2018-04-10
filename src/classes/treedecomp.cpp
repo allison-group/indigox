@@ -30,14 +30,14 @@ namespace indigox {
   
   typedef Options::AssignElectrons::FPT fpt_;
   
-  TDecomp::TDecomp() : _TDGraph() { }
+  _TDecomp::_TDecomp() : _TDGraph() { }
   
-  TDecomp::TDecomp(PermutableGraph_p G, ElimOrder &order)
+  _TDecomp::_TDecomp(PermutableGraph G, ElimOrder &order)
   : _TDGraph(), originalG_(G) {
     SetInput(G, order);
   }
   
-  String TDecomp::ToString() {
+  std::string _TDecomp::ToString() {
     std::ostringstream ss;
 
     ss << "Bags: " << std::endl;
@@ -61,16 +61,16 @@ namespace indigox {
     return ss.str();
   }
   
-  void TDecomp::SetInput(PermutableGraph_p G, ElimOrder &order) {
+  void _TDecomp::SetInput(PermutableGraph G, ElimOrder &order) {
     Clear();
-    originalG_ = PermutableGraph_p(G);
-    permG_ = PermutableGraph_p(new PermutableGraph(G));
+    originalG_ = PermutableGraph(G);
+    permG_ = PermutableGraph(new _PermutableGraph(G));
     uid_t eIdx = 0;
     for (PermVertex v : order) elimiIndex_.emplace(v, eIdx++);
     FromOrder(order, 0);
   }
   
-  void TDecomp::FromOrder(ElimOrder &order, size_t index) {
+  void _TDecomp::FromOrder(ElimOrder &order, size_t index) {
     size_t s = permG_->NumVertices();
     
     if (s == 0) { // shouldn't happen

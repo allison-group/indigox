@@ -61,16 +61,16 @@ typedef Options::AssignElectrons opt_;
 
 
 ElectronOpt::ElectronOpt()
-: electronsToAdd_(0), molGraph_(std::make_shared<MolecularGraph>()),
-elnGraph_(std::make_shared<ElectronGraph>()) { }
+: electronsToAdd_(0), molGraph_(std::make_shared<_MolecularGraph>()),
+elnGraph_(std::make_shared<_ElectronGraph>()) { }
 
-ElectronOpt::ElectronOpt(std::shared_ptr<MolecularGraph> G)
+ElectronOpt::ElectronOpt(MolecularGraph G)
 : electronsToAdd_(0), molGraph_(G),
-elnGraph_(std::make_shared<ElectronGraph>()) { }
+elnGraph_(std::make_shared<_ElectronGraph>()) { }
 
-void ElectronOpt::SetMolecularGraph(std::shared_ptr<MolecularGraph> G) {
+void ElectronOpt::SetMolecularGraph(MolecularGraph G) {
   molGraph_ = G;
-  elnGraph_.reset(new ElectronGraph(*G));
+  elnGraph_.reset(new _ElectronGraph(*G));
 }
 
 size_t ElectronOpt::Run() {
@@ -103,7 +103,7 @@ size_t ElectronOpt::Run() {
   return res;
 }
 
-bool ElectronOpt::ApplyElectronAssigment(Uint i) {
+bool ElectronOpt::ApplyElectronAssigment(size_t i) {
   return algo_->ApplyElectronAssignment(i);
 }
 
@@ -197,21 +197,21 @@ void ElectronOpt::DeterminePotentialElectronLocations() {
 }
 
 void ElectronOpt::LoadScores() {
-  PeriodicTable_p pt = PeriodicTable::GetInstance();
+  PeriodicTable pt = IXPeriodicTable::GetInstance();
   if (Options::DATA_DIRECTORY.back() != '/') {
     Options::DATA_DIRECTORY.append("/");
   }
-  String atmFile = Options::DATA_DIRECTORY + opt_::ATOM_ENERGY_FILE;
+  std::string atmFile = Options::DATA_DIRECTORY + opt_::ATOM_ENERGY_FILE;
   utils::FileReader at(atmFile);
-  String bndFile = Options::DATA_DIRECTORY + opt_::BOND_ENERGY_FILE;
+  std::string bndFile = Options::DATA_DIRECTORY + opt_::BOND_ENERGY_FILE;
   utils::FileReader bn(bndFile);
   std::vector<std::string> at_items, bn_items;
   at.GetAllItems(at_items);
   bn.GetAllItems(bn_items);
   
   int64_t global_min = LLONG_MAX;
-  std::map<String, int64_t> la_mins;
-  std::map<std::pair<String, String>, int64_t> lb_mins;
+  std::map<std::string, int64_t> la_mins;
+  std::map<std::pair<std::string, std::string>, int64_t> lb_mins;
   
   // Convert atom energies to ints
 #define NUM_DECIMAL_PLACE 5
@@ -255,8 +255,8 @@ void ElectronOpt::LoadScores() {
     }
     if (score < global_min) global_min = score;
     
-    String atomA = bn_items[i-3];
-    String atomB = bn_items[i-2];
+    std::string atomA = bn_items[i-3];
+    std::string atomB = bn_items[i-2];
     size_t pos_sign_a, pos_sign_b;
     pos_sign_a = atomA.find_first_of('+');
     pos_sign_b = atomB.find_first_of('+');
@@ -275,8 +275,8 @@ void ElectronOpt::LoadScores() {
       if (pos_sign_b != std::string::npos) atomB = atomB.substr(0, pos_sign_b);
     }
     
-    std::pair<String, String> b1 = std::make_pair(atomA, atomB);
-    std::pair<String, String> b2 = std::make_pair(atomB, atomA);
+    std::pair<std::string, std::string> b1 = std::make_pair(atomA, atomB);
+    std::pair<std::string, std::string> b2 = std::make_pair(atomB, atomA);
     if (lb_mins.find(b1) == lb_mins.end()) {
       lb_mins.emplace(b1, score);
     } else if (lb_mins.at(b1) > score) {
@@ -302,7 +302,7 @@ void ElectronOpt::LoadScores() {
     }
     uint32_t k = Z + (uint32_t)(std::abs(fc) << 8);
     if (fc < 0) k += (1 << 15);
-    Score val = (Score)(std::stoll(at_items[i + 2]) - la_mins.at(at_items[i]));
+    FCSCORE val = (FCSCORE)(std::stoll(at_items[i + 2]) - la_mins.at(at_items[i]));
     scores_.emplace(k, val);
   }
   
@@ -366,8 +366,8 @@ void ElectronOpt::LoadScores() {
       k2 += (2 << 16);
       k1 += (2 << 18);
     }
-    std::pair<String, String> bondType = std::make_pair(bn_items[i], bn_items[i+1]);
-    Score val = (Score)(std::stoll(bn_items[i + 3]) - lb_mins.at(bondType));
+    std::pair<std::string, std::string> bondType = std::make_pair(bn_items[i], bn_items[i+1]);
+    FCSCORE val = (FCSCORE)(std::stoll(bn_items[i + 3]) - lb_mins.at(bondType));
 //    Score val = (Score)(std::stoll(bn_items[i + 3]) - global_min);
     scores_.emplace(k1, val);
     if (k1 != k2) scores_.emplace(k2, val);

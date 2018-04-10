@@ -11,7 +11,6 @@
 #include <sstream>
 #include <string>
 
-#include "indigox/api.hpp"
 #include "indigox/algorithm/formalbonds/elimination_ordering.hpp"
 #include "indigox/classes/permutablegraph.hpp"
 
@@ -22,7 +21,7 @@
 namespace indigox {
   namespace algorithm {
     
-    size_t VirtualElimination(PermutableGraph_p G, PermVertex v) {
+    size_t VirtualElimination(PermutableGraph G, PermVertex v) {
       size_t addEdges = 0;
       PermNbrsIterPair outer = G->GetNeighbours(v);
       for (; outer.first != outer.second; ++outer.first) {
@@ -35,7 +34,7 @@ namespace indigox {
       return addEdges;
     }
     
-    void RandomOrder(PermutableGraph_p G, ElimOrder& order) {
+    void RandomOrder(PermutableGraph G, ElimOrder& order) {
       order.clear();
       
       for (PermVertIterPair vs = G->GetVertices(); vs.first != vs.second; ++vs.first) {
@@ -49,7 +48,7 @@ namespace indigox {
       
     }
     
-    void QuickBBOrder(PermutableGraph_p G, ElimOrder& order) {
+    void QuickBBOrder(PermutableGraph G, ElimOrder& order) {
       order.clear();
       
 #ifndef BUILD_JAVA
@@ -69,8 +68,8 @@ namespace indigox {
 #endif
     }
     
-    void MinDegreeOrder(PermutableGraph_p G, ElimOrder& order) {
-      PermutableGraph_p g = PermutableGraph_p(new PermutableGraph(G));
+    void MinDegreeOrder(PermutableGraph G, ElimOrder& order) {
+      PermutableGraph g = PermutableGraph(new _PermutableGraph(G));
       while (g->NumVertices() > 0) {
         size_t minD = g->NumVertices();
         PermVertex minV = NULL;
@@ -87,8 +86,8 @@ namespace indigox {
       }
     }
     
-    void MinAddEdgesOrder(PermutableGraph_p G, ElimOrder& order) {
-      PermutableGraph_p g = PermutableGraph_p(new PermutableGraph(G));
+    void MinAddEdgesOrder(PermutableGraph G, ElimOrder& order) {
+      PermutableGraph g = PermutableGraph(new _PermutableGraph(G));
       while (g->NumVertices() > 0) {
         size_t minA = G->NumVertices();
         PermVertex minV = NULL;

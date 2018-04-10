@@ -5,9 +5,6 @@
 //  Created by Welsh, Ivan on 8/01/18.
 //  Copyright © 2018 Allison Group. All rights reserved.
 //
-
-#include "indigox/api.hpp"
-
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 
@@ -16,30 +13,29 @@
 #include "indigox/classes/atom.hpp"
 #include "indigox/classes/bond.hpp"
 #include "indigox/classes/molecule.hpp"
-#include "indigox/utils/helpers.hpp"
 
 namespace py = pybind11;
 
 namespace indigox {
   void GeneratePyBond(py::module& m) {
     // Bond class
-    py::class_<Bond, Bond_p>(m, "Bond")
+    py::class_<IXBond, Bond>(m, "Bond")
     // Hidden methods
-    .def(py::init<>(&CreateBond))
-    .def("__str__", &Bond::ToString)
-    .def("__repr__", &Bond::ToString)
+    .def(py::init<>([](){ return Bond(new IXBond()); }))
+    .def("__str__", &IXBond::ToString)
+    .def("__repr__", &IXBond::ToString)
     // Getters
-    .def("GetIndex", &Bond::GetIndex)
-    .def("GetMolecule", &Bond::GetMolecule)
-    .def("GetOrder", &Bond::GetOrder)
-    .def("GetSourceAtom", &Bond::GetSourceAtom)
-    .def("GetTargetAtom", &Bond::GetTargetAtom)
+    .def("GetIndex", &IXBond::GetIndex)
+    .def("GetMolecule", &IXBond::GetMolecule)
+    .def("GetOrder", &IXBond::GetOrder)
+    .def("GetSourceAtom", &IXBond::GetSourceAtom)
+    .def("GetTargetAtom", &IXBond::GetTargetAtom)
     // Setters
-    .def("SetIndex", &Bond::SetIndex)
-    .def("SetMolecule", &Bond::SetMolecule)
-    .def("SetOrder", &Bond::SetOrder)
-    .def("SetSourceAtom", &Bond::SetSourceAtom)
-    .def("SetTargetAtom", &Bond::SetTargetAtom)
+    .def("SetIndex", &IXBond::SetIndex)
+    .def("SetMolecule", &IXBond::SetMolecule)
+    .def("SetOrder", &IXBond::SetOrder)
+    .def("SetSourceAtom", &IXBond::SetSourceAtom)
+    .def("SetTargetAtom", &IXBond::SetTargetAtom)
     ;
     
     // BondOrder enum

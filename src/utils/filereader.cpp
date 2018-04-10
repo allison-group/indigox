@@ -12,7 +12,6 @@
 #include <sstream>
 #include <vector>
 
-#include "indigox/api.hpp"
 #include "indigox/utils/filereader.hpp"
 
 
@@ -22,7 +21,7 @@ namespace indigox {
     /** @details Sets the path of a file to read.
      *  @param file path to the file to read.
      */
-    FileReader::FileReader(const String& file)
+    FileReader::FileReader(const std::string& file)
     : path_(file) {}
     
     /** @details Loads the given file and reads it itemwise (white space
@@ -31,9 +30,9 @@ namespace indigox {
      *  of the line is ignored.
      *  @param[out] out_items a vector to store the items from the file.
      */
-    void FileReader::GetAllItems(std::vector<String> &out_items)
+    void FileReader::GetAllItems(std::vector<std::string> &out_items)
     {
-      String next_item, line;
+      std::string next_item, line;
       std::ifstream infile;
       infile.open(path_);
       

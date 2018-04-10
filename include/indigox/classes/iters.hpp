@@ -11,7 +11,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../api.hpp"
 #include "atom.hpp"
 #include "bond.hpp"
 #include "molecule.hpp"
@@ -33,9 +32,9 @@ namespace indigox {
   class AtomIterator {
   public:
     AtomIterator();
-    AtomIterator(Atom_p);
-    AtomIterator(Bond_p);
-    AtomIterator(Molecule_p);
+    AtomIterator(Atom);
+    AtomIterator(Bond);
+    AtomIterator(Molecule);
     AtomIterator(const AtomIterator&);
     ~AtomIterator();
     
@@ -46,8 +45,8 @@ namespace indigox {
     // Post increment
     AtomIterator operator++(int);
     // Shared pointer to current atom
-    Atom_p operator->() const;
-    Atom_p operator*() const;
+    Atom operator->() const;
+    Atom operator*() const;
     
   private:
     void ResetToOther(const AtomIterator&);
@@ -55,13 +54,13 @@ namespace indigox {
   private:
     IteratorType type_;
     MolAtomIterator itMol_;
-    Molecule_p parentMol_;
+    Molecule parentMol_;
     BondAtomIterator itBond_;
-    Bond_p parentBond_;
-    AtomBondIterator itAtom_;
-    Atom_p parentAtom_;
+    Bond parentBond_;
+    AtomBondIter itAtom_;
+    Atom parentAtom_;
     
-    Atom_p ptr_;
+    Atom ptr_;
   };
 }
 

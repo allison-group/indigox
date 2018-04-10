@@ -16,10 +16,10 @@
 namespace indigox {
   namespace algorithm {
     
-    void RandomOrder(PermutableGraph_p, ElimOrder&);
-    void QuickBBOrder(PermutableGraph_p, ElimOrder&);
-    void MinDegreeOrder(PermutableGraph_p, ElimOrder&);
-    void MinAddEdgesOrder(PermutableGraph_p, ElimOrder&);
+    void RandomOrder(PermutableGraph, ElimOrder&);
+    void QuickBBOrder(PermutableGraph, ElimOrder&);
+    void MinDegreeOrder(PermutableGraph, ElimOrder&);
+    void MinAddEdgesOrder(PermutableGraph, ElimOrder&);
     
   }
 }

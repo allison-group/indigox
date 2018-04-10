@@ -11,34 +11,41 @@
 
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <string>
 #include <tuple>
 
 #include <boost/logic/tribool.hpp>
 
-#include "../api.hpp"
 #include "periodictable.hpp"
 #include "../utils/counter.hpp"
 #include "../utils/graph.hpp"
 
 namespace indigox {
   
+  class IXAtom;
+  class IXBond;
+  class IXAngle;
+  class IXDihedral;
+  class IXMolecule;
+  typedef std::shared_ptr<IXAtom> Atom;
+  typedef std::shared_ptr<IXBond> Bond;
+  typedef std::shared_ptr<IXAngle> Angle;
+  typedef std::shared_ptr<IXDihedral> Dihedral;
+  typedef std::shared_ptr<IXMolecule> Molecule;
+  typedef std::weak_ptr<IXAtom> _Atom;
+  typedef std::weak_ptr<IXBond> _Bond;
+  typedef std::weak_ptr<IXAngle> _Angle;
+  typedef std::weak_ptr<IXDihedral> _Dihedral;
+  typedef std::weak_ptr<IXMolecule> _Molecule;
+  
   struct MolVertProp {
-//    float charge = 0.0f;
-//    Element_p element;
-//    int8_t formal_charge = 0;
-//    // R,S as per normal, A for achiral, I for indetermined
-//    char chirality = 'I';
-//    bool aromaticity = false;
-    Atom_p atom;
+    Atom atom;
     int component = -1;
   };
   
   struct MolEdgeProp {
-//    uint8_t bond_order = 1;
-//    // E,Z as per normal, N for non-geometric bond, I for indetermined
-//    char geometry = 'I';
-    Bond_p bond;
+    Bond bond;
   };
   
   // TODO: Replace OutEdgeList and VertexList with boost::vecS. Doing so
@@ -61,34 +68,35 @@ namespace indigox {
   typedef std::map<MolVertex, int> MolVertIdxMap;
   typedef std::map<MolEdge, int> MolEdgeIdxMap;
   
-  class MolecularGraph : public _MolGraph {
+  class _MolecularGraph : public _MolGraph {
   private:
     boost::tribool planar_ = boost::indeterminate;
     int16_t totalCharge_ = 0;
-    Uint num_components_ = 1;
-    Molecule_p source_;
+    size_t num_components_ = 1;
+    Molecule source_;
     
   public:
     using _MolGraph::AddVertex;
     using _MolGraph::GetEdge;
     using _MolGraph::AddEdge;
     
-    MolecularGraph();
-    MolecularGraph(Molecule_p);
+    _MolecularGraph();
+    _MolecularGraph(Molecule);
     
-    MolVertex AddVertex(Atom_p);
-    MolEdgeBool AddEdge(MolVertex, MolVertex, Bond_p);
+    MolVertex AddVertex(Atom);
+    MolEdgeBool AddEdge(MolVertex, MolVertex, Bond);
     
     // Graph operations
     inline int16_t GetTotalCharge() const { return totalCharge_; }
     inline void SetTotalCharge(int16_t q) { totalCharge_ = q; }
     
     /// @todo transfer connected components to underlying graph
-    Uint NumConnectedComponents();
+    size_t NumConnectedComponents();
     
-    String ToDGFString();
+    std::string ToDGFString();
     
   };
+  typedef std::shared_ptr<_MolecularGraph> MolecularGraph;
   
 }  // namespace indigox
 

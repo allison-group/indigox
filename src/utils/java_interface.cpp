@@ -12,15 +12,13 @@
 #include <jni.h>
 #endif
 
-#include "indigox/api.hpp"
-
 #include "indigox/utils/java_interface.hpp"
 #include "indigox/utils/options.hpp"
 
 namespace indigox {
   namespace utils {
     
-    String GetEliminationOrdering(String& dgf_graph) {
+    std::string GetEliminationOrdering(std::string& dgf_graph) {
 #ifdef BUILD_JAVA
       static JavaVM* jvm;
       static JNIEnv* env;

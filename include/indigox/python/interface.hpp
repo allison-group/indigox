@@ -5,7 +5,6 @@
 //  Created by Welsh, Ivan on 8/01/18.
 //  Copyright © 2018 Allison Group. All rights reserved.
 //
-#include "../api.hpp"
 #include <pybind11/pybind11.h>
 
 #ifndef INDIGOX_PYTHON_INTERFACE_HPP

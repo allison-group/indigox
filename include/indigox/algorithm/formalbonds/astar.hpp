@@ -24,24 +24,24 @@ namespace indigox {
     
     typedef boost::dynamic_bitset<> VertMask;
     
-    struct AStarQueueItem {
+    struct _AStarQueueItem {
       ElnDist distribution;
       VertMask unchangeable, calculable, new_calculable;
-      Score path_cost, heuristic_cost, parent_path_cost;
+      FCSCORE path_cost, heuristic_cost, parent_path_cost;
       uint16_t nbr_start_idx;
       uint8_t nbr_count;
     };
     
-    typedef std::shared_ptr<AStarQueueItem> p_AStarQueueItem;
+    typedef std::shared_ptr<_AStarQueueItem> AStarQueueItem;
     
     class ItemCompare {
     public:
-      bool operator()(const p_AStarQueueItem a, const p_AStarQueueItem b);
+      bool operator()(const AStarQueueItem a, const AStarQueueItem b);
     };
     
     
     class PriorityQueue :
-    public std::priority_queue<p_AStarQueueItem, std::vector<p_AStarQueueItem>,
+    public std::priority_queue<AStarQueueItem, std::vector<AStarQueueItem>,
     ItemCompare > {
     public:
       void reserve(size_t sz) { this->c.reserve(sz); }
@@ -78,15 +78,15 @@ namespace indigox {
     private:
       void PopulateUniqueIDs();
       void PopulateUnchangeables();
-      void PopulateInitialDistribution(p_AStarQueueItem d);
-      void PopulateNeighbourDistribution(p_AStarQueueItem parent, p_AStarQueueItem child);
+      void PopulateInitialDistribution(AStarQueueItem d);
+      void PopulateNeighbourDistribution(AStarQueueItem parent, AStarQueueItem child);
       void Initalise();
-      void DetermineCalculable(p_AStarQueueItem d);
-      void CalculatePathEnergy(p_AStarQueueItem d);
-      void CalculateHeuristicEnergy(p_AStarQueueItem d);
-      void PromiscuousHeuristic(p_AStarQueueItem d);
-      void AbstemiousHeuristic(p_AStarQueueItem d);
-      void GenerateNeighbourDistributions(p_AStarQueueItem d, std::vector<ElnDist>* out_nbrs);
+      void DetermineCalculable(AStarQueueItem d);
+      void CalculatePathEnergy(AStarQueueItem d);
+      void CalculateHeuristicEnergy(AStarQueueItem d);
+      void PromiscuousHeuristic(AStarQueueItem d);
+      void AbstemiousHeuristic(AStarQueueItem d);
+      void GenerateNeighbourDistributions(AStarQueueItem d, std::vector<ElnDist>* out_nbrs);
       
     };
   }

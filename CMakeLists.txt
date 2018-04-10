@@ -4,16 +4,16 @@ CMAKE_POLICY(VERSION 3.7)
 
 PROJECT(indigox VERSION 0.7.2.0)
 
-# We require c++-14 compiler
+# We require c++-17 compiler
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-SET(CMAKE_CXX_STANDARD 14)
+SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 # Set defaults for available options
 OPTION(BUILD_PYTHON "Build Python bindings" ON)
 OPTION(USE_JAVA_QUICKBB "Build with Java interface to libtw so can use QuickBB tree-decomposition method" OFF)
-OPTION(BUILD_EXAMPLES "Build a few example programs" ON)
+OPTION(BUILD_EXAMPLES "Build a few example programs" OFF)
 
 # Default to release mode build. Does Debug actually do anything?
 IF(NOT CMAKE_BUILD_TYPE)
@@ -28,7 +28,7 @@ IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
 ENDIF()
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og -DDEBUG")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/indigox)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
 # Set default install prefix to /usr/local/opt/indigox
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)    # Requires Cmake >= 3.7
@@ -40,6 +40,7 @@ ENDIF()
 # Setup install directories
 INCLUDE(GNUInstallDirs)
 ADD_DEFINITIONS(-DDFT_DATA_DIR=${CMAKE_INSTALL_FULL_DATAROOTDIR})
+ADD_DEFINITIONS(-DFCSCORE=uint32_t)
 
 # List all the files to compile into the indigox library
 SET(INDIGOX_LIB_SRCS
@@ -61,7 +62,6 @@ SET(INDIGOX_LIB_SRCS
     src/classes/treedecomp.cpp
     src/utils/common.cpp
     src/utils/filereader.cpp
-    src/utils/helpers.cpp
     src/utils/java_interface.cpp
     src/utils/options.cpp)
 
@@ -91,9 +91,9 @@ ENDIF(USE_JAVA_QUICKBB)
 # Build bindings if requested
 IF(BUILD_PYTHON)
   ADD_SUBDIRECTORY(src/python)
-ELSE(BUILD_PYTHON)
+ELSE()
   MESSAGE(STATUS "Building of Python bindings disabled.")
-ENDIF(BUILD_PYTHON)
+ENDIF()
 
 IF(BUILD_EXAMPLES)
     ADD_EXECUTABLE(cxx_example examples/cxx_example.cpp)

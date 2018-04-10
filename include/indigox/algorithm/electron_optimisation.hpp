@@ -14,8 +14,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include "../api.hpp"
-
 #include "../classes/electron_graph.hpp"
 #include "../classes/molecular_graph.hpp"
 
@@ -36,21 +34,21 @@ namespace indigox {
   public:
     uint32_t electronsToAdd_;
     std::vector<MolVertPair> possibleLocations_;
-    std::shared_ptr<MolecularGraph> molGraph_;
-    std::shared_ptr<ElectronGraph> elnGraph_;
-    std::unordered_map<uint32_t, Score> scores_;
+    MolecularGraph molGraph_;
+    ElectronGraph elnGraph_;
+    std::unordered_map<uint32_t, FCSCORE> scores_;
     std::shared_ptr<algorithm::ElectronOptimisationAlgorithm> algo_;
-    Score finalScore_;
+    FCSCORE finalScore_;
     
   public:
     ElectronOpt();
-    ElectronOpt(std::shared_ptr<MolecularGraph> G);
+    ElectronOpt(MolecularGraph G);
     
   public:
-    void SetMolecularGraph(std::shared_ptr<MolecularGraph> G);
+    void SetMolecularGraph(MolecularGraph G);
     size_t Run();
-    inline Score GetMinimisedEnergy() { return finalScore_; }
-    bool ApplyElectronAssigment(Uint);
+    inline FCSCORE GetMinimisedEnergy() { return finalScore_; }
+    bool ApplyElectronAssigment(size_t);
     
   private:
     void DetermineElectronsToAdd();

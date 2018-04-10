@@ -13,7 +13,6 @@
 #include <vector>
 
 #include <boost/dynamic_bitset.hpp>
-#include "../../api.hpp"
 #include "../../classes/molecular_graph.hpp"
 #include "../../classes/nicetreedecomp.hpp"
 
@@ -26,7 +25,7 @@ namespace indigox {
     typedef boost::dynamic_bitset<> VertMask;
     typedef VertMask ForgetMask;
     typedef VertMask BagMask;
-    typedef std::multimap<Score, ForgetMask> MaskScores;
+    typedef std::multimap<FCSCORE, ForgetMask> MaskScores;
     typedef std::map<BagMask, MaskScores> BagScores;
     typedef std::map<uint32_t, BagScores> ProperScoreMatrix;
     
@@ -45,11 +44,11 @@ namespace indigox {
       void Initalise();
       void DetermineMinMax();
       void PopulateReferenceVectors();
-      Score ScoreVertex(MolVertPair v, VertMask mask);
+      FCSCORE ScoreVertex(MolVertPair v, VertMask mask);
       ElnDist VertMaskToElnDist(const VertMask& m);
       
     private:
-      NTDecomp_p td_;
+      NTDecomp td_;
       std::map<NTDVertex, std::shared_ptr<TDVertScore>> scorematrices_;
       std::vector<MolVertPair> possibleStates_;
       std::map<MolVertPair, VertMask> pairMasks_;
@@ -73,9 +72,9 @@ namespace indigox {
       void IntroducePropagate(std::shared_ptr<TDVertScore> a);
       void JoinPropagate(std::shared_ptr<TDVertScore> a, std::shared_ptr<TDVertScore> b);
       
-      String VertMaskToNiceString(VertMask);
-      String ToString();
-      String KindToString();
+      std::string VertMaskToNiceString(VertMask);
+      std::string ToString();
+      std::string KindToString();
     };
     
   }

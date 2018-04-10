@@ -16,7 +16,6 @@
 #include <boost/bimap.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
-#include "../api.hpp"
 
 namespace indigox {
   namespace utils {

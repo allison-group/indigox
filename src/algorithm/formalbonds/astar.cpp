@@ -17,7 +17,7 @@
 #include "indigox/algorithm/formalbonds/astar.hpp"
 #include "indigox/utils/options.hpp"
 
-std::ostream& operator<<(std::ostream& os, const indigox::algorithm::p_AStarQueueItem a) {
+std::ostream& operator<<(std::ostream& os, const indigox::algorithm::AStarQueueItem a) {
   os << "Distribution:        " << a->distribution << std::endl;
   os << "Unchangeables:       " << a->unchangeable << std::endl;
   os << "Calculable:          " << a->calculable << std::endl;
@@ -32,7 +32,7 @@ using namespace algorithm;
 typedef Options::AssignElectrons opt_;
 typedef opt_::AStar opt_as;
 
-bool ItemCompare::operator()(const p_AStarQueueItem a, const p_AStarQueueItem b)  {
+bool ItemCompare::operator()(const AStarQueueItem a, const AStarQueueItem b)  {
   if (a->path_cost == opt_::INF || a->heuristic_cost == opt_::INF) {
     if (b->path_cost == opt_::INF || b->heuristic_cost == opt_::INF)
       return false;
@@ -58,10 +58,10 @@ void AStarOptimisation::Run() {
   std::vector<ElnDist> nbrDistributions;
   nbrDistributions.reserve(8);
   
-  Score targetScore = opt_::INF;
+  FCSCORE targetScore = opt_::INF;
   targetScore = upperLimit_;
   
-  Score initialTargetScore = targetScore;
+  FCSCORE initialTargetScore = targetScore;
   
   size_t count = 0;
   size_t len_limit;
@@ -71,7 +71,7 @@ void AStarOptimisation::Run() {
     size_t test_count = 1024 * 1024;
     size_t _size = (parent_->possibleLocations_.size() / ElnDist::bits_per_block) + 1;
     _size += 2 * ((parent_->elnGraph_->NumVertices() / VertMask::bits_per_block) + 1);
-    sizePerItem_ = (sizeof(AStarQueueItem) + sizeof(p_AStarQueueItem) + _size * ElnDist::bits_per_block / 4);
+    sizePerItem_ = (sizeof(_AStarQueueItem) + sizeof(AStarQueueItem) + _size * ElnDist::bits_per_block / 4);
     test_count /= sizePerItem_;
     len_limit = opt_as::MEGABYTE_LIMIT * test_count;
   }
@@ -80,7 +80,7 @@ void AStarOptimisation::Run() {
   
   while (queue_.size()) {
     // Get next item
-    p_AStarQueueItem source = queue_.top();
+    AStarQueueItem source = queue_.top();
     queue_.pop();
     
     // Check exit conditions
@@ -102,7 +102,7 @@ void AStarOptimisation::Run() {
     // Generate neighbour queue items
     GenerateNeighbourDistributions(source, &nbrDistributions);
     for (ElnDist& item : nbrDistributions) {
-      p_AStarQueueItem target = p_AStarQueueItem(new AStarQueueItem());
+      AStarQueueItem target = AStarQueueItem(new _AStarQueueItem());
       target->distribution = ElnDist(item);
       
       PopulateNeighbourDistribution(source, target);
@@ -197,13 +197,13 @@ void AStarOptimisation::Initalise() {
   
   PopulateUniqueIDs();
   PopulateUnchangeables();
-  p_AStarQueueItem init = p_AStarQueueItem(new AStarQueueItem());
+  AStarQueueItem init = AStarQueueItem(new _AStarQueueItem());
   PopulateInitialDistribution(init);
   queue_.push(init);
   CalculateUpperLimit();
 }
 
-void AStarOptimisation::GenerateNeighbourDistributions(p_AStarQueueItem d, std::vector<ElnDist> *out_nbrs) {
+void AStarOptimisation::GenerateNeighbourDistributions(AStarQueueItem d, std::vector<ElnDist> *out_nbrs) {
   out_nbrs->clear();
   for (uint8_t i = 0; i <= d->nbr_count; ++i) {
     ElnDist nbr = ElnDist(d->distribution);
@@ -214,7 +214,7 @@ void AStarOptimisation::GenerateNeighbourDistributions(p_AStarQueueItem d, std::
   }
 }
 
-void AStarOptimisation::PopulateInitialDistribution(p_AStarQueueItem d) {
+void AStarOptimisation::PopulateInitialDistribution(AStarQueueItem d) {
   d->distribution = ElnDist(parent_->possibleLocations_.size());
   d->distribution.reset();
   
@@ -242,7 +242,7 @@ void AStarOptimisation::PopulateInitialDistribution(p_AStarQueueItem d) {
   } else d->nbr_count = 0;
 }
 
-void AStarOptimisation::PopulateNeighbourDistribution(p_AStarQueueItem parent, p_AStarQueueItem child) {
+void AStarOptimisation::PopulateNeighbourDistribution(AStarQueueItem parent, AStarQueueItem child) {
   
   child->unchangeable = VertMask(parent->unchangeable);
   child->calculable = VertMask(parent->calculable);
@@ -274,7 +274,7 @@ void AStarOptimisation::PopulateNeighbourDistribution(p_AStarQueueItem parent, p
   
 }
 
-void AStarOptimisation::DetermineCalculable(p_AStarQueueItem d) {
+void AStarOptimisation::DetermineCalculable(AStarQueueItem d) {
   if (d->unchangeable.all()
       || d->distribution.count() >= parent_->electronsToAdd_) {
     d->calculable.set();
@@ -302,7 +302,7 @@ void AStarOptimisation::DetermineCalculable(p_AStarQueueItem d) {
   }
 }
 
-void AStarOptimisation::CalculatePathEnergy(p_AStarQueueItem d) {
+void AStarOptimisation::CalculatePathEnergy(AStarQueueItem d) {
   if ((parent_->electronsToAdd_ < d->distribution.count())
       || ((d->distribution.size() - d->nbr_start_idx) < (parent_->electronsToAdd_ - d->distribution.count()))) {
     d->path_cost = opt_::INF;
@@ -311,10 +311,10 @@ void AStarOptimisation::CalculatePathEnergy(p_AStarQueueItem d) {
     SetElectronDistribution(d->distribution);
     DetermineFormalCharges();
     
-    Score energy = d->parent_path_cost;
+    FCSCORE energy = d->parent_path_cost;
     for (size_t i = 0; i < d->calculable.size(); ++i) {
       if (d->new_calculable[i]) {
-        Score v_energy = CalculateVertexEnergy(pos2vert_[i]);
+        FCSCORE v_energy = CalculateVertexEnergy(pos2vert_[i]);
         if (v_energy == opt_::INF) {
           energy = v_energy;
           break;
@@ -328,7 +328,7 @@ void AStarOptimisation::CalculatePathEnergy(p_AStarQueueItem d) {
   }
 }
 
-void AStarOptimisation::CalculateHeuristicEnergy(p_AStarQueueItem d) {
+void AStarOptimisation::CalculateHeuristicEnergy(AStarQueueItem d) {
   if (opt_as::HEURISTIC == opt_as::Heuristic::PROMISCUOUS)
     PromiscuousHeuristic(d);
   else if (opt_as::HEURISTIC == opt_as::Heuristic::ABSTEMIOUS)
@@ -337,7 +337,7 @@ void AStarOptimisation::CalculateHeuristicEnergy(p_AStarQueueItem d) {
     d->heuristic_cost = 0;
 }
 
-void AStarOptimisation::PromiscuousHeuristic(p_AStarQueueItem d) {
+void AStarOptimisation::PromiscuousHeuristic(AStarQueueItem d) {
   // Doesn't this just always return 0 or INFINITY?
   
   if (d->distribution.count() == parent_->electronsToAdd_)
@@ -345,25 +345,25 @@ void AStarOptimisation::PromiscuousHeuristic(p_AStarQueueItem d) {
   else if (d->distribution.count() > parent_->electronsToAdd_)
     d->heuristic_cost = opt_::INF;
   else {
-    Score h_cost = 0;
+    FCSCORE h_cost = 0;
     for (unsigned int v = 0; v < d->calculable.size(); ++v) {
       ElnVertex vv = pos2vert_.at(v);
       if (d->calculable[v]) continue;
       ElnVertProp *p = vertexProperties_.at(vv);
-      Score minene = opt_::INF;
+      FCSCORE minene = opt_::INF;
       if (p->id.first == p->id.second) {  // Atom energies
         uint16_t atomic = p->atomic_number;
         
         for (uint8_t fc = 0; fc < 10; ++fc) {
           uint16_t mask = atomic + (fc << 8);
           if (parent_->scores_.find(mask) != parent_->scores_.end()) {
-            Score e = parent_->scores_.at(mask);
+            FCSCORE e = parent_->scores_.at(mask);
             if (e < minene) minene = e;
           }
           
           mask += (1 << 15);
           if (parent_->scores_.find(mask) != parent_->scores_.end()) {
-            Score e = parent_->scores_.at(mask);
+            FCSCORE e = parent_->scores_.at(mask);
             if (e < minene) minene = e;
           }
         }
@@ -378,7 +378,7 @@ void AStarOptimisation::PromiscuousHeuristic(p_AStarQueueItem d) {
             for (uint32_t bond_e = 1; bond_e < 9; ++bond_e) {
               uint32_t mask = mask_root + (a_charge << 16) + (b_charge << 18) + (bond_e << 20);
               if (parent_->scores_.find(mask) != parent_->scores_.end()) {
-                Score e = parent_->scores_.at(mask);
+                FCSCORE e = parent_->scores_.at(mask);
                 if (e < minene) minene = e;
               }
             }
@@ -399,7 +399,7 @@ void AStarOptimisation::PromiscuousHeuristic(p_AStarQueueItem d) {
   }
 }
 
-void AStarOptimisation::AbstemiousHeuristic(p_AStarQueueItem d) {
+void AStarOptimisation::AbstemiousHeuristic(AStarQueueItem d) {
   
   if (d->distribution.count() == parent_->electronsToAdd_)
     d->heuristic_cost = 0;
@@ -421,7 +421,7 @@ void AStarOptimisation::AbstemiousHeuristic(p_AStarQueueItem d) {
     std::vector<std::vector<int8_t> > attainableCharges;
     attainableCharges.reserve(d->calculable.size());
     
-    Score h_cost = 0;
+    FCSCORE h_cost = 0;
     
     if (opt_::USE_ELECTRON_PAIRS)
       availableExtras += availableExtras;
@@ -460,7 +460,7 @@ void AStarOptimisation::AbstemiousHeuristic(p_AStarQueueItem d) {
         attainableCharges.push_back(attainable);
         
         // Determine minimum energy I can attain
-        Score localMin = opt_::INF;
+        FCSCORE localMin = opt_::INF;
         uint16_t maskBase = p->atomic_number;
         for (int8_t fc : attainable) {
           uint32_t mask = maskBase + uint32_t(abs(fc) << 8);
@@ -483,7 +483,7 @@ void AStarOptimisation::AbstemiousHeuristic(p_AStarQueueItem d) {
         attainableCharges.push_back(attainable);
       } else {
         if (d->calculable[v]) continue;
-        Score localMin = opt_::INF;
+        FCSCORE localMin = opt_::INF;
         
         ElnNeighboursIter nbr = parent_->elnGraph_->GetNeighbours(vv).first;
         ElnVertProp* pa = vertexProperties_[*nbr];

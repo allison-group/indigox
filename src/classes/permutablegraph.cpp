@@ -8,7 +8,6 @@
 #include <map>
 #include <sstream>
 
-#include "indigox/api.hpp"
 #include "indigox/classes/molecular_graph.hpp"
 #include "indigox/classes/permutablegraph.hpp"
 #include "indigox/classes/treedecomp.hpp"
@@ -18,7 +17,7 @@
 using namespace indigox;
 typedef Options::AssignElectrons::FPT fpt_;;
 
-String PermutableGraph::ToDGFString() {
+std::string _PermutableGraph::ToDGFString() {
   std::ostringstream dgf;
   uid_t u, v;
   PermEdgeIterPair edges = GetEdges();
@@ -31,7 +30,7 @@ String PermutableGraph::ToDGFString() {
   return dgf.str();
 }
 
-String PermutableGraph::PGVToMGVTable() {
+std::string _PermutableGraph::PGVToMGVTable() {
   std::ostringstream ss;
   PermVertIterPair verts = GetVertices();
   for (; verts.first != verts.second; ++verts.first) {
@@ -45,13 +44,13 @@ String PermutableGraph::PGVToMGVTable() {
   return ss.str();
 }
 
-PermutableGraph::PermutableGraph() : _PermGraph() { }
+_PermutableGraph::_PermutableGraph() : _PermGraph() { }
 
-PermutableGraph::PermutableGraph(MolecularGraph_p G) : _PermGraph() {
+_PermutableGraph::_PermutableGraph(MolecularGraph G) : _PermGraph() {
   SetInput(G);
 }
 
-PermutableGraph::PermutableGraph(PermutableGraph_p G) : _PermGraph() {
+_PermutableGraph::_PermutableGraph(PermutableGraph G) : _PermGraph() {
   source_ = G->GetSourceGraph();
   
   PermVertIterPair verts = G->GetVertices();
@@ -77,7 +76,7 @@ PermutableGraph::PermutableGraph(PermutableGraph_p G) : _PermGraph() {
   }
 }
 
-void PermutableGraph::SetInput(MolecularGraph_p G) {
+void _PermutableGraph::SetInput(MolecularGraph G) {
   Clear();
   source_ = G;
   
@@ -122,7 +121,7 @@ void PermutableGraph::SetInput(MolecularGraph_p G) {
   }
 }
 
-void PermutableGraph::EliminateVertex(PermVertex v) {
+void _PermutableGraph::EliminateVertex(PermVertex v) {
   PermNbrsIterPair outer = GetNeighbours(v);
   while (outer.first != outer.second) {
     PermNbrsIterPair inner = GetNeighbours(v);

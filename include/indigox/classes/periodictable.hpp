@@ -16,11 +16,16 @@
 #include <memory>
 #include <vector>
 
-#include "../api.hpp"
-
 namespace indigox {
+  class IXPeriodicTable;
+  class IXElement;
+  typedef std::shared_ptr<IXPeriodicTable> PeriodicTable;
+  typedef std::shared_ptr<IXElement> Element;
+  typedef std::weak_ptr<IXPeriodicTable> _PeriodicTable;
+  typedef std::weak_ptr<IXElement> _Element;
   
-  /** @class PeriodicTable periodictable.hpp classes/periodictable.hpp
+  
+  /** @class IXPeriodicTable periodictable.hpp classes/periodictable.hpp
    *  @brief Singleton class for storing and access elemental information.
    *  @details The PeriodicTable class provides the only means to access
    *  the Element class. Access to the instance should only be obtained
@@ -49,106 +54,108 @@ namespace indigox {
    *  All columns must be populated.
    *  @since 0.1
    */
-  class PeriodicTable {
+  class IXPeriodicTable {
   public:
     /// @brief Obtain the singleton instance of the PeriodicTable.
-    static PeriodicTable_p GetInstance();
+    static PeriodicTable GetInstance();
     
   public:
     /// @brief Get the element with the given atomic number.
-    Element_p GetElement(uint8_t) const;
+    Element GetElement(uint8_t);
     
     /// @brief Get the element with the given name or symbol.
-    Element_p GetElement(String) const;
+    Element GetElement(std::string);
     
     /// @returns the total number of elements in the PeriodicTable.
     inline size_t NumElements() const { return z_to_.size(); }
     
   private:
-    std::map<uint8_t, Element_p> z_to_;  // owner of elements
-    std::map<String, Element_wp> name_to_;
-    static PeriodicTable_wp instance_;
+    std::map<uint8_t, Element> z_to_;  // owner of elements
+    std::map<std::string, _Element> name_to_;
+    static bool _init;
+    static PeriodicTable _instance;
     
   private:
-    PeriodicTable() = default;
+    IXPeriodicTable() = default;
+    Element _null_element;
     
     /// @brief Generates the PeriodicTable data.
     void GeneratePeriodicTable();
     
   };
   
-  /** @class Element periodictable.hpp classes/periodictable.hpp
+  /** @class IXElement periodictable.hpp classes/periodictable.hpp
    *  @brief Read only class for storing elemental information.
    *  @details Contains a large amount of relevant information pertaining
    *  to elements. No public constructors so can only be created by the
    *  PeriodicTable class.
    *  @since 0.1
    */
-  class Element {
+  class IXElement {
   public:
     /// @returns the relative atomic mass of the element in daltons.
-    inline Float GetAtomicMass() const { return mass_; }
+    float GetAtomicMass() const { return mass_; }
     
     /// @returns the atomic number of the element.
-    inline uint8_t GetAtomicNumber() const { return Z_; }
+    uint8_t GetAtomicNumber() const { return Z_; }
     
     /// @returns the atomic radius of the element in angstroms.
-    inline Float GetAtomicRadius() const { return radius_; }
+    float GetAtomicRadius() const { return radius_; }
     
     /// @returns the covalent radius of the element in angstroms.
-    inline Float GetCovalentRadius() const { return cov_; }
+    float GetCovalentRadius() const { return cov_; }
     
     /// @returns the van der Waals radius of the element in angstroms.
-    inline Float GetVanDerWaalsRadius() const { return vdw_; }
+    float GetVanDerWaalsRadius() const { return vdw_; }
     
     /// @returns the name of the element.
-    inline String GetName() const { return name_; }
+    std::string GetName() const { return name_; }
     
     /// @returns the symbol of the element.
-    inline String GetSymbol() const { return symbol_; }
+    std::string GetSymbol() const { return symbol_; }
     
     /// @returns the IUPAC group number the element is in.
-    inline uint8_t GetGroup() const { return grp_; }
+    uint8_t GetGroup() const { return grp_; }
     
     /// @returns the period the element is in.
-    inline uint8_t GetPeriod() const { return period_; }
+    uint8_t GetPeriod() const { return period_; }
     
     /// @returns the number of valence electrons the element contains.
-    inline uint8_t GetValenceElectronCount() const { return val_; }
+    uint8_t GetValenceElectronCount() const { return val_; }
     
     /// @returns the number of electrons required for a full outer shell.
-    inline uint8_t GetOctet() const { return oct_; }
+    uint8_t GetOctet() const { return oct_; }
     
     /// @returns the number of electrons allowed when allowing hypervalency.
-    inline uint8_t GetHypervalentOctet() const { return hyper_; }
+    uint8_t GetHypervalentOctet() const { return hyper_; }
     
     /// @returns the electronegativity of the element on the Pauling scale.
-    inline Float GetElectronegativity() const { return chi_; }
+    float GetElectronegativity() const { return chi_; }
 
     /// @returns a simple string representation of the element.
-    String ToString() const;
+    std::string ToString() const;
     
   private:
-    const String name_, symbol_;
+    const std::string name_, symbol_;
     const uint8_t grp_, period_, Z_, val_, oct_, hyper_;
-    const Float mass_, radius_, cov_, vdw_, chi_;
+    const float mass_, radius_, cov_, vdw_, chi_;
     
   private:  // Only create Elements within PeriodicTable
-    friend class PeriodicTable;
-    Element() = default;
-    Element(uint8_t, String, String, Float, uint8_t, uint8_t, uint8_t,
-            uint8_t, uint8_t, Float, Float, Float, Float);
+    friend class IXPeriodicTable;
+    IXElement();
+    IXElement(uint8_t, std::string, std::string, float, uint8_t, uint8_t, uint8_t,
+            uint8_t, uint8_t, float, float, float, float);
   };
   
-  std::ostream& operator<<(std::ostream& s, indigox::Element_p e);
+  std::ostream& operator<<(std::ostream&, Element e);
   
-  bool operator==(Element_p l, uint8_t r);
-  bool operator==(Element_p l, String r);
-  bool operator==(Element_p l, Element_p r);
+  bool operator==(Element, uint8_t);
+  bool operator==(Element, std::string);
+  bool operator==(Element, Element);
   
-  bool operator!=(Element_p l, uint8_t r);
-  bool operator!=(Element_p l, String r);
-  bool operator!=(Element_p l, Element_p r);
+  bool operator!=(Element, uint8_t);
+  bool operator!=(Element, std::string);
+  bool operator!=(Element, Element);
 }
 
 #endif /* INDIGOX_CLASSES_PERIODIC_TABLE_HPP */

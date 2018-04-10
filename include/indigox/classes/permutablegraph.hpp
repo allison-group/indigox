@@ -12,7 +12,6 @@
 #include <memory>
 #include <vector>
 
-#include "../api.hpp"
 #include "molecular_graph.hpp"
 #include "../utils/graph.hpp"
 
@@ -22,6 +21,8 @@ namespace indigox {
     uid_t bag;
   };
   
+  class _PermutableGraph;
+  typedef std::shared_ptr<_PermutableGraph> PermutableGraph;
   typedef utils::Graph<PermVertProp> _PermGraph;
   typedef _PermGraph::VertType PermVertex;
   typedef _PermGraph::NbrsIter PermNbrsIter;
@@ -32,26 +33,23 @@ namespace indigox {
   
   typedef std::vector<PermVertex> ElimOrder;
   
-  class PermutableGraph : public _PermGraph
+  class _PermutableGraph : public _PermGraph
   {
   public:
-    PermutableGraph();
-    PermutableGraph(MolecularGraph_p);
-    PermutableGraph(PermutableGraph_p);
+    _PermutableGraph();
+    _PermutableGraph(MolecularGraph);
+    _PermutableGraph(PermutableGraph);
     
   public:
-    void SetInput(MolecularGraph_p);
+    void SetInput(MolecularGraph);
     void EliminateVertex(PermVertex);
-    String ToDGFString();
-    MolecularGraph_p GetSourceGraph() { return source_; }
-    String PGVToMGVTable();
+    std::string ToDGFString();
+    MolecularGraph GetSourceGraph() { return source_; }
+    std::string PGVToMGVTable();
     
   private:
-    MolecularGraph_p source_;
+    MolecularGraph source_;
   };
-  
-  typedef std::shared_ptr<PermutableGraph> PermutableGraph_p;
-  
 }
 
 #endif /* INDIGOX_CLASSES_PERMUTABLEGRAPH_HPP */

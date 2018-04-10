@@ -16,7 +16,7 @@
 
 namespace indigox {
   
-  uint8_t PreplaceCount(const MolecularGraph &G, MolVertex v) {
+  uint8_t PreplaceCount(const _MolecularGraph &G, MolVertex v) {
     if (!Options::AssignElectrons::PREPLACE_ELECTRONS) return 0;
     MolVertProp* p = G.GetProperties(v);
     switch (G.Degree(v)) {
@@ -47,7 +47,7 @@ namespace indigox {
     }
   }
   
-  uint8_t PreplaceCount(const MolecularGraph &G, MolEdge e) {
+  uint8_t PreplaceCount(const _MolecularGraph &G, MolEdge e) {
     if (!Options::AssignElectrons::PREPLACE_ELECTRONS) return 2;
     MolVertex u = G.GetSource(e);
     MolVertex v = G.GetTarget(e);
@@ -70,12 +70,12 @@ namespace indigox {
    *     Construction     *
    *                      *
    ************************/
-  ElectronGraph::ElectronGraph()
+  _ElectronGraph::_ElectronGraph()
   : _ElnGraph()
   {
   }
   
-  ElectronGraph::ElectronGraph(const MolecularGraph &G)
+  _ElectronGraph::_ElectronGraph(const _MolecularGraph &G)
   : _ElnGraph()
   {
     using namespace std;
@@ -118,7 +118,7 @@ namespace indigox {
     }
   }
   
-  ElnVertex ElectronGraph::GetVertex(MolVertPair id) const {
+  ElnVertex _ElectronGraph::GetVertex(MolVertPair id) const {
     ElnVertIterPair vertices = GetVertices();
     for (ElnVertexIter it = vertices.first; it != vertices.second; ++it) {
       ElnVertProp* p = GetProperties(*it);

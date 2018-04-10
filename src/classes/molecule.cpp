@@ -12,7 +12,6 @@
 #include <map>
 #include <sstream>
 
-#include "indigox/api.hpp"
 #include "indigox/classes/atom.hpp"
 #include "indigox/classes/bond.hpp"
 #include "indigox/classes/molecular_graph.hpp"
@@ -29,15 +28,15 @@ using namespace indigox;
  */
 
 // Initalisation methods
-Molecule::Molecule()
-: name_("None"), graph_(new MolecularGraph()), elnopt_(new ElectronOpt()){ }
+IXMolecule::IXMolecule()
+: name_("None"), graph_(new _MolecularGraph()), elnopt_(new ElectronOpt()){ }
 
 /** @param name the name to call the molecule. */
-Molecule::Molecule(String name) : Molecule() {
+IXMolecule::IXMolecule(std::string name) : IXMolecule() {
   name_ = name;
 }
 
-Molecule::~Molecule() { }
+IXMolecule::~IXMolecule() { }
 
 // Data retrival methods
 
@@ -45,15 +44,15 @@ Molecule::~Molecule() { }
  *  @details Atom indicies are unstable. Use of this method is not recommended
  *  unless you know what you're doing.
  */
-Atom_p Molecule::GetAtomIndex(uid_t i) {
-  Atom_p atm = Atom_p();
+Atom IXMolecule::GetAtomIndex(uid_t i) {
+  Atom atm = Atom();
   auto it = idx_to_atom_.find(i);
   if (it != idx_to_atom_.end() && !(it->second.expired())
       && it->second.lock()->GetIndex() == i) {
     atm = it->second.lock();
   } else {
     idx_to_atom_.clear();
-    for (Atom_p a : atoms_) {
+    for (Atom a : atoms_) {
       if (a->GetIndex() == i) atm = a;
       idx_to_atom_.emplace(a->GetIndex(), a);
     }
@@ -64,26 +63,26 @@ Atom_p Molecule::GetAtomIndex(uid_t i) {
 /** @param i the unique id of the atom to get
  *  @details Returns the atom in the molecule with the given unique id, if it exists
  */
-Atom_p Molecule::GetAtomUniqueID(uid_t i) {
-  for (Atom_p atm : atoms_) {
+Atom IXMolecule::GetAtomUniqueID(uid_t i) {
+  for (Atom atm : atoms_) {
     if (atm->GetUniqueID() == i) return atm;
   }
-  return Atom_p();
+  return Atom();
 }
 
 /** @param i the bond index to get
  *  @details Bond indicies are unstable. Use of this method is not recommended
  *  unless you know what you're doing.
  */
-Bond_p Molecule::GetBondIndex(uid_t i) {
-  Bond_p bnd = Bond_p();
+Bond IXMolecule::GetBondIndex(uid_t i) {
+  Bond bnd = Bond();
   auto it = idx_to_bond_.find(i);
   if (it != idx_to_bond_.end() && !(it->second.expired())
       && it->second.lock()->GetIndex() == i) {
     bnd = it->second.lock();
   } else {
     idx_to_bond_.clear();
-    for (Bond_p b : bonds_) {
+    for (Bond b : bonds_) {
       if (b->GetIndex() == i) bnd = b;
       idx_to_bond_.emplace(b->GetIndex(), b);
     }
@@ -96,13 +95,13 @@ Bond_p Molecule::GetBondIndex(uid_t i) {
  *  @details Atoms should both be in the molecule. Returns a null bond if no
  *  such bond exists.
  */
-Bond_p Molecule::GetBond(Atom_p a, Atom_p b) const {
+Bond IXMolecule::GetBond(Atom a, Atom b) const {
   /// @todo Logging system calls for fail reasons
-  Bond_p bnd = Bond_p();
+  Bond bnd = Bond();
   if (a->GetMolecule()->GetUniqueID() != GetUniqueID()) return bnd;
   if (b->GetMolecule()->GetUniqueID() != GetUniqueID()) return bnd;
-  for (AtomBondIterator it = a->BeginBond(); it != a->EndBond(); ++it) {
-    Bond_p tmp = it->lock();
+  for (AtomBondIter it = a->BeginBond(); it != a->EndBond(); ++it) {
+    Bond tmp = it->lock();
     if (tmp->GetSourceAtom() == a && tmp->GetTargetAtom() == b) return tmp;
     if (tmp->GetSourceAtom() == b && tmp->GetTargetAtom() == a) return tmp;
   }
@@ -113,10 +112,10 @@ Bond_p Molecule::GetBond(Atom_p a, Atom_p b) const {
  *  If any atom does not have an element set, an \"Xx\" symbol is added to the
  *  formula.
  */
-String Molecule::GetFormula() const {
-  std::map<String, Uint> e_count;
-  for (Atom_p atm : atoms_) {
-    Element_p elem = atm->GetElement();
+std::string IXMolecule::GetFormula() const {
+  std::map<std::string, size_t> e_count;
+  for (Atom atm : atoms_) {
+    Element elem = atm->GetElement();
     if (!elem) e_count["Xx"]++;
     else e_count[elem->GetSymbol()]++;
   }
@@ -135,40 +134,40 @@ String Molecule::GetFormula() const {
   return ss.str();
 }
 
-MolecularGraph_p Molecule::GetMolecularGraph() { return graph_; }
+MolecularGraph IXMolecule::GetMolecularGraph() { return graph_; }
 
-String Molecule::GetName() const { return name_; }
+std::string IXMolecule::GetName() const { return name_; }
 
 /** @details Issues a warning if the set molecular charge does not match the
  *  sum of the atom formal charges.
  */
-Int Molecule::GetTotalCharge() const {
-  Int q_tot = 0;
-  for (Atom_p atm : atoms_) q_tot += atm->GetFormalCharge();
+int IXMolecule::GetTotalCharge() const {
+  int q_tot = 0;
+  for (Atom atm : atoms_) q_tot += atm->GetFormalCharge();
   /// @todo Logging system call
   if (q_tot != q_) std::cerr << "Atom formal charges do not match molecular charge." << std::endl;
   return q_;
 }
 
-bool Molecule::IsModified() const { return modified_; }
+bool IXMolecule::IsModified() const { return modified_; }
 
-Uint Molecule::NumAtoms() const { return (Uint)atoms_.size(); }
+size_t IXMolecule::NumAtoms() const { return (size_t)atoms_.size(); }
 
-Uint Molecule::NumBonds() const { return (Uint)bonds_.size(); }
+size_t IXMolecule::NumBonds() const { return (size_t)bonds_.size(); }
 
 /// @name Data modification methods
 
 /** @param name the name tos et for this molecule. */
-void Molecule::SetName(String name) { name_ = name; }
+void IXMolecule::SetName(std::string name) { name_ = name; }
 
 /** @param q the molecular charge value to set. */
-void Molecule::SetTotalCharge(Int q) {
+void IXMolecule::SetTotalCharge(int q) {
   q_ = q;
   modified_ = true;
   graph_->SetTotalCharge(q);
 }
 
-void Molecule::ResetIndices() {
+void IXMolecule::ResetIndices() {
   idx_to_atom_.clear();
   for (uid_t i = 0; i < atoms_.size(); ++i) {
     atoms_[i]->SetIndex(i);
@@ -182,8 +181,8 @@ void Molecule::ResetIndices() {
   }
 }
 
-Atom_p Molecule::NewAtom() {
-  Atom_p atm = Atom_p(new Atom(shared_from_this()));
+Atom IXMolecule::NewAtom() {
+  Atom atm = Atom(new IXAtom(shared_from_this()));
   atoms_.emplace_back(atm);
   idx_to_atom_.emplace(atm->GetIndex(), atm);
   atom_to_vertex_.emplace(atm, graph_->AddVertex(atm));
@@ -192,13 +191,13 @@ Atom_p Molecule::NewAtom() {
 }
 
 
-Atom_p Molecule::NewAtom(Element_p e) {
-  Atom_p atm = NewAtom();
+Atom IXMolecule::NewAtom(Element e) {
+  Atom atm = NewAtom();
   atm->SetElement(e);
   return atm;
 }
-Atom_p Molecule::NewAtom(uid_t idx, Element_p e) {
-  Atom_p atm = NewAtom(e);
+Atom IXMolecule::NewAtom(uid_t idx, Element e) {
+  Atom atm = NewAtom(e);
   idx_to_atom_.erase(atm->GetIndex());
   atm->SetIndex(idx);
   idx_to_atom_.emplace(idx, atm);
@@ -209,14 +208,14 @@ Atom_p Molecule::NewAtom(uid_t idx, Element_p e) {
  *  @param b the target atom for the new bond.
  *  @details Both atoms should be in this molecule.
  */
-Bond_p Molecule::NewBond(Atom_p a, Atom_p b) {
+Bond IXMolecule::NewBond(Atom a, Atom b) {
   /// @todo Logging for fail reasons.
-  Bond_p bnd = Bond_p();
+  Bond bnd = Bond();
   if (a->GetMolecule() != shared_from_this()) return bnd;
   if (b->GetMolecule() != shared_from_this()) return bnd;
   bnd = GetBond(a, b);
   if (!bnd) {
-    bnd.reset(new Bond(a, b));
+    bnd.reset(new IXBond(a, b));
     bonds_.emplace_back(bnd);
     idx_to_bond_.emplace(bnd->GetIndex(), bnd);
     MolEdgeBool eb = graph_->AddEdge(atom_to_vertex_.at(a),
@@ -230,13 +229,13 @@ Bond_p Molecule::NewBond(Atom_p a, Atom_p b) {
 }
 
 /** @param a the atom to remove from the molecule. */
-void Molecule::RemoveAtom(Atom_p a) {
+void IXMolecule::RemoveAtom(Atom a) {
   if (a->GetMolecule() != shared_from_this()) return;
   auto it = std::find(atoms_.begin(), atoms_.end(), a);
   if (it != atoms_.end()) {
-    Atom_p hit = *it;
-    for (AtomBondIterator bs = hit->BeginBond(); bs != hit->EndBond(); ++bs) {
-      Bond_p tmp = bs->lock();
+    Atom hit = *it;
+    for (AtomBondIter bs = hit->BeginBond(); bs != hit->EndBond(); ++bs) {
+      Bond tmp = bs->lock();
       bond_to_edge_.erase(tmp);
       if (tmp->GetSourceAtom() != hit) tmp->GetSourceAtom()->RemoveBond(tmp);
       else tmp->GetTargetAtom()->RemoveBond(tmp);
@@ -251,11 +250,11 @@ void Molecule::RemoveAtom(Atom_p a) {
 }
 
 /** @param b the bond to remove from the molecule. */
-void Molecule::RemoveBond(Bond_p b) {
+void IXMolecule::RemoveBond(Bond b) {
   if (b->GetMolecule() != shared_from_this()) return;
   auto it = std::find(bonds_.begin(), bonds_.end(), b);
   if (it != bonds_.end()) {
-    Bond_p hit = *it;
+    Bond hit = *it;
     hit->GetSourceAtom()->RemoveBond(hit);
     hit->GetTargetAtom()->RemoveBond(hit);
     bonds_.erase(it);
@@ -265,7 +264,7 @@ void Molecule::RemoveBond(Bond_p b) {
   }
 }
 
-Uint Molecule::AssignElectrons() {
+size_t IXMolecule::AssignElectrons() {
   // check is single component (use graph)
   /// @todo
   if (graph_->NumConnectedComponents() != 1) {
@@ -275,7 +274,7 @@ Uint Molecule::AssignElectrons() {
   
   // check all elements valid.
   typedef Options::AssignElectrons opt_;
-  for (Atom_p atm : atoms_) {
+  for (Atom atm : atoms_) {
     if (!atm->GetElement()) {
       std::cerr << "Not all atoms have elements assigned." << std::endl;
       return 0;
@@ -290,7 +289,7 @@ Uint Molecule::AssignElectrons() {
   // Set the ElectronOpt graph
   elnopt_->SetMolecularGraph(graph_);
   modified_ = false;
-  Uint num = (Uint)elnopt_->Run();
+  size_t num = (size_t)elnopt_->Run();
   if (num) ApplyElectronAssignment(0);
 //  for (auto& tmp : idx_to_atom_) {
 //    Atom_p atom = tmp.second.lock();
@@ -311,7 +310,7 @@ Uint Molecule::AssignElectrons() {
   return num;
 }
 
-Score Molecule::GetMinimumElectronAssignmentScore() {
+FCSCORE IXMolecule::GetMinimumElectronAssignmentScore() {
   if (modified_) {
     std::cerr << "Molecule has been modified since assignment. Please re-assign." << std::endl;
     return Options::AssignElectrons::INF;
@@ -319,7 +318,7 @@ Score Molecule::GetMinimumElectronAssignmentScore() {
   return elnopt_->GetMinimisedEnergy();
 }
 
-bool Molecule::ApplyElectronAssignment(Uint idx) {
+bool IXMolecule::ApplyElectronAssignment(size_t idx) {
   if (modified_) {
     std::cerr << "Molecule has been modified since assignment. Please re-assign." << std::endl;
     return false;
@@ -328,19 +327,19 @@ bool Molecule::ApplyElectronAssignment(Uint idx) {
 }
 
 // Iterator methods
-Atom_p Molecule::Begin(MolAtomIterator &it) {
+Atom IXMolecule::Begin(MolAtomIterator &it) {
   it = atoms_.begin();
-  return (it == atoms_.end()) ? Atom_p() : *it;
+  return (it == atoms_.end()) ? Atom() : *it;
 }
 
-Atom_p Molecule::Next(MolAtomIterator &it) {
+Atom IXMolecule::Next(MolAtomIterator &it) {
   ++it;
-  return (it == atoms_.end()) ? Atom_p() : *it;
+  return (it == atoms_.end()) ? Atom() : *it;
 }
 
-MolAtomIterator Molecule::BeginAtom() { return atoms_.begin(); }
-MolAtomIterator Molecule::EndAtom() { return atoms_.end(); }
-MolBondIterator Molecule::BeginBond() { return bonds_.begin(); }
-MolBondIterator Molecule::EndBond() { return bonds_.end(); }
+MolAtomIterator IXMolecule::BeginAtom() { return atoms_.begin(); }
+MolAtomIterator IXMolecule::EndAtom() { return atoms_.end(); }
+MolBondIterator IXMolecule::BeginBond() { return bonds_.begin(); }
+MolBondIterator IXMolecule::EndBond() { return bonds_.end(); }
 
 

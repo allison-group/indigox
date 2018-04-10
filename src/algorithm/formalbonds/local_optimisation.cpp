@@ -55,7 +55,7 @@ void LocalOptimisation::Run() {
   using namespace std::chrono;
   high_resolution_clock::time_point startT, endT;
   BuildLocationBitMasks();
-  std::map<ElnDist, Score> seenDists;
+  std::map<ElnDist, FCSCORE> seenDists;
   std::vector<ElnDist> nbrDists;
   std::set<ElnDist> cMinDists, rMinDists, doneNbrs;
   
@@ -65,9 +65,9 @@ void LocalOptimisation::Run() {
   ElnDist initDist = CalculateUpperLimit();
   cMinDists.insert(initDist);
   
-  Score cMinScore = upperLimit_;
+  FCSCORE cMinScore = upperLimit_;
   if (cMinScore != opt_::INF) --cMinScore;
-  Score rMinScore = cMinScore;
+  FCSCORE rMinScore = cMinScore;
   seenDists.emplace(initDist, cMinScore);
   size_t infsEncounterd = 0;
   size_t cDistSize = cMinDists.size();
@@ -94,9 +94,9 @@ void LocalOptimisation::Run() {
 //      else doneNbrs.emplace(*begin);
       GetNeighbourDistributions(*begin, &nbrDists);
       for (ElnDist n : nbrDists) {
-        Score s;
+        FCSCORE s;
         if (lo_::CACHE_RESULTS) {
-          std::map<ElnDist, Score>::iterator beenSeen = seenDists.find(n);
+          std::map<ElnDist, FCSCORE>::iterator beenSeen = seenDists.find(n);
           if (beenSeen != seenDists.end()) {
             s = beenSeen->second;
           }

@@ -12,7 +12,6 @@
 #include <set>
 #include <string>
 
-#include "../api.hpp"
 #include "../utils/graph.hpp"
 #include "treedecomp.hpp"
 
@@ -45,24 +44,25 @@ namespace indigox {
     
     
     
-    class NTDecomp : public _NTDGraph
+    class _NTDecomp : public _NTDGraph
     {
     public:
-      NTDecomp();
-      NTDecomp(TDecomp_p);
-      NTDecomp(TDecomp_p, TDVertex);
+      _NTDecomp();
+      _NTDecomp(TDecomp);
+      _NTDecomp(TDecomp, TDVertex);
       
-      void SetInput(TDecomp_p);
-      void SetInput(TDecomp_p, TDVertex);
+      void SetInput(TDecomp);
+      void SetInput(TDecomp, TDVertex);
       void TopologicalSort(std::vector<NTDVertex>&) const;
-      TDecomp_p GetSourceGraph() { return source_; }
+      TDecomp GetSourceGraph() { return source_; }
       size_t GetWidth();
       
     private:
       uint32_t vert_count_ = 0;
-      TDecomp_p source_;
-      
+      TDecomp source_;
     };
+  
+  typedef std::shared_ptr<_NTDecomp> NTDecomp;
   
 }
 

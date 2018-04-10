@@ -7,7 +7,6 @@
 //
 #include <iostream>
 
-#include "indigox/api.hpp"
 #include "indigox/classes/iters.hpp"
 #include "indigox/classes/molecule.hpp"
 
@@ -15,19 +14,19 @@ using namespace indigox;
 
 AtomIterator::AtomIterator() : type_(UNDEFINED), ptr_() { }
 
-AtomIterator::AtomIterator(Molecule_p m) : type_(MOLECULE_ATOM) {
+AtomIterator::AtomIterator(Molecule m) : type_(MOLECULE_ATOM) {
   parentMol_ = m;
   ptr_ = parentMol_->Begin(itMol_);
 }
 
-AtomIterator::AtomIterator(Bond_p b) : type_(BOND_ATOM) {
+AtomIterator::AtomIterator(Bond b) : type_(BOND_ATOM) {
   parentBond_ = b;
   ptr_ = parentBond_->Begin(itBond_);
 }
 
-AtomIterator::AtomIterator(Atom_p a) : type_(ATOM_NEIGHBOUR) {
+AtomIterator::AtomIterator(Atom a) : type_(ATOM_NEIGHBOUR) {
   parentAtom_ = a;
-  Bond_p tmp = parentAtom_->Begin(itAtom_);
+  Bond tmp = parentAtom_->Begin(itAtom_);
   ptr_ = tmp->GetSourceAtom();
   if (!ptr_ || ptr_->GetUniqueID() != parentAtom_->GetUniqueID()) {
     ptr_ = tmp->GetTargetAtom();
@@ -64,7 +63,7 @@ AtomIterator& AtomIterator::operator++() {
       break;
     case ATOM_NEIGHBOUR:
       {
-        Bond_p tmp = parentAtom_->Next(itAtom_);
+        Bond tmp = parentAtom_->Next(itAtom_);
         ptr_ = tmp->GetSourceAtom();
         if (!ptr_ || ptr_->GetUniqueID() != parentAtom_->GetUniqueID()) {
           ptr_ = tmp->GetTargetAtom();
@@ -84,5 +83,5 @@ AtomIterator AtomIterator::operator++(int) {
   return tmp;
 }
 
-Atom_p AtomIterator::operator->() const { return ptr_; }
-Atom_p AtomIterator::operator*() const { return ptr_; }
+Atom AtomIterator::operator->() const { return ptr_; }
+Atom AtomIterator::operator*() const { return ptr_; }

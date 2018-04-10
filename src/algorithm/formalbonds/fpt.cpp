@@ -201,7 +201,7 @@ void FPTOptimisation::Initalise()
   
   previousDist_ = ElnDist(parent_->possibleLocations_.size());
   previousDist_.reset();
-  PermutableGraph_p PG = PermutableGraph_p(new PermutableGraph(parent_->molGraph_));
+  PermutableGraph PG = PermutableGraph(new _PermutableGraph(parent_->molGraph_));
   ElimOrder order;
   switch (opt_::FPT::PERM_ALGO) {
     case opt_::FPT::PermAlgo::RANDOM:
@@ -218,8 +218,8 @@ void FPTOptimisation::Initalise()
       break;
   }
   
-  TDecomp_p TD = TDecomp_p(new TDecomp(PG, order));
-  td_ = NTDecomp_p(new NTDecomp(TD));
+  TDecomp TD = TDecomp(new _TDecomp(PG, order));
+  td_ = NTDecomp(new _NTDecomp(TD));
   PopulateReferenceVectors();
   DetermineMinMax();
   CalculateUpperLimit();
@@ -317,7 +317,7 @@ void TDVertScore::ForgetPropagate(std::shared_ptr<TDVertScore> a)
         VertMask checkMask = maskScore.second & tmpF;
         uint32_t eNew = (uint32_t)checkMask.count();
         if (eNew < min_e || eNew > max_e) continue;
-        Score s = parent->ScoreVertex(f, maskScore.second);
+        FCSCORE s = parent->ScoreVertex(f, maskScore.second);
         if (s == opt_::INF) continue;
         s += maskScore.first;
         if (s > parent->upperLimit_) continue;
@@ -336,18 +336,18 @@ void TDVertScore::ForgetPropagate(std::shared_ptr<TDVertScore> a)
   if (opt_::FPT::MINIMUM_PROPAGATION_DEPTH > 0) {
     for (auto& e : score) {
       for (auto& bm : e.second) {
-        std::set<Score> minScores;
+        std::set<FCSCORE> minScores;
         for (auto& ms : bm.second) {
           if (minScores.size() < opt_::FPT::MINIMUM_PROPAGATION_DEPTH) {
             minScores.emplace(ms.first);
           } else {
-            Score maxScore = *std::max_element(minScores.begin(), minScores.end());
+            FCSCORE maxScore = *std::max_element(minScores.begin(), minScores.end());
             if (ms.first < maxScore) minScores.emplace(ms.first);
             if (minScores.size() > opt_::FPT::MINIMUM_PROPAGATION_DEPTH)
               minScores.erase(maxScore);
           }
         }
-        Score maxScore = *std::max_element(minScores.begin(), minScores.end());
+        FCSCORE maxScore = *std::max_element(minScores.begin(), minScores.end());
         for (auto it = bm.second.begin(); it != bm.second.end();) {
           if (it->first > maxScore) it = bm.second.erase(it);
           else ++it;
@@ -434,7 +434,7 @@ void TDVertScore::JoinPropagate(std::shared_ptr<TDVertScore> a, std::shared_ptr<
 //        std::cerr << "Join jobs @" << min_e << "-" << e << "-" << max_e << ": " << be.second.at(a_bagmask.first).size() * a_bagmask.second.size() << std::endl;
         for (auto& a_maskScore : a_bagmask.second) {
           for (auto& b_maskScore : be.second.at(a_bagmask.first)) {
-            Score s = a_maskScore.first + b_maskScore.first;
+            FCSCORE s = a_maskScore.first + b_maskScore.first;
             if (s > parent->upperLimit_) continue;
             ForgetMask placeMask = a_maskScore.second | b_maskScore.second;
             if (opt_::MAXIMUM_RESULT_COUNT == 0
@@ -449,18 +449,18 @@ void TDVertScore::JoinPropagate(std::shared_ptr<TDVertScore> a, std::shared_ptr<
   if (opt_::FPT::MINIMUM_PROPAGATION_DEPTH > 0) {
     for (auto& e : score) {
       for (auto& bm : e.second) {
-        std::set<Score> minScores;
+        std::set<FCSCORE> minScores;
         for (auto& ms : bm.second) {
           if (minScores.size() < opt_::FPT::MINIMUM_PROPAGATION_DEPTH) {
             minScores.emplace(ms.first);
           } else {
-            Score maxScore = *std::max_element(minScores.begin(), minScores.end());
+            FCSCORE maxScore = *std::max_element(minScores.begin(), minScores.end());
             if (ms.first < maxScore) minScores.emplace(ms.first);
             if (minScores.size() > opt_::FPT::MINIMUM_PROPAGATION_DEPTH)
               minScores.erase(maxScore);
           }
         }
-        Score maxScore = *std::max_element(minScores.begin(), minScores.end());
+        FCSCORE maxScore = *std::max_element(minScores.begin(), minScores.end());
         for (auto it = bm.second.begin(); it != bm.second.end();) {
           if (it->first > maxScore) it = bm.second.erase(it);
           else ++it;
@@ -499,9 +499,9 @@ ElnDist FPTOptimisation::VertMaskToElnDist(const VertMask& m) {
   return actualDist;
 }
 
-Score FPTOptimisation::ScoreVertex(MolVertPair v, VertMask f)
+FCSCORE FPTOptimisation::ScoreVertex(MolVertPair v, VertMask f)
 {  
-  Score s = opt_::INF;
+  FCSCORE s = opt_::INF;
   const VertMask placed = f & placedMask_;
   if (placed.count() > parent_->electronsToAdd_) return s;
   
@@ -514,11 +514,11 @@ Score FPTOptimisation::ScoreVertex(MolVertPair v, VertMask f)
   return s;
 }
 
-String TDVertScore::VertMaskToNiceString(VertMask m) {
+std::string TDVertScore::VertMaskToNiceString(VertMask m) {
   std::ostringstream ss;
   ss << "[";
   VertMask placed = m; // & parent->actualPlacedMask_;
-  MolecularGraph_p mg = parent->td_->GetSourceGraph()->GetSourceGraph()->GetSourceGraph();
+  MolecularGraph mg = parent->td_->GetSourceGraph()->GetSourceGraph()->GetSourceGraph();
   for (auto& mvp2vm : parent->pairMasks_) {
     if (!(placed & mvp2vm.second).count()) continue;
     uid_t a = mg->GetVertexIndex(mvp2vm.first.first);
@@ -531,7 +531,7 @@ String TDVertScore::VertMaskToNiceString(VertMask m) {
   return ss.str();
 }
 
-String TDVertScore::ToString() {
+std::string TDVertScore::ToString() {
   std::ostringstream ss;
   for (auto& e : score) {
     ss << "Forgotten " << e.first << std::endl;
@@ -544,9 +544,9 @@ String TDVertScore::ToString() {
   return ss.str();
 }
 
-String TDVertScore::KindToString() {
+std::string TDVertScore::KindToString() {
   std::ostringstream ss;
-  MolecularGraph_p mg = parent->td_->GetSourceGraph()->GetSourceGraph()->GetSourceGraph();
+  MolecularGraph mg = parent->td_->GetSourceGraph()->GetSourceGraph()->GetSourceGraph();
   if (tdProperties->kind.first == 'L') ss << "LEAF";
   if (tdProperties->kind.first == 'I') {
     ss << "INTRODUCE: ";

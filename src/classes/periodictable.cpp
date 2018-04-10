@@ -13,7 +13,6 @@
 #include <sstream>
 #include <vector>
 
-#include "indigox/api.hpp"
 #include "indigox/classes/periodictable.hpp"
 #include "indigox/utils/common.hpp"
 #include "indigox/utils/filereader.hpp"
@@ -24,7 +23,7 @@ namespace indigox {
   /*
    *  Element implementation
    */
-  Element::Element(uint8_t Z, std::string name, std::string symbol, float mass,
+  IXElement::IXElement(uint8_t Z, std::string name, std::string symbol, float mass,
                    uint8_t group, uint8_t period, uint8_t valence,
                    uint8_t octet, uint8_t hyperOctet, float atomicR, float covR,
                    float vdwR, float chi)
@@ -32,7 +31,7 @@ namespace indigox {
   val_(valence), oct_(octet), hyper_(hyperOctet), mass_(mass), radius_(atomicR),
   cov_(covR), vdw_(vdwR), chi_(chi) { }
   
-  String Element::ToString() const {
+  std::string IXElement::ToString() const {
     std::stringstream ss;
     ss << name_ << " (" << symbol_ << ")";
     return ss.str();
@@ -42,67 +41,67 @@ namespace indigox {
    *  PeriodicTable implementation
    */
   
-  PeriodicTable_wp PeriodicTable::instance_ = PeriodicTable_wp();
+  PeriodicTable IXPeriodicTable::_instance = PeriodicTable();
+  bool IXPeriodicTable::_init = false;
   
   /** @details If an instance does not exist, creates one and loads elemental
    *  information from the file given by the Options::PERIODIC_TABLE_FILE
    *  attribute.
    *  @returns a shared pointer to the global PeriodicTable instance.
    */
-  PeriodicTable_p PeriodicTable::GetInstance() {
-    PeriodicTable_p instance = instance_.lock();
-    if (!instance) {
-      instance.reset(new PeriodicTable());
-      instance->GeneratePeriodicTable();
-      instance_ = instance;
+  PeriodicTable IXPeriodicTable::GetInstance() {
+    if (!_init) {
+      _instance.reset(new IXPeriodicTable());
+      _instance->GeneratePeriodicTable();
+      _init = true;
     }
-    return instance;
+    return _instance;
   }
   
   /** @param z the atomic number of the element to get.
    *  @returns a shared pointer to the requested element. If no element with
    *  the given atomic number exists, the shared pointer is empty.
    */
-  Element_p PeriodicTable::GetElement(uint8_t z) const {
+  Element IXPeriodicTable::GetElement(uint8_t z) {
     if (z_to_.find(z) != z_to_.end())
       return z_to_.at(z);
-    return Element_p();
+    return _null_element;
   }
   
   /** @param name the atomic symbol or name of the element to get.
    *  @returns a shared pointer to the requested element. If no element with
    *  the given name/symbol exists, the shared pointer is empty.
    */
-  Element_p PeriodicTable::GetElement(std::string name) const {
+  Element IXPeriodicTable::GetElement(std::string name) {
     std::string u = utils::toUpperFirst(&name);
     if (name_to_.find(u) != name_to_.end()) {
       return name_to_.at(name).lock();
     }
-    return Element_p();
+    return _null_element;
   }
   
   /** @details Loads elemental data from the file pointed to by the
    *  Options::PERIODIC_TABLE_FILE attribute.
    */
-  void PeriodicTable::GeneratePeriodicTable() {
+  void IXPeriodicTable::GeneratePeriodicTable() {
     /// @todo Check for duplicate elements and skip them.
     /// @todo Ensure all columns are populated.
-    std::vector<String> lines;
+    std::vector<std::string> lines;
     if (Options::DATA_DIRECTORY.back() != '/') {
       Options::DATA_DIRECTORY.append("/");
     }
-    String path = Options::DATA_DIRECTORY;
-    String file = Options::PERIODIC_TABLE_FILE;
+    std::string path = Options::DATA_DIRECTORY;
+    std::string file = Options::PERIODIC_TABLE_FILE;
     //if (path.back() != '/') path.append("/");
     utils::FileReader fr(path + file);
     fr.GetAllItems(lines);
     
-    String n = "", s = "";
+    std::string n = "", s = "";
     uint8_t g = 0, p = 0, z = 0, v = 0, o = 0, h = 0;
-    Float m = 0.0f, r = 0.0f, c = 0.0f, V = 0.0f, e = 0.0f;
+    float m = 0.0f, r = 0.0f, c = 0.0f, V = 0.0f, e = 0.0f;
     int count = 0;
     
-    for (String& line : lines) {
+    for (std::string& line : lines) {
       switch (count) {
         case 0: z = std::stoi(line); break;
         case 1: n = utils::toUpperFirst(&line); break;
@@ -122,7 +121,7 @@ namespace indigox {
       }
       
       if (count == 12) {
-        Element_p elem = Element_p(new Element(z, n, s, m, g, p, v, o, h, r, c,
+        Element elem = Element(new IXElement(z, n, s, m, g, p, v, o, h, r, c,
                                                V, e));
         z_to_.emplace(elem->GetAtomicNumber(), elem);
         name_to_.emplace(elem->GetSymbol(), elem);
@@ -130,6 +129,8 @@ namespace indigox {
         count = 0;
       } else count++;
     }
+    _null_element = Element(new IXElement(0, "Undefined", "XX", 0.0f, 0,0,0,0,0,
+                                          0.0f,0.0f,0.0f,0.0f));
   }
   
   
@@ -138,32 +139,32 @@ namespace indigox {
    */
   namespace ix = indigox;
   
-  std::ostream& operator<<(std::ostream& s, ix::Element_p e) {
+  std::ostream& operator<<(std::ostream& s, ix::Element e) {
     return (s << e->ToString());
   }
   
-  bool operator==(ix::Element_p l, uint8_t r) {
+  bool operator==(ix::Element l, uint8_t r) {
     return l->GetAtomicNumber() == r;
   }
   
-  bool operator==(ix::Element_p l, std::string r) {
+  bool operator==(ix::Element l, std::string r) {
     return r.size() <= 2 ? (l->GetSymbol() == r)
     : (l->GetName() == ix::utils::toUpperFirst(&r));
   }
   
-  bool operator==(ix::Element_p l, ix::Element_p r) {
+  bool operator==(ix::Element l, ix::Element r) {
     return l->GetAtomicNumber() == r->GetAtomicNumber();
   }
   
-  bool operator!=(ix::Element_p l, uint8_t r) {
+  bool operator!=(ix::Element l, uint8_t r) {
     return !(l == r);
   }
   
-  bool operator!=(ix::Element_p l, std::string r) {
+  bool operator!=(ix::Element l, std::string r) {
     return !(l == r);
   }
   
-  bool operator!=(ix::Element_p l, ix::Element_p r) {
+  bool operator!=(ix::Element l, ix::Element r) {
     return !(l == r);
   }
 }

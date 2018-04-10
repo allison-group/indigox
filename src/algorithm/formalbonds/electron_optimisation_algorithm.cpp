@@ -60,7 +60,7 @@ void ElectronOptimisationAlgorithm::PopulateMVP2EV() {
   }
 }
 
-bool ElectronOptimisationAlgorithm::ApplyElectronAssignment(Uint idx) {
+bool ElectronOptimisationAlgorithm::ApplyElectronAssignment(size_t idx) {
   if (idx >= minDistributions_.size()) {
     std::cerr << "Index " << idx << " is out of range." << std::endl;
     return false;
@@ -181,14 +181,14 @@ void ElectronOptimisationAlgorithm::DetermineFormalCharges() {
   }
 }
 
-Score ElectronOptimisationAlgorithm::CalculateDistributionEnergy(ElnDist dist) {
+FCSCORE ElectronOptimisationAlgorithm::CalculateDistributionEnergy(ElnDist dist) {
   SetElectronDistribution(dist);
   DetermineFormalCharges();
-  Score energy = 0;
+  FCSCORE energy = 0;
   
   ElnVertIterPair vs = parent_->elnGraph_->GetVertices();
   for (ElnVertexIter v = vs.first; v != vs.second; ++v) {
-    Score v_energy = CalculateVertexEnergy(*v);
+    FCSCORE v_energy = CalculateVertexEnergy(*v);
     if (v_energy == opt_::INF) {
       energy = v_energy;
       break;
@@ -214,11 +214,11 @@ ElnDist ElectronOptimisationAlgorithm::CalculateUpperLimit() {
   for (size_t i = 0; i < initDist.size(); ++i) it = all_pos.insert(it, i);
   
   while (initDist.count() < parent_->electronsToAdd_) {
-    Score cMin = opt_::INF;
+    FCSCORE cMin = opt_::INF;
     size_t mPos = *(all_pos.begin());
     for (size_t i : all_pos) {
       initDist.set(i);
-      Score tmp = CalculateDistributionEnergy(initDist);
+      FCSCORE tmp = CalculateDistributionEnergy(initDist);
       if (tmp < cMin) {
         cMin = tmp;
         mPos = i;
@@ -237,7 +237,7 @@ ElnDist ElectronOptimisationAlgorithm::CalculateUpperLimit() {
   return initDist;
 }
 
-Score ElectronOptimisationAlgorithm::CalculateVertexEnergy(ElnVertex& vert) {
+FCSCORE ElectronOptimisationAlgorithm::CalculateVertexEnergy(ElnVertex& vert) {
   ElnVertProp* prop = parent_->elnGraph_->GetProperties(vert);
   MolVertPair id = prop->id;
   size_t idCount = (size_t)std::count(parent_->possibleLocations_.begin(),

@@ -22,14 +22,14 @@
 
 using namespace indigox;
 
-MolecularGraph::MolecularGraph()
+_MolecularGraph::_MolecularGraph()
 : _MolGraph()
 {
 }
 
-MolecularGraph::MolecularGraph(Molecule_p m) : _MolGraph() {
+_MolecularGraph::_MolecularGraph(Molecule m) : _MolGraph() {
   m->ResetIndices();
-  std::map<Atom_p, MolVertex> atom_to_vertex;
+  std::map<Atom, MolVertex> atom_to_vertex;
   for (MolAtomIterator it = m->BeginAtom(); it != m->EndAtom(); ++it) {
     MolVertex v = AddVertex(*it);
     atom_to_vertex.emplace(*it, v);
@@ -42,19 +42,19 @@ MolecularGraph::MolecularGraph(Molecule_p m) : _MolGraph() {
   }
 }
 
-MolVertex MolecularGraph::AddVertex(Atom_p atm) {
+MolVertex _MolecularGraph::AddVertex(Atom atm) {
   MolVertProp p;
   p.atom = atm;
   return AddVertex(p);
 }
 
-MolEdgeBool MolecularGraph::AddEdge(MolVertex u, MolVertex v, Bond_p bnd) {
+MolEdgeBool _MolecularGraph::AddEdge(MolVertex u, MolVertex v, Bond bnd) {
   MolEdgeProp p;
   p.bond = bnd;
   return AddEdge(u, v, p);
 }
 
-Uint MolecularGraph::NumConnectedComponents() {
+size_t _MolecularGraph::NumConnectedComponents() {
   MolVertIdxMap idxMap;
   boost::associative_property_map<MolVertIdxMap> indexMap(idxMap);
   MolVertIterPair mvp = GetVertices();
@@ -62,13 +62,13 @@ Uint MolecularGraph::NumConnectedComponents() {
     boost::put(indexMap, (*mvp.first), i);
   }
   
-  num_components_ = (Uint)boost::connected_components(*graph_,
+  num_components_ = (size_t)boost::connected_components(*graph_,
                                                 boost::get(&MolVertProp::component, *graph_),
                                                 boost::vertex_index_map(indexMap));
   return num_components_;
 }
 
-String MolecularGraph::ToDGFString() {
+std::string _MolecularGraph::ToDGFString() {
   typedef Options::AssignElectrons::FPT fpt_;
   std::ostringstream dgf_stream;
   uid_t u, v;

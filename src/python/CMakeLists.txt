@@ -9,7 +9,8 @@ SET(INDIGOX_PYTHON_INTERFACE_SRCS
 
 # Setup pybind11 properly
 SET(PYBIND11_PYTHON_VERSION 3.4)
-ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/external/pybind11 ${PROJECT_BINARY_DIR}/pybind11)
+ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/external/pybind11
+                 ${PROJECT_BINARY_DIR}/external/pybind11)
 # Find the site-packages location to install library to
 EXECUTE_PROCESS( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
                  OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE)

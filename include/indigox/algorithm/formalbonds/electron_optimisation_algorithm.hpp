@@ -17,7 +17,6 @@
 
 #include "../../classes/electron_graph.hpp"
 #include "../electron_optimisation.hpp"
-#include "../../api.hpp"
 
 namespace indigox {
   namespace algorithm {
@@ -30,8 +29,8 @@ namespace indigox {
       // Result storage
       std::vector<std::pair<ElnDist, uint32_t>> minDistributions_;
       std::map<MolVertPair, ElnVertex> mvp2ev_;
-      Score minScore_;
-      Score upperLimit_;
+      FCSCORE minScore_;
+      FCSCORE upperLimit_;
       
       uint32_t eneBitmask_;   // Used for checking bond energies w/wo charge
       ElnDist previousDist_;
@@ -45,17 +44,17 @@ namespace indigox {
       
       //virtual void Initalise();
       virtual void Run() = 0;
-      bool ApplyElectronAssignment(Uint);
+      bool ApplyElectronAssignment(size_t);
       inline size_t GetResultCount() { return minDistributions_.size(); }
-      inline Score GetResultEnergy() { return minScore_; }
+      inline FCSCORE GetResultEnergy() { return minScore_; }
       void PopulateMVP2EV();
       
     protected:
       void SetElectronDistribution(ElnDist& dist);
       void DetermineFormalCharges();
       ElnDist CalculateUpperLimit();
-      Score CalculateVertexEnergy(ElnVertex& v);
-      Score CalculateDistributionEnergy(ElnDist);
+      FCSCORE CalculateVertexEnergy(ElnVertex& v);
+      FCSCORE CalculateDistributionEnergy(ElnDist);
       
       
     };

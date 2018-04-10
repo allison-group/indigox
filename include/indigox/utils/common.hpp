@@ -10,26 +10,22 @@
 #ifndef INDIGOX_UTILS_COMMON_HPP
 #define INDIGOX_UTILS_COMMON_HPP
 
-#include <algorithm>
+#include <string>
 
-#include "../api.hpp"
-
-namespace indigox {
-  namespace utils {
-    
-    /// @brief Convert a string to upper case.
-    String toUpper(const String*);
-    
-    /// @brief Convert a string to lower case.
-    String toLower(const String*);
-    
-    /// @brief Convert a string to lower case with leading upper case.
-    String toUpperFirst(const String*);
-    
-    /// @brief Generate a random string.
-    String randomString(size_t);
-    
-  }  // namespace utils
+namespace indigox::utils {
+  
+  /// @brief Convert a string to upper case.
+  std::string toUpper(const std::string*);
+  
+  /// @brief Convert a string to lower case.
+  std::string toLower(const std::string*);
+  
+  /// @brief Convert a string to lower case with leading upper case.
+  std::string toUpperFirst(const std::string*);
+  
+  /// @brief Generate a random string.
+  std::string randomString(size_t,
+                           const std::string chrs = "qwertyuiopasdfghjklzxcvbnmZAQXSWCDEVFRBGTNHYMJUKILOP");
 }  // namespace indigox
 
 

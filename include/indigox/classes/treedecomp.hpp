@@ -13,7 +13,6 @@
 #include <set>
 #include <string>
 
-#include "../api.hpp"
 #include "../utils/graph.hpp"
 #include "permutablegraph.hpp"
 
@@ -42,30 +41,29 @@ namespace indigox {
   typedef _TDGraph::VertBool TDVertBool;
   typedef _TDGraph::EdgeBool TDEdgeBool;
   
+//  class _TDecomp
   
-  
-  class TDecomp : public _TDGraph
+  class _TDecomp : public _TDGraph
   {
   public:
-    TDecomp();
-    TDecomp(PermutableGraph_p, ElimOrder&);
+    _TDecomp();
+    _TDecomp(PermutableGraph, ElimOrder&);
     
-    void SetInput(PermutableGraph_p, ElimOrder&);
-    String ToString();
+    void SetInput(PermutableGraph, ElimOrder&);
+    std::string ToString();
     size_t GetWidth() const { return upperBound_; }
-    inline PermutableGraph_p GetSourceGraph() { return originalG_; }
+    inline PermutableGraph GetSourceGraph() { return originalG_; }
     
   private:
     void FromOrder(ElimOrder&, size_t);
     
   private:
-    PermutableGraph_p permG_, originalG_;
+    PermutableGraph permG_, originalG_;
     std::map<PermVertex, TDVertex> bagMap_;
     std::map<PermVertex, uid_t> elimiIndex_;
     size_t upperBound_;
-    
-    
   };
+  typedef std::shared_ptr<_TDecomp> TDecomp;
   
 }
 

@@ -15,8 +15,6 @@
 
 #include <boost/graph/topological_sort.hpp>
 
-#include "indigox/api.hpp"
-
 #include "indigox/classes/molecular_graph.hpp"
 #include "indigox/classes/nicetreedecomp.hpp"
 #include "indigox/classes/treedecomp.hpp"
@@ -24,7 +22,7 @@
 
 namespace indigox {
   
-  size_t NTDecomp::GetWidth() {
+  size_t _NTDecomp::GetWidth() {
     size_t maxBag = 0;
     NTDVertIterPair verts = GetVertices();
     for (; verts.first != verts.second; ++verts.first) {
@@ -35,17 +33,17 @@ namespace indigox {
     return maxBag - 1;
   }
   
-  NTDecomp::NTDecomp() : _NTDGraph() { }
+  _NTDecomp::_NTDecomp() : _NTDGraph() { }
   
-  NTDecomp::NTDecomp(TDecomp_p G) : _NTDGraph() {
+  _NTDecomp::_NTDecomp(TDecomp G) : _NTDGraph() {
     SetInput(G);
   }
   
-  NTDecomp::NTDecomp(TDecomp_p G, TDVertex v) : _NTDGraph() {
+  _NTDecomp::_NTDecomp(TDecomp G, TDVertex v) : _NTDGraph() {
     SetInput(G, v);
   }
   
-  void NTDecomp::SetInput(TDecomp_p G) {
+  void _NTDecomp::SetInput(TDecomp G) {
     TDVertex v = NULL;
     TDVertIterPair verts = G->GetVertices();
     for (; verts.first != verts.second; ++verts.first) {
@@ -57,11 +55,11 @@ namespace indigox {
     SetInput(G, v);
   }
   
-  void NTDecomp::SetInput(TDecomp_p g, TDVertex root) {
+  void _NTDecomp::SetInput(TDecomp g, TDVertex root) {
     source_ = g;
-    TDecomp_p td = g;
-    PermutableGraph_p pg = td->GetSourceGraph();
-    MolecularGraph_p mg = pg->GetSourceGraph();
+    TDecomp td = g;
+    PermutableGraph pg = td->GetSourceGraph();
+    MolecularGraph mg = pg->GetSourceGraph();
     
     std::vector<NTDVertex> existing_vertices;
     
@@ -349,7 +347,7 @@ namespace indigox {
 //                            boost::vertex_index_map(indexMap));
 //  }
   
-  void NTDecomp::TopologicalSort(std::vector<NTDVertex> &sorted_out) const {
+  void _NTDecomp::TopologicalSort(std::vector<NTDVertex> &sorted_out) const {
     sorted_out.clear();
     sorted_out.reserve(NumVertices());
     std::vector<NTDVertex> queue;

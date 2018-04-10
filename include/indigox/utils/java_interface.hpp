@@ -11,12 +11,10 @@
 
 #include <string>
 
-#include "../api.hpp"
-
 namespace indigox {
   namespace utils {
     
-    String GetEliminationOrdering(String& dgf_graph);
+    std::string GetEliminationOrdering(std::string& dgf_graph);
     
   }
 }
