@@ -64,6 +64,7 @@ namespace indigox {
     
     /// @returns the total number of elements in the PeriodicTable.
     inline size_t NumElements() const { return z_to_.size(); }
+    std::string ToString() const;
     
   private:
     std::map<uint8_t, Element> z_to_;  // owner of elements

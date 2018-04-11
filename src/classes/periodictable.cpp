@@ -8,6 +8,7 @@
  */
 
 #include <cstdint>
+#include <iomanip>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -34,6 +35,69 @@ namespace indigox {
   std::string IXElement::ToString() const {
     std::stringstream ss;
     ss << name_ << " (" << symbol_ << ")";
+    return ss.str();
+  }
+  
+  
+  typedef std::pair<char, uint> nchar;
+  typedef std::pair<Element, int> erow;
+  
+  std::ostream& operator<<(std::ostream& ss, nchar cn) {
+    for (uint i = 0; i < cn.second; ++i) ss << cn.first;
+    return ss;
+  }
+  
+  std::ostream& operator<<(std::ostream& ss, erow er) {
+    switch (er.second) {
+      case 0:
+        return (ss << "--- ");
+      case 1:
+        return (ss << std::setw(3) << (int)er.first->GetAtomicNumber() << '|');
+      case 2:
+        return (ss << std::setw(3) << er.first->GetSymbol() << '|');
+      case 3:
+        return (ss << "    ");
+      case 4:
+        return (ss << "   |");
+      default:
+        return ss;
+    }
+  }
+  
+  std::string IXPeriodicTable::ToString() const {
+    std::stringstream ss;
+    size_t row_count = 0, restart = 0;
+    std::vector<int> elems = {
+       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,-1,
+       3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 8, 9,10,-1,
+      11,12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,13,14,15,16,17,18,-1,
+      19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,
+      37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,-1,
+      55,56,57,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,-1,
+      87,88,89,104,105,106,107,108,109,-1,-1,
+       0, 0, 0,58,59,60,61,62,63,64,65,66,67,68,69,70,71,-1,
+       0, 0, 0,90,91,92,93,94,95,96,97,98,99,100,101,102,103,-1
+    };
+    ss << ' ';
+    for (size_t i = 0; i < elems.size(); ) {
+      if (elems[i] == -1) {
+        ss << "\n";
+        if (row_count == 0 || row_count == 1) ss << '|';
+        else ss << ' ';
+        ++row_count;
+        if (row_count < 3) i = restart;
+        else { ++i; restart = i; row_count = 0; }
+      } else if (elems[i] == 0 && elems[i+1] == 0) {
+        ss << erow(_null, 3);
+        ++i;
+      } else if (elems[i] == 0 && elems[i+1] != 0 && row_count != 0) {
+        ss << erow(_null, 4);
+        ++i;
+      } else if (elems[i] == 0 && elems[i+1] != 0 && row_count == 0) {
+        ss << erow(_null, 3);
+        ++i;
+      } else { ss << erow(_z_to.at(elems[i]), row_count); ++i; }
+    }
     return ss.str();
   }
   
