@@ -5,17 +5,21 @@ using namespace indigox;
 
 size_t __indigox_pickling_version = 0;
 
-py::tuple PickleAtom(const Atom a) {
-  return py::make_tuple(a->GetAromaticity(),
-                        a->GetElement()->GetAtomicNumber(),
-                        a->GetFormalCharge(),
-                        a->GetImplicitCount(),
-                        a->GetIndex(),
-//                        a->GetMolecule(),
-                        a->GetName(),
-//                        a->GetStereochemistry(),
-//                        a->GetVector(),
+py::tuple PickleAtom(const Atom atom) {
+  return py::make_tuple(atom->GetAromaticity(),
+                        atom->GetElement()->GetAtomicNumber(),
+                        atom->GetFormalCharge(),
+                        atom->GetImplicitCount(),
+                        atom->GetIndex(),
+//                        atom->GetMolecule(),
+                        atom->GetName(),
+//                        atom->GetStereochemistry(),
+//                        atom->GetVector(),
                         __indigox_pickling_version);
+}
+
+py::tuple PicklePeriodicTable(const PeriodicTable table) {
+  return py::make_tuple(bool(table));
 }
 
 Atom __unpickle_atom_version_0(py::tuple& t) {
@@ -38,4 +42,9 @@ Atom UnpickleAtom(py::tuple& t) {
     default:
       return __unpickle_atom_version_0(t);
   }
+}
+
+PeriodicTable UnpicklePeriodicTable(py::tuple& t) {
+  bool real = t[0].cast<bool>();
+  return real ? IXPeriodicTable::GetInstance() : PeriodicTable();
 }

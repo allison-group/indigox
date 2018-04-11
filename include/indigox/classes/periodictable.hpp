@@ -7,78 +7,106 @@
 #include <cstdint>
 #include <iostream>
 #include <map>
-#include <memory>
-#include <vector>
+#include <string>
+
+#include "../utils/common.hpp"
 
 namespace indigox {
+  
   class IXPeriodicTable;
   class IXElement;
+  
+  
+  //! \brief shared_ptr for normal use of the IXPeriodicTable class.
   typedef std::shared_ptr<IXPeriodicTable> PeriodicTable;
   typedef std::shared_ptr<IXElement> Element;
+  /*! \brief weak_ptr for non-ownership reference to the IXPeriodicTable class.
+   *  \details Intended for internal use only. */
   typedef std::weak_ptr<IXPeriodicTable> _PeriodicTable;
   typedef std::weak_ptr<IXElement> _Element;
-  
   
   /*! \class IXPeriodicTable periodictable.hpp indigox/classes/periodictable.hpp
    *  \brief Singleton class for storing and access elemental information.
    *  \details The IXPeriodicTable class provides the only means to access
    *  the IXElement class. Access to the instance should only be obtained
-   *  using the GetInstance() method.
-   *
-   *  Information for the elements is stored a data file, set by the
-   *  Options::PERIODIC_TABLE_FILE attribute. This attribute should be set
-   *  before creating a PeriodicTable instance.
-   *
-   *  The file is formatted as white space seperated columns. Each line
-   *  coresponds to a single element. Column order is:
-   *    -# atomic number
-   *    -# name of the element
-   *    -# symbol for the element
-   *    -# relative atomic mass in daltons
-   *    -# IUPAC group number
-   *    -# period
-   *    -# number of valence electrons
-   *    -# number of electrons in a full outer shell
-   *    -# number of electrons in a full outer shell when hypervalency is allowed
-   *    -# atomic radius in angstroms
-   *    -# covalent radius in angstroms
-   *    -# van der Waals radius in angstroms
-   *    -# electronegativity on the Pauling scale
-   *
-   *  All columns must be populated.
-   *  @since 0.1
-   */
+   *  using the GetInstance() method. Like most other classes in the indigoX
+   *  library, usage is primarily intended through the use of smart pointers. */
   class IXPeriodicTable {
   public:
-    /// @brief Obtain the singleton instance of the PeriodicTable.
+    
+    /*! \brief Obtain the singleton instance of the PeriodicTable.
+     *  \details If an instance does not exist, creates one and generates
+     *  elemental information.
+     *  \returns the PeriodicTable instance. */
     static PeriodicTable GetInstance();
     
   public:
-    /// @brief Get the element with the given atomic number.
-    Element GetElement(uint8_t);
+    /*! \brief Get the element with the given atomic number.
+     *  \param z the atomic number of the element to get.
+     *  \returns the requested element.
+     *  \throw std::invalid_argument If the requested atomic number does not exist
+     *  within the PeriodicTable. */
+    Element GetElement(const uint8_t z) const;
     
-    /// @brief Get the element with the given name or symbol.
-    Element GetElement(std::string);
+    /*! \brief Get the element with the given name or symbol.
+     *  \details Matches are made ignoring case.
+     *  \param name the name or symbol of the element to get.
+     *  \returns the requested element.
+     *  \throw std::invalid_argument If the requested name or symbol does not
+     *  exist within the PeriodicTable. */
+    Element GetElement(const std::string name) const;
     
-    Element GetUndefinedElement() { return _null; }
+    /*! \brief Get the element with the given atomic number.
+     *  \param z the atomic number of the element to get.
+     *  \return the requested element.
+     *  \see IXPeriodicTable::GetElement */
+    Element operator[](const uint8_t z) const { return GetElement(z); }
     
-    /// @returns the total number of elements in the PeriodicTable.
-    inline size_t NumElements() const { return z_to_.size(); }
+    /*! \brief Get the element with the given name or symbol.
+     *  \param name the name or symbol of the element to get.
+     *  \return the requested element.
+     *  \see IXPeriodicTable::GetElement */
+    Element operator[](const std::string name) const { return GetElement(name); }
+    
+    /*! \brief Get the element for use when an element is not defined.
+     *  \details As there is not much point in an undefined element, this
+     *  method is intended for internal use.
+     *  \return the undefined Element. */
+    Element GetUndefinedElement() const { return _null; }
+    
+    /*! \brief Number of elements in the PeriodicTable.
+     *  \return the number of elements in the PeriodicTable. */
+    size_t NumElements() const { return _z_to.size(); }
+    
+    /*! \brief Get a textual representation of the PeriodicTable.
+     *  \details The textual representation lays out the elements of the
+     *  PeriodicTable as one would expect in a normal periodic table. Each
+     *  element has its atomic number and symbol printed.
+     *  \return a string containing a tabular layout of the PeriodicTable
+     *  elements. */
     std::string ToString() const;
-    
+  
   private:
-    std::map<uint8_t, Element> z_to_;  // owner of elements
-    std::map<std::string, _Element> name_to_;
-    static bool _init;
-    static PeriodicTable _instance;
-    
-  private:
+    //! Default constructor.
     IXPeriodicTable() = default;
-    Element _null;
     
-    /// @brief Generates the PeriodicTable data.
+    /*! \brief Generate Elements.
+     *  \details Currently, the first 109 elements are generated. These are
+     *  hard coded into the implementation file. These are populated into both
+     *  the _z_to and _name_to maps. */
     void GeneratePeriodicTable();
-    
+  
+  private:
+    //! Has been initalised.
+    static bool _init;
+    //! The initailied instance.
+    static PeriodicTable _instance;
+    //! Undefined element.
+    Element _null;
+    //! Map atomic numbers to elements.
+    std::map<uint8_t, Element> _z_to;
+    //! Map symbol and name to elements.
+    std::map<std::string, Element> _name_to;
   };
   
   /** @class IXElement periodictable.hpp classes/periodictable.hpp
@@ -143,16 +171,21 @@ namespace indigox {
     IXElement(uint8_t, std::string, std::string, double, uint8_t, uint8_t,
               uint8_t, uint8_t, uint8_t, double, double, double, double);
   };
-  
-  std::ostream& operator<<(std::ostream&, Element e);
-  
-  bool operator==(Element, uint8_t);
-  bool operator==(Element, std::string);
-  bool operator==(Element, Element);
-  
-  bool operator!=(Element, uint8_t);
-  bool operator!=(Element, std::string);
-  bool operator!=(Element, Element);
+} // namespace indigox
+
+// Operators have to be explicitly inlined or python bindings linkage fails
+inline std::ostream& operator<<(std::ostream& os, indigox::Element e) {
+  return e ? (os << e->ToString()) : os;
+}
+
+/*! \brief Print a PeriodicTable to an output stream.
+ *  \details Prints number of elements in the PeriodicTable.
+ *  \param os output stream to print to.
+ *  \param pt PeriodicTable to print.
+ *  \return the output stream.
+ */
+inline std::ostream& operator<<(std::ostream& os, indigox::PeriodicTable pt) {
+  return pt ? (os << "PeriodicTable(" << pt->NumElements() << " elements)") : os;
 }
 
 #endif /* INDIGOX_CLASSES_PERIODIC_TABLE_HPP */
