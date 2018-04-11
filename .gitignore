@@ -34,7 +34,6 @@
 # Build directories
 archive
 build
-docs
 data-out
 
 # Xcode file
