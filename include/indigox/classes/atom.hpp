@@ -84,10 +84,11 @@ namespace indigox {
      *  methods. */
     IXAtom();
     
-    /*! \brief Normal constructor, links IXAtom to a IXMolecule.
-     *  \details Though allowed, it is not recommended to construct IXAtom
-     *  instances directly. Rather, do so through the IXMolecule::NewAtom
-     *  methods.
+    /*! \brief Normal constructor.
+     *  \details Links the constructed atom to the given Molecule, though no
+     *  bookkeeping is performed so the molecule does not know about it. Though
+     *  allowed, it is not recommended to construct IXAtom instances directly.
+     *  Rather, do so through the IXMolecule::NewAtom methods.
      *  \param m the molecule to assign this atom to. */
     IXAtom(Molecule m);
     
