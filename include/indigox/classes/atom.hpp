@@ -21,38 +21,35 @@
 #include "../utils/counter.hpp"
 
 namespace indigox {
-
-  // Related typedefs
-  //! \cond
   class IXAtom;
   class IXBond;
   class IXAngle;
   class IXDihedral;
   class IXMolecule;
+  
+  //! \brief shared_ptr for normal use of the IXAtom class.
   typedef std::shared_ptr<IXAtom> Atom;
   typedef std::shared_ptr<IXBond> Bond;
   typedef std::shared_ptr<IXAngle> Angle;
   typedef std::shared_ptr<IXDihedral> Dihedral;
   typedef std::shared_ptr<IXMolecule> Molecule;
+  
+  /*! \brief weak_ptr for non-ownership reference to the IXAtom class.
+   *  \details Intended for internal use only. */
   typedef std::weak_ptr<IXAtom> _Atom;
   typedef std::weak_ptr<IXBond> _Bond;
   typedef std::weak_ptr<IXAngle> _Angle;
   typedef std::weak_ptr<IXDihedral> _Dihedral;
   typedef std::weak_ptr<IXMolecule> _Molecule;
   
-  typedef std::vector<_Bond> AtomBonds;
-  typedef std::vector<_Angle> AtomAngles;
-  typedef std::vector<_Dihedral> AtomDihedrals;
-  typedef AtomBonds::iterator AtomBondIter;
-  typedef AtomAngles::iterator AtomAngleIter;
-  typedef AtomDihedrals::iterator AtomDihedralIter;
-  
-  enum ATOMSTEREO {
-    ACHIRAL,
-    CHIRAL_R,
-    CHIRAL_S
+  //! \brief Enum for the different types of atom stereochemistry
+  enum AtomStereo {
+    ACHIRAL,   //!< No stereochemistry.
+    CHIRAL_R,  //!< Has R stereochemistry.
+    CHIRAL_S,  //!< Has S stereochemistry.
   };
   
+  //! \cond
   // Temporary defintion of Vec3 struct. Will make proper math stuff sometime.
   struct Vec3 {
     double x = 0.0, y = 0.0, z = 0.0;
@@ -63,7 +60,21 @@ namespace indigox {
   : public utils::CountableObject<IXAtom>,
   public std::enable_shared_from_this<IXAtom> {
   
-  public:
+  private:
+    // Typedefs
+    //! \brief Container for storing IXBond references on an IXAtom
+    typedef std::vector<_Bond> AtomBonds;
+    //! \brief Container for storing IXAngle references on an IXAtom
+    typedef std::vector<_Angle> AtomAngles;
+    //! \brief Container for storing IXDihedral references on an IXAtom
+    typedef std::vector<_Dihedral> AtomDihedrals;
+  public:  // Make the iterator typedefs public for easier external usage
+    //! \brief Iterator over IXBond references stored on an IXAtom
+    typedef AtomBonds::iterator AtomBondIter;
+    //! \brief Iterator over IXAngle references stored on an IXAtom
+    typedef AtomAngles::iterator AtomAngleIter;
+    //! \brief Iterator over IXDihedral references stored on an IXAtom
+    typedef AtomDihedrals::iterator AtomDihedralIter;
 
     /*! \brief Default constructor.
      *  \details Though allowed, it is not recommended to construct IXAtom
@@ -78,8 +89,9 @@ namespace indigox {
      *  \param m the molecule to assign this atom to. */
     IXAtom(Molecule m);
     
-    //! \brief Destructor
+    //! \cond
     ~IXAtom() = default;
+    //! \endcond
     
     /*! \brief Element of the atom.
      *  \return the element of this atom. */
@@ -210,7 +222,7 @@ namespace indigox {
     
     /*! \brief Set the stereochemistry of an atomic center.
      *  \param s the stereochemistry to set. */
-    void SetStereochemistry(ATOMSTEREO s) { _stereo = s; }
+    void SetStereochemistry(AtomStereo s) { _stereo = s; }
     
     /*! \brief Set the aromaticity of an atom.
      *  \param a if the atom is aromatic or not. */
@@ -218,7 +230,7 @@ namespace indigox {
     
     /*! \brief Get the stereochemistry of the atom.
      *  \return the stereochemistry of the atom. */
-    ATOMSTEREO GetStereochemistry() { return _stereo; }
+    AtomStereo GetStereochemistry() { return _stereo; }
     
     /*! \brief Get the aromaticity of an atom.
      *  \return if the atom is aromatic or not. */
@@ -316,7 +328,7 @@ namespace indigox {
     //! Partial atomic charge.
     double _partial = 0.0;
     //! Stereochemistry
-    ATOMSTEREO _stereo = ACHIRAL;
+    AtomStereo _stereo;
     //! Aromaticity
     bool _aromatic = false;
     
