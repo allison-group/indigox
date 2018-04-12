@@ -57,10 +57,17 @@ void IXAtom::RemoveDihedral(Dihedral d) {
 void IXAtom::Clear() {
   _mol.reset();
   _elem.reset();
+  _fc = 0;
+  _idx = 0;
+  _implicitH = 0;
+  _name = "ATOM";
+  _pos = Vec3();
+  _partial = 0.0;
+  _stereo = ACHIRAL;
+  _aromatic = false;
   _bonds.clear();
   _angles.clear();
   _dihedrals.clear();
-  _pos = Vec3();
 }
 
 
