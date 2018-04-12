@@ -13,13 +13,13 @@ namespace indigox {
                    uint8_t group, uint8_t period, uint8_t valence,
                    uint8_t octet, uint8_t hyperOctet, double atomicR, double covR,
                    double vdwR, double chi)
-  : name_(name), symbol_(symbol), grp_(group), period_(period),Z_(Z),
-  val_(valence), oct_(octet), hyper_(hyperOctet), mass_(mass), radius_(atomicR),
-  cov_(covR), vdw_(vdwR), chi_(chi) { }
+  : _nme(name), _sym(symbol), _grp(group), _prd(period),_Z(Z),
+  _val(valence), _oct(octet), _hyp(hyperOctet), _mass(mass), _rad(atomicR),
+  _cov(covR), _vdw(vdwR), _chi(chi) { }
   
   std::string IXElement::ToString() const {
     std::stringstream ss;
-    ss << name_ << " (" << symbol_ << ")";
+    ss << +_Z << "-" << _nme << " (" << _sym << ")";
     return ss.str();
   }
   
@@ -31,7 +31,7 @@ namespace indigox {
       case 0:
         return (ss << "--- ");
       case 1:
-        return (ss << std::setw(3) << (int)er.first->GetAtomicNumber() << '|');
+        return (ss << std::setw(3) << er.first->GetAtomicNumber() << '|');
       case 2:
         return (ss << std::setw(3) << er.first->GetSymbol() << '|');
       case 3:
@@ -81,10 +81,7 @@ namespace indigox {
     return ss.str();
   }
   
-  /*
-   *  PeriodicTable implementation
-   */
-  
+  // Initalise the IXPeriodicTable static members
   PeriodicTable IXPeriodicTable::_instance = PeriodicTable();
   bool IXPeriodicTable::_init = false;
   
@@ -228,39 +225,5 @@ namespace indigox {
       _name_to.emplace(ze.second->GetName(), ze.second);
     }
   }
-  
-  
-  /*
-   *  Operators
-   */
-  namespace ix = indigox;
-  
-  std::ostream& operator<<(std::ostream& s, ix::Element e) {
-    return (s << e->ToString());
-  }
-  
-  bool operator==(ix::Element l, uint8_t r) {
-    return l->GetAtomicNumber() == r;
-  }
-  
-  bool operator==(ix::Element l, std::string r) {
-    return r.size() <= 2 ? (l->GetSymbol() == r)
-    : (l->GetName() == ix::utils::toUpperFirst(&r));
-  }
-  
-  bool operator==(ix::Element l, ix::Element r) {
-    return l->GetAtomicNumber() == r->GetAtomicNumber();
-  }
-  
-  bool operator!=(ix::Element l, uint8_t r) {
-    return !(l == r);
-  }
-  
-  bool operator!=(ix::Element l, std::string r) {
-    return !(l == r);
-  }
-  
-  bool operator!=(ix::Element l, ix::Element r) {
-    return !(l == r);
-  }
-}
+} // namespace indigox
+
