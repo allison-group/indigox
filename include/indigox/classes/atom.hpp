@@ -150,10 +150,7 @@ namespace indigox {
     Vec3 GetVector() const { return _pos; }
     
     /*! \brief String representation of the atom.
-     *  \details The representation returned depends on if indigox was compiled
-     *  in debug mode or not. In release mode, the string is of the form:
-     *  Atom(NAME, ELEMENT). In debug mode, the string is of the form:
-     *  Atom(NAME-IDX, ELEMENT, X.X, Y.Y, Z.Z).
+     *  \details The returned string is of the form: Atom(NAME, SYMBOL).
      *  \return a string representation of the atom. */
     std::string ToString();
     

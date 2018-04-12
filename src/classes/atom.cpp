@@ -20,12 +20,7 @@ IXAtom::IXAtom(Molecule m) : IXAtom() {
 std::string IXAtom::ToString() {
   std::stringstream ss;
   Element e = GetElement();
-#ifndef DEBUG
   ss << "Atom(" << _name << ", " << e->GetSymbol() << ")";
-#else
-  ss << "Atom(" << _name << "-" << _idx << ", " << e->GetSymbol();
-  ss << ", " << _pos.x << ", " << _pos.y << ", " << _pos.z << ")";
-#endif
   return ss.str();
 }
 
