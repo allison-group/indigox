@@ -316,21 +316,21 @@ namespace indigox {
     //! The atoms element.
     _Element _elem;
     //! Formal charge.
-    int _fc = 0;
+    int _fc;
     //! Index (unstable).
-    unsigned int _idx = 0;
+    unsigned int _idx;
     //! Number of implicit hydrogens.
-    unsigned int _implicitH = 0;
+    unsigned int _implicitH;
     //! Atoms name.
-    std::string _name = "ATOM";
+    std::string _name;
     //! Position vector.
     Vec3 _pos;
     //! Partial atomic charge.
-    double _partial = 0.0;
+    double _partial;
     //! Stereochemistry
     AtomStereo _stereo;
     //! Aromaticity
-    bool _aromatic = false;
+    bool _aromatic;
     
     //! MM type for atom
     // FFAtom _mmtype;

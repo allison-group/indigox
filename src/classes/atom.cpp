@@ -9,10 +9,13 @@
 
 using namespace indigox;
 
-IXAtom::IXAtom() : utils::CountableObject<IXAtom>(), _mol(), _elem() { }
+IXAtom::IXAtom() : utils::CountableObject<IXAtom>(), _mol(), _elem(), _fc(0),
+                   _idx(0), _implicitH(0), _name("ATOM"), _pos({0.0,0.0,0.0}),
+                   _partial(0.0), _stereo(ACHIRAL), _aromatic(false) { }
 
-IXAtom::IXAtom(Molecule m)
-: utils::CountableObject<IXAtom>(), _mol(m), _elem() { }
+IXAtom::IXAtom(Molecule m) : IXAtom() {
+  _mol = m;
+}
 
 std::string IXAtom::ToString() {
   std::stringstream ss;
@@ -25,6 +28,7 @@ std::string IXAtom::ToString() {
 #endif
   return ss.str();
 }
+
 
 void IXAtom::RemoveBond(Bond b) {
   AtomBondIter it = _bonds.begin();
