@@ -9,14 +9,10 @@
 
 using namespace indigox;
 
-IXAtom::IXAtom() : utils::CountableObject<IXAtom>(), _mol(), _elem() {
-  _idx = GetUniqueID();
-}
+IXAtom::IXAtom() : utils::CountableObject<IXAtom>(), _mol(), _elem() { }
 
 IXAtom::IXAtom(Molecule m)
-: utils::CountableObject<IXAtom>(), _mol(m), _elem(){
-  _idx = GetUniqueID();
-}
+: utils::CountableObject<IXAtom>(), _mol(m), _elem() { }
 
 std::string IXAtom::ToString() {
   std::stringstream ss;
