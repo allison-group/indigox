@@ -42,13 +42,6 @@ namespace indigox {
   typedef std::weak_ptr<IXDihedral> _Dihedral;
   typedef std::weak_ptr<IXMolecule> _Molecule;
   
-  //! \brief Enum for the different types of atom stereochemistry
-  enum AtomStereo {
-    ACHIRAL,   //!< No stereochemistry.
-    CHIRAL_R,  //!< Has R stereochemistry.
-    CHIRAL_S,  //!< Has S stereochemistry.
-  };
-  
   //! \cond
   // Temporary defintion of Vec3 struct. Will make proper math stuff sometime.
   struct Vec3 {
@@ -75,6 +68,15 @@ namespace indigox {
     typedef AtomAngles::iterator AtomAngleIter;
     //! \brief Iterator over IXDihedral references stored on an IXAtom
     typedef AtomDihedrals::iterator AtomDihedralIter;
+    
+  public:
+    //! \brief Enum for the different types of atom stereochemistry
+    enum class Stereo {
+      UNDEFINED, //!< No defined stereochemistry.
+      ACHIRAL,   //!< Defined as no stereochemistry.
+      R,         //!< Has R stereochemistry.
+      S,         //!< Has S stereochemistry.
+    };
 
     /*! \brief Default constructor.
      *  \details Though allowed, it is not recommended to construct IXAtom
@@ -219,7 +221,7 @@ namespace indigox {
     
     /*! \brief Set the stereochemistry of an atomic center.
      *  \param s the stereochemistry to set. */
-    void SetStereochemistry(AtomStereo s) { _stereo = s; }
+    void SetStereochemistry(Stereo s) { _stereo = s; }
     
     /*! \brief Set the aromaticity of an atom.
      *  \param a if the atom is aromatic or not. */
@@ -227,7 +229,7 @@ namespace indigox {
     
     /*! \brief Get the stereochemistry of the atom.
      *  \return the stereochemistry of the atom. */
-    AtomStereo GetStereochemistry() { return _stereo; }
+    Stereo GetStereochemistry() { return _stereo; }
     
     /*! \brief Get the aromaticity of an atom.
      *  \return if the atom is aromatic or not. */
@@ -325,7 +327,7 @@ namespace indigox {
     //! Partial atomic charge.
     double _partial;
     //! Stereochemistry
-    AtomStereo _stereo;
+    Stereo _stereo;
     //! Aromaticity
     bool _aromatic;
     

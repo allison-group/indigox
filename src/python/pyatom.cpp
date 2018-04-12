@@ -22,7 +22,8 @@ namespace py = pybind11;
 
 namespace indigox {
   void GeneratePyAtom(pybind11::module& m) {
-    py::class_<IXAtom, Atom>(m, "Atom")
+    py::class_<IXAtom, Atom> atom(m, "Atom");
+    atom
     // Constructors
     .def(py::init<>([](){ return Atom(new IXAtom()); }))
     .def(py::init<>([](Molecule m){ return Atom(new IXAtom(m)); }))
@@ -76,6 +77,14 @@ namespace indigox {
 //    .def("IterateDihedrals", &IXAtom::GetDihedralIters)
     // Pickle support
     .def(py::pickle(&PickleAtom, &UnpickleAtom))
+    ;
+    
+    // AtomStereo enum
+    py::enum_<IXAtom::Stereo>(atom, "Stereo")
+    .value("UNDEFINED", IXAtom::Stereo::UNDEFINED)
+    .value("ACHIRAL", IXAtom::Stereo::ACHIRAL)
+    .value("R", IXAtom::Stereo::R)
+    .value("S", IXAtom::Stereo::S)
     ;
   }
 }
