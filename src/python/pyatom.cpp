@@ -28,7 +28,6 @@ namespace indigox {
     .def(py::init<>([](){ return Atom(new IXAtom()); }))
     .def(py::init<>([](Molecule m){ return Atom(new IXAtom(m)); }))
     // Hidden methods
-    .def("__str__", &IXAtom::ToString)
     .def("__repr__", &IXAtom::ToString)
     // Getters
     .def("GetAromaticity", &IXAtom::GetAromaticity)
@@ -44,6 +43,9 @@ namespace indigox {
     .def("GetX", &IXAtom::GetX)
     .def("GetY", &IXAtom::GetY)
     .def("GetZ", &IXAtom::GetZ)
+    .def("NumAngles", &IXAtom::NumAngles)
+    .def("NumBonds", &IXAtom::NumBonds)
+    .def("NumDihedrals", &IXAtom::NumDihedrals)
     .def("GetUniqueID", &IXAtom::GetUniqueID)
     // Setters
     .def("SetAromaticity", &IXAtom::SetAromaticity)
