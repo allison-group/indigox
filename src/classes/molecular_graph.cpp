@@ -14,7 +14,6 @@
 
 #include "indigox/classes/atom.hpp"
 #include "indigox/classes/bond.hpp"
-#include "indigox/classes/iters.hpp"
 #include "indigox/classes/molecular_graph.hpp"
 #include "indigox/classes/molecule.hpp"
 #include "indigox/utils/common.hpp"

@@ -82,26 +82,26 @@ bool ElectronOptimisationAlgorithm::ApplyElectronAssignment(size_t idx) {
       MolEdgeProp* prop = parent_->molGraph_->GetProperties(edg);
       switch (p->electron_count + p->pre_placed) {
         case 2:
-          prop->bond->SetOrder(SINGLE_BOND);
+          prop->bond->SetOrder(IXBond::Order::SINGLE);
           break;
         case 3:
-          prop->bond->SetOrder(ONEANDAHALF_BOND);
+          prop->bond->SetOrder(IXBond::Order::ONEANDAHALF);
           break;
         case 4:
-          prop->bond->SetOrder(DOUBLE_BOND);
+          prop->bond->SetOrder(IXBond::Order::DOUBLE);
           break;
         case 5:
-          prop->bond->SetOrder(TWOANDAHALF_BOND);
+          prop->bond->SetOrder(IXBond::Order::TWOANDAHALF);
           break;
         case 6:
-          prop->bond->SetOrder(TRIPLE_BOND);
+          prop->bond->SetOrder(IXBond::Order::TRIPLE);
           break;
         case 8:
-          prop->bond->SetOrder(QUADRUPLE_BOND);
+          prop->bond->SetOrder(IXBond::Order::QUADRUPLE);
           break;
           
         default:
-          prop->bond->SetOrder(UNDEFINED_BOND);
+          prop->bond->SetOrder(IXBond::Order::UNDEFINED);
           break;
       }
     }

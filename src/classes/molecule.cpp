@@ -300,7 +300,7 @@ size_t IXMolecule::AssignElectrons() {
 //  
 //  for (auto& tmp : idx_to_bond_) {
 //    Bond_p bond = tmp.second.lock();
-//    if (bond->GetOrder() != BondOrder::SINGLE_BOND) {
+//    if (bond->GetOrder() != Order::SINGLE_BOND) {
 //      uid_t a = bond->GetSourceAtom()->GetIndex();
 //      uid_t b = bond->GetTargetAtom()->GetIndex();
 //      if (a <= b) std::cout << a << "-" << b << " : " << bond->GetOrder() << std::endl;
