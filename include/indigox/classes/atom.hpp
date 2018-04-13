@@ -310,6 +310,18 @@ namespace indigox {
       return std::make_pair(_dihedrals.begin(), _dihedrals.end());
     }
     
+    /*! \brief Number of bonds this atom is part of.
+     *  \returns the number of assigned bonds. */
+    size_t NumAtoms() const { return _bonds.size(); }
+    
+    /*! \brief Number of angles this atom is a part of.
+     *  \returns the number of assigned angles. */
+    size_t NumAngles() const { return _angles.size(); }
+    
+    /*! \brief Number of dihedrals this atom is a part of.
+     *  \returns the number of assigned dihedrals. */
+    size_t NumDihedrals() const { return _dihedrals.size(); }
+    
   private:
     //! The molecule this atom is assigned to.
     _Molecule _mol;
