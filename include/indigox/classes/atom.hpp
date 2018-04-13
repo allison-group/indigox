@@ -312,7 +312,7 @@ namespace indigox {
     
     /*! \brief Number of bonds this atom is part of.
      *  \returns the number of assigned bonds. */
-    size_t NumAtoms() const { return _bonds.size(); }
+    size_t NumBonds() const { return _bonds.size(); }
     
     /*! \brief Number of angles this atom is a part of.
      *  \returns the number of assigned angles. */
