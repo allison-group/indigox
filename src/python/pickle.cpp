@@ -67,7 +67,9 @@ PeriodicTable UnpicklePeriodicTable(py::tuple& t) {
 Atom __unpickle_atom_version_0(py::tuple& t) {
   Atom a = Atom(new IXAtom());
   a->SetAromaticity(t[0].cast<bool>());
-  a->SetElement(t[1].cast<unsigned int>());
+  unsigned int Z = t[1].cast<unsigned int>();
+  if (!Z) a->SetElement(IXPeriodicTable::GetInstance()->GetUndefinedElement());
+  else a->SetElement(Z);
   a->SetFormalCharge(t[2].cast<int>());
   a->SetImplicitCount(t[3].cast<unsigned int>());
   a->SetIndex(t[4].cast<unsigned int>());
