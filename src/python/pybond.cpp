@@ -8,46 +8,76 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 
-#include "indigox/python/interface.hpp"
+#include <indigox/python/interface.hpp>
+#include <indigox/python/pickle.hpp>
 
-#include "indigox/classes/atom.hpp"
-#include "indigox/classes/bond.hpp"
-#include "indigox/classes/molecule.hpp"
+#include <indigox/classes/atom.hpp>
+#include <indigox/classes/bond.hpp>
+#include <indigox/classes/molecule.hpp>
 
 namespace py = pybind11;
 
 namespace indigox {
   void GeneratePyBond(py::module& m) {
     // Bond class
-    py::class_<IXBond, Bond>(m, "Bond")
+    py::class_<IXBond, Bond> bond(m, "Bond");
+    bond
     // Hidden methods
     .def(py::init<>([](){ return Bond(new IXBond()); }))
-    .def("__str__", &IXBond::ToString)
+    .def(py::init<>([](Atom a, Atom b){ return Bond(new IXBond(a,b)); }))
     .def("__repr__", &IXBond::ToString)
     // Getters
+    .def("GetAromaticity", &IXBond::GetAromaticity)
     .def("GetIndex", &IXBond::GetIndex)
     .def("GetMolecule", &IXBond::GetMolecule)
     .def("GetOrder", &IXBond::GetOrder)
     .def("GetSourceAtom", &IXBond::GetSourceAtom)
+    .def("GetStereochemistry", &IXBond::GetStereochemistry)
     .def("GetTargetAtom", &IXBond::GetTargetAtom)
+    .def("NumAngles", &IXBond::NumAngles)
+    .def("NumAtoms", &IXBond::NumAtoms)
+    .def("NumDihedrals", &IXBond::NumDihedrals)
+    .def("ToString", &IXBond::ToString)
     // Setters
+    .def("SetAromaticity", &IXBond::SetAromaticity)
     .def("SetIndex", &IXBond::SetIndex)
     .def("SetMolecule", &IXBond::SetMolecule)
     .def("SetOrder", &IXBond::SetOrder)
     .def("SetSourceAtom", &IXBond::SetSourceAtom)
+    .def("SetStereochemistry", &IXBond::SetStereochemistry)
     .def("SetTargetAtom", &IXBond::SetTargetAtom)
+    // Modification
+//    .def("AddAngle", &IXBond::AddAngle)
+//    .def("AddDihedral", &IXBond::AddDihedral)
+    .def("Clear", &IXBond::Clear)
+//    .def("RemoveAngle", &IXBond::RemoveAngle)
+//    .def("RemoveDihedral", &IXBond::RemoveDihedral)
+    // Iterators
+    .def("IterateAngles", &IXBond::GetAngleIters)
+    .def("IterateAtoms", &IXBond::GetAtomIters)
+    .def("IterateDihedrals", &IXBond::GetDihedralIters)
+    // Pickle support
+    .def(py::pickle(&PickleBond, &UnpickleBond))
     ;
     
     // BondOrder enum
-    py::enum_<BondOrder>(m, "BondOrder")
-    .value("UNDEFINED_BOND", BondOrder::UNDEFINED_BOND)
-    .value("SINGLE_BOND", BondOrder::SINGLE_BOND)
-    .value("DOUBLE_BOND", BondOrder::DOUBLE_BOND)
-    .value("TRIPLE_BOND", BondOrder::TRIPLE_BOND)
-    .value("QUADRUPLE_BOND", BondOrder::QUADRUPLE_BOND)
-    .value("AROMATIC_BOND", BondOrder::AROMATIC_BOND)
-    .value("ONEANDAHALF_BOND", BondOrder::ONEANDAHALF_BOND)
-    .value("TWOANDAHALF_BOND", BondOrder::TWOANDAHALF_BOND)
+    py::enum_<IXBond::Order>(bond, "Order")
+    .value("UNDEFINED", IXBond::Order::UNDEFINED)
+    .value("SINGLE", IXBond::Order::SINGLE)
+    .value("DOUBLE", IXBond::Order::DOUBLE)
+    .value("TRIPLE", IXBond::Order::TRIPLE)
+    .value("QUADRUPLE", IXBond::Order::QUADRUPLE)
+    .value("AROMATIC", IXBond::Order::AROMATIC)
+    .value("ONEANDAHALF", IXBond::Order::ONEANDAHALF)
+    .value("TWOANDAHALF", IXBond::Order::TWOANDAHALF)
+    ;
+    
+    // BondStereo enum
+    py::enum_<IXBond::Stereo>(bond, "Stereo")
+    .value("UNDEFINED", IXBond::Stereo::UNDEFINED)
+    .value("NONE", IXBond::Stereo::NONE)
+    .value("E", IXBond::Stereo::E)
+    .value("Z", IXBond::Stereo::Z)
     ;
   }
 }

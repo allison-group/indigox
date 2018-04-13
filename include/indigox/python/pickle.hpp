@@ -13,6 +13,9 @@ namespace py = pybind11;
 py::tuple PickleAtom(const indigox::Atom atom);
 indigox::Atom UnpickleAtom(py::tuple& t);
 
+py::tuple PickleBond(const indigox::Bond bond);
+indigox::Bond UnpickleBond(py::tuple& t);
+
 py::tuple PicklePeriodicTable(const indigox::PeriodicTable table);
 indigox::PeriodicTable UnpicklePeriodicTable(py::tuple& t);
 
