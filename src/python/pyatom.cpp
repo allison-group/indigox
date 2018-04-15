@@ -47,6 +47,7 @@ namespace indigox {
     .def("NumBonds", &IXAtom::NumBonds)
     .def("NumDihedrals", &IXAtom::NumDihedrals)
     .def("GetUniqueID", &IXAtom::GetUniqueID)
+    .def("GetCurrentCount", &utils::CountableObject<IXAtom>::GetCurrentCount)
     // Setters
     .def("SetAromaticity", &IXAtom::SetAromaticity)
     .def("SetElement", py::overload_cast<Element>(&IXAtom::SetElement))

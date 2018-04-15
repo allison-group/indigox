@@ -7,7 +7,7 @@
 
 namespace indigox::utils {
   
-  /*! \class CountableObject counter.hpp indigox/utils/counter.hpp
+  /*! \class CountableObject indigox/utils/counter.hpp
    *  \brief Template class for counting instances.
    *  \tparam T class requiring counting.
    *  \details Provides a means to count number of instances of a type created.

@@ -22,7 +22,6 @@ namespace indigox {
       if (pt) ss << "PeriodicTable(" << pt->NumElements() << " elements)";
       return ss.str();
     })
-//    .def("__repr__", &IXPeriodicTable::ToString)
     .def("GetInstance", &IXPeriodicTable::GetInstance, py::return_value_policy::reference)
     .def("GetElement", py::overload_cast<const uint8_t>(&IXPeriodicTable::GetElement, py::const_))
     .def("GetElement", py::overload_cast<const std::string>(&IXPeriodicTable::GetElement, py::const_))
