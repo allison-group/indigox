@@ -107,7 +107,7 @@ BRIEF_MEMBER_DESC      = YES
 # brief descriptions will be completely suppressed.
 # The default value is: YES.
 
-REPEAT_BRIEF           = YES
+REPEAT_BRIEF           = NO
 
 # This tag implements a quasi-intelligent brief description abbreviator that is
 # used to form the text in various listings. Each string in this list, if found
@@ -876,7 +876,9 @@ RECURSIVE              = YES
 # run.
 
 EXCLUDE                = @PROJECT_SOURCE_DIR@/external \
-                         @PROJECT_SOURCE_DIR@/test
+                         @PROJECT_SOURCE_DIR@/test \
+                         @PROJECT_SOURCE_DIR@/include/indigox/classes/forcefield \
+                         @PROJECT_SOURCE_DIR@/src/classes/forcefield
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
