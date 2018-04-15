@@ -2,10 +2,14 @@
 #include <cstdint>
 #include <memory>
 #include <sstream>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
-#include "indigox/classes/atom.hpp"
-#include "indigox/classes/periodictable.hpp"
-#include "indigox/utils/counter.hpp"
+#include <indigox/classes/atom.hpp>
+#include <indigox/classes/periodictable.hpp>
+#include <indigox/utils/counter.hpp>
+#include <indigox/utils/numerics.hpp>
 
 using namespace indigox;
 
@@ -18,7 +22,7 @@ IXAtom::IXAtom(Molecule m) : IXAtom() {
   _mol = m;
 }
 
-std::string IXAtom::ToString() {
+string_ IXAtom::ToString() {
   std::stringstream ss;
   Element e = GetElement();
   ss << "Atom(" << _name << ", " << e->GetSymbol() << ")";
@@ -48,6 +52,26 @@ void IXAtom::RemoveDihedral(Dihedral d) {
     if (!it->expired() && it->lock() == d) break;
   }
   if (it != _dihedrals.end()) _dihedrals.erase(it);
+}
+
+void IXAtom::SetElement(uint_ e)  {
+  _elem = IXPeriodicTable::GetInstance()->GetElement(e);
+}
+
+void IXAtom::SetElement(string_ e) {
+  _elem = IXPeriodicTable::GetInstance()->GetElement(e);
+}
+
+Element IXAtom::GetElement() const {
+  if(_elem.expired())
+    return IXPeriodicTable::GetInstance()->GetUndefinedElement();
+  return _elem.lock();
+}
+
+Molecule IXAtom::GetMolecule() const {
+  if(_mol.expired())
+    throw std::logic_error("Atom not assigned to a valid molecule");
+  return _mol.lock();
 }
 
 void IXAtom::Clear() {

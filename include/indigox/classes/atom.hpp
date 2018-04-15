@@ -1,24 +1,14 @@
-/** @file atom.hpp
- *  @brief Atom declaration
- *  @author Ivan Welsh
- *  @date 5 January 2018
- *  @lastmodify 8 January 2018
- *  @version 0.1
- *  @copyright The MIT License
- */
+/*! \file atom.hpp */
 
 #ifndef INDIGOX_CLASSES_ATOM_HPP
 #define INDIGOX_CLASSES_ATOM_HPP
 
-#include <cstdint>
-#include <iostream>
 #include <memory>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
-#include "periodictable.hpp"
 #include "../utils/counter.hpp"
+#include "../utils/numerics.hpp"
 
 namespace indigox {
   class IXAtom;
@@ -27,12 +17,15 @@ namespace indigox {
   class IXDihedral;
   class IXMolecule;
   
+  class IXElement;
+  
   //! \brief shared_ptr for normal use of the IXAtom class.
   typedef std::shared_ptr<IXAtom> Atom;
   typedef std::shared_ptr<IXBond> Bond;
   typedef std::shared_ptr<IXAngle> Angle;
   typedef std::shared_ptr<IXDihedral> Dihedral;
   typedef std::shared_ptr<IXMolecule> Molecule;
+  typedef std::shared_ptr<IXElement> Element;
   
   /*! \brief weak_ptr for non-ownership reference to the IXAtom class.
    *  \details Intended for internal use only. */
@@ -41,11 +34,12 @@ namespace indigox {
   typedef std::weak_ptr<IXAngle> _Angle;
   typedef std::weak_ptr<IXDihedral> _Dihedral;
   typedef std::weak_ptr<IXMolecule> _Molecule;
+  typedef std::weak_ptr<IXElement> _Element;
   
   //! \cond
   // Temporary defintion of Vec3 struct. Will make proper math stuff sometime.
   struct Vec3 {
-    double x = 0.0, y = 0.0, z = 0.0;
+    float_ x = 0.0, y = 0.0, z = 0.0;
   };
   //! \endcond
   
@@ -55,11 +49,11 @@ namespace indigox {
   
   private:
     // Typedefs
-    //! \brief Container for storing IXBond references on an IXAtom
+    //! \brief Container for storing IXBond references.
     typedef std::vector<_Bond> AtomBonds;
-    //! \brief Container for storing IXAngle references on an IXAtom
+    //! \brief Container for storing IXAngle references.
     typedef std::vector<_Angle> AtomAngles;
-    //! \brief Container for storing IXDihedral references on an IXAtom
+    //! \brief Container for storing IXDihedral references.
     typedef std::vector<_Dihedral> AtomDihedrals;
   public:  // Make the iterator typedefs public for easier external usage
     //! \brief Iterator over IXBond references stored on an IXAtom
@@ -98,55 +92,47 @@ namespace indigox {
     
     /*! \brief Element of the atom.
      *  \return the element of this atom. */
-    Element GetElement() const {
-      if(_elem.expired())
-        return IXPeriodicTable::GetInstance()->GetUndefinedElement();
-      return _elem.lock();
-    }
+    Element GetElement() const;
     
     /*! \brief Formal charge on the atom.
      *  \return the formal charge on the atom. */
-    int GetFormalCharge() const { return _fc; }
+    int_ GetFormalCharge() const { return _fc; }
     
     /*! \brief Partial atomic charge on the atom.
      *  \return the partial atomic charge. */
-    double GetPartialCharge() const { return _partial; }
+    float_ GetPartialCharge() const { return _partial; }
     
     /*! \brief Index of the atom.
      *  \details This value may be modified without warning. Use with caution.
      *  For a constant identifier to the atom, use IXAtom::GetUniqueID.
      *  \return the index assigned to the atom. */
-    unsigned int GetIndex() const { return _idx; };
+    uint_ GetIndex() const { return _idx; };
     
     /*! \brief Get number of implicit hydrogens.
      *  \return the number of implicit hydrogens in the atom. */
-    unsigned int GetImplicitCount() const { return _implicitH; }
+    uint_ GetImplicitCount() const { return _implicitH; }
     
     /*! \brief Molecule this atom is associated with.
      *  \return the molecule associated with this atom.
      *  \throw std::logic_error Error if the atom was never assigned to a
      *  molecule, or if the assigned molecule has been deleted. */
-    Molecule GetMolecule() const {
-      if(_mol.expired())
-        throw std::logic_error("Atom not assigned to a valid molecule");
-      return _mol.lock();
-    }
+    Molecule GetMolecule() const;
     
     /*! \brief Atom name.
      *  \return name of the atom. */
-    std::string GetName() const { return _name; }
+    string_ GetName() const { return _name; }
     
     /*! \brief Atom x position.
      *  \return the x coordinate of this atom. */
-    double GetX() const { return _pos.x; }
+    float_ GetX() const { return _pos.x; }
     
     /*! \brief Atom y position.
      *  \return the y coordinate of this atom. */
-    double GetY() const { return _pos.y; }
+    float_ GetY() const { return _pos.y; }
     
     /*! \brief Atom z position.
      *  \return the z coordinate of this atom. */
-    double GetZ() const { return _pos.z; }
+    float_ GetZ() const { return _pos.z; }
     
     /*! \brief Vector of the atom's position.
      *  \return the atoms position. */
@@ -155,7 +141,7 @@ namespace indigox {
     /*! \brief String representation of the atom.
      *  \details The returned string is of the form: Atom(NAME, SYMBOL).
      *  \return a string representation of the atom. */
-    std::string ToString();
+    string_ ToString();
     
     /*! \brief Set the element of this atom.
      *  \param e the element to set to. */
@@ -163,33 +149,29 @@ namespace indigox {
     
     /*! \brief Set the element of this atom.
      *  \param e the name or atomic symbol of the element to set. */
-    void SetElement(std::string e) {
-      _elem = IXPeriodicTable::GetInstance()->GetElement(e);
-    }
+    void SetElement(string_ e);
     
     /*! \brief Set the element of this atom.
      *  \param e the atomic number of the element to set. */
-    void SetElement(unsigned int e)  {
-      _elem = IXPeriodicTable::GetInstance()->GetElement(e);
-    }
+    void SetElement(uint_ e);
     
     /*! \brief Set the formal charge of this atom.
      *  \param q the formal charge value to set. */
-    void SetFormalCharge(int q) { _fc = q; }
+    void SetFormalCharge(int_ q) { _fc = q; }
     
     /*! \brief Set the partial charge of this atom.
      *  \param q the partial charge value to set. */
-    void SetPartialCharge(double q) { _partial = q; }
+    void SetPartialCharge(float_ q) { _partial = q; }
     
     /*! \brief Set the number of implicit hydrogens.
      *  \param h the number of implicit hydrogens to set. */
-    void SetImplicitCount(unsigned int h) { _implicitH = h; }
+    void SetImplicitCount(uint_ h) { _implicitH = h; }
     
     /*! \brief Set the index of this atom.
      *  \details The index of an atom should not be considered stable. Use with
      *  caution.
      *  \param i the index to set. */
-    void SetIndex(unsigned int i) { _idx = i; }
+    void SetIndex(uint_ i) { _idx = i; }
     
     /*! \brief Set the molecule this atom is part of.
      *  \details No bookkeeping is performed, meaning the molecule is not
@@ -200,23 +182,23 @@ namespace indigox {
     
     /*! \brief Set the atom name.
      *  \param n name to set. */
-    void SetName(std::string n) { _name = n; }
+    void SetName(string_ n) { _name = n; }
     
     /*! \brief Set the x position.
      *  \param x position to set. */
-    void SetX(double x) { _pos.x = x; }
+    void SetX(float_ x) { _pos.x = x; }
     
     /*! \brief Set the y position.
      *  \param y position to set. */
-    void SetY(double y) { _pos.y = y; }
+    void SetY(float_ y) { _pos.y = y; }
     
     /*! \brief Set the z position.
      *  \param z position to set. */
-    void SetZ(double z) { _pos.z = z; }
+    void SetZ(float_ z) { _pos.z = z; }
     
     /*! \brief Set the x, y and z positions.
      *  \param x,y,z position to set. */
-    void SetPosition(double x, double y, double z) {
+    void SetPosition(float_ x, float_ y, float_ z) {
       _pos.x = x; _pos.y = y; _pos.z = z;
     }
     
@@ -312,15 +294,15 @@ namespace indigox {
     
     /*! \brief Number of bonds this atom is part of.
      *  \returns the number of assigned bonds. */
-    size_t NumBonds() const { return _bonds.size(); }
+    size_ NumBonds() const { return _bonds.size(); }
     
     /*! \brief Number of angles this atom is a part of.
      *  \returns the number of assigned angles. */
-    size_t NumAngles() const { return _angles.size(); }
+    size_ NumAngles() const { return _angles.size(); }
     
     /*! \brief Number of dihedrals this atom is a part of.
      *  \returns the number of assigned dihedrals. */
-    size_t NumDihedrals() const { return _dihedrals.size(); }
+    size_ NumDihedrals() const { return _dihedrals.size(); }
     
   private:
     //! The molecule this atom is assigned to.
@@ -328,17 +310,17 @@ namespace indigox {
     //! The atoms element.
     _Element _elem;
     //! Formal charge.
-    int _fc;
+    int_ _fc;
     //! Index (unstable).
-    unsigned int _idx;
+    uint_ _idx;
     //! Number of implicit hydrogens.
-    unsigned int _implicitH;
+    uint_ _implicitH;
     //! Atoms name.
-    std::string _name;
+    string_ _name;
     //! Position vector.
     Vec3 _pos;
     //! Partial atomic charge.
-    double _partial;
+    float_ _partial;
     //! Stereochemistry
     Stereo _stereo;
     //! Aromaticity
