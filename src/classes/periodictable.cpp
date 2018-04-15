@@ -1,4 +1,3 @@
-#include <cstdint>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -6,18 +5,18 @@
 
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/utils/common.hpp>
+#include <indigox/utils/numerics.hpp>
 
 namespace indigox {
   
-  IXElement::IXElement(uint8_t Z, std::string name, std::string symbol, double mass,
-                   uint8_t group, uint8_t period, uint8_t valence,
-                   uint8_t octet, uint8_t hyperOctet, double atomicR, double covR,
-                   double vdwR, double chi)
-  : _nme(name), _sym(symbol), _grp(group), _prd(period),_Z(Z),
-  _val(valence), _oct(octet), _hyp(hyperOctet), _mass(mass), _rad(atomicR),
-  _cov(covR), _vdw(vdwR), _chi(chi) { }
+  IXElement::IXElement(uchar_ Z, string_ name, string_ sym, float_ mass,
+                       uchar_ grp, uchar_ prd, uchar_ val, uchar_ oct,
+                       uchar_ hyp, float_ rad, float_ cov, float_ vdw,
+                       float_ chi)
+  : _nme(name), _sym(sym), _grp(grp), _prd(prd), _Z(Z), _val(val), _oct(oct),
+  _hyp(hyp), _mass(mass), _rad(rad), _cov(cov), _vdw(vdw), _chi(chi) { }
   
-  std::string IXElement::ToString() const {
+  string_ IXElement::ToString() const {
     std::stringstream ss;
     ss << +_Z << "-" << _nme << " (" << _sym << ")";
     return ss.str();
@@ -44,10 +43,10 @@ namespace indigox {
   }
   //! \endcond
   
-  std::string IXPeriodicTable::ToString() const {
+  string_ IXPeriodicTable::ToString() const {
     std::stringstream ss;
-    size_t row_count = 0, restart = 0;
-    std::vector<int> elems = {
+    size_ row_count = 0, restart = 0;
+    std::vector<int_> elems = {
        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,-1,
        3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 8, 9,10,-1,
       11,12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,13,14,15,16,17,18,-1,
@@ -59,7 +58,7 @@ namespace indigox {
        0, 0, 0,90,91,92,93,94,95,96,97,98,99,100,101,102,103,-1
     };
     ss << ' ';
-    for (size_t i = 0; i < elems.size(); ) {
+    for (size_ i = 0; i < elems.size(); ) {
       if (elems[i] == -1) {
         ss << "\n";
         if (row_count == 0 || row_count == 1) ss << '|';

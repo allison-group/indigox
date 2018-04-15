@@ -4,12 +4,11 @@
 #ifndef INDIGOX_CLASSES_PERIODIC_TABLE_HPP
 #define INDIGOX_CLASSES_PERIODIC_TABLE_HPP
 
-#include <cstdint>
 #include <iostream>
 #include <map>
-#include <string>
 
 #include "../utils/common.hpp"
+#include "../utils/numerics.hpp"
 
 namespace indigox {
   
@@ -49,7 +48,7 @@ namespace indigox {
      *  \returns the requested element.
      *  \throw std::invalid_argument If the requested atomic number does not exist
      *  within the PeriodicTable. */
-    Element GetElement(const uint8_t z) const;
+    Element GetElement(const uchar_ z) const;
     
     /*! \brief Get the element with the given name or symbol.
      *  \details Matches are made ignoring case.
@@ -57,19 +56,19 @@ namespace indigox {
      *  \returns the requested element.
      *  \throw std::invalid_argument If the requested name or symbol does not
      *  exist within the PeriodicTable. */
-    Element GetElement(const std::string name) const;
+    Element GetElement(const string_ name) const;
     
     /*! \brief Get the element with the given atomic number.
      *  \param z the atomic number of the element to get.
      *  \return the requested element.
      *  \see IXPeriodicTable::GetElement(const uint8_t) const */
-    Element operator[](const uint8_t z) const { return GetElement(z); }
+    Element operator[](const uchar_ z) const { return GetElement(z); }
     
     /*! \brief Get the element with the given name or symbol.
      *  \param name the name or symbol of the element to get.
      *  \return the requested element.
      *  \see IXPeriodicTable::GetElement(const std::string) const */
-    Element operator[](const std::string name) const { return GetElement(name); }
+    Element operator[](const string_ name) const { return GetElement(name); }
     
     /*! \brief Get the element for use when an element is not defined.
      *  \details As there is not much point in an undefined element, this
@@ -79,7 +78,7 @@ namespace indigox {
     
     /*! \brief Number of elements in the PeriodicTable.
      *  \return the number of elements in the PeriodicTable. */
-    size_t NumElements() const { return _z_to.size(); }
+    size_ NumElements() const { return _z_to.size(); }
     
     /*! \brief Get a textual representation of the PeriodicTable.
      *  \details The textual representation lays out the elements of the
@@ -87,7 +86,7 @@ namespace indigox {
      *  element has its atomic number and symbol printed.
      *  \return a string containing a tabular layout of the PeriodicTable
      *  elements. */
-    std::string ToString() const;
+    string_ ToString() const;
   
   private:
     //! Default constructor.
@@ -107,9 +106,9 @@ namespace indigox {
     //! Undefined element.
     Element _null;
     //! Map atomic numbers to elements.
-    std::map<uint8_t, Element> _z_to;
+    std::map<uchar_, Element> _z_to;
     //! Map symbol and name to elements.
-    std::map<std::string, Element> _name_to;
+    std::map<string_, Element> _name_to;
   };
   
   /*! \class IXElement periodictable.hpp indigox/classes/periodictable.hpp
@@ -128,65 +127,65 @@ namespace indigox {
     
     /*! \brief Get atomic mass.
      *  \return the atomic mass of the element. */
-    double GetAtomicMass() const { return _mass; }
+    float_ GetAtomicMass() const { return _mass; }
     
     /*! \brief Get atomic number.
      *  \return the atomic number of the element. */
-    uint GetAtomicNumber() const { return _Z; }
+    uchar_ GetAtomicNumber() const { return _Z; }
     
     /*! \brief Get atomic radius.
      *  \details Radius is in angstroms.
      *  \return the atomic radius of the element. */
-    double GetAtomicRadius() const { return _rad; }
+    float_ GetAtomicRadius() const { return _rad; }
     
     /*! \brief Get covalent radius.
      *  \details Radius is in angstroms.
      *  \return the covalent radius of the element. */
-    double GetCovalentRadius() const { return _cov; }
+    float_ GetCovalentRadius() const { return _cov; }
     
     /*! \brief Get van der Waals radius.
      *  \details Radius is in angstroms.
      *  \return the van der Waals radius of the element. */
-    double GetVanDerWaalsRadius() const { return _vdw; }
+    float_ GetVanDerWaalsRadius() const { return _vdw; }
     
     /*! \brief Get element name.
      *  \return the name of the element. */
-    std::string GetName() const { return _nme; }
+    string_ GetName() const { return _nme; }
     
     /*! \brief Get element symbol.
      *  \return the symbol of the element. */
-    std::string GetSymbol() const { return _sym; }
+    string_ GetSymbol() const { return _sym; }
     
     /*! \brief Get element group number.
      *  \return the IUPAC group number of the element. */
-    uint GetGroup() const { return _grp; }
+    uchar_ GetGroup() const { return _grp; }
     
     /*! \brief Get element period.
      *  \return the period of the periodic table the element is in. */
-    uint GetPeriod() const { return _prd; }
+    uchar_ GetPeriod() const { return _prd; }
     
     /*! \brief Get number of valence electrons
      *  \return the number of valence electrons the element contains. */
-    uint GetValenceElectronCount() const { return _val; }
+    uchar_ GetValenceElectronCount() const { return _val; }
     
     /*! \brief Get full outer shell octet.
      *  \return the number of electrons required for a full outer shell. */
-    uint GetOctet() const { return _oct; }
+    uchar_ GetOctet() const { return _oct; }
     
     /*! \brief Get full outer shell octet whne allowing for hypervalency.
      *  \return the number of electrons required for a full outer shell in a
      *  hypervalent state. */
-    uint GetHypervalentOctet() const { return _hyp; }
+    uchar_ GetHypervalentOctet() const { return _hyp; }
     
     /*! \brief Get electronegativity.
      *  \return the electronegativity of the element on the Pauling scale. */
-    double GetElectronegativity() const { return _chi; }
+    float_ GetElectronegativity() const { return _chi; }
 
     /*! \brief Get a textual representation of the element.
      *  \details Representation contains the element's name, symbol and atomic
      *  number.
      *  \return textutal representation of the element. */
-    std::string ToString() const;
+    string_ ToString() const;
     
     //! \cond
     operator bool() { return bool(_Z); }
@@ -197,7 +196,7 @@ namespace indigox {
      *  \brief Element name.
      *  \property _sym
      *  \brief Atomic symbol. */
-    const std::string _nme, _sym;
+    const string_ _nme, _sym;
     /*! \property _grp
      *  \brief IUPAC group.
      *  \property _prd
@@ -210,7 +209,7 @@ namespace indigox {
      *  \brief Octet.
      *  \property _hyp
      *  \brief Hypervalent octet. */
-    const uint8_t _grp, _prd, _Z, _val, _oct, _hyp;
+    const uchar_ _grp, _prd, _Z, _val, _oct, _hyp;
     /*! \property _mass
      *  \brief Relative atomic mass.
      *  \property _rad
@@ -221,7 +220,7 @@ namespace indigox {
      *  \brief Van der Waals radius.
      *  \property _chi
      *  \brief Electronegativity. */
-    const double _mass, _rad, _cov, _vdw, _chi;
+    const float_ _mass, _rad, _cov, _vdw, _chi;
     
   private:
     //! Allow IXPeriodicTable to create new IXElement instances.
@@ -244,9 +243,9 @@ namespace indigox {
      *  \param cov covalent radius in angstroms.
      *  \param vdw van der Waals radius i angstroms.
      *  \param chi electronegativity. */
-    IXElement(uint8_t Z, std::string name, std::string sym, double mass,
-              uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct, uint8_t hyp,
-              double rad, double cov, double vdw, double chi);
+    IXElement(uchar_ Z, string_ name, string_ sym, float_ mass,
+              uchar_ grp, uchar_ prd, uchar_ val, uchar_ oct, uchar_ hyp,
+              float_ rad, float_ cov, float_ vdw, float_ chi);
   };
 
   // Operators have to be explicitly inlined or python bindings linkage fails
