@@ -17,8 +17,6 @@
 
 #include <boost/logic/tribool.hpp>
 
-#include "periodictable.hpp"
-#include "../utils/counter.hpp"
 #include "../utils/graph.hpp"
 
 namespace indigox {

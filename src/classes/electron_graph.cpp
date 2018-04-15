@@ -11,6 +11,7 @@
 #include "indigox/classes/atom.hpp"
 #include "indigox/classes/electron_graph.hpp"
 #include "indigox/classes/molecular_graph.hpp"
+#include <indigox/classes/periodictable.hpp>
 #include "indigox/utils/graph.hpp"
 #include "indigox/utils/options.hpp"
 

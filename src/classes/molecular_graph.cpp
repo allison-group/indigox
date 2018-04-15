@@ -16,6 +16,7 @@
 #include "indigox/classes/bond.hpp"
 #include "indigox/classes/molecular_graph.hpp"
 #include "indigox/classes/molecule.hpp"
+#include <indigox/classes/periodictable.hpp>
 #include "indigox/utils/common.hpp"
 #include "indigox/utils/options.hpp"
 
