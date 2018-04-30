@@ -1,6 +1,6 @@
-/*! \file graph_base.hpp */
-#ifndef INDIGOX_GRAPH_GRAPH_BASE_HPP
-#define INDIGOX_GRAPH_GRAPH_BASE_HPP
+/*! \file base.hpp */
+#ifndef INDIGOX_GRAPH_BASE_HPP
+#define INDIGOX_GRAPH_BASE_HPP
 
 #include <map>
 #include <stdexcept>
@@ -81,7 +81,7 @@ namespace indigox::graph {
     
   public:
     //! \brief Default constructor
-    Graph() : _graph(std::make_shared<G>()) { }
+    GraphBase() : _graph(std::make_shared<G>()) { }
     
     /*! \brief Add a new vertex to the graph.
      *  \param v vertex to add.
@@ -370,4 +370,4 @@ namespace indigox::graph {
   
 }
 
-#endif /* INDIGOX_UTILS_GRAPH_BASE_HPP */
+#endif /* INDIGOX_GRAPH_BASE_HPP */
