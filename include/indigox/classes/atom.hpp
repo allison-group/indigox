@@ -102,11 +102,11 @@ namespace indigox {
      *  \return the partial atomic charge. */
     float_ GetPartialCharge() const { return _partial; }
     
-    /*! \brief Index of the atom.
+    /*! \brief Tag of the atom.
      *  \details This value may be modified without warning. Use with caution.
      *  For a constant identifier to the atom, use IXAtom::GetUniqueID.
-     *  \return the index assigned to the atom. */
-    uint_ GetIndex() const { return _idx; };
+     *  \return the tag assigned to the atom. */
+    uint_ GetTag() const { return _tag; };
     
     /*! \brief Get number of implicit hydrogens.
      *  \return the number of implicit hydrogens in the atom. */
@@ -167,11 +167,11 @@ namespace indigox {
      *  \param h the number of implicit hydrogens to set. */
     void SetImplicitCount(uint_ h) { _implicitH = h; }
     
-    /*! \brief Set the index of this atom.
-     *  \details The index of an atom should not be considered stable. Use with
+    /*! \brief Set the tag of this atom.
+     *  \details The tag of an atom should not be considered stable. Use with
      *  caution.
-     *  \param i the index to set. */
-    void SetIndex(uint_ i) { _idx = i; }
+     *  \param i the tag to set. */
+    void SetTag(uint_ i) { _tag = i; }
     
     /*! \brief Set the molecule this atom is part of.
      *  \details No bookkeeping is performed, meaning the molecule is not
@@ -311,8 +311,8 @@ namespace indigox {
     _Element _elem;
     //! Formal charge.
     int_ _fc;
-    //! Index (unstable).
-    uint_ _idx;
+    //! Tag (unstable).
+    uint_ _tag;
     //! Number of implicit hydrogens.
     uint_ _implicitH;
     //! Atoms name.

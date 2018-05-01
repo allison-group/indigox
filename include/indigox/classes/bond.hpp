@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../utils/counter.hpp"
+#include "../utils/numerics.hpp"
 
 #ifndef INDIGOX_CLASSES_BOND_HPP
 #define INDIGOX_CLASSES_BOND_HPP
@@ -90,11 +91,11 @@ namespace indigox {
     ~IXBond() = default;
     //! \endcond
     
-    /*! \brief Index of the bond.
+    /*! \brief Tag of the bond.
      *  \details This value may be modified without warning. Use with caution.
      *  For a constant identifier to the bond, use IXBond::GetUniqeID().
-     *  \return the index assigned to the bond. */
-    uid_t GetIndex() const { return _idx; }
+     *  \return the tag assigned to the bond. */
+    uid_ GetTag() const { return _tag; }
     
     /*! \brief Molecule this bond is associated with.
      *  \return the molecule associated with this bond.
@@ -143,13 +144,13 @@ namespace indigox {
      *  returned string is Bond(MALFORMED), otherwise it is of the form:
      *  Bond(NAME_SOURCE, NAME_TARGET).
      *  \return a string representation of the bond. */
-    std::string ToString() const;
+    string_ ToString() const;
     
-    /*! \brief Set the index of this bond.
-     *  \details The index of a bond should not be considered stable. Use with
+    /*! \brief Set the tag of this bond.
+     *  \details The tag of a bond should not be considered stable. Use with
      *  caution.
-     *  \param i the index to set. */
-    void SetIndex(uid_t i) { _idx = i; }
+     *  \param tag the tag to set. */
+    void SetTag(uid_ tag) { _tag = tag; }
     
     /*! \brief Set the molecule this bond is part of.
      *  \details No bookkeeping is performed, meaning the molecule is not
@@ -229,15 +230,15 @@ namespace indigox {
     
     /*! \brief Number of atoms this bond is made of.
      *  \returns 2. */
-    size_t NumAtoms() const { return _atoms.size(); }
+    size_ NumAtoms() const { return _atoms.size(); }
     
     /*! \brief Number of angles this bond is a part of.
      *  \returns the number of assigned angles. */
-    size_t NumAngles() const { return _angles.size(); }
+    size_ NumAngles() const { return _angles.size(); }
     
     /*! \brief Number of dihedrals this bond is a part of.
      *  \returns the number of assigned dihedrals. */
-    size_t NumDihedrals() const { return _dihedrals.size(); }
+    size_ NumDihedrals() const { return _dihedrals.size(); }
     
     /*! \brief Remove an angle from this bond.
      *  \details No bookkeeping is performed, meaning that the angle is not
@@ -258,8 +259,8 @@ namespace indigox {
   private:
     //! The molecule this bond is assigned to.
     _Molecule _mol;
-    //! Index (unstable).
-    uid_t _idx;
+    //! Tag (unstable).
+    uid_ _tag;
     //! Bond order.
     Order _order;
     //! Aromaticity.

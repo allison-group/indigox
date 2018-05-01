@@ -28,7 +28,7 @@ namespace indigox {
     .def("__repr__", &IXBond::ToString)
     // Getters
     .def("GetAromaticity", &IXBond::GetAromaticity)
-    .def("GetIndex", &IXBond::GetIndex)
+    .def("GetIndex", &IXBond::GetTag)
     .def("GetMolecule", &IXBond::GetMolecule)
     .def("GetOrder", &IXBond::GetOrder)
     .def("GetSourceAtom", &IXBond::GetSourceAtom)
@@ -40,7 +40,7 @@ namespace indigox {
     .def("ToString", &IXBond::ToString)
     // Setters
     .def("SetAromaticity", &IXBond::SetAromaticity)
-    .def("SetIndex", &IXBond::SetIndex)
+    .def("SetIndex", &IXBond::SetTag)
     .def("SetMolecule", &IXBond::SetMolecule)
     .def("SetOrder", &IXBond::SetOrder)
     .def("SetSourceAtom", &IXBond::SetSourceAtom)

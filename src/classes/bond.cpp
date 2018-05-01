@@ -11,7 +11,7 @@ namespace indigox {
    */
   
   // Initalisation methods
-  IXBond::IXBond() : utils::CountableObject<IXBond>(), _mol(), _idx(0),
+  IXBond::IXBond() : utils::CountableObject<IXBond>(), _mol(), _tag(0),
                     _order(Order::UNDEFINED), _aromatic(false),
                     _stereo(Stereo::UNDEFINED), _atoms({{_Atom(),_Atom()}})  { }
   
@@ -29,7 +29,7 @@ namespace indigox {
   
   void IXBond::Clear() {
     _mol.reset();
-    _idx = 0;
+    _tag = 0;
     _order = Order::UNDEFINED;
     _aromatic = false;
     _atoms.fill(_Atom());

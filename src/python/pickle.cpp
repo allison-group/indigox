@@ -20,7 +20,7 @@ py::tuple PickleAtom(const Atom atom) {
 
 py::tuple PickleBond(const Bond bond) {
   return py::make_tuple(bond->GetAromaticity(),
-                        bond->GetIndex(),
+                        bond->GetTag(),
 //                        bond->GetMolecule(),
                         bond->GetOrder(),
                         bond->GetSourceAtom(),
@@ -80,7 +80,7 @@ Atom __unpickle_atom_version_0(py::tuple& t) {
 Bond __unpickle_bond_version_0(py::tuple& t) {
   Bond bond = Bond(new IXBond());
   bond->SetAromaticity(t[0].cast<bool>());
-  bond->SetIndex(t[1].cast<uid_t>());
+  bond->SetTag(t[1].cast<uid_t>());
   bond->SetOrder(t[2].cast<IXBond::Order>());
   bond->SetSourceAtom(t[3].cast<Atom>());
   bond->SetStereochemistry(t[4].cast<IXBond::Stereo>());

@@ -14,7 +14,7 @@
 using namespace indigox;
 
 IXAtom::IXAtom() : utils::CountableObject<IXAtom>(), _mol(), _elem(), _fc(0),
-                   _idx(0), _implicitH(0), _name("ATOM"), _pos({0.0,0.0,0.0}),
+                   _tag(0), _implicitH(0), _name("ATOM"), _pos({0.0,0.0,0.0}),
                    _partial(0.0), _stereo(Stereo::UNDEFINED), _aromatic(false)
                   { }
 
@@ -78,7 +78,7 @@ void IXAtom::Clear() {
   _mol.reset();
   _elem.reset();
   _fc = 0;
-  _idx = 0;
+  _tag = 0;
   _implicitH = 0;
   _name = "ATOM";
   _pos = Vec3();

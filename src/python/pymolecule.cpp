@@ -1,10 +1,3 @@
-//
-//  pymolecule.cpp
-//  indigox
-//
-//  Created by Welsh, Ivan on 8/01/18.
-//  Copyright © 2018 Allison Group. All rights reserved.
-//
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 
