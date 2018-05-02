@@ -113,10 +113,10 @@ namespace indigox {
     uint_ GetImplicitCount() const { return _implicitH; }
     
     /*! \brief Molecule this atom is associated with.
-     *  \return the molecule associated with this atom.
-     *  \throw std::logic_error Error if the atom was never assigned to a
-     *  molecule, or if the assigned molecule has been deleted. */
-    Molecule GetMolecule() const;
+     *  \details The returned shared_ptr is empty of the atom is not assigned
+     *  to a valid molecule.
+     *  \return the molecule associated with this atom. */
+    Molecule GetMolecule() const { return _mol.lock(); }
     
     /*! \brief Atom name.
      *  \return name of the atom. */

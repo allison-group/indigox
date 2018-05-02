@@ -98,38 +98,26 @@ namespace indigox {
     uid_ GetTag() const { return _tag; }
     
     /*! \brief Molecule this bond is associated with.
-     *  \return the molecule associated with this bond.
-     *  \throw std::logic_error if the bond was never assigned to a molecule, or
-     *  if the assigned molecule has been deleted. */
-    Molecule GetMolecule() const {
-      if (_mol.expired())
-        throw std::logic_error("Bond not assigned to a valid molecule.");
-      return _mol.lock();
-    }
+     *  \details The returned shared_ptr is empty if the bond is not assigned
+     *  to a valid molecule.
+     *  \return the molecule associated with this bond. */
+    Molecule GetMolecule() const { return _mol.lock(); }
     
     /*! \brief Get the bond order of the bond.
      *  \return the bond order. */
     Order GetOrder() const { return _order; }
     
     /*! \brief Get the source atom of the bond.
-     *  \return the source atom of the bond.
-     *  \throw std::logic_error if the source atom was never set or has been
-     *  deleted. */
-    Atom GetSourceAtom() const {
-      if (_atoms[0].expired())
-        throw std::logic_error("Bond not assigned a valid source atom.");
-      return _atoms[0].lock();
-    }
+     *  \details The returned shared_ptr is empty if the source atom was never
+     *  set or is no longer valid.
+     *  \return the source atom of the bond. */
+    Atom GetSourceAtom() const { return _atoms[0].lock(); }
     
     /*! \brief Get the target atom of the bond.
-     *  \return the target atom of the bond.
-     *  \throw std::logic_error if the target atom was never set or has been
-     *  deleted. */
-    Atom GetTargetAtom() const {
-      if (_atoms[1].expired())
-        throw std::logic_error("Bond not assigned a valid target atom.");
-      return _atoms[1].lock();
-    }
+     *  \details The returned shared_ptr is empty if the target atom was never
+     *  set or is no longer valid.
+     *  \return the target atom of the bond. */
+    Atom GetTargetAtom() const { return _atoms[1].lock(); }
     
     /*! \brief Get the aromaticity of a bond.
      *  \return if the bond is aromatic or not. */

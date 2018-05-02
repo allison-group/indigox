@@ -68,12 +68,6 @@ Element IXAtom::GetElement() const {
   return _elem.lock();
 }
 
-Molecule IXAtom::GetMolecule() const {
-  if(_mol.expired())
-    throw std::logic_error("Atom not assigned to a valid molecule");
-  return _mol.lock();
-}
-
 void IXAtom::Clear() {
   _mol.reset();
   _elem.reset();
