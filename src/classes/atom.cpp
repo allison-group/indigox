@@ -85,18 +85,12 @@ void IXAtom::Clear() {
 }
 
 void IXAtom::Cleanup() {
-  for (auto it = _bonds.begin(); it != _bonds.end(); ) {
-    if (it->expired()) it = _bonds.erase(it);
-    else ++it;
-  }
-  for (auto it = _angles.begin(); it != _angles.end(); ) {
-    if (it->expired()) it = _angles.erase(it);
-    else ++it;
-  }
-  for (auto it = _dihedrals.begin(); it != _dihedrals.end(); ) {
-    if (it->expired()) it = _dihedrals.erase(it);
-    else ++it;
-  }
+  _bonds.erase(std::remove_if(_bonds.begin(), _bonds.end(),
+                              [](_Bond b){ b.expired(); }), _bonds.end());
+  _angles.erase(std::remove_if(_angles.begin(), _angles.end(),
+                               [](_Angle a){ a.expired(); }), _angles.end());
+  _dihedrals.erase(std::remove_if(_dihedrals.begin(), _dihedrals.end(),
+                            [](_Dihedral d){ d.expired(); }), _dihedrals.end());
 }
 
 
