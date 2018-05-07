@@ -84,4 +84,19 @@ void IXAtom::Clear() {
   _dihedrals.clear();
 }
 
+void IXAtom::Cleanup() {
+  for (auto it = _bonds.begin(); it != _bonds.end(); ) {
+    if (it->expired()) it = _bonds.erase(it);
+    else ++it;
+  }
+  for (auto it = _angles.begin(); it != _angles.end(); ) {
+    if (it->expired()) it = _angles.erase(it);
+    else ++it;
+  }
+  for (auto it = _dihedrals.begin(); it != _dihedrals.end(); ) {
+    if (it->expired()) it = _dihedrals.erase(it);
+    else ++it;
+  }
+}
+
 

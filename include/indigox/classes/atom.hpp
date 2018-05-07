@@ -267,6 +267,11 @@ namespace indigox {
      *  \details Erases all information stored on the atom. */
     void Clear();
     
+    /*! \brief Remove all expired references in containers.
+     *  \details If an expired bond, angle or dihedral is referenced, it is
+     *  removed. */
+    void Cleanup();
+    
     /*! \brief Get iterator access to the atom's bonds.
      *  \details Intended primarily for internal use as the iterators are to
      *  weak_ptrs.
