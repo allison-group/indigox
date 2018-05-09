@@ -80,20 +80,6 @@ namespace indigox {
     return ss.str();
   }
   
-  // Initalise the IXPeriodicTable static members
-  PeriodicTable IXPeriodicTable::_instance = PeriodicTable();
-  bool IXPeriodicTable::_init = false;
-  
-  
-  PeriodicTable IXPeriodicTable::GetInstance() {
-    if (!_init) {
-      _instance.reset(new IXPeriodicTable());
-      _instance->GeneratePeriodicTable();
-      _init = true;
-    }
-    return _instance;
-  }
-  
   Element IXPeriodicTable::GetElement(const uint8_t z) const {
     if (_z_to.find(z) != _z_to.end())
       return _z_to.at(z);

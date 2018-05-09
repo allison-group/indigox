@@ -34,13 +34,6 @@ namespace indigox {
    *  using the GetInstance() method. Like most other classes in the indigoX
    *  library, usage is primarily intended through the use of smart pointers. */
   class IXPeriodicTable {
-  public:
-    
-    /*! \brief Obtain the singleton instance of the PeriodicTable.
-     *  \details If an instance does not exist, creates one and generates
-     *  elemental information.
-     *  \returns the PeriodicTable instance. */
-    static PeriodicTable GetInstance();
     
   public:
     /*! \brief Get the element with the given atomic number.
@@ -97,12 +90,10 @@ namespace indigox {
      *  hard coded into the implementation file. These are populated into both
      *  the _z_to and _name_to maps. */
     void GeneratePeriodicTable();
+    
+    friend PeriodicTable GetPeriodicTable();
   
   private:
-    //! Has been initalised.
-    static bool _init;
-    //! The initailied instance.
-    static PeriodicTable _instance;
     //! Undefined element.
     Element _null;
     //! Map atomic numbers to elements.
@@ -131,7 +122,7 @@ namespace indigox {
     
     /*! \brief Get atomic number.
      *  \return the atomic number of the element. */
-    uchar_ GetAtomicNumber() const { return _Z; }
+    size_ GetAtomicNumber() const { return static_cast<size_>(_Z); }
     
     /*! \brief Get atomic radius.
      *  \details Radius is in angstroms.
