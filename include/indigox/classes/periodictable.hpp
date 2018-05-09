@@ -289,7 +289,7 @@ namespace indigox {
    *  \param l, r elements to compare.
    *  \return if the elements are the name. */
   inline bool operator==(Element l, Element r) {
-    return (l && *l && r && *r) ? l == r : false;
+    return (l && *l && r && *r) ? l.get() == r.get() : false;
   }
   
   // Inverse eq operators
