@@ -44,7 +44,8 @@ namespace indigox {
     Element GetElement(const uchar_ z) const;
     
     /*! \brief Get the element with the given name or symbol.
-     *  \details Matches are made ignoring case.
+     *  \details Name based matches are made ignoring case. Symbol matches are
+     *  made checking case as well.
      *  \param name the name or symbol of the element to get.
      *  \returns the requested element.
      *  \throw std::invalid_argument If the requested name or symbol does not
@@ -115,6 +116,9 @@ namespace indigox {
    */
   class IXElement {
   public:
+    
+    // No default constructor provided
+    IXElement() = delete;
     
     /*! \brief Get atomic mass.
      *  \return the atomic mass of the element. */
@@ -216,9 +220,6 @@ namespace indigox {
   private:
     //! Allow IXPeriodicTable to create new IXElement instances.
     friend class IXPeriodicTable;
-    
-    // No default constructor provided
-    IXElement() = delete;
     
     /*! \brief Construct new IXElement instance given data.
      *  \param Z atomic number.

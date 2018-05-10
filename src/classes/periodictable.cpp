@@ -87,7 +87,9 @@ namespace indigox {
   }
   
   Element IXPeriodicTable::GetElement(const std::string name) const {
-    std::string u = utils::toUpperFirst(&name);
+    std::string u;
+    if (name.size() > 2) u = utils::toUpperFirst(&name);
+    else u = name;
     if (_name_to.find(u) != _name_to.end()) {
       return _name_to.at(u);
     }
