@@ -281,7 +281,7 @@ namespace indigox {
   inline bool operator==(Element l, std::string r) {
     if (!l || !*l) return false;
     else return r.size() <= 2 ? (l->GetSymbol() == r)
-      : (l->GetName() == utils::toUpperFirst(&r));
+      : (l->GetName() == utils::ToUpperFirst(r));
   }
   /*! \brief Equality test of two Elements.
    *  \details Checks if the stored pointers are equivalent. If either of the

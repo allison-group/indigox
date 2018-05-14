@@ -44,6 +44,7 @@ namespace indigox {
   //! \endcond
   
   string_ IXPeriodicTable::ToString() const {
+    //! \todo Cleanup generation so matches expected table output.
     std::stringstream ss;
     size_ row_count = 0, restart = 0;
     std::vector<int_> elems = {
@@ -88,7 +89,7 @@ namespace indigox {
   
   Element IXPeriodicTable::GetElement(const std::string name) const {
     std::string u;
-    if (name.size() > 2) u = utils::toUpperFirst(&name);
+    if (name.size() > 2) u = utils::ToUpperFirst(name);
     else u = name;
     if (_name_to.find(u) != _name_to.end()) {
       return _name_to.at(u);
