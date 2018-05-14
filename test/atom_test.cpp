@@ -206,9 +206,10 @@ BOOST_AUTO_TEST_CASE(angles_add_remove) {
   BOOST_TEST(a.NumAngles() == 1);
   // Add another angle
   BOOST_TEST(a.AddAngle(ang2));
-  auto angles = a.GetAngleIters();
   BOOST_TEST(a.NumAngles() == 2);
-  BOOST_CHECK(angles.first + 2 == angles.second);
+  // Check iterators
+  auto angles = a.GetAngleIters();
+  BOOST_CHECK(std::distance(angles.first, angles.second) == 2);
   // Add an existing angle
   BOOST_TEST(!a.AddAngle(ang1));
   BOOST_TEST(a.NumAngles() == 2);
@@ -240,9 +241,10 @@ BOOST_AUTO_TEST_CASE(bonds_add_remove) {
   BOOST_TEST(a.NumBonds() == 1);
   // Add another bond
   BOOST_TEST(a.AddBond(bnd2));
-  auto bonds = a.GetBondIters();
   BOOST_TEST(a.NumBonds() == 2);
-  BOOST_CHECK(bonds.first + 2 == bonds.second);
+  // Check iterators
+  auto bonds = a.GetBondIters();
+  BOOST_CHECK(std::distance(bonds.first, bonds.second) == 2);
   // Add an existing bond
   BOOST_TEST(!a.AddBond(bnd1));
   BOOST_TEST(a.NumBonds() == 2);
@@ -274,9 +276,10 @@ BOOST_AUTO_TEST_CASE(dihedrals_add_remove) {
   BOOST_TEST(a.NumDihedrals() == 1);
   // Add another dihedral
   BOOST_TEST(a.AddDihedral(dhd2));
-  auto dihedrals = a.GetDihedralIters();
   BOOST_TEST(a.NumDihedrals() == 2);
-  BOOST_CHECK(dihedrals.first + 2 == dihedrals.second);
+  // Check iterators
+  auto dihedrals = a.GetDihedralIters();
+  BOOST_CHECK(std::distance(dihedrals.first, dihedrals.second) == 2);
   // Add an existing dihedral
   BOOST_TEST(!a.AddDihedral(dhd1));
   BOOST_TEST(a.NumDihedrals() == 2);
