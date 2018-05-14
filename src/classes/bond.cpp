@@ -19,7 +19,7 @@ namespace indigox {
   }
   
   bool IXBond::SetSourceAtom(Atom atom) {
-    if (atom && atom != _atoms[0].lock()) {
+    if (atom && atom != _atoms[1].lock()) {
       _atoms[0] = atom;
       return true;
     }
@@ -27,7 +27,7 @@ namespace indigox {
   }
   
   bool IXBond::SetTargetAtom(Atom atom) {
-    if (atom && atom != _atoms[1].lock()) {
+    if (atom && atom != _atoms[0].lock()) {
       _atoms[1] = atom;
       return true;
     }
