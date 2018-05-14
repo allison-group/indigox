@@ -3,6 +3,7 @@
 #ifndef INDIGOX_CLASSES_ATOM_HPP
 #define INDIGOX_CLASSES_ATOM_HPP
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -44,7 +45,7 @@ namespace indigox {
   //! \endcond
   
   class IXAtom
-  : public utils::CountableObject<IXAtom>,
+  : public utils::IXCountableObject<IXAtom>,
   public std::enable_shared_from_this<IXAtom> {
   
   private:
@@ -112,6 +113,17 @@ namespace indigox {
      *  \return the number of implicit hydrogens in the atom. */
     uint_ GetImplicitCount() const { return _implicitH; }
     
+    /*! \brief Add an implicit hydrogen.
+     *  \return the new number of implicit hydrogens in the atom. */
+    uint_ AddImplicitHydrogen() { return ++_implicitH; }
+    
+    /*! \brief Remove an implicit hydrogen.
+     *  \details If GetImplicitCount() == 0, no hydrogen is removed.
+     *  \return the new number of implicit hydrogens in the atom. */
+    uint_ RemoveImplicitHydrogen() {
+      return _implicitH ? --_implicitH : _implicitH;
+    }
+    
     /*! \brief Molecule this atom is associated with.
      *  \details The returned shared_ptr is empty of the atom is not assigned
      *  to a valid molecule.
@@ -145,7 +157,7 @@ namespace indigox {
     
     /*! \brief Set the element of this atom.
      *  \param e the element to set to. */
-    void SetElement(Element e) { _elem = e; }
+    void SetElement(Element e);
     
     /*! \brief Set the element of this atom.
      *  \param e the name or atomic symbol of the element to set. */
@@ -221,47 +233,53 @@ namespace indigox {
     /*! \brief Add a bond to this atom.
      *  \details No bookkeeping is performed, meaning that the bond is not
      *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use.
-     *  \param b the bond to add. */
-    void AddBond(Bond b) { _bonds.emplace_back(b); }
+     *  method is only intended for internal use. The existing bonds are checked
+     *  to ensure that no duplicate bonds are added.
+     *  \param b the bond to add.
+     *  \return if the bond was added or not. */
+    bool AddBond(Bond b);
     
     /*! \brief Add an angle to this atom.
      *  \details No bookkeeping is performed, meaning that the angle is not
      *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use.
-     *  \param a the angle to add. */
-    void AddAngle(Angle a) { _angles.emplace_back(a); }
+     *  method is only intended for internal use. Existing angles are checked to
+     *  ensure that no duplicate angles are added.
+     *  \param a the angle to add.
+     *  \return if the angle was added or not. */
+    bool AddAngle(Angle a);
     
     /*! \brief Add a dihedral to this atom.
      *  \details No bookkeeping is performed, meaning that the dihedral is not
      *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use.
-     *  \param d the dihedral to add. */
-    void AddDihedral(Dihedral d) { _dihedrals.emplace_back(d); }
+     *  method is only intended for internal use. Existing dihedrals are checked
+     *  to ensure that no duplicate dihedrals are added.
+     *  \param d the dihedral to add.
+     *  \return if the dihedral was added or not. */
+    bool AddDihedral(Dihedral d);
     
     /*! \brief Remove a bond from this atom.
      *  \details No bookkeeping is performed, meaning that the bond is not
      *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use. If the bond is not part of
-     *  this atom, nothing happens.
-     *  \param b the bond to remove. */
-    void RemoveBond(Bond b);
+     *  method is only intended for internal use.
+     *  \param b the bond to remove.
+     *  \return if the bond was removed or not. */
+    bool RemoveBond(Bond b);
     
     /*! \brief Remove an angle from this atom.
      *  \details No bookkeeping is performed, meaning that the angle is not
      *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use. If the angle is not part of
-     *  this atom, nothing happens.
-     *  \param a the angle to remove. */
-    void RemoveAngle(Angle a);
+     *  method is only intended for internal use.
+     *  \param a the angle to remove.
+     *  \return if the angle was removed or not. */
+    bool RemoveAngle(Angle a);
     
     /*! \brief Remove a dihedral from this atom.
      *  \details No bookkeeping is performed, meaning that the dihedral is not
      *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use. If the dihedral is not part of
-     *  this atom, nothing happens.
-     *  \param d the dihedral to remove. */
-    void RemoveDihedral(Dihedral d);
+     *  method is only intended for internal use.
+     *  \param d the dihedral to remove.
+     *  \return if the dihedral was removed or not. */
+    bool RemoveDihedral(Dihedral d);
     
     /*! \brief Clear all information.
      *  \details Erases all information stored on the atom. */
@@ -277,7 +295,7 @@ namespace indigox {
      *  weak_ptrs.
      *  \returns a pair of iterators for the beginning and end of the bonds. */
     std::pair<AtomBondIter, AtomBondIter> GetBondIters() {
-      return std::make_pair(_bonds.begin(), _bonds.end());
+      return std::make_pair(_bnds.begin(), _bnds.end());
     }
     
     /*! \brief Get iterator access to the atom's angles.
@@ -285,7 +303,7 @@ namespace indigox {
      *  weak_ptrs.
      *  \returns a pair of iterators for the beginning and end of the angles. */
     std::pair<AtomAngleIter, AtomAngleIter> GetAngleIters() {
-      return std::make_pair(_angles.begin(), _angles.end());
+      return std::make_pair(_angs.begin(), _angs.end());
     }
     
     /*! \brief Get iterator access to the atom's dihedrals.
@@ -294,20 +312,20 @@ namespace indigox {
      *  \returns a pair of iterators for the beginning and end of the
      *  dihedrals. */
     std::pair<AtomDihedralIter, AtomDihedralIter> GetDihedralIters() {
-      return std::make_pair(_dihedrals.begin(), _dihedrals.end());
+      return std::make_pair(_dhds.begin(), _dhds.end());
     }
     
-    /*! \brief Number of bonds this atom is part of.
-     *  \returns the number of assigned bonds. */
-    size_ NumBonds() const { return _bonds.size(); }
+    /*! \brief Number of valid bonds this atom is part of.
+     *  \returns the number of valid assigned bonds. */
+    size_ NumBonds() const;
     
-    /*! \brief Number of angles this atom is a part of.
-     *  \returns the number of assigned angles. */
-    size_ NumAngles() const { return _angles.size(); }
+    /*! \brief Number of valid angles this atom is a part of.
+     *  \returns the number of valid assigned angles. */
+    size_ NumAngles() const;
     
-    /*! \brief Number of dihedrals this atom is a part of.
-     *  \returns the number of assigned dihedrals. */
-    size_ NumDihedrals() const { return _dihedrals.size(); }
+    /*! \brief Number of valis dihedrals this atom is a part of.
+     *  \returns the number of valid assigned dihedrals. */
+    size_ NumDihedrals() const;
     
   private:
     //! The molecule this atom is assigned to.
@@ -335,13 +353,18 @@ namespace indigox {
     // FFAtom _mmtype;
     
     //! Bonds the atom is part of
-    AtomBonds _bonds;
+    AtomBonds _bnds;
     //! Angles the atom is part of
-    AtomAngles _angles;
+    AtomAngles _angs;
     //! Dihedrals the atom is part of
-    AtomDihedrals _dihedrals;
-    
+    AtomDihedrals _dhds;
   };
+  
+//  /*! \brief Print an IXAtom::Stereo to an output stream.
+//   *  \param os output stream to print to.
+//   *  \param s IXAtom::Stereo to print.
+//   *  \return the output stream. */
+//  std::ostream& operator<<(std::ostream& os, IXAtom::Stereo s);
 }
 
 #endif /* INDIGOX_CLASSES_ATOM_HPP */
