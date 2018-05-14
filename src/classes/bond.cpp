@@ -1,21 +1,19 @@
 #include <sstream>
+#include <stdexcept>
 
-#include "indigox/classes/atom.hpp"
-#include "indigox/classes/bond.hpp"
-#include "indigox/utils/counter.hpp"
+#include <indigox/classes/atom.hpp>
+#include <indigox/classes/bond.hpp>
+#include <indigox/utils/counter.hpp>
 
 namespace indigox {
   
-  /*
-   *  Bond implementation
-   */
+  IXBond::IXBond() : utils::IXCountableObject<IXBond>(), _mol(), _tag(0),
+  _order(Order::UNDEFINED), _aromatic(false), _stereo(Stereo::UNDEFINED),
+  _atoms({{_Atom(),_Atom()}})  { }
   
-  // Initalisation methods
-  IXBond::IXBond() : utils::CountableObject<IXBond>(), _mol(), _tag(0),
-                    _order(Order::UNDEFINED), _aromatic(false),
-                    _stereo(Stereo::UNDEFINED), _atoms({{_Atom(),_Atom()}})  { }
-  
-  IXBond::IXBond(Atom a, Atom b) : IXBond() { _atoms = {{a,b}}; }
+  IXBond::IXBond(Atom a, Atom b) : utils::IXCountableObject<IXBond>(), _mol(),
+  _tag(0), _order(Order::UNDEFINED), _aromatic(false),
+  _stereo(Stereo::UNDEFINED), _atoms({{a,b}})  { }
   
   std::string IXBond::ToString() const {
     std::stringstream ss;

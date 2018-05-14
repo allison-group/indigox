@@ -33,7 +33,7 @@ namespace indigox {
   typedef std::weak_ptr<IXMolecule> _Molecule;
   
   class IXBond
-  : public utils::CountableObject<IXBond>,
+  : public utils::IXCountableObject<IXBond>,
   public std::enable_shared_from_this<IXBond> {
   private:
     //! \brief Container for storing IXAtom references assigned to an IXBond.
