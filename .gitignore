@@ -35,6 +35,7 @@
 archive
 build
 data-out
+test/coverage
 
 # Xcode file
 indigox.xcodeproj
