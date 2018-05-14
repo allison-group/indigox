@@ -1,59 +1,29 @@
-#define BOOST_TEST_MODULE PeriodicTable test
-#include <boost/test/included/unit_test.hpp>
-#include <boost/test/data/test_case.hpp>
-#include <boost/test/data/monomorphic.hpp>
+#define BOOST_TEST_DYN_LINK
+//#define BOOST_TEST_MODULE PeriodicTable test
+#include <boost/test/unit_test.hpp>
 
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/utils/helpers.hpp>
 
 #include <algorithm>
 #include <iostream>
+#include <sstream>
+
+BOOST_AUTO_TEST_SUITE(ixperiodictable);
 
 using namespace indigox;
 // Test for the correct generation of PeriodicTable instances
-BOOST_AUTO_TEST_CASE(periodictable_instance_test,
+BOOST_AUTO_TEST_CASE(instance_constructor,
                      *boost::unit_test::expected_failures(1)) {
   PeriodicTable pt = GetPeriodicTable();
   PeriodicTable pt2 = GetPeriodicTable();
   
   BOOST_TEST(pt->NumElements() == 118);
   BOOST_TEST(pt == pt2);
-  string_ expected_table = "\
- ---                                                                 --- \n\
-|  1|                                                               |  2|\n\
-|  H|                                                               | He|\n\
- --- ---                                         --- --- --- --- --- --- \n\
-|  3|  4|                                       |  5|  6|  7|  8|  9| 10|\n\
-| Li| Be|                                       |  B|  C|  N|  O|  F| Ne|\n\
- --- ---                                         --- --- --- --- --- --- \n\
-| 11| 12|                                       | 13| 14| 15| 16| 17| 18|\n\
-| Na| Mg|                                       | Al| Si|  P|  S| Cl| Ar|\n\
- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-| 19| 20| 21| 22| 23| 24| 25| 26| 27| 28| 29| 30| 31| 32| 33| 34| 35| 36|\n\
-|  K| Ca| Sc| Ti|  V| Cr| Mn| Fe| Co| Ni| Cu| Zn| Ga| Ge| As| Se| Br| Kr|\n\
- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-| 37| 38| 39| 40| 41| 42| 43| 44| 45| 46| 47| 48| 49| 50| 51| 52| 53| 54|\n\
-| Rb| Sr|  Y| Zr| Nb| Mo| Tc| Ru| Rh| Pd| Ag| Cd| In| Sn| Sb| Te|  I| Xe|\n\
- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-| 55| 56| 57| 72| 73| 74| 75| 76| 77| 78| 79| 80| 81| 82| 83| 84| 85| 86|\n\
-| Cs| Ba| La| Hf| Ta|  W| Re| Os| Ir| Pt| Au| Hg| Tl| Pb| Bi| Po| At| Rn|\n\
- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-| 87| 88| 89|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|\n\
-| Fr| Ra| Ac| Db| Jl| Rf| Bh| Hn| Mt| Ds| Rg| Cn| Nh| Fl| Mc| Lv| Ts| Og|\n\
- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-            | 58| 59| 60| 61| 62| 63| 64| 65| 66| 67| 68| 69| 70| 71|\n\
-            | Ce| Pr| Nd| Pm| Sm| Eu| Gd| Tb| Dy| Ho| Er| Tm| Yb| Lu|\n\
-             --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-            | 90| 91| 92| 93| 94| 95| 96| 97| 98| 99|100|101|102|103|\n\
-            | Th| Pa|  U| Np| Pu| Am| Cm| Bk| Cf| Es| Fm| Md| No| Lr|\n\
-             --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
-  
-  BOOST_CHECK_MESSAGE(pt->ToString() == expected_table,
-                      "Full periodic table string does not match expected.");
 }
 
 // Test for correct handling of the null element
-BOOST_AUTO_TEST_CASE(null_element_test) {
+BOOST_AUTO_TEST_CASE(null_element) {
   PeriodicTable pt = GetPeriodicTable();
   Element null_e = pt->GetUndefinedElement();
   // Check that the null element is not an empty pointer
@@ -70,31 +40,28 @@ BOOST_AUTO_TEST_CASE(null_element_test) {
   BOOST_TEST(null_e != "Undefined");
 }
 
-namespace bdata = boost::unit_test::data;
 
 // Test for correct retrieval of elements
-BOOST_DATA_TEST_CASE(element_retrieve_test,
-                     bdata::random(1, 118) ^ bdata::xrange(10),
-                     random_num, index) {
-  // Test retrieving 10 random elements
+BOOST_AUTO_TEST_CASE(element_retrieve) {
   PeriodicTable pt = GetPeriodicTable();
-  Element e1 = pt->GetElement(random_num);
-  BOOST_TEST(e1);
+  Element carbon = pt->GetElement(6);
+  BOOST_TEST((carbon && *carbon));
   // Check correct element obtained
-  BOOST_TEST(e1->GetAtomicNumber() == random_num);
+  BOOST_TEST(carbon->GetAtomicNumber() == 6);
   // Check other getting methods return same element
-  BOOST_TEST(e1 == (*pt)[random_num]);
-  BOOST_TEST(e1 == (*pt)[e1->GetSymbol()]);
-  BOOST_TEST(e1 == (*pt)[e1->GetName()]);
-  BOOST_TEST(e1 == pt->GetElement(e1->GetSymbol()));
-  BOOST_TEST(e1 == pt->GetElement(e1->GetName()));
-  // Check that the name and symbol are correctly size;
-  BOOST_TEST(e1->GetSymbol().size() <= 2);
-  BOOST_TEST(e1->GetName().size() > 2);
+  BOOST_TEST(carbon == (*pt)[6]);
+  BOOST_TEST(carbon == (*pt)[carbon->GetSymbol()]);
+  BOOST_TEST(carbon == (*pt)[carbon->GetName()]);
+  BOOST_TEST(carbon == pt->GetElement(carbon->GetSymbol()));
+  BOOST_TEST(carbon == pt->GetElement(carbon->GetName()));
+  BOOST_TEST(carbon == pt->GetElement("caRBOn"));  // name get case insensitive
+  // Check that the name and symbol are correct
+  BOOST_TEST(carbon->GetSymbol() == "C");
+  BOOST_TEST(carbon->GetName() == "Carbon");
 }
 
 // Test comparison operators for elements
-BOOST_AUTO_TEST_CASE(element_compare_test) {
+BOOST_AUTO_TEST_CASE(element_compare) {
   PeriodicTable pt = GetPeriodicTable();
   Element carbon = pt->GetElement(6);
   Element nitrogen = pt->GetElement(7);
@@ -138,3 +105,80 @@ BOOST_AUTO_TEST_CASE(bad_element_retrieve) {
   BOOST_CHECK_THROW(pt->GetElement("c"), std::invalid_argument);
   BOOST_CHECK_NO_THROW(pt->GetElement("carbon"));
 }
+
+// Test ostreams
+BOOST_AUTO_TEST_CASE(printing_methods) {
+  PeriodicTable pt = GetPeriodicTable();
+  PeriodicTable pt_fail;
+  std::stringstream ss;
+  ss << pt;
+  BOOST_TEST(ss.str() == "PeriodicTable(118 elements)");
+  ss.str("");
+  ss << pt_fail;
+  BOOST_TEST(ss.str() == "");
+  string_ ex = "\
+  ---                                                                 --- \n\
+  |  1|                                                               |  2|\n\
+  |  H|                                                               | He|\n\
+  --- ---                                         --- --- --- --- --- --- \n\
+  |  3|  4|                                       |  5|  6|  7|  8|  9| 10|\n\
+  | Li| Be|                                       |  B|  C|  N|  O|  F| Ne|\n\
+  --- ---                                         --- --- --- --- --- --- \n\
+  | 11| 12|                                       | 13| 14| 15| 16| 17| 18|\n\
+  | Na| Mg|                                       | Al| Si|  P|  S| Cl| Ar|\n\
+  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
+  | 19| 20| 21| 22| 23| 24| 25| 26| 27| 28| 29| 30| 31| 32| 33| 34| 35| 36|\n\
+  |  K| Ca| Sc| Ti|  V| Cr| Mn| Fe| Co| Ni| Cu| Zn| Ga| Ge| As| Se| Br| Kr|\n\
+  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
+  | 37| 38| 39| 40| 41| 42| 43| 44| 45| 46| 47| 48| 49| 50| 51| 52| 53| 54|\n\
+  | Rb| Sr|  Y| Zr| Nb| Mo| Tc| Ru| Rh| Pd| Ag| Cd| In| Sn| Sb| Te|  I| Xe|\n\
+  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
+  | 55| 56| 57| 72| 73| 74| 75| 76| 77| 78| 79| 80| 81| 82| 83| 84| 85| 86|\n\
+  | Cs| Ba| La| Hf| Ta|  W| Re| Os| Ir| Pt| Au| Hg| Tl| Pb| Bi| Po| At| Rn|\n\
+  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
+  | 87| 88| 89|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|\n\
+  | Fr| Ra| Ac| Db| Jl| Rf| Bh| Hn| Mt| Ds| Rg| Cn| Nh| Fl| Mc| Lv| Ts| Og|\n\
+  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
+  | 58| 59| 60| 61| 62| 63| 64| 65| 66| 67| 68| 69| 70| 71|\n\
+  | Ce| Pr| Nd| Pm| Sm| Eu| Gd| Tb| Dy| Ho| Er| Tm| Yb| Lu|\n\
+  --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
+  | 90| 91| 92| 93| 94| 95| 96| 97| 98| 99|100|101|102|103|\n\
+  | Th| Pa|  U| Np| Pu| Am| Cm| Bk| Cf| Es| Fm| Md| No| Lr|\n\
+  --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+  
+  BOOST_TEST(pt->ToString() == ex);
+  
+  ss.str("");
+  Element c = pt->GetElement(6), element_fail = Element();
+  ss << element_fail;
+  BOOST_TEST(ss.str() == "");
+  ss << c;
+  BOOST_TEST(ss.str() == "Element(Carbon)");
+  BOOST_TEST(c->ToString() == "6-Carbon (C)");
+  
+}
+
+// Test element properties get
+BOOST_AUTO_TEST_CASE(element_get_properties) {
+  PeriodicTable pt = GetPeriodicTable();
+  Element cm = pt->GetElement("Cm"), w = pt->GetElement("W");
+  BOOST_TEST((cm->GetAtomicMass() == 247.0703 && w->GetAtomicMass() == 183.84),
+             boost::test_tools::tolerance(0.0000001));
+  BOOST_TEST((cm->GetAtomicNumber() == 96 && w->GetAtomicNumber() == 74));
+  BOOST_TEST((cm->GetName() == "Curium" && w->GetName() == "Tungsten"));
+  BOOST_TEST((cm->GetSymbol() == "Cm" && w->GetSymbol() == "W"));
+  BOOST_TEST((cm->GetGroup() == 0 && w->GetGroup() == 6));
+  BOOST_TEST((cm->GetPeriod() == 7 && w->GetPeriod() == 6));
+  BOOST_TEST((cm->GetValenceElectronCount() == 0 && w->GetValenceElectronCount() == 6));
+  BOOST_TEST((cm->GetOctet() == 8 && w->GetOctet() == 8));
+  BOOST_TEST((cm->GetHypervalentOctet() == 8 && w->GetHypervalentOctet() == 8));
+  BOOST_TEST((cm->GetAtomicRadius() == 1.74 && w->GetAtomicRadius() == 1.37),
+             boost::test_tools::tolerance(0.0000001));
+  BOOST_TEST((cm->GetCovalentRadius() == 0.00 && w->GetCovalentRadius() == 1.30),
+             boost::test_tools::tolerance(0.0000001));
+  BOOST_TEST((cm->GetVanDerWaalsRadius() == 0.00 && w->GetVanDerWaalsRadius() == 0.00),
+             boost::test_tools::tolerance(0.0000001));
+  BOOST_TEST((cm->GetElectronegativity() == 1.30 && w->GetElectronegativity() == 1.90),
+             boost::test_tools::tolerance(0.0000001));
+}
+BOOST_AUTO_TEST_SUITE_END();
