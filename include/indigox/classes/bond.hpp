@@ -173,6 +173,8 @@ namespace indigox {
      *  \return of the target atom was set or not. */
     bool SetTargetAtom(Atom atom);
     
+    /*! \brief Switch the two atoms of the bond.
+     *  \details the source atom will become the target atom and vice versa. */
     void SwapSourceTarget() { std::swap(_atoms[0], _atoms[1]); }
     
     /*! \brief Set the aromaticity.
