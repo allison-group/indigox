@@ -7,20 +7,20 @@
 
 namespace indigox::utils {
   
-  /*! \class CountableObject indigox/utils/counter.hpp
+  /*! \class IXCountableObject indigox/utils/counter.hpp
    *  \brief Template class for counting instances.
    *  \tparam T class requiring counting.
    *  \details Provides a means to count number of instances of a type created.
    *  Classes should derive from this template and call the constructor in class
    *  initalisation list. */
   template <class T>
-  class CountableObject {
+  class IXCountableObject {
     
   public:
     /*! \brief Default constructor.
      *  \details Sets the unique id associated with the class instance.
      */
-    CountableObject() : _id(++_count) { }
+    IXCountableObject() : _id(++_count) { }
     
     /*! \brief Obtain the class instance unique id.
      *  \returns the unique id. */
@@ -38,7 +38,7 @@ namespace indigox::utils {
   };
   
   template <class T>
-  uid_ CountableObject<T>::_count = 0;
+  uid_ IXCountableObject<T>::_count = 0;
   
 }
 
