@@ -13,7 +13,26 @@ namespace indigox {
   
   IXBond::IXBond(Atom a, Atom b) : utils::IXCountableObject<IXBond>(), _mol(),
   _tag(0), _order(Order::UNDEFINED), _aromatic(false),
-  _stereo(Stereo::UNDEFINED), _atoms({{a,b}})  { }
+  _stereo(Stereo::UNDEFINED), _atoms({{a,b}})  {
+    if (a && a == b)
+      throw std::logic_error("Cannot create a bond with the same atom.");
+  }
+  
+  bool IXBond::SetSourceAtom(Atom atom) {
+    if (atom && atom != _atoms[0].lock()) {
+      _atoms[0] = atom;
+      return true;
+    }
+    return false;
+  }
+  
+  bool IXBond::SetTargetAtom(Atom atom) {
+    if (atom && atom != _atoms[1].lock()) {
+      _atoms[1] = atom;
+      return true;
+    }
+    return false;
+  }
   
   std::string IXBond::ToString() const {
     std::stringstream ss;

@@ -81,10 +81,12 @@ namespace indigox {
     
     /*! \brief Normal constructor.
      *  \details Creates a bond between the two atoms, though no bookkeeping is
-     *  performed, nor any sanity checks on the provided atoms. Tough allowed,
-     *  it is not recommended to construct IXBond instances directly. Rather, do
-     *  so through the IXMolecule::NewBond methods.
-     *  \param a, b the atoms to construct a bonds between. */
+     *  performed. However a sanity checks on the provided atoms is performed
+     *  to ensure that they are not the same atom. Though allowed, it is not
+     *  recommended to construct IXBond instances directly. Rather, do so
+     *  through the IXMolecule::NewBond methods.
+     *  \param a, b the atoms to construct a bonds between.
+     *  \throw std::logic_error if boths atoms are valid and the same. */
     IXBond(Atom a, Atom b);
     
     //! \cond
@@ -154,16 +156,24 @@ namespace indigox {
     /*! \brief Set the source atom of the bond.
      *  \details No bookkeeping is performed, so the atom does not know that it
      *  has been added to a new bond. As such, this method is intended for
-     *  internal use only.
-     *  \param atom the source atom to set. */
-    void SetSourceAtom(Atom atom) { _atoms[0] = atom; }
+     *  internal use only. Sanity check is performed to ensure the atom is not
+     *  the same atom as the target atom. If you want to swap source and target
+     *  use the SwapSourceTarget() method.
+     *  \param atom the source atom to set.
+     *  \return if the source atom was set or not. */
+    bool SetSourceAtom(Atom atom);
     
     /*! \brief Set the target atom of the bond.
      *  \details No bookkeeping is performed, so the atom does not know that it
      *  has been added to a new bond. As such, this method is intended for
-     *  internal use only.
-     *  \param atom the target atom to set. */
-    void SetTargetAtom(Atom atom) { _atoms[1] = atom; }
+     *  internal use only. Sanity check is performed to ensure the atom is not
+     *  the same atom as the source atom. If you want to swap source and target
+     *  use the SwapSourceTarget() method.
+     *  \param atom the target atom to set.
+     *  \return of the target atom was set or not. */
+    bool SetTargetAtom(Atom atom);
+    
+    void SwapSourceTarget() { std::swap(_atoms[0], _atoms[1]); }
     
     /*! \brief Set the aromaticity.
      *  \param aromatic of the atom is aromatic or not. */
