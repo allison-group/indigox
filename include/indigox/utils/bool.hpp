@@ -10,8 +10,10 @@ namespace indigox::utils {
     const bool success;
     //! \brief The reason for the state.
     const std::string reason;
-    //! \brief Default constructor.
-    IXBool(bool p, std::string r) : success(p), reason(r) { }
+    //! \brief Successful constructor
+    IXBool() : success(true), reason("Successful") { }
+    //! \brief Failed constructor.
+    IXBool(std::string r) : success(false), reason(r) { }
     //! \brief Implicit conversion to the primitive bool type.
     operator bool() const { return success; }
   };
