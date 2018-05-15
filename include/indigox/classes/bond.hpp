@@ -1,5 +1,6 @@
 /*! \file bond.hpp */
 #include <array>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -113,13 +114,13 @@ namespace indigox {
      *  \details The returned shared_ptr is empty if the source atom was never
      *  set or is no longer valid.
      *  \return the source atom of the bond. */
-    Atom GetSourceAtom() const { return _atoms[0].lock(); }
+    Atom GetSourceAtom() const { return _atms[0].lock(); }
     
     /*! \brief Get the target atom of the bond.
      *  \details The returned shared_ptr is empty if the target atom was never
      *  set or is no longer valid.
      *  \return the target atom of the bond. */
-    Atom GetTargetAtom() const { return _atoms[1].lock(); }
+    Atom GetTargetAtom() const { return _atms[1].lock(); }
     
     /*! \brief Get the aromaticity of a bond.
      *  \return if the bond is aromatic or not. */
@@ -175,7 +176,7 @@ namespace indigox {
     
     /*! \brief Switch the two atoms of the bond.
      *  \details the source atom will become the target atom and vice versa. */
-    void SwapSourceTarget() { std::swap(_atoms[0], _atoms[1]); }
+    void SwapSourceTarget() { std::swap(_atms[0], _atms[1]); }
     
     /*! \brief Set the aromaticity.
      *  \param aromatic of the atom is aromatic or not. */
@@ -195,7 +196,7 @@ namespace indigox {
      *  of the atoms being iterated over.
      *  \return a pair of iterators for the beginning and end of the atoms. */
     std::pair<BondAtomIter, BondAtomIter> GetAtomIters() {
-      return std::make_pair(_atoms.begin(), _atoms.end());
+      return std::make_pair(_atms.begin(), _atms.end());
     }
     
     /*! \brief Get iterator access to the angles the bond is involved in.
@@ -203,7 +204,7 @@ namespace indigox {
      *  of the angles being iterated over.
      *  \return a pair of iterators for the beginning and end of the angles. */
     std::pair<BondAngleIter, BondAngleIter> GetAngleIters() {
-      return std::make_pair(_angles.begin(), _angles.end());
+      return std::make_pair(_angs.begin(), _angs.end());
     }
     
     /*! \brief Get iterator access to the dihedrals the bond is involved in.
@@ -211,50 +212,60 @@ namespace indigox {
      *  of the dihedrals being iterated over.
      *  \return a pair of iterators for the beginning and end of the dihedrals. */
     std::pair<BondDihedralIter, BondDihedralIter> GetDihedralIters() {
-      return std::make_pair(_dihedrals.begin(), _dihedrals.end());
+      return std::make_pair(_dhds.begin(), _dhds.end());
     }
     
     /*! \brief Add an angle to this bond.
      *  \details No bookkeeping is performed, meaning that the angle is not
      *  checked to ensure it actually contains the current bond. As such, this
-     *  method is intended for internal use only.
-     *  \param ang the angle to add. */
-    void AddAngle(Angle ang) { _angles.emplace_back(ang); }
+     *  method is intended for internal use only. Angle is checked to ensure
+     *  that it does not already exist on the bond.
+     *  \param ang the angle to add.
+     *  \return if the dihedral was added. */
+    bool AddAngle(Angle ang);
     
     /*! \brief Add a dihedral to this bond.
      *  \details No bookkeeping is performed, meaning that the dihedral is not
      *  checked to ensure it actually contains the current bond. As such, this
-     *  method is intended for internal use only.
-     *  \param dihed the dihedral to add. */
-    void AddDihedral(Dihedral dihed) { _dihedrals.emplace_back(dihed); }
+     *  method is intended for internal use only. Dihedral is checked to ensure
+     *  that it does not already exist on the bond.
+     *  \param dihed the dihedral to add.
+     *  \return if the dihedral was added. */
+    bool AddDihedral(Dihedral dihed);
     
-    /*! \brief Number of atoms this bond is made of.
-     *  \returns 2. */
-    size_ NumAtoms() const { return _atoms.size(); }
+    /*! \brief Number of valid atoms this bond is made of.
+     *  \returns count of the valid atoms assigned. */
+    size_ NumAtoms() const;
     
-    /*! \brief Number of angles this bond is a part of.
-     *  \returns the number of assigned angles. */
-    size_ NumAngles() const { return _angles.size(); }
+    /*! \brief Number of valid angles this bond is a part of.
+     *  \returns the number of valid assigned angles. */
+    size_ NumAngles() const;
     
-    /*! \brief Number of dihedrals this bond is a part of.
-     *  \returns the number of assigned dihedrals. */
-    size_ NumDihedrals() const { return _dihedrals.size(); }
+    /*! \brief Number of valid dihedrals this bond is a part of.
+     *  \returns the number of valid assigned dihedrals. */
+    size_ NumDihedrals() const;
     
     /*! \brief Remove an angle from this bond.
      *  \details No bookkeeping is performed, meaning that the angle is not
      *  checked to ensure it actually contains the current bond. As such this
      *  method is intened for internal use only. If the angle is not part of
-     *  this bond, nothing happens.
-     *  \param ang the angle to remove. */
-    void RemoveAngle(Angle ang);
+     *  this bond, no removal occurs.
+     *  \param ang the angle to remove.
+     *  \return if the angle was removed or not. */
+    bool RemoveAngle(Angle ang);
     
     /*! \brief Remove a dihedral from this bond.
      *  \details No bookkeeping is performed, meaning that the dihedral is not
      *  checked to ensure it actually contains the current bond. As such this
      *  method is intened for internal use only. If the dihedral is not part of
-     *  this bond, nothing happens.
-     *  \param dihed the dihedral to remove. */
-    void RemoveDihedral(Dihedral dihed);
+     *  this bond, no removal occurs.
+     *  \param dihed the dihedral to remove.
+     *  \return if the dihedral was removed or not. */
+    bool RemoveDihedral(Dihedral dihed);
+    
+    /*! \brief Remove all expired references in containers.
+     *  \details If an expired angle or dihedral is referenced, it is removed. */
+    void Cleanup();
     
   private:
     //! The molecule this bond is assigned to.
@@ -269,12 +280,19 @@ namespace indigox {
     Stereo _stereo;
     
     //! \brief Atoms which make up the bond.
-    BondAtoms _atoms;
+    BondAtoms _atms;
     //! \brief Angles which the bond is part of.
-    BondAngles _angles;
+    BondAngles _angs;
     //! \brief Dihedrals which the bond is part of.
-    BondDihedrals _dihedrals;
+    BondDihedrals _dhds;
   };
+  
+  /*! \brief Print a Bond to an output stream.
+   *  \details The printed string is of the form: Bond(SOURCE, TARGET).
+   *  \param os the output stream to print to.
+   *  \param bnd the Bond to print.
+   *  \return the output stream after printing. */
+  std::ostream& operator<<(std::ostream& os, Bond bnd);
   
 }
 
