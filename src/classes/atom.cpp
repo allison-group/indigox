@@ -146,5 +146,11 @@ namespace indigox {
                      _dhds.end());
   }
   
-  
+  std::ostream& operator<<(std::ostream& os, Atom atom) {
+    if (atom) {
+      os << "Atom(" << atom->GetUniqueID() << ", "
+      << atom->GetElement()->GetSymbol() << ")";
+    }
+    return os;
+  }
 }

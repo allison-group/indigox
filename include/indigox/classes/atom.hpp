@@ -323,7 +323,7 @@ namespace indigox {
      *  \returns the number of valid assigned angles. */
     size_ NumAngles() const;
     
-    /*! \brief Number of valis dihedrals this atom is a part of.
+    /*! \brief Number of valid dihedrals this atom is a part of.
      *  \returns the number of valid assigned dihedrals. */
     size_ NumDihedrals() const;
     
@@ -359,6 +359,13 @@ namespace indigox {
     //! Dihedrals the atom is part of
     AtomDihedrals _dhds;
   };
+  
+  /*! \brief Print an Atom to an output stream.
+   *  \details The printed string is of the form: Atom(UID, SYMBOL).
+   *  \param os the output stream to print to.
+   *  \param atom the Atom to print.
+   *  \return the output stream after printing. */
+  std::ostream& operator<<(std::ostream& os, Atom atom);
   
 //  /*! \brief Print an IXAtom::Stereo to an output stream.
 //   *  \param os output stream to print to.
