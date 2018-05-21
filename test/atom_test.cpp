@@ -2,6 +2,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <indigox/classes/atom.hpp>
+#include <indigox/classes/bond.hpp>
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/utils/helpers.hpp>
 
@@ -13,7 +14,6 @@
 
 namespace indigox {
   // Dummyclasses
-  class IXBond {};
   class IXAngle {};
   class IXDihedral {};
   class IXMolecule {};
