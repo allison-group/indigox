@@ -78,6 +78,45 @@ namespace indigox::test {
     
   };
   
+  class IXBond {
+    indigox::IXBond x;
+  public:
+    typedef indigox::IXBond::BondAtomIter BndAtmIter;
+    typedef indigox::IXBond::BondAngleIter BndAngIter;
+    typedef indigox::IXBond::BondDihedralIter BndDhdIter;
+    
+    // private wrapping members
+    IXBond() : x(Atom(), Atom(), Molecule()) { }
+    IXBond(Atom a, Atom b, Molecule m) : x(a,b,m) { }
+    inline void AddAngle(Angle a) { x.AddAngle(a); }
+    inline void AddDihedral(Dihedral a) { x.AddDihedral(a); }
+    inline void Clear() { x.Clear(); }
+    inline void RemoveAngle(Angle a) { x.RemoveAngle(a); }
+    inline void RemoveDihedral(Dihedral a) { x.RemoveDihedral(a); }
+    
+    // public wrapping members
+    inline std::pair<BndAngIter, BndAngIter> GetAngleIters() { return x.GetAngleIters(); }
+    inline bool GetAromaticity() { return x.GetAromaticity(); }
+    inline std::pair<BndAtmIter, BndAtmIter> GetAtomIters() { return x.GetAtomIters(); }
+    inline std::pair<BndDhdIter, BndDhdIter> GetDihedralIters() { return x.GetDihedralIters(); }
+    inline Molecule GetMolecule() { return x.GetMolecule(); }
+    inline BondOrder GetOrder() { return x.GetOrder(); }
+    inline Atom GetSourceAtom() { return x.GetSourceAtom(); }
+    inline BondStereo GetStereochemistry() { return x.GetStereochemistry(); }
+    inline uid_ GetTag() { return x.GetTag(); }
+    inline Atom GetTargetAtom() { return x.GetTargetAtom(); }
+    inline size_ NumAngles() { return x.NumAngles(); }
+    inline size_ NumAtoms() { return x.NumAtoms(); }
+    inline size_ NumDihedrals() { return x.NumDihedrals(); }
+    inline void SetAromaticity(bool a) { x.SetAromaticity(a); }
+    inline void SetOrder(BondOrder a) { x.SetOrder(a); }
+    inline void SetStereochemistry(BondStereo a) { x.SetStereochemistry(a); }
+    inline void SetTag(uid_ tag) { x.SetTag(tag); }
+    inline void SwapSourceTarget() { x.SwapSourceTarget(); }
+    inline string_ ToString() { return x.ToString(); }
+    inline uid_ GetUniqueID() { return x.GetUniqueID(); }
+  };
+  
   class IXMolecularGraph {
     graph::IXMolecularGraph g;
   public:
