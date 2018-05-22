@@ -349,6 +349,9 @@ namespace indigox {
   inline Molecule CreateMolecule() {
     Molecule m(new indigox::IXMolecule()); m->Init(); return m; }
   
+  //! \brief Type for the modifiable properties of an IXMolecule
+  typedef indigox::IXMolecule::Property MolProperty;
+  
 }
 
 #endif /* INDIGOX_MOLECULE_HPP */

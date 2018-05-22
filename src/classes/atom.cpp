@@ -16,7 +16,7 @@
 
 namespace indigox {
   
-  inline void __set_property_modified(_Molecule mol, IXMolecule::Property p) {
+  inline void __set_property_modified(_Molecule mol, MolProperty p) {
     if (!mol.expired()) mol.lock()->SetPropertyModified(p);
   }
   
@@ -33,7 +33,7 @@ namespace indigox {
   void IXAtom::SetElement(Element e) {
     if (e != GetElement()) {
       _elem = e;
-      __set_property_modified(_mol, IXMolecule::Property::ATOM_ELEMENTS);
+      __set_property_modified(_mol, MolProperty::ATOM_ELEMENTS);
     }
   }
   
