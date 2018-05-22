@@ -85,6 +85,9 @@ namespace indigox::test {
     typedef indigox::IXBond::BondAngleIter BndAngIter;
     typedef indigox::IXBond::BondDihedralIter BndDhdIter;
     
+    static Bond GetNewBond() { return Bond(new indigox::IXBond(Atom(), Atom(), Molecule())); }
+    static Bond GetNewBond(Atom a, Atom b, Molecule m) { return Bond(new indigox::IXBond(a,b,m)); }
+    
     // private wrapping members
     IXBond() : x(Atom(), Atom(), Molecule()) { }
     IXBond(Atom a, Atom b, Molecule m) : x(a,b,m) { }

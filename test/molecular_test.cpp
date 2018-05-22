@@ -52,7 +52,7 @@ namespace indigox::test {
       for (auto& i : incident_edges) {
         expected_degrees.at(i.first)++;
         expected_degrees.at(i.second)++;
-        bonds.emplace_back(new IXBond(atoms[i.first], atoms[i.second]));
+        bonds.emplace_back(indigox::test::IXBond::GetNewBond(atoms[i.first], atoms[i.second], mol));
         edges.emplace_back(G.AddEdge(bonds.back()));
       }
     }
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(edge_add_remove) {
   // Add an edge where the vertices haven't been added
   atoms.emplace_back(indigox::test::IXAtom::GetNewAtom(mol));
   atoms.emplace_back(indigox::test::IXAtom::GetNewAtom(mol));
-  bonds.emplace_back(new IXBond(atoms[atoms.size() - 1], atoms[atoms.size() - 2]));
+  bonds.emplace_back(indigox::test::IXBond::GetNewBond(atoms[atoms.size() - 1], atoms[atoms.size() - 2], mol));
   edges.emplace_back(G.AddEdge(bonds.back()));
   BOOST_CHECK(G.NumVertices() == num_atoms + 2);
   BOOST_CHECK(G.NumEdges() == num_bonds + 1);
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(has_vertex_edge) {
   BOOST_CHECK(!G.HasVertex(MGVertex())); // fail on null pass
   BOOST_CHECK(!G.HasVertex(fail_vert));  // fail on not part pass
   
-  Bond fail_bond = Bond(new IXBond(atoms[incident_fail_edge.first], atoms[incident_fail_edge.second]));
+  Bond fail_bond = indigox::test::IXBond::GetNewBond(atoms[incident_fail_edge.first], atoms[incident_fail_edge.second], mol);
   MGEdge fail_edge = G.AddEdge(fail_bond); G.RemoveEdge(fail_edge);
   BOOST_CHECK(!G.HasEdge(fail_bond));
   BOOST_CHECK(!G.HasEdge(fail_edge));
@@ -225,7 +225,7 @@ BOOST_AUTO_TEST_CASE(edge_vertex_get) {
   BOOST_CHECK(G.GetVertex(Atom()) == MGVertex());     // fail on null pass
   BOOST_CHECK(G.GetVertex(fail_atom) == MGVertex());  // fail on not part pass
   
-  Bond fail_bond = Bond(new IXBond(atoms[incident_fail_edge.first], atoms[incident_fail_edge.second]));
+  Bond fail_bond = indigox::test::IXBond::GetNewBond(atoms[incident_fail_edge.first], atoms[incident_fail_edge.second], mol);
   BOOST_CHECK(G.GetEdge(fail_bond) == MGEdge());
   BOOST_CHECK(G.GetEdge(Bond()) == MGEdge());
   BOOST_CHECK(G.GetEdge(fail_vert, verts[0]) == MGEdge());

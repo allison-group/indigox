@@ -28,7 +28,7 @@ namespace indigox::test {
     AtomFixture() : mol(new IXMolecule()), a1(Molecule()), a2(mol), a3(indigox::test::IXAtom::GetNewAtom()) {
       std::random_device rd;
       std::mt19937 gen(rd());
-      std::uniform_int_distribution<size_> dist(1,10);
+      std::uniform_int_distribution<size_> dist(3,10);
       std::array<size_, 118> elems;
       std::iota(elems.begin(), elems.end(), 1);
       std::shuffle(elems.begin(), elems.end(), gen);
@@ -38,7 +38,7 @@ namespace indigox::test {
       enull = GetPeriodicTable()->GetUndefined();
       num_bonds = dist(gen); bonds.reserve(num_bonds);
       for (size_ i = 0; i < num_bonds; ++i) {
-        bonds.emplace_back(new indigox::IXBond());
+        bonds.emplace_back(indigox::test::IXBond::GetNewBond());
         a2.AddBond(bonds.back());
       }
       num_angles = dist(gen); angles.reserve(num_angles);
@@ -61,10 +61,8 @@ using namespace indigox;
 
 BOOST_AUTO_TEST_CASE(constructor) {
   BOOST_CHECK(a1.GetUniqueID());
-  BOOST_CHECK(a1.GetMolecule() == Molecule());
   BOOST_CHECK(a2.GetUniqueID());
   BOOST_CHECK(a1.GetUniqueID() != a2.GetUniqueID());
-  BOOST_CHECK(a2.GetMolecule() == mol);
 }
 
 BOOST_AUTO_TEST_CASE(aromaticity_get_set) {
