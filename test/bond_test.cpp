@@ -173,6 +173,8 @@ BOOST_AUTO_TEST_CASE(printing_methods) {
   a3->SetName("Foxtrot"); a3->SetElement("F");
   b1.SwapSourceTarget();
   BOOST_CHECK(b1.ToString() == "Bond(Atom(Foxtrot, F), Atom(Romeo, U))");
+  a3.reset();  // malformed checking
+  BOOST_CHECK(b1.ToString() == "Bond(MALFORMED)");
 }
 
 BOOST_AUTO_TEST_CASE(cleaning_methods) {
