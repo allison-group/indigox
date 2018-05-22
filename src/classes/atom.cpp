@@ -37,22 +37,6 @@ namespace indigox {
     }
   }
   
-  void IXAtom::SetElement(string_ e) {
-    Element elem = GetPeriodicTable()->GetElement(e);
-    if (e != GetElement()) {
-      _elem = elem;
-      __set_property_modified(_mol, IXMolecule::Property::ATOM_ELEMENTS);
-    }
-  }
-  
-  void IXAtom::SetElement(uint_ e) {
-    Element elem = GetPeriodicTable()->GetElement(e);
-    if (e != GetElement()) {
-      _elem = elem;
-      __set_property_modified(_mol, IXMolecule::Property::ATOM_ELEMENTS);
-    }
-  }
-  
   void IXAtom::Clear() {
     _mol.reset();
     _elem.reset();

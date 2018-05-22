@@ -162,11 +162,15 @@ namespace indigox {
     
     /*! \brief Set the element of this atom.
      *  \param e the name or atomic symbol of the element to set. */
-    void SetElement(string_ e);
+    inline void SetElement(string_ e) {
+      SetElement(GetPeriodicTable()->GetElement(e));
+    }
     
     /*! \brief Set the element of this atom.
      *  \param e the atomic number of the element to set. */
-    void SetElement(uint_ e);
+    inline void SetElement(uint_ e){
+      SetElement(GetPeriodicTable()->GetElement(e));
+    }
     
     /*! \brief Set the formal charge of this atom.
      *  \param q the formal charge value to set. */
