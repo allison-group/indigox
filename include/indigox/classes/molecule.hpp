@@ -103,6 +103,12 @@ namespace indigox {
      *  via the Molecule shared_ptr. */
     IXMolecule();
     
+    /*! \brief Initalisation method to always be called after construction.
+     *  \details Primary reason is to work around IXMolecularGraph requiring
+     *  a Molecule for construction, which can not be done until the IXMolecule
+     *  has completed construction. */
+    void Init();
+    
   public:
     //! \brief Destructor
     ~IXMolecule() { }
@@ -340,7 +346,8 @@ namespace indigox {
    *  \details Strictly enforces usage of the IXMolecule class through use of
    *  the Molecule shared_ptr.
    *  \return a new, blank Molecule. */
-  inline Molecule CreateMolecule() { return Molecule(new IXMolecule()); }
+  inline Molecule CreateMolecule() {
+    Molecule m(new indigox::IXMolecule()); m->Init(); return m; }
   
 }
 

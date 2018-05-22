@@ -39,9 +39,13 @@ namespace indigox {
   }
   
   IXMolecule::IXMolecule() : utils::IXCountableObject<IXMolecule>(), _name(""),
-    _q(0), _emerge(0), _g(new graph::IXMolecularGraph(shared_from_this())) {
+    _q(0), _emerge(0) {
       _emerge.set();
     }
+  
+  void IXMolecule::Init() {
+    _g = graph::MolecularGraph(new graph::IXMolecularGraph(shared_from_this()));
+  }
   
   Atom IXMolecule::GetAtomTag(uid_ tag) const {
     auto pos = std::find_if(_atoms.begin(), _atoms.end(),
