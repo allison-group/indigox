@@ -19,8 +19,8 @@ namespace indigox {
   class IXAngle;
   class IXDihedral;
   class IXMolecule;
-  
   class IXElement;
+  namespace test { class IXAtom; }
   
   //! \brief shared_ptr for normal use of the IXAtom class.
   typedef std::shared_ptr<IXAtom> Atom;
@@ -49,7 +49,10 @@ namespace indigox {
   class IXAtom
   : public utils::IXCountableObject<IXAtom>,
   public std::enable_shared_from_this<IXAtom> {
-  
+    //! \brief Friendship allows IXMolecule to create new atoms.
+    friend class indigox::IXMolecule;
+    //! \brief Friendship allows IXAtom to be tested.
+    friend class indigox::test::IXAtom;
   private:
     // Typedefs
     //! \brief Container for storing IXBond references.
@@ -75,54 +78,50 @@ namespace indigox {
       S,         //!< Has S stereochemistry.
     };
 
-    /*! \brief Default constructor.
-     *  \details Though allowed, it is not recommended to construct IXAtom
-     *  instances directly. Rather, do so through the IXMolecule::NewAtom
-     *  methods. */
-    IXAtom();
-    
+  private:
     /*! \brief Normal constructor.
-     *  \details Links the constructed atom to the given Molecule, though no
-     *  bookkeeping is performed so the molecule does not know about it. Though
-     *  allowed, it is not recommended to construct IXAtom instances directly.
-     *  Rather, do so through the IXMolecule::NewAtom methods.
+     *  \details Links the constructed atom to the given Molecule.
      *  \param m the molecule to assign this atom to. */
     IXAtom(Molecule m);
     
-    //! \cond
-    ~IXAtom() = default;
-    //! \endcond
+  public:
+    IXAtom() = delete;  // no default constructor
+    
+    //! \brief Destructor
+    ~IXAtom() { };
     
     /*! \brief Element of the atom.
      *  \return the element of this atom. */
-    Element GetElement() const;
+    inline Element GetElement() const {
+      return _elem.expired() ? GetPeriodicTable()->GetUndefined() : _elem.lock();
+    }
     
     /*! \brief Formal charge on the atom.
      *  \return the formal charge on the atom. */
-    int_ GetFormalCharge() const { return _fc; }
+    inline int_ GetFormalCharge() const { return _fc; }
     
     /*! \brief Partial atomic charge on the atom.
      *  \return the partial atomic charge. */
-    float_ GetPartialCharge() const { return _partial; }
+    inline float_ GetPartialCharge() const { return _partial; }
     
     /*! \brief Tag of the atom.
      *  \details This value may be modified without warning. Use with caution.
      *  For a constant identifier to the atom, use IXAtom::GetUniqueID.
      *  \return the tag assigned to the atom. */
-    uint_ GetTag() const { return _tag; };
+    inline uint_ GetTag() const { return _tag; };
     
     /*! \brief Get number of implicit hydrogens.
      *  \return the number of implicit hydrogens in the atom. */
-    uint_ GetImplicitCount() const { return _implicitH; }
+    inline uint_ GetImplicitCount() const { return _implicitH; }
     
     /*! \brief Add an implicit hydrogen.
      *  \return the new number of implicit hydrogens in the atom. */
-    uint_ AddImplicitHydrogen() { return ++_implicitH; }
+    inline uint_ AddImplicitHydrogen() { return ++_implicitH; }
     
     /*! \brief Remove an implicit hydrogen.
      *  \details If GetImplicitCount() == 0, no hydrogen is removed.
      *  \return the new number of implicit hydrogens in the atom. */
-    uint_ RemoveImplicitHydrogen() {
+    inline uint_ RemoveImplicitHydrogen() {
       return _implicitH ? --_implicitH : _implicitH;
     }
     
@@ -130,27 +129,27 @@ namespace indigox {
      *  \details The returned shared_ptr is empty of the atom is not assigned
      *  to a valid molecule.
      *  \return the molecule associated with this atom. */
-    Molecule GetMolecule() const { return _mol.lock(); }
+    inline Molecule GetMolecule() const { return _mol.lock(); }
     
     /*! \brief Atom name.
      *  \return name of the atom. */
-    string_ GetName() const { return _name; }
+    inline string_ GetName() const { return _name; }
     
     /*! \brief Atom x position.
      *  \return the x coordinate of this atom. */
-    float_ GetX() const { return _pos.x; }
+    inline float_ GetX() const { return _pos.x; }
     
     /*! \brief Atom y position.
      *  \return the y coordinate of this atom. */
-    float_ GetY() const { return _pos.y; }
+    inline float_ GetY() const { return _pos.y; }
     
     /*! \brief Atom z position.
      *  \return the z coordinate of this atom. */
-    float_ GetZ() const { return _pos.z; }
+    inline float_ GetZ() const { return _pos.z; }
     
     /*! \brief Vector of the atom's position.
      *  \return the atoms position. */
-    Vec3 GetVector() const { return _pos; }
+    inline Vec3 GetVector() const { return _pos; }
     
     /*! \brief String representation of the atom.
      *  \details The returned string is of the form: Atom(NAME, SYMBOL).
@@ -159,139 +158,124 @@ namespace indigox {
     
     /*! \brief Set the element of this atom.
      *  \param e the element to set to. */
-    void SetElement(Element e);
+    inline void SetElement(Element e) { _elem = e; }
     
     /*! \brief Set the element of this atom.
      *  \param e the name or atomic symbol of the element to set. */
-    void SetElement(string_ e);
+    inline void SetElement(string_ e) {
+      _elem = GetPeriodicTable()->GetElement(e);
+    }
     
     /*! \brief Set the element of this atom.
      *  \param e the atomic number of the element to set. */
-    void SetElement(uint_ e);
+    inline void SetElement(uint_ e) {
+      _elem = GetPeriodicTable()->GetElement(e);
+    }
     
     /*! \brief Set the formal charge of this atom.
      *  \param q the formal charge value to set. */
-    void SetFormalCharge(int_ q) { _fc = q; }
+    inline void SetFormalCharge(int_ q) { _fc = q; }
     
     /*! \brief Set the partial charge of this atom.
      *  \param q the partial charge value to set. */
-    void SetPartialCharge(float_ q) { _partial = q; }
+    inline void SetPartialCharge(float_ q) { _partial = q; }
     
     /*! \brief Set the number of implicit hydrogens.
      *  \param h the number of implicit hydrogens to set. */
-    void SetImplicitCount(uint_ h) { _implicitH = h; }
+    inline void SetImplicitCount(uint_ h) { _implicitH = h; }
     
     /*! \brief Set the tag of this atom.
      *  \details The tag of an atom should not be considered stable. Use with
      *  caution.
      *  \param i the tag to set. */
-    void SetTag(uint_ i) { _tag = i; }
-    
-    /*! \brief Set the molecule this atom is part of.
-     *  \details No bookkeeping is performed, meaning the molecule is not
-     *  informed that it now contains another atom. As such, this method is
-     *  only intended for internal use.
-     *  \param m the molecule to set. */
-    void SetMolecule(Molecule m) { _mol = m; }
+    inline void SetTag(uint_ i) { _tag = i; }
     
     /*! \brief Set the atom name.
      *  \param n name to set. */
-    void SetName(string_ n) { _name = n; }
+    inline void SetName(string_ n) { _name = n; }
     
     /*! \brief Set the x position.
      *  \param x position to set. */
-    void SetX(float_ x) { _pos.x = x; }
+    inline void SetX(float_ x) { _pos.x = x; }
     
     /*! \brief Set the y position.
      *  \param y position to set. */
-    void SetY(float_ y) { _pos.y = y; }
+    inline void SetY(float_ y) { _pos.y = y; }
     
     /*! \brief Set the z position.
      *  \param z position to set. */
-    void SetZ(float_ z) { _pos.z = z; }
+    inline void SetZ(float_ z) { _pos.z = z; }
     
     /*! \brief Set the x, y and z positions.
      *  \param x,y,z position to set. */
-    void SetPosition(float_ x, float_ y, float_ z) {
+    inline void SetPosition(float_ x, float_ y, float_ z) {
       _pos.x = x; _pos.y = y; _pos.z = z;
     }
     
     /*! \brief Set the stereochemistry of an atomic center.
      *  \param s the stereochemistry to set. */
-    void SetStereochemistry(Stereo s) { _stereo = s; }
+    inline void SetStereochemistry(Stereo s) { _stereo = s; }
     
     /*! \brief Set the aromaticity of an atom.
      *  \param a if the atom is aromatic or not. */
-    void SetAromaticity(bool a) { _aromatic = a; }
+    inline void SetAromaticity(bool a) { _aromatic = a; }
     
     /*! \brief Get the stereochemistry of the atom.
      *  \return the stereochemistry of the atom. */
-    Stereo GetStereochemistry() { return _stereo; }
+    inline Stereo GetStereochemistry() { return _stereo; }
     
     /*! \brief Get the aromaticity of an atom.
      *  \return if the atom is aromatic or not. */
-    bool GetAromaticity() { return _aromatic; }
+    inline bool GetAromaticity() { return _aromatic; }
     
+  private:
     /*! \brief Add a bond to this atom.
-     *  \details No bookkeeping is performed, meaning that the bond is not
-     *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use. The existing bonds are checked
-     *  to ensure that no duplicate bonds are added.
+     *  \details Assumes that the bond is not already added to the atom.
      *  \param b the bond to add.
      *  \return if the bond was added or not. */
-    bool AddBond(Bond b);
+    inline void AddBond(Bond b) { _bnds.emplace_back(b); }
     
     /*! \brief Add an angle to this atom.
-     *  \details No bookkeeping is performed, meaning that the angle is not
-     *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use. Existing angles are checked to
-     *  ensure that no duplicate angles are added.
+     *  \details Assumes that the angle is not already added to the atom.
      *  \param a the angle to add.
      *  \return if the angle was added or not. */
-    bool AddAngle(Angle a);
+    inline void AddAngle(Angle a) { _angs.emplace_back(a); }
     
     /*! \brief Add a dihedral to this atom.
-     *  \details No bookkeeping is performed, meaning that the dihedral is not
-     *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use. Existing dihedrals are checked
-     *  to ensure that no duplicate dihedrals are added.
+     *  \details Assumes that the dihedral is not already added to the atom.
      *  \param d the dihedral to add.
      *  \return if the dihedral was added or not. */
-    bool AddDihedral(Dihedral d);
+    inline void AddDihedral(Dihedral d) { _dhds.emplace_back(d); }
     
     /*! \brief Remove a bond from this atom.
-     *  \details No bookkeeping is performed, meaning that the bond is not
-     *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use.
+     *  \details Assumes that the bond is added to the atom.
      *  \param b the bond to remove.
      *  \return if the bond was removed or not. */
-    bool RemoveBond(Bond b);
+    inline void RemoveBond(Bond b) {
+      _bnds.erase(utils::WeakContainsShared(_bnds.begin(), _bnds.end(), b));
+    }
     
     /*! \brief Remove an angle from this atom.
-     *  \details No bookkeeping is performed, meaning that the angle is not
-     *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use.
+     *  \details Assumes that the angle is added to the atom.
      *  \param a the angle to remove.
      *  \return if the angle was removed or not. */
-    bool RemoveAngle(Angle a);
+    inline void RemoveAngle(Angle a) {
+      _angs.erase(utils::WeakContainsShared(_angs.begin(), _angs.end(), a));
+    }
     
     /*! \brief Remove a dihedral from this atom.
-     *  \details No bookkeeping is performed, meaning that the dihedral is not
-     *  checked to ensure it actually contains the current atom. As such, this
-     *  method is only intended for internal use.
+     *  \details Assumes that the dihedral is added to the atom.
      *  \param d the dihedral to remove.
      *  \return if the dihedral was removed or not. */
-    bool RemoveDihedral(Dihedral d);
+    inline void RemoveDihedral(Dihedral d) {
+      _dhds.erase(utils::WeakContainsShared(_dhds.begin(), _dhds.end(), d));
+    }
     
     /*! \brief Clear all information.
      *  \details Erases all information stored on the atom. */
     void Clear();
     
-    /*! \brief Remove all expired references in containers.
-     *  \details If an expired bond, angle or dihedral is referenced, it is
-     *  removed. */
-    void Cleanup();
-    
+  public:
     /*! \brief Get iterator access to the atom's bonds.
      *  \details Intended primarily for internal use as the iterators are to
      *  weak_ptrs.
@@ -319,15 +303,15 @@ namespace indigox {
     
     /*! \brief Number of valid bonds this atom is part of.
      *  \returns the number of valid assigned bonds. */
-    size_ NumBonds() const;
+    size_ NumBonds() const { return _bnds.size(); }
     
     /*! \brief Number of valid angles this atom is a part of.
      *  \returns the number of valid assigned angles. */
-    size_ NumAngles() const;
+    size_ NumAngles() const { return _angs.size(); }
     
     /*! \brief Number of valid dihedrals this atom is a part of.
      *  \returns the number of valid assigned dihedrals. */
-    size_ NumDihedrals() const;
+    size_ NumDihedrals() const { return _dhds.size(); }
     
   private:
     //! The molecule this atom is assigned to.
@@ -369,11 +353,8 @@ namespace indigox {
    *  \return the output stream after printing. */
   std::ostream& operator<<(std::ostream& os, Atom atom);
   
-//  /*! \brief Print an IXAtom::Stereo to an output stream.
-//   *  \param os output stream to print to.
-//   *  \param s IXAtom::Stereo to print.
-//   *  \return the output stream. */
-//  std::ostream& operator<<(std::ostream& os, IXAtom::Stereo s);
+  //! \brief Type for the stereochemistry enum of an atom.
+  typedef indigox::IXAtom::Stereo AtomStereo;
 }
 
 #endif /* INDIGOX_CLASSES_ATOM_HPP */

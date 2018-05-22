@@ -6,53 +6,9 @@
 #include <random>
 #include <vector>
 
-#include <indigox/classes/atom.hpp>
-#include <indigox/classes/bond.hpp>
-#include <indigox/graph/molecular.hpp>
-#include <indigox/utils/numerics.hpp>
+#include "class_test_wrappers.hpp"
 
-
-namespace indigox {
-  // Dummyclasses
-  class IXMolecule {};
-  namespace test {
-    class IXMolecularGraph {
-      graph::IXMolecularGraph g;
-    public:
-      typedef graph::IXMolecularGraph::EdgeIter EdgeIter;
-      typedef graph::IXMolecularGraph::NbrsIter NbrsIter;
-      typedef graph::IXMolecularGraph::VertIter VertIter;
-      IXMolecularGraph() = delete;
-      IXMolecularGraph(Molecule m) : g(m) {}
-      inline size_ Degree(const graph::MGVertex v) const { return g.Degree(v); }
-      inline graph::MGEdge GetEdge(const graph::MGVertex u, const graph::MGVertex v) const { return g.GetEdge(u, v); }
-      inline graph::MGEdge GetEdge(const Bond b) const { return g.GetEdge(b); }
-      inline std::pair<EdgeIter, EdgeIter> GetEdges() { return g.GetEdges(); }
-      inline std::pair<NbrsIter, NbrsIter> GetNeighbours(const graph::MGVertex v) { return g.GetNeighbours(v); }
-      inline graph::MGVertex GetSource(const graph::MGEdge e) const { return g.GetSource(e); }
-      inline graph::MGVertex GetTarget(const graph::MGEdge e) const { return g.GetTarget(e); }
-      inline graph::MGVertex GetVertex(const Atom a) const { return g.GetVertex(a); }
-      inline std::pair<graph::MGVertex, graph::MGVertex> GetVertices(const graph::MGEdge e) const { return g.GetVertices(e); }
-      inline std::pair<VertIter, VertIter> GetVertices() { return g.GetVertices(); }
-      inline bool HasEdge(const Bond b) const { return g.HasEdge(b); }
-      inline bool HasEdge(const graph::MGEdge e) const { return g.HasEdge(e); }
-      inline bool HasEdge(const graph::MGVertex u, const graph::MGVertex v) const { return g.HasEdge(u,v); }
-      inline bool HasVertex(const Atom v) const { return g.HasVertex(v); }
-      inline bool HasVertex(const graph::MGVertex v) const { return g.HasVertex(v); }
-      inline size_ NumEdges() const { return g.NumEdges(); }
-      inline size_ NumVertices() const { return g.NumVertices(); }
-      //
-      inline graph::MGEdge AddEdge(const Bond bnd) { return g.AddEdge(bnd); }
-      inline graph::MGVertex AddVertex(const Atom atm) { return g.AddVertex(atm); }
-      inline void Clear() { g.Clear(); }
-      inline void RemoveEdge(const graph::MGEdge e) { g.RemoveEdge(e); }
-      inline void RemoveEdge(const graph::MGVertex u, const graph::MGVertex v) { g.RemoveEdge(u,v); }
-      inline void RemoveVertex(const graph::MGVertex v) { g.RemoveVertex(v); }
-    };
-  }
-}
-
-namespace indigox {
+namespace indigox::test {
   struct RandomMG {
     Molecule mol;
     indigox::test::IXMolecularGraph G;
@@ -76,7 +32,7 @@ namespace indigox {
       atoms.reserve(num_atoms); verts.reserve(num_atoms);
       for (int i = 0; i < num_atoms; ++i) {
         expected_degrees.emplace(i,0);
-        atoms.emplace_back(new IXAtom());
+        atoms.emplace_back(indigox::test::IXAtom::GetNewAtom(mol));
         verts.emplace_back(G.AddVertex(atoms.back()));
         vert_ids.emplace(verts.back(), i);
       }
@@ -112,7 +68,7 @@ namespace std {
 }
 }
 
-BOOST_FIXTURE_TEST_SUITE(ixmolecular_graph, RandomMG);
+BOOST_FIXTURE_TEST_SUITE(ixmolecular_graph, indigox::test::RandomMG);
 //BOOST_AUTO_TEST_SUITE(ixmolecular_graph);
 
 BOOST_AUTO_TEST_CASE(constructor) {
@@ -182,8 +138,8 @@ BOOST_AUTO_TEST_CASE(edge_add_remove) {
                                 built_edges.begin(), built_edges.end());
   
   // Add an edge where the vertices haven't been added
-  atoms.emplace_back(new IXAtom());
-  atoms.emplace_back(new IXAtom());
+  atoms.emplace_back(indigox::test::IXAtom::GetNewAtom(mol));
+  atoms.emplace_back(indigox::test::IXAtom::GetNewAtom(mol));
   bonds.emplace_back(new IXBond(atoms[atoms.size() - 1], atoms[atoms.size() - 2]));
   edges.emplace_back(G.AddEdge(bonds.back()));
   BOOST_CHECK(G.NumVertices() == num_atoms + 2);
@@ -228,7 +184,7 @@ BOOST_AUTO_TEST_CASE(has_vertex_edge) {
                                 fill_edges.begin(), fill_edges.end());
   
   // Check that has methods correctly fail
-  Atom fail_atom = Atom(new IXAtom());
+  Atom fail_atom = Atom(indigox::test::IXAtom::GetNewAtom(mol));
   MGVertex fail_vert = G.AddVertex(fail_atom); G.RemoveVertex(fail_vert);
   BOOST_CHECK(!G.HasVertex(Atom()));     // fail on null pass
   BOOST_CHECK(!G.HasVertex(fail_atom));  // fail on not part pass
@@ -264,7 +220,7 @@ BOOST_AUTO_TEST_CASE(edge_vertex_get) {
   
   
   // Check that get methods correctly fail (return null)
-  Atom fail_atom = Atom(new IXAtom());
+  Atom fail_atom = Atom(indigox::test::IXAtom::GetNewAtom(mol));
   MGVertex fail_vert = G.AddVertex(fail_atom); G.RemoveVertex(fail_vert);
   BOOST_CHECK(G.GetVertex(Atom()) == MGVertex());     // fail on null pass
   BOOST_CHECK(G.GetVertex(fail_atom) == MGVertex());  // fail on not part pass
