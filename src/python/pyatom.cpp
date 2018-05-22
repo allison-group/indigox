@@ -22,11 +22,8 @@ namespace py = pybind11;
 
 namespace indigox {
   void GeneratePyAtom(pybind11::module& m) {
-    py::class_<IXAtom, Atom> atom(m, "Atom");
-    atom
-    // Constructors
-    .def(py::init<>([](){ return Atom(new IXAtom()); }))
-    .def(py::init<>([](Molecule m){ return Atom(new IXAtom(m)); }))
+    py::class_<IXAtom, Atom>(m, "Atom")
+    // Only construct from Molecule
     // Hidden methods
     .def("__repr__", &IXAtom::ToString)
     // Getters
@@ -34,11 +31,11 @@ namespace indigox {
     .def("GetElement", &IXAtom::GetElement)
     .def("GetFormalCharge", &IXAtom::GetFormalCharge)
     .def("GetImplicitCount", &IXAtom::GetImplicitCount)
-    .def("GetIndex", &IXAtom::GetIndex)
     .def("GetMolecule", &IXAtom::GetMolecule)
     .def("GetName", &IXAtom::GetName)
     .def("GetPartialCharge", &IXAtom::GetPartialCharge)
-    .def("GetStereoChemistry", &IXAtom::GetStereochemistry)
+    .def("GetStereochemistry", &IXAtom::GetStereochemistry)
+    .def("GetTag", &IXAtom::GetTag)
     .def("GetVector", &IXAtom::GetVector)
     .def("GetX", &IXAtom::GetX)
     .def("GetY", &IXAtom::GetY)
@@ -47,7 +44,6 @@ namespace indigox {
     .def("NumBonds", &IXAtom::NumBonds)
     .def("NumDihedrals", &IXAtom::NumDihedrals)
     .def("GetUniqueID", &IXAtom::GetUniqueID)
-    .def("GetCurrentCount", &utils::CountableObject<IXAtom>::GetCurrentCount)
     // Setters
     .def("SetAromaticity", &IXAtom::SetAromaticity)
     .def("SetElement", py::overload_cast<Element>(&IXAtom::SetElement))
@@ -55,39 +51,32 @@ namespace indigox {
     .def("SetElement", py::overload_cast<unsigned int>(&IXAtom::SetElement))
     .def("SetFormalCharge", &IXAtom::SetFormalCharge)
     .def("SetImplicitCount", &IXAtom::SetImplicitCount)
-    .def("SetIndex", &IXAtom::SetIndex)
-    .def("SetMolecule", &IXAtom::SetMolecule)
     .def("SetName", &IXAtom::SetName)
     .def("SetPartialCharge", &IXAtom::SetPartialCharge)
     .def("SetPosition", &IXAtom::SetPosition)
     .def("SetStereochemistry", &IXAtom::SetStereochemistry)
+    .def("SetTag", &IXAtom::SetTag)
     .def("SetX", &IXAtom::SetX)
     .def("SetY", &IXAtom::SetY)
     .def("SetZ", &IXAtom::SetZ)
-    // Modification
-//    .def("AddAngle", &IXAtom::AddAngle)
-    .def("AddBond", &IXAtom::AddBond)
-//    .def("AddDihedral", &IXAtom::AddDihedral)
-    .def("Clear", &IXAtom::Clear)
-//    .def("RemoveAngle", &IXAtom::RemoveAngle)
-    .def("RemoveBond", &IXAtom::RemoveBond)
-//    .def("RemoveDihedral", &IXAtom::RemoveDihedral)
     // Other
+    .def("AddImplicitHydrogen", &IXAtom::AddImplicitHydrogen)
+    .def("RemoveImplicitHydrogen", &IXAtom::RemoveImplicitHydrogen)
     .def("ToString", &IXAtom::ToString)
     // Iterators
 //    .def("IterateAngles", &IXAtom::GetAngleIters)
-    .def("IterateBonds", &IXAtom::GetBondIters)
+//    .def("IterateBonds", &IXAtom::GetBondIters)
 //    .def("IterateDihedrals", &IXAtom::GetDihedralIters)
     // Pickle support
-    .def(py::pickle(&PickleAtom, &UnpickleAtom))
+//    .def(py::pickle(&PickleAtom, &UnpickleAtom))
     ;
     
     // AtomStereo enum
-    py::enum_<IXAtom::Stereo>(atom, "Stereo")
-    .value("UNDEFINED", IXAtom::Stereo::UNDEFINED)
-    .value("ACHIRAL", IXAtom::Stereo::ACHIRAL)
-    .value("R", IXAtom::Stereo::R)
-    .value("S", IXAtom::Stereo::S)
+    py::enum_<AtomStereo>("AtomStereo")
+    .value("UNDEFINED", AtomStereo::UNDEFINED)
+    .value("ACHIRAL", AtomStereo::ACHIRAL)
+    .value("R", AtomStereo::R)
+    .value("S", AtomStereo::S)
     ;
   }
 }
