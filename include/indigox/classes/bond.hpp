@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "../utils/common.hpp"
 #include "../utils/counter.hpp"
 #include "../utils/numerics.hpp"
 
@@ -17,6 +18,7 @@ namespace indigox {
   class IXAngle;
   class IXDihedral;
   class IXMolecule;
+  namespace test { class IXBond; }
   
   typedef std::shared_ptr<IXAtom> Atom;
   //! \brief shared_ptr for normal use of the IXBond class.
@@ -36,6 +38,10 @@ namespace indigox {
   class IXBond
   : public utils::IXCountableObject<IXBond>,
   public std::enable_shared_from_this<IXBond> {
+    //! \brief Friendship allows IXMolecule to create new bonds.
+    friend class indigox::IXMolecule;
+    //! \brief Friendship allows IXBond to be tested.
+    friend class indigox::test::IXBond;
   private:
     //! \brief Container for storing IXAtom references assigned to an IXBond.
     typedef std::array<_Atom, 2> BondAtoms;
@@ -73,65 +79,61 @@ namespace indigox {
       TWOANDAHALF, //!< Bond order of 2.5
     };
     
-  public:
-    /*! \brief Default constructor.
-     *  \details Though allowed, it is not recommended to construct IXBond
-     *  instances directly. Rather, do so through the IXMolecule::NewBond
-     *  methods. */
-    IXBond();
-    
+  private:
     /*! \brief Normal constructor.
-     *  \details Creates a bond between the two atoms, though no bookkeeping is
-     *  performed. However a sanity checks on the provided atoms is performed
-     *  to ensure that they are not the same atom. Though allowed, it is not
-     *  recommended to construct IXBond instances directly. Rather, do so
-     *  through the IXMolecule::NewBond methods.
+     *  \details Creates a bond between the two atoms, linking it to the given
+     *  Molecule.
      *  \param a, b the atoms to construct a bonds between.
-     *  \throw std::logic_error if boths atoms are valid and the same. */
-    IXBond(Atom a, Atom b);
+     *  \param m the molecule to assign the bond to. */
+    IXBond(Atom a, Atom b, Molecule m);
     
-    //! \cond
-    ~IXBond() = default;
-    //! \endcond
+  public:
+    IXBond() = delete;  // no default constructor
+    
+    //! \brief Destructor
+    ~IXBond() { };
     
     /*! \brief Tag of the bond.
      *  \details This value may be modified without warning. Use with caution.
      *  For a constant identifier to the bond, use IXBond::GetUniqeID().
      *  \return the tag assigned to the bond. */
-    uid_ GetTag() const { return _tag; }
+    inline uid_ GetTag() const { return _tag; }
     
     /*! \brief Molecule this bond is associated with.
      *  \details The returned shared_ptr is empty if the bond is not assigned
      *  to a valid molecule.
      *  \return the molecule associated with this bond. */
-    Molecule GetMolecule() const { return _mol.lock(); }
+    inline Molecule GetMolecule() const { return _mol.lock(); }
     
     /*! \brief Get the bond order of the bond.
-     *  \return the bond order. */
-    Order GetOrder() const { return _order; }
+     *  \return the bond order.
+     *  \todo Obtain order based on molecule data. */
+    inline Order GetOrder() const { return _order; }
     
     /*! \brief Get the source atom of the bond.
-     *  \details The returned shared_ptr is empty if the source atom was never
-     *  set or is no longer valid.
+     *  \details The returned shared_ptr is empty if the source atom is no
+     *  longer valid.
      *  \return the source atom of the bond. */
-    Atom GetSourceAtom() const { return _atms[0].lock(); }
+    inline Atom GetSourceAtom() const { return _atms[0].lock(); }
     
     /*! \brief Get the target atom of the bond.
-     *  \details The returned shared_ptr is empty if the target atom was never
-     *  set or is no longer valid.
+     *  \details The returned shared_ptr is empty if the target atom is no
+     *  longer valid.
      *  \return the target atom of the bond. */
-    Atom GetTargetAtom() const { return _atms[1].lock(); }
+    inline Atom GetTargetAtom() const { return _atms[1].lock(); }
     
     /*! \brief Get the aromaticity of a bond.
-     *  \return if the bond is aromatic or not. */
-    bool GetAromaticity() const { return _aromatic; }
+     *  \return if the bond is aromatic or not.
+     *  \todo Obtain aromaticity based on molecule data. */
+    inline bool GetAromaticity() const { return _aromatic; }
     
     /*! \brief Get the stereochemistry of the bond.
-     *  \return the stereochemistry of the bond. */
-    Stereo GetStereochemistry() const { return _stereo; }
+     *  \return the stereochemistry of the bond.
+     *  \todo Obtain stereochemistry based on molecule data. */
+    inline Stereo GetStereochemistry() const { return _stereo; }
     
     /*! \brief String representation of the bond.
-     *  \details If either of the atoms of the bond are not provided, the
+     *  \details If either of the atoms of the bond are not valid, the
      *  returned string is Bond(MALFORMED), otherwise it is of the form:
      *  Bond(NAME_SOURCE, NAME_TARGET).
      *  \return a string representation of the bond. */
@@ -141,55 +143,23 @@ namespace indigox {
      *  \details The tag of a bond should not be considered stable. Use with
      *  caution.
      *  \param tag the tag to set. */
-    void SetTag(uid_ tag) { _tag = tag; }
-    
-    /*! \brief Set the molecule this bond is part of.
-     *  \details No bookkeeping is performed, meaning the molecule is not
-     *  informed that it now contains another bond. As such, this method is only
-     *  intended for internal use.
-     *  \param mol the molecule to set. */
-    void SetMolecule(Molecule mol) { _mol = mol; }
+    inline void SetTag(uid_ tag) { _tag = tag; }
     
     /*! \brief Set the bond order.
      *  \param order the bond order to set. */
-    void SetOrder(Order order) { _order = order; }
-    
-    /*! \brief Set the source atom of the bond.
-     *  \details No bookkeeping is performed, so the atom does not know that it
-     *  has been added to a new bond. As such, this method is intended for
-     *  internal use only. Sanity check is performed to ensure the atom is not
-     *  the same atom as the target atom. If you want to swap source and target
-     *  use the SwapSourceTarget() method.
-     *  \param atom the source atom to set.
-     *  \return if the source atom was set or not. */
-    bool SetSourceAtom(Atom atom);
-    
-    /*! \brief Set the target atom of the bond.
-     *  \details No bookkeeping is performed, so the atom does not know that it
-     *  has been added to a new bond. As such, this method is intended for
-     *  internal use only. Sanity check is performed to ensure the atom is not
-     *  the same atom as the source atom. If you want to swap source and target
-     *  use the SwapSourceTarget() method.
-     *  \param atom the target atom to set.
-     *  \return of the target atom was set or not. */
-    bool SetTargetAtom(Atom atom);
+    inline void SetOrder(Order order) { _order = order; }
     
     /*! \brief Switch the two atoms of the bond.
      *  \details the source atom will become the target atom and vice versa. */
-    void SwapSourceTarget() { std::swap(_atms[0], _atms[1]); }
+    inline void SwapSourceTarget() { std::swap(_atms[0], _atms[1]); }
     
     /*! \brief Set the aromaticity.
      *  \param aromatic of the atom is aromatic or not. */
-    void SetAromaticity(bool aromatic) { _aromatic = aromatic; }
+    inline void SetAromaticity(bool aromatic) { _aromatic = aromatic; }
     
     /*! \brief Set the stereochemistry of the bond.
      *  \param stereo the stereochemistry to set. */
-    void SetStereochemistry(Stereo stereo) { _stereo = stereo; }
-    
-    /*! \brief Clear all information.
-     *  \details Erases all information stored on the bond, and resets
-     *  everything back to a just created state. No bookkeeping is performed. */
-    void Clear();
+    inline void SetStereochemistry(Stereo stereo) { _stereo = stereo; }
     
     /*! \brief Get iterator access to the atoms of the bond.
      *  \details Intended for internal use only as the bond does not own any
@@ -215,57 +185,48 @@ namespace indigox {
       return std::make_pair(_dhds.begin(), _dhds.end());
     }
     
+  private:
+    /*! \brief Clear all information.
+     *  \details Erases all information stored on the bond, and resets
+     *  everything back to a just created state. */
+    void Clear();
+    
     /*! \brief Add an angle to this bond.
-     *  \details No bookkeeping is performed, meaning that the angle is not
-     *  checked to ensure it actually contains the current bond. As such, this
-     *  method is intended for internal use only. Angle is checked to ensure
-     *  that it does not already exist on the bond.
-     *  \param ang the angle to add.
-     *  \return if the dihedral was added. */
-    bool AddAngle(Angle ang);
+     *  \details Assumes that the angle is not already added.
+     *  \param ang the angle to add. */
+    inline void AddAngle(Angle ang) { _angs.emplace_back(ang); }
     
     /*! \brief Add a dihedral to this bond.
-     *  \details No bookkeeping is performed, meaning that the dihedral is not
-     *  checked to ensure it actually contains the current bond. As such, this
-     *  method is intended for internal use only. Dihedral is checked to ensure
-     *  that it does not already exist on the bond.
-     *  \param dihed the dihedral to add.
-     *  \return if the dihedral was added. */
-    bool AddDihedral(Dihedral dihed);
+     *  \details Assumes that the dihedral is not already added.
+     *  \param dihed the dihedral to add. */
+    inline void AddDihedral(Dihedral dihed) { _dhds.emplace_back(dihed); }
     
-    /*! \brief Number of valid atoms this bond is made of.
-     *  \returns count of the valid atoms assigned. */
-    size_ NumAtoms() const;
+    /*! \brief Remove an angle from this bond.
+     *  \details Assumes that the angle is already added.
+     *  \param ang the angle to remove. */
+    inline void RemoveAngle(Angle ang) {
+      _angs.erase(utils::WeakContainsShared(_angs.begin(), _angs.end(), ang));
+    }
+    
+    /*! \brief Remove a dihedral from this bond.
+     *  \details Assumes that the dihedral is already added.
+     *  \param dihed the dihedral to remove. */
+    inline void RemoveDihedral(Dihedral dihed) {
+      _dhds.erase(utils::WeakContainsShared(_dhds.begin(), _dhds.end(), dihed));
+    }
+    
+  public:
+    /*! \brief Number of atoms this bond is between.
+     *  \returns 2. */
+    size_ NumAtoms() const { return _atms.size(); }
     
     /*! \brief Number of valid angles this bond is a part of.
      *  \returns the number of valid assigned angles. */
-    size_ NumAngles() const;
+    size_ NumAngles() const { return _angs.size(); }
     
     /*! \brief Number of valid dihedrals this bond is a part of.
      *  \returns the number of valid assigned dihedrals. */
-    size_ NumDihedrals() const;
-    
-    /*! \brief Remove an angle from this bond.
-     *  \details No bookkeeping is performed, meaning that the angle is not
-     *  checked to ensure it actually contains the current bond. As such this
-     *  method is intened for internal use only. If the angle is not part of
-     *  this bond, no removal occurs.
-     *  \param ang the angle to remove.
-     *  \return if the angle was removed or not. */
-    bool RemoveAngle(Angle ang);
-    
-    /*! \brief Remove a dihedral from this bond.
-     *  \details No bookkeeping is performed, meaning that the dihedral is not
-     *  checked to ensure it actually contains the current bond. As such this
-     *  method is intened for internal use only. If the dihedral is not part of
-     *  this bond, no removal occurs.
-     *  \param dihed the dihedral to remove.
-     *  \return if the dihedral was removed or not. */
-    bool RemoveDihedral(Dihedral dihed);
-    
-    /*! \brief Remove all expired references in containers.
-     *  \details If an expired angle or dihedral is referenced, it is removed. */
-    void Cleanup();
+    size_ NumDihedrals() const { return _dhds.size(); }
     
   private:
     //! The molecule this bond is assigned to.
@@ -293,6 +254,11 @@ namespace indigox {
    *  \param bnd the Bond to print.
    *  \return the output stream after printing. */
   std::ostream& operator<<(std::ostream& os, Bond bnd);
+  
+  //! Type for the stereochemistry enum of a bond.
+  typedef indigox::IXBond::Stereo BondStereo;
+  //! Type for the order of a bond.
+  typedef indigox::IXBond::Order BondOrder;
   
 }
 
