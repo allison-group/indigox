@@ -223,5 +223,15 @@ namespace indigox {
       _name_to.emplace(ze.second->GetName(), ze.second);
     }
   }
+  
+  PeriodicTable GetPeriodicTable() {
+    static PeriodicTable instance = PeriodicTable();
+    if (!instance) {
+      instance.reset(new IXPeriodicTable());
+      instance->GeneratePeriodicTable();
+    }
+    return instance;
+  }
+  
 } // namespace indigox
 

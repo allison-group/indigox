@@ -68,7 +68,7 @@ namespace indigox {
      *  \details As there is not much point in an undefined element, this
      *  method is intended for internal use.
      *  \return the undefined Element. */
-    Element GetUndefinedElement() const { return _null; }
+    Element GetUndefined() const { return _null; }
     
     /*! \brief Number of elements in the PeriodicTable.
      *  \return the number of elements in the PeriodicTable. */
@@ -92,6 +92,7 @@ namespace indigox {
      *  the _z_to and _name_to maps. */
     void GeneratePeriodicTable();
     
+    //! Friendship allows for access to a single IXPeriodicTable instance.
     friend PeriodicTable GetPeriodicTable();
   
   private:
@@ -332,6 +333,9 @@ namespace indigox {
    *  \see operator==(Element, Element) */
   inline bool operator!=(Element l, Element r) { return !(l == r); }
 
+  // Helper access function
+  PeriodicTable GetPeriodicTable();
+  
 } // namespace indigox
 
 #endif /* INDIGOX_CLASSES_PERIODIC_TABLE_HPP */

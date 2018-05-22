@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "../classes/periodictable.hpp"
+#include "../utils/common.hpp"
 #include "../utils/counter.hpp"
 #include "../utils/numerics.hpp"
 

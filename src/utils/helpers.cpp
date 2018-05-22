@@ -3,12 +3,5 @@
 
 namespace indigox {
   
-  PeriodicTable GetPeriodicTable() {
-    static PeriodicTable instance = PeriodicTable();
-    if (!instance) {
-      instance.reset(new IXPeriodicTable());
-      instance->GeneratePeriodicTable();
-    }
-    return instance;
-  }
+  
 }
