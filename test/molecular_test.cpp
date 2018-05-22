@@ -9,7 +9,7 @@
 #include "class_test_wrappers.hpp"
 
 namespace indigox::test {
-  struct RandomMG {
+  struct MolecularGraphFixture {
     Molecule mol;
     indigox::test::IXMolecularGraph G;
     size_ num_atoms, num_bonds;
@@ -21,7 +21,7 @@ namespace indigox::test {
     std::pair<size_, size_> incident_fail_edge;
     std::map<size_, size_> expected_degrees;
     std::map<graph::MGVertex, size_> vert_ids;
-    RandomMG() : mol(new IXMolecule()), G(mol) {
+    MolecularGraphFixture() : mol(new IXMolecule()), G(mol) {
       std::random_device rd;
       std::mt19937 gen(rd());
       std::uniform_int_distribution<size_> at_dis(15,35);
@@ -64,11 +64,11 @@ using namespace indigox::graph;
 
 namespace std {
   std::ostream& operator<<(std::ostream& os, const std::pair<indigox::graph::MGVertex, indigox::graph::MGVertex> p) {
-  return (os << &p.first << "," << &p.second);
-}
+    return (os << &p.first << "," << &p.second);
+  }
 }
 
-BOOST_FIXTURE_TEST_SUITE(ixmolecular_graph, indigox::test::RandomMG);
+BOOST_FIXTURE_TEST_SUITE(ixmolecular_graph, indigox::test::MolecularGraphFixture);
 //BOOST_AUTO_TEST_SUITE(ixmolecular_graph);
 
 BOOST_AUTO_TEST_CASE(constructor) {

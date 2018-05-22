@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(instance_constructor,
 // Test for correct handling of the null element
 BOOST_AUTO_TEST_CASE(null_element) {
   PeriodicTable pt = GetPeriodicTable();
-  Element null_e = pt->GetUndefinedElement();
+  Element null_e = pt->GetUndefined();
   // Check that the null element is not an empty pointer
   BOOST_TEST(null_e);
   BOOST_TEST(bool(*null_e) == false);
