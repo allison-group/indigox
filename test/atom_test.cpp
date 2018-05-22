@@ -202,6 +202,8 @@ BOOST_AUTO_TEST_CASE(printing_methods) {
   expected_out << "Atom(" << a3->GetUniqueID() << ", " << a3->GetElement()->GetSymbol() << ")";
   actual_output << a3;
   BOOST_CHECK(actual_output.is_equal(expected_out.str()));
+  actual_output << Atom();
+  BOOST_CHECK(actual_output.is_empty());
   
   // Test ToString method
   BOOST_CHECK(a1.ToString() == "Atom(, XX)");
