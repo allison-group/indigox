@@ -1,14 +1,31 @@
-//
-//  simple_bimap.hpp
-//  indigox_test
-//
-//  Created by Welsh, Ivan on 22/05/18.
-//  Copyright © 2018 Allison Group. All rights reserved.
-//
+#include <map>
 
-#ifndef simple_bimap_hpp
-#define simple_bimap_hpp
+#ifndef INDIGOX_UTILS_SIMPLE_BIMAP_HPP
+#define INDIGOX_UTILS_SIMPLE_BIMAP_HPP
 
-#include <stdio.h>
+namespace indigox::utils {
+  template <class L, class R>
+  struct SimpleBiMap {
+    std::map<L, R> left;
+    std::map<R, L> right;
+    
+    inline void insert(L l, R r) {
+      left.emplace(l, r);
+      right.emplace(r, l);
+    }
+    inline void erase(L l) {
+      right.erase(left.at(l));
+      left.erase(l);
+    }
+    inline void erase(R r) {
+      left.erase(right.at(r));
+      right.erase(r);
+    }
+    inline void clear() {
+      left.clear();
+      right.clear();
+    }
+  };
+}
 
-#endif /* simple_bimap_hpp */
+#endif /* INDIGOX_UTILS_SIMPLE_BIMAP_HPP */

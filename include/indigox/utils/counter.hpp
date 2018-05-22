@@ -26,10 +26,6 @@ namespace indigox::utils {
      *  \returns the unique id. */
     inline uid_ GetUniqueID() const { return _id; }
     
-    /*! \brief Get the current instance count.
-     *  \return the current number of created instances of the type. */
-    static uid_ GetCurrentCount() { return _count; }
-    
   private:
     //! \brief Unique ID.
     const uid_ _id;
