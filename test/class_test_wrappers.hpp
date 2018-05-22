@@ -3,7 +3,7 @@
 
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
-//#include <indigox/classes/molecule.hpp>
+#include <indigox/classes/molecule.hpp>
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/utils/numerics.hpp>
@@ -12,7 +12,6 @@
 namespace indigox {
   class IXAngle { };
   class IXDihedral { };
-  class IXMolecule { };
 }
 
 namespace indigox::test {

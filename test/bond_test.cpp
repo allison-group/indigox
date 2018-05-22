@@ -20,7 +20,7 @@ namespace indigox::test {
     std::vector<Angle> angles;
     std::vector<Dihedral> dihedrals;
     
-    BondFixture() : mol(new IXMolecule()), a1(indigox::test::IXAtom::GetNewAtom()),
+    BondFixture() : mol(CreateMolecule()), a1(indigox::test::IXAtom::GetNewAtom()),
     a2(indigox::test::IXAtom::GetNewAtom(mol)), a3(indigox::test::IXAtom::GetNewAtom()),
     a4(indigox::test::IXAtom::GetNewAtom(mol)), b1(a1,a3,Molecule()), b2(a2,a4,mol) {
       std::random_device rd;

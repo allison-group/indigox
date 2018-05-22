@@ -21,7 +21,7 @@ namespace indigox::test {
     std::pair<size_, size_> incident_fail_edge;
     std::map<size_, size_> expected_degrees;
     std::map<graph::MGVertex, size_> vert_ids;
-    MolecularGraphFixture() : mol(new IXMolecule()), G(mol) {
+    MolecularGraphFixture() : mol(CreateMolecule()), G(mol) {
       std::random_device rd;
       std::mt19937 gen(rd());
       std::uniform_int_distribution<size_> at_dis(15,35);
