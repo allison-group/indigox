@@ -125,6 +125,7 @@ namespace indigox::test {
     typedef graph::IXMolecularGraph::EdgeIter EdgeIter;
     typedef graph::IXMolecularGraph::NbrsIter NbrsIter;
     typedef graph::IXMolecularGraph::VertIter VertIter;
+    typedef graph::IXMolecularGraph::CompIter CompIter;
     IXMolecularGraph() = delete;
     IXMolecularGraph(Molecule m) : g(m) {}
     inline size_ Degree(graph::MGVertex v) { return g.Degree(v); }
@@ -142,6 +143,9 @@ namespace indigox::test {
     inline bool HasEdge(graph::MGVertex u, graph::MGVertex v) { return g.HasEdge(u,v); }
     inline bool HasVertex(Atom v) { return g.HasVertex(v); }
     inline bool HasVertex(graph::MGVertex v) { return g.HasVertex(v); }
+    inline bool IsConnected() { return g.IsConnected(); }
+    inline size_ NumConnectedComponents() { return g.NumConnectedComponents(); }
+    inline std::pair<CompIter, CompIter> GetConnectedComponents() { return g.GetConnectedComponents(); }
     inline size_ NumEdges() { return g.NumEdges(); }
     inline size_ NumVertices() { return g.NumVertices(); }
     //

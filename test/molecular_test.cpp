@@ -11,17 +11,18 @@
 namespace indigox::test {
   struct MolecularGraphFixture {
     Molecule mol;
-    indigox::test::IXMolecularGraph G;
+    indigox::test::IXMolecularGraph G, G_connected;
     size_ num_atoms, num_bonds;
     std::vector<Atom> atoms;
     std::vector<Bond> bonds;
-    std::vector<graph::MGVertex> verts;
-    std::vector<graph::MGEdge> edges;
+    std::vector<graph::MGVertex> verts, connected_verts;
+    std::vector<graph::MGEdge> edges, connected_edges;
     std::vector<std::pair<size_, size_>> incident_edges;
     std::pair<size_, size_> incident_fail_edge;
     std::map<size_, size_> expected_degrees;
     std::map<graph::MGVertex, size_> vert_ids;
-    MolecularGraphFixture() : mol(CreateMolecule()), G(mol) {
+    MolecularGraphFixture() : mol(CreateMolecule()), G(mol), G_connected(mol),
+    incident_edges({{0,1},{1,2},{1,10},{10,11},{4,5},{5,6},{6,7},{4,7},{8,9},{9,13},{3,14}}){
       std::random_device rd;
       std::mt19937 gen(rd());
       std::uniform_int_distribution<size_> at_dis(15,35);
@@ -35,15 +36,22 @@ namespace indigox::test {
         atoms.emplace_back(indigox::test::IXAtom::GetNewAtom(mol));
         verts.emplace_back(G.AddVertex(atoms.back()));
         vert_ids.emplace(verts.back(), i);
+        if (i < 15) connected_verts.emplace_back(G_connected.AddVertex(atoms.back()));
       }
       
-      // Random number of bonds
+      // Random number of additional bonds
       num_bonds = bn_dis(gen);
       std::vector<std::pair<size_, size_>> possible_edges;
       possible_edges.reserve(num_atoms * (num_atoms + 1) / 2);
-      bonds.reserve(num_bonds); edges.reserve(num_bonds); incident_edges.reserve(num_bonds);
+      bonds.reserve(num_bonds); edges.reserve(num_bonds);
+      incident_edges.reserve(num_bonds + 10);
+      
       for (size_ i = 0; i < num_atoms; ++i) {
-        for (size_ j = i + 1; j < num_atoms; ++j ) possible_edges.emplace_back(i,j);
+        for (size_ j = i + 1; j < num_atoms; ++j ) {
+          if (std::find(incident_edges.begin(), incident_edges.end(),
+                        std::pair<size_, size_>(i,j)) == incident_edges.end())
+            possible_edges.emplace_back(i,j);
+        }
       }
       std::sample(possible_edges.begin(), possible_edges.end(),
                   std::back_inserter(incident_edges), num_bonds + 1, gen);
@@ -55,6 +63,7 @@ namespace indigox::test {
         bonds.emplace_back(indigox::test::IXBond::GetNewBond(atoms[i.first], atoms[i.second], mol));
         edges.emplace_back(G.AddEdge(bonds.back()));
       }
+      for (size_ i = 0; i < 11; ++i) connected_edges.emplace_back(G_connected.AddEdge(bonds[i]));
     }
   };
 }
@@ -69,7 +78,6 @@ namespace std {
 }
 
 BOOST_FIXTURE_TEST_SUITE(ixmolecular_graph, indigox::test::MolecularGraphFixture);
-//BOOST_AUTO_TEST_SUITE(ixmolecular_graph);
 
 BOOST_AUTO_TEST_CASE(constructor) {
   BOOST_CHECK(G.NumEdges() == num_bonds);
@@ -273,6 +281,25 @@ BOOST_AUTO_TEST_CASE(clear) {
   auto edge_itr = G.GetEdges();
   BOOST_CHECK(vert_itr.first == vert_itr.second);
   BOOST_CHECK(edge_itr.first == edge_itr.second);
+}
+
+BOOST_AUTO_TEST_CASE(connected_components) {
+  BOOST_CHECK(!G_connected.IsConnected());
+  BOOST_CHECK(G_connected.NumConnectedComponents() == 5);
+  auto obtain_comp = G_connected.GetConnectedComponents();
+  BOOST_CHECK(std::distance(obtain_comp.first, obtain_comp.second) == 5);
+  std::map<size_, std::set<MGVertex>> expect_comp;
+  expect_comp.emplace(1, std::set<MGVertex>({{connected_verts[12]}}));
+  expect_comp.emplace(2, std::set<MGVertex>({{connected_verts[3], connected_verts[14]}}));
+  expect_comp.emplace(3, std::set<MGVertex>({{connected_verts[8], connected_verts[9], connected_verts[13]}}));
+  expect_comp.emplace(4, std::set<MGVertex>({{connected_verts[4], connected_verts[5], connected_verts[6], connected_verts[7]}}));
+  expect_comp.emplace(5, std::set<MGVertex>({{connected_verts[0], connected_verts[1], connected_verts[2], connected_verts[10], connected_verts[11]}}));
+  for (; obtain_comp.first != obtain_comp.second; ++obtain_comp.first) {
+    std::set<MGVertex> obtain(obtain_comp.first->begin(), obtain_comp.first->end());
+    BOOST_CHECK_EQUAL_COLLECTIONS(obtain.begin(), obtain.end(),
+                                  expect_comp.at(obtain.size()).begin(),
+                                  expect_comp.at(obtain.size()).end());
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -105,6 +105,8 @@ namespace indigox{
       typedef std::vector<MGVertex>::const_iterator VertIter;
       //! \brief Type of the iterator returned by GetNeighbours() method.
       typedef std::vector<MGVertex>::const_iterator NbrsIter;
+      //! \brief Type of the iterator over components of the graph
+      typedef std::vector<std::vector<MGVertex>>::const_iterator CompIter;
       
     public:
       IXMolecularGraph() = delete;  // no default constructor
@@ -264,7 +266,7 @@ namespace indigox{
        *  \param u, v the vertices to check for an edge between.
        *  \return if there is an edge between the two vertices or not. */
       inline bool HasEdge(const MGVertex u, const MGVertex v) const {
-        if (!HasVertex(u) || !HasVertex(v)) return false;
+        if (!u || !v) return false;
         return _g.HasEdge(u.get(), v.get());
       }
       
@@ -275,6 +277,22 @@ namespace indigox{
       /*! \brief The number of vertices in the graph.
        *  \return the number of vertices. */
       inline size_ NumVertices() const { return _g.NumVertices(); }
+      
+      /*! \brief Determine if the graph is connected.
+       *  \details A graph is connected if it contains only one connected
+       *  component. Here, a graph is also deemed to be connected if it contains
+       *  no vertices.
+       *  \return if the graph is connected or not. */
+      inline bool IsConnected() { return _g.NumConnectedComponents() <= 1; }
+      
+      /*! \brief Calculate number of connected components.
+       *  \return the number of connected components of the graph. */
+      inline size_ NumConnectedComponents() { return _g.NumConnectedComponents(); }
+      
+      /*! \brief Calculate the connected components.
+       *  \return a pair of iterators providing access to the components. Each
+       *  component is a std::vector<MGVertex>. */
+      std::pair<CompIter, CompIter> GetConnectedComponents();
       
     private:
       //! \brief Source molecule of the molecular graph.
@@ -291,6 +309,8 @@ namespace indigox{
       std::vector<MGEdge> _edge_access;
       //! \brief Container for neighbours of a vertex
       std::vector<MGVertex> _nbrs_access;
+      //! \brief Container for components of the graph
+      std::vector<std::vector<MGVertex>> _components;
     
     };
   }  // namespace graph

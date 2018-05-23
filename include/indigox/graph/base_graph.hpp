@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
 
 #include <indigox/utils/numerics.hpp>
 #include <indigox/utils/simple_bimap.hpp>
@@ -42,7 +43,7 @@ namespace indigox::graph {
   private:
     
     //! \brief Type for applying a numerical label to a vertex or edge.
-    union Label{
+    struct Label{
       //! \brief An integer label.
       int_ ilabel;
       //! \brief A floating point label
@@ -324,10 +325,29 @@ namespace indigox::graph {
      *  \details It is the callers responsibilty to ensure that the edge is a
      *  part of the graph.
      *  \param e the edge to get the target of.
-     *  \return the target vertex of the edge.
-     *  \throw std::invalid_argument if the edge is not in the graph. */
+     *  \return the target vertex of the edge. */
     V* GetTarget(E* e) const {
       return _verts.right.at(boost::target(_edges.left.at(e), *_graph));
+    }
+    
+    /*! \brief Get the connected components of the graph.
+     *  \param components[out] where the connected components will be written to.
+     *  \return the number of connected components. */
+    size_ ConnectedComponents(std::vector<std::vector<V*>>& components) {
+      static_assert(!D::is_directed, "Requires an undirected graph.");
+      size_ num = __connected_components_worker();
+      components.clear();
+      components.assign(num, std::vector<V*>());
+      for (auto v : _verts.right)
+        components[(*_graph)[v.first].ilabel].push_back(v.second);
+      return num;
+    }
+    
+    /*! \brief Number of connected components of the graph.
+     *  \return the number of connected components. */
+    size_ NumConnectedComponents() {
+      static_assert(!D::is_directed, "Requires an undirected graph.");
+      return __connected_components_worker();
     }
     
   private:
@@ -360,6 +380,26 @@ namespace indigox::graph {
      *  \param v vertex descriptor to get indegree of.
      *  \return the indegree of the given vertex descriptor. */
     size_ InDegree(VertType v) const { return boost::in_degree(v, *_graph); }
+    
+    //! \cond
+    /*! \brief Worker method for calculating connected components.
+     *  \details Each vertex is labeled with the ID of the component it is
+     *  a part of. */
+    size_ __connected_components_worker() {
+      using namespace boost;
+      typedef std::map<VertType, size_> VertIdxMap;
+      VertIdxMap data;
+      associative_property_map<VertIdxMap> indexMap(data);
+      auto verts = vertices(*_graph);
+      for (size_ i = 0; verts.first != verts.second; ++verts.first, ++i)
+        put(indexMap, *verts.first, i);
+      
+      auto num = connected_components(*_graph,
+                                      get(&VertProp::ilabel, *_graph),
+                                      vertex_index_map(indexMap));
+      return static_cast<size_>(num);
+    }
+    //! \endcond
   };
   
 }

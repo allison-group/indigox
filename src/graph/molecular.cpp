@@ -113,4 +113,20 @@ namespace indigox::graph {
     }
     return {_nbrs_access.cbegin(), _nbrs_access.cend()};
   }
+  
+  std::pair<IXMolecularGraph::CompIter, IXMolecularGraph::CompIter>
+  IXMolecularGraph::GetConnectedComponents() {
+    _components.clear();
+    std::vector<std::vector<IXMGVertex*>> ptr_components;
+    size_ num = _g.ConnectedComponents(ptr_components);
+    _components.reserve(num);
+    for (auto component : ptr_components) {
+      _components.push_back(std::vector<MGVertex>());
+      _components.back().reserve(component.size());
+      for (IXMGVertex* v : component)
+        _components.back().emplace_back(v->shared_from_this());
+    }
+    return {_components.cbegin(), _components.cend()};
+  }
+  
 }
