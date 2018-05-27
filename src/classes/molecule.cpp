@@ -112,12 +112,30 @@ namespace indigox {
     return _angles.size();
   }
   
+  std::pair<IXMolecule::MolAngleIter, IXMolecule::MolAngleIter>
+  IXMolecule::GetAngles() {
+    if (_emerge[static_cast<size_>(Emergent::ANGLE_PERCEPTION)]) {
+      // DetermineAngles();
+      _emerge.reset(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
+    }
+    return {_angles.cbegin(), _angles.cend()};
+  }
+  
   size_ IXMolecule::NumDihedrals() {
     if (_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) {
       // DetermineDihedrals();
       _emerge.reset(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
     }
     return _dihedrals.size();
+  }
+  
+  std::pair<IXMolecule::MolDihedralIter, IXMolecule::MolDihedralIter>
+  IXMolecule::GetDihedrals() {
+    if (_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) {
+      // DetermineDihedrals();
+      _emerge.reset(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
+    }
+    return {_dihedrals.cbegin(), _dihedrals.cend()};
   }
   
   void IXMolecule::SetMolecularCharge(int q) {

@@ -45,7 +45,7 @@ namespace indigox {
   public std::enable_shared_from_this<IXMolecule> {
     //! \brief Friendship allows generation of molecules.
     friend Molecule CreateMolecule();
-    //! \brief Friendship allows IXMolecule to be tested.
+    //! \brief Friendship allows IXMolecule internals to be tested.
     friend class indigox::test::IXMolecule;
     
   private:
@@ -64,13 +64,13 @@ namespace indigox {
     
   public:   // Public iterator typedefs for easier external usage
     //! \brief Iterator over owned IXAtom instances.
-    typedef MolAtoms::iterator MolAtomIter;
+    typedef MolAtoms::const_iterator MolAtomIter;
     //! \brief Iterator over owned IXBond instances.
-    typedef MolBonds::iterator MolBondIter;
+    typedef MolBonds::const_iterator MolBondIter;
     //! \brief Iterator over owned IXAngle instances.
-    typedef MolAngles::iterator MolAngleIter;
+    typedef MolAngles::const_iterator MolAngleIter;
     //! \brief Iterator over owned IXDihedral instances.
-    typedef MolDihedrals::iterator MolDihedralIter;
+    typedef MolDihedrals::const_iterator MolDihedralIter;
     
   public: // Public so that IXAtom etc can set when they're modified.
     /*! \brief Enum for the different types of properties a molecule has.
@@ -143,7 +143,7 @@ namespace indigox {
      *  change during normal operations.
      *  \param pos the position of the bond to get.
      *  \return the bond at pos or an empty shared_ptr. */
-    Bond GetBond(size_ pos) const {
+    inline Bond GetBond(size_ pos) const {
       return (pos < _bonds.size()) ? _bonds[pos] : Bond();
     }
     
@@ -179,23 +179,23 @@ namespace indigox {
     
     /*! \brief Get the molecular graph for this molecule.
      *  \return the molecular graph of this molecule. */
-    graph::MolecularGraph GetGraph() const { return _g; }
+    inline graph::MolecularGraph GetGraph() const { return _g; }
     
     /*! \brief Get the name of the molecule.
      *  \return the name of the molecule. */
-    string_ GetName() const { return _name; }
+    inline string_ GetName() const { return _name; }
     
     /*! \brief Get the molecular charge of the molecule.
      *  \return the molecular charge of the molecule. */
-    int GetMolecularCharge() const { return _q; }
+    inline int_ GetMolecularCharge() const { return _q; }
     
     /*! \brief Get the number of atoms in the molecule.
      *  \return the number of atoms in the molecule. */
-    size_ NumAtoms() const { return _atoms.size(); }
+    inline size_ NumAtoms() const { return _atoms.size(); }
     
     /*! \brief Get the number of bonds in the molecule.
      *  \return the number of bonds in the molecule. */
-    size_ NumBonds() const { return _bonds.size(); }
+    inline size_ NumBonds() const { return _bonds.size(); }
     
     /*! \brief Get the number of angles in the molecule.
      *  \details If the CONNECTIVITY property has been modified, angles are
@@ -211,7 +211,7 @@ namespace indigox {
     
     /*! \brief Set the name of the molecule.
      *  \param name the new to set. */
-    void SetName(string_ name) { _name = name; }
+    inline void SetName(string_ name) { _name = name; }
     
     /*! \brief Set the molecular charge of the molecule.
      *  \details Sets the IXMolecule::ELECTRON_COUNT property as modified.
@@ -283,7 +283,7 @@ namespace indigox {
      *  instances. This is more efficient when building large molecules as the
      *  vector will not need to grow as more atoms are added.
      *  \param num the number of IXAtoms to reserve space for. */
-    void ReserveAtoms(size_ num) {
+    inline void ReserveAtoms(size_ num) {
       if (_atoms.size() < num) _atoms.reserve(num);
     }
     
@@ -292,7 +292,7 @@ namespace indigox {
      *  instances. This is more efficient when building large molecules as the
      *  vector will not need to grow as more bonds are added.
      *  \param num the number of IXBonds to reserve space for. */
-    void ReserveBonds(size_ num) {
+    inline void ReserveBonds(size_ num) {
       if (_bonds.size() < num ) _bonds.reserve(num);
     }
     
@@ -301,7 +301,7 @@ namespace indigox {
      *  instances. This is more efficient when building large molecules as the
      *  vector will not need to grow as more angles are added.
      *  \param num the number of IXAngles to reserve space for. */
-    void ReserveAngles(size_ num) {
+    inline void ReserveAngles(size_ num) {
       if (_angles.size() < num) _angles.reserve(num);
     }
     
@@ -310,7 +310,7 @@ namespace indigox {
      *  instances. This is more efficient when building large molecules as the
      *  vector will not need to grow as more dihedrals are added.
      *  \param num the number of IXDihedrals to reserve space for. */
-    void ReserveDihedrals(size_ num) {
+    inline void ReserveDihedrals(size_ num) {
       if (_dihedrals.size() < num) _dihedrals.reserve(num);
     }
     
@@ -320,6 +320,34 @@ namespace indigox {
      *  time they are accessed.
      *  \param prop the property that has been modified. */
     void SetPropertyModified(Property prop);
+    
+    /*! \brief Get iterator access to the owned atoms.
+     *  \return a pair of iterators indicating the begining and end of the
+     *  owned atoms. */
+    inline std::pair<MolAtomIter, MolAtomIter> GetAtoms() const {
+      return {_atoms.begin(), _atoms.end()};
+    }
+    
+    /*! \brief Get iterator access to the owned bonds.
+     *  \return a pair of iterators indication the beginning and end of the
+     *  owned bonds. */
+    inline std::pair<MolBondIter, MolBondIter> GetBonds() const {
+      return {_bonds.begin(), _bonds.end()};
+    }
+    
+    /*! \brief Get iterator access to the owned angles.
+     *  \details The set of angles are regenerated prior to returning iterator
+     *  access if the CONNECTIVITY property has been set.
+     *  \return a pair of iterators indication the beginning and end of the
+     *  owned angles. */
+    std::pair<MolAngleIter, MolAngleIter> GetAngles();
+    
+    /*! \brief Get iterator access to the owned dihedrals.
+     *  \details The set of dihedrals are regenerated prior to returning iterator
+     *  access if the CONNECTIVITY property has been set.
+     *  \return a pair of iterators indication the beginning and end of the
+     *  owned dihedrals. */
+    std::pair<MolDihedralIter, MolDihedralIter> GetDihedrals();
     
   private:
     //! Name of the molecule
