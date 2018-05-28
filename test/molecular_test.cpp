@@ -207,6 +207,7 @@ BOOST_AUTO_TEST_CASE(has_vertex_edge) {
   BOOST_CHECK(!G.HasEdge(MGEdge()));
   BOOST_CHECK(!G.HasEdge(fail_vert, verts[0]));
   BOOST_CHECK(!G.HasEdge(verts[0], verts[0]));
+  BOOST_CHECK(!G.HasEdge(fail_vert, MGVertex()));
 }
 
 BOOST_AUTO_TEST_CASE(edge_vertex_get) {
