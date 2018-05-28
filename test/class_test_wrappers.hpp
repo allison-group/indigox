@@ -119,6 +119,65 @@ namespace indigox::test {
     inline uid_ GetUniqueID() { return x.GetUniqueID(); }
   };
   
+  class IXMolecule {
+    Molecule m; // needs to be a shared_ptr due to MolecularGraph ownership.
+  public:
+    typedef indigox::IXMolecule::MolAtomIter MolAtmIter;
+    typedef indigox::IXMolecule::MolBondIter MolBndIter;
+    typedef indigox::IXMolecule::MolAngleIter MolAngIter;
+    typedef indigox::IXMolecule::MolDihedralIter MolDhdIter;
+    typedef indigox::IXMolecule::Emergent Emergent;
+    typedef std::bitset<static_cast<size_>(Emergent::NUM_EMERGENTS)> EmergeSet;
+    // private wrapping members
+    IXMolecule() : m(CreateMolecule()) { }
+    
+    // public wrapping members
+//    inline std::pair<MolAngIter, MolAngIter> GetAngles() { return m->GetAngles(); }
+    inline Atom GetAtom(size_ pos) { return m->GetAtom(pos); }
+    inline Atom GetAtomID(uid_ id) { return m->GetAtomID(id); }
+    inline std::pair<MolAtmIter, MolAtmIter> GetAtoms() { return m->GetAtoms(); }
+    inline Atom GetAtomTag(uid_ tag) { return m->GetAtomTag(tag); }
+    inline Bond GetBond(size_ pos) { return m->GetBond(pos); }
+    inline Bond GetBond(Atom a, Atom b) { return m->GetBond(a,b); }
+    inline Bond GetBondID(uid_ i) { return m->GetBondID(i); }
+    inline std::pair<MolBndIter, MolBndIter> GetBonds() { return m->GetBonds(); }
+    inline Bond GetBondTag(uid_ t) { return m->GetBondTag(t); }
+//    inline std::pair<MolDhdIter, MolDhdIter> GetDihedrals() { return m->GetDihedrals(); }
+    inline string_ GetFormula() { return m->GetFormula(); }
+    inline graph::MolecularGraph GetGraph() { return m->GetGraph(); }
+    inline int_ GetMolecularCharge() { return m->GetMolecularCharge(); }
+    inline string_ GetName() { return m->GetName(); }
+    inline bool HasAtom(Atom a) { return m->HasAtom(a); }
+    inline bool HasBond(Bond b) { return m->HasBond(b); }
+    inline bool HasBond(Atom a, Atom b) { return m->HasBond(a,b); }
+    inline Atom NewAtom() { return m->NewAtom(); }
+    inline Atom NewAtom(Element e) { return m->NewAtom(e); }
+    inline Atom NewAtom(string_ n) { return m->NewAtom(n); }
+    inline Atom NewAtom(string_ n, Element e) { return m->NewAtom(n, e); }
+    inline Bond NewBond(Atom a, Atom b) { return m->NewBond(a,b); }
+//    inline size_ NumAngles() { return m->NumAngles(); }
+    inline size_ NumAtoms() { return m->NumAtoms(); }
+    inline size_ NumBonds() { return m->NumBonds(); }
+//    inline size_ NumDihedrals() { return m->NumDihedrals(); }
+    inline bool RemoveAtom(Atom a) { return m->RemoveAtom(a); }
+    inline bool RemoveBond(Atom a, Atom b) { return m->RemoveBond(a,b); }
+    inline bool RemoveBond(Bond b) { return m->RemoveBond(b); }
+    inline void ReserveAtoms(size_ n) { m->ReserveAtoms(n); }
+    inline void ReserveBonds(size_ n) { m->ReserveBonds(n); }
+    inline void SetMolecularCharge(int_ q) { m->SetMolecularCharge(q); }
+    inline void SetName(string_ n) { m->SetName(n); }
+    inline void SetPropertyModified(MolProperty p) { m->SetPropertyModified(p); }
+    
+    // internals wrapping members
+    inline EmergeSet GetEmergentState() { return m->_emerge; }
+    inline void ResetEmergentState() { m->_emerge.reset(); }
+    inline void SetEmergentState(size_ p) { m->_emerge.set(p); }
+    inline void ResetEmergentState(size_ p) { m->_emerge.reset(p); }
+    inline string_ GetFormulaCache() { return m->_formula_cache; }
+    inline size_ AtomCapacity() { return m->_atoms.capacity(); }
+    inline size_ BondCapacity() { return m->_bonds.capacity(); }
+  };
+  
   class IXMolecularGraph {
     graph::IXMolecularGraph g;
   public:

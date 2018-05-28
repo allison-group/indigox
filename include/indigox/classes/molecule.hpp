@@ -201,13 +201,13 @@ namespace indigox {
      *  \details If the CONNECTIVITY property has been modified, angles are
      *  re-calculated prior to determining how many there are in the molecule.
      *  \return the number of angles in the molecule. */
-    size_ NumAngles();
+//    size_ NumAngles();
     
     /*! \brief Get the number of dihedrals in the molecule.
      *  \details If the CONNECTIVITY property has been modified, dihedrals are
      *  re-calculated prior to determining how many there are in the molecule.
      *  \return the number of dihedrals in the molecule. */
-    size_ NumDihedrals();
+//    size_ NumDihedrals();
     
     /*! \brief Set the name of the molecule.
      *  \param name the new to set. */
@@ -227,6 +227,11 @@ namespace indigox {
      *  \param bond the bond to check for.
      *  \return if the bond is owned by this molecule. */
     bool HasBond(Bond bond) const;
+    
+    /*! \brief Check if a bond between two atoms exists in this molecule.
+     *  \param a,b the atoms the bond should be between.
+     *  \return if there is a bond between the two atoms. */
+    bool HasBond(Atom a, Atom b) const;
     
     /*! \brief Create a new atom owned by the molecule.
      *  \return the new atom. */
@@ -274,6 +279,11 @@ namespace indigox {
      *  \return if a removal occured. */
     bool RemoveBond(Bond bond);
     
+    /*! \brief Remove a bond between two atoms.
+     *  \param a,b the atoms to remove a bond between.
+     *  \return if removal occured. */
+    inline bool RemoveBond(Atom a, Atom b) { return RemoveBond(GetBond(a,b)); }
+    
 //    size_t AssignElectrons();
 //    bool ApplyElectronAssignment(size_t);
 //    FCSCORE GetMinimumElectronAssignmentScore();
@@ -294,24 +304,6 @@ namespace indigox {
      *  \param num the number of IXBonds to reserve space for. */
     inline void ReserveBonds(size_ num) {
       if (_bonds.size() < num ) _bonds.reserve(num);
-    }
-    
-    /*! \brief Reserve storage space for angles.
-     *  \details Reserves storage space for a minimum of \p num IXAngle
-     *  instances. This is more efficient when building large molecules as the
-     *  vector will not need to grow as more angles are added.
-     *  \param num the number of IXAngles to reserve space for. */
-    inline void ReserveAngles(size_ num) {
-      if (_angles.size() < num) _angles.reserve(num);
-    }
-    
-    /*! \brief Reserve storage space for dihedrals.
-     *  \details Reserves storage space for a minimum of \p num IXDihedral
-     *  instances. This is more efficient when building large molecules as the
-     *  vector will not need to grow as more dihedrals are added.
-     *  \param num the number of IXDihedrals to reserve space for. */
-    inline void ReserveDihedrals(size_ num) {
-      if (_dihedrals.size() < num) _dihedrals.reserve(num);
     }
     
     /*! \brief Set that the given property has been modified.
@@ -340,14 +332,14 @@ namespace indigox {
      *  access if the CONNECTIVITY property has been set.
      *  \return a pair of iterators indication the beginning and end of the
      *  owned angles. */
-    std::pair<MolAngleIter, MolAngleIter> GetAngles();
+//    std::pair<MolAngleIter, MolAngleIter> GetAngles();
     
     /*! \brief Get iterator access to the owned dihedrals.
      *  \details The set of dihedrals are regenerated prior to returning iterator
      *  access if the CONNECTIVITY property has been set.
      *  \return a pair of iterators indication the beginning and end of the
      *  owned dihedrals. */
-    std::pair<MolDihedralIter, MolDihedralIter> GetDihedrals();
+//    std::pair<MolDihedralIter, MolDihedralIter> GetDihedrals();
     
   private:
     //! Name of the molecule

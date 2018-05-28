@@ -117,6 +117,8 @@ namespace indigox {
    */
   class IXElement {
   public:
+    //! Allow IXPeriodicTable to create new IXElement instances.
+    friend class IXPeriodicTable;
     
     // No default constructor provided
     IXElement() = delete;
@@ -219,9 +221,6 @@ namespace indigox {
     const float_ _mass, _rad, _cov, _vdw, _chi;
     
   private:
-    //! Allow IXPeriodicTable to create new IXElement instances.
-    friend class IXPeriodicTable;
-    
     /*! \brief Construct new IXElement instance given data.
      *  \param Z atomic number.
      *  \param name element name.

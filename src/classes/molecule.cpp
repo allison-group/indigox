@@ -16,8 +16,7 @@
 namespace indigox {
   
   void IXMolecule::SetPropertyModified(Property prop) {
-    typedef std::bitset<static_cast<size_t>(Emergent::NUM_EMERGENTS)> es;
-    es mask(0);
+    std::bitset<static_cast<size_t>(Emergent::NUM_EMERGENTS)> mask(0);
     switch (prop) {
       case Property::ATOM_ELEMENTS:
         mask.set(static_cast<size_>(Emergent::MOLECULAR_FORMULA));
@@ -60,15 +59,11 @@ namespace indigox {
   }
   
   Bond IXMolecule::GetBond(Atom a, Atom b) const {
-    IXAtom::AtomBondIter begin, end;
-    std::tie(begin, end) = a->GetBondIters();
-    auto pos = std::find_if(begin, end, [a,b](_Bond bnd) {
-      Bond b_ = bnd.lock();
-      if (!b_) return false;
+    auto pos = std::find_if(_bonds.begin(), _bonds.end(), [a,b](Bond b_) {
       return ((b_->GetSourceAtom() == a && b_->GetTargetAtom() == b)
               || (b_->GetSourceAtom() == b && b_->GetTargetAtom() == a));
     });
-    return (pos == end) ? Bond() : pos->lock();
+    return (pos == _bonds.end()) ? Bond() : *pos;
   }
   
   Bond IXMolecule::GetBondTag(uid_ tag) const {
@@ -104,39 +99,39 @@ namespace indigox {
     return _formula_cache;
   }
   
-  size_ IXMolecule::NumAngles() {
-    if (_emerge[static_cast<size_>(Emergent::ANGLE_PERCEPTION)]) {
-      // DetermineAngles();
-      _emerge.reset(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
-    }
-    return _angles.size();
-  }
+//  size_ IXMolecule::NumAngles() {
+//    if (_emerge[static_cast<size_>(Emergent::ANGLE_PERCEPTION)]) {
+//      // DetermineAngles();
+//      _emerge.reset(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
+//    }
+//    return _angles.size();
+//  }
   
-  std::pair<IXMolecule::MolAngleIter, IXMolecule::MolAngleIter>
-  IXMolecule::GetAngles() {
-    if (_emerge[static_cast<size_>(Emergent::ANGLE_PERCEPTION)]) {
-      // DetermineAngles();
-      _emerge.reset(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
-    }
-    return {_angles.cbegin(), _angles.cend()};
-  }
+//  std::pair<IXMolecule::MolAngleIter, IXMolecule::MolAngleIter>
+//  IXMolecule::GetAngles() {
+//    if (_emerge[static_cast<size_>(Emergent::ANGLE_PERCEPTION)]) {
+//      // DetermineAngles();
+//      _emerge.reset(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
+//    }
+//    return {_angles.cbegin(), _angles.cend()};
+//  }
   
-  size_ IXMolecule::NumDihedrals() {
-    if (_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) {
-      // DetermineDihedrals();
-      _emerge.reset(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
-    }
-    return _dihedrals.size();
-  }
+//  size_ IXMolecule::NumDihedrals() {
+//    if (_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) {
+//      // DetermineDihedrals();
+//      _emerge.reset(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
+//    }
+//    return _dihedrals.size();
+//  }
   
-  std::pair<IXMolecule::MolDihedralIter, IXMolecule::MolDihedralIter>
-  IXMolecule::GetDihedrals() {
-    if (_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) {
-      // DetermineDihedrals();
-      _emerge.reset(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
-    }
-    return {_dihedrals.cbegin(), _dihedrals.cend()};
-  }
+//  std::pair<IXMolecule::MolDihedralIter, IXMolecule::MolDihedralIter>
+//  IXMolecule::GetDihedrals() {
+//    if (_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) {
+//      // DetermineDihedrals();
+//      _emerge.reset(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
+//    }
+//    return {_dihedrals.cbegin(), _dihedrals.cend()};
+//  }
   
   void IXMolecule::SetMolecularCharge(int q) {
     if (q != _q) SetPropertyModified(Property::ELECTRON_COUNT);
@@ -151,6 +146,14 @@ namespace indigox {
   bool IXMolecule::HasBond(Bond bond) const {
     auto pos = std::find(_bonds.begin(), _bonds.end(), bond);
     return pos != _bonds.end();
+  }
+  
+  bool IXMolecule::HasBond(Atom a, Atom b) const {
+    auto pos = std::find_if(_bonds.begin(), _bonds.end(), [a,b](Bond b_) {
+      return ((b_->GetSourceAtom() == a && b_->GetTargetAtom() == b)
+              || (b_->GetSourceAtom() == b && b_->GetTargetAtom() == a));
+    });
+    return (pos != _bonds.end());
   }
   
   Atom IXMolecule::NewAtom() {
