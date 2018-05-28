@@ -44,7 +44,6 @@ namespace indigox {
   //! \endcond
   
   string_ IXPeriodicTable::ToString() const {
-    //! \todo Cleanup generation so matches expected table output.
     std::stringstream ss;
     size_ row_count = 0, restart = 0;
     std::vector<int_> elems = {
@@ -55,28 +54,33 @@ namespace indigox {
       37,38,39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,-1,
       55,56,57, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86,-1,
       87,88,89,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,-1,
-       0, 0, 0, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, -1,
-       0, 0, 0, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,100,101,102,103, -1
+       0, 0, 0, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71,  0,-1,
+       0, 0, 0, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,100,101,102,103,  0,-1
     };
     ss << ' ';
     for (size_ i = 0; i < elems.size(); ) {
       if (elems[i] == -1) {
         ss << "\n";
-        if (row_count == 0 || row_count == 1) ss << '|';
-        else ss << ' ';
-        ++row_count;
+        if ((row_count == 0 || row_count == 1) && elems[i-18] != 0) ss << '|';
+        else ss << ' '; ++row_count;
         if (row_count < 3) i = restart;
         else { ++i; restart = i; row_count = 0; }
+      } else if (elems[i] == 0 && i > 19 && elems[i-19] != 0 && row_count == 0) {
+        ss << erow(_null, 0); ++i;
       } else if (elems[i] == 0 && elems[i+1] == 0) {
-        ss << erow(_null, 3);
-        ++i;
-      } else if (elems[i] == 0 && elems[i+1] != 0 && row_count != 0) {
-        ss << erow(_null, 4);
-        ++i;
-      } else if (elems[i] == 0 && elems[i+1] != 0 && row_count == 0) {
-        ss << erow(_null, 3);
-        ++i;
+        ss << erow(_null, 3); ++i;
+      } else if (elems[i] == 0 && elems[i+1] > 0 && row_count != 0) {
+        ss << erow(_null, 4); ++i;
+      } else if (elems[i] == 0 && elems[i+1] > 0 && row_count == 0) {
+        ss << erow(_null, 3); ++i;
+      } else if (elems[i] == 0 && elems[i+1] == -1) {
+        ss << erow(_null, 3); ++i;
       } else { ss << erow(_z_to.at(elems[i]), row_count); ++i; }
+    }
+    // Final line at bottom of table
+    for (size_ i = 0; i < 17; ++i) {
+      if (i < 3) ss << erow(_null, 3);
+      else ss << erow(_null, 0);
     }
     return ss.str();
   }

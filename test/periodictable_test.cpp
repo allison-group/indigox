@@ -1,6 +1,6 @@
 #define BOOST_TEST_DYN_LINK
-//#define BOOST_TEST_MODULE PeriodicTable test
 #include <boost/test/unit_test.hpp>
+#include <boost/test/output_test_stream.hpp>
 
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/utils/helpers.hpp>
@@ -110,52 +110,48 @@ BOOST_AUTO_TEST_CASE(bad_element_retrieve) {
 BOOST_AUTO_TEST_CASE(printing_methods) {
   PeriodicTable pt = GetPeriodicTable();
   PeriodicTable pt_fail;
-  std::stringstream ss;
-  ss << pt;
-  BOOST_TEST(ss.str() == "PeriodicTable(118 elements)");
-  ss.str("");
-  ss << pt_fail;
-  BOOST_TEST(ss.str() == "");
-  string_ ex = "\
-  ---                                                                 --- \n\
-  |  1|                                                               |  2|\n\
-  |  H|                                                               | He|\n\
-  --- ---                                         --- --- --- --- --- --- \n\
-  |  3|  4|                                       |  5|  6|  7|  8|  9| 10|\n\
-  | Li| Be|                                       |  B|  C|  N|  O|  F| Ne|\n\
-  --- ---                                         --- --- --- --- --- --- \n\
-  | 11| 12|                                       | 13| 14| 15| 16| 17| 18|\n\
-  | Na| Mg|                                       | Al| Si|  P|  S| Cl| Ar|\n\
-  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-  | 19| 20| 21| 22| 23| 24| 25| 26| 27| 28| 29| 30| 31| 32| 33| 34| 35| 36|\n\
-  |  K| Ca| Sc| Ti|  V| Cr| Mn| Fe| Co| Ni| Cu| Zn| Ga| Ge| As| Se| Br| Kr|\n\
-  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-  | 37| 38| 39| 40| 41| 42| 43| 44| 45| 46| 47| 48| 49| 50| 51| 52| 53| 54|\n\
-  | Rb| Sr|  Y| Zr| Nb| Mo| Tc| Ru| Rh| Pd| Ag| Cd| In| Sn| Sb| Te|  I| Xe|\n\
-  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-  | 55| 56| 57| 72| 73| 74| 75| 76| 77| 78| 79| 80| 81| 82| 83| 84| 85| 86|\n\
-  | Cs| Ba| La| Hf| Ta|  W| Re| Os| Ir| Pt| Au| Hg| Tl| Pb| Bi| Po| At| Rn|\n\
-  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-  | 87| 88| 89|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|\n\
-  | Fr| Ra| Ac| Db| Jl| Rf| Bh| Hn| Mt| Ds| Rg| Cn| Nh| Fl| Mc| Lv| Ts| Og|\n\
-  --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-  | 58| 59| 60| 61| 62| 63| 64| 65| 66| 67| 68| 69| 70| 71|\n\
-  | Ce| Pr| Nd| Pm| Sm| Eu| Gd| Tb| Dy| Ho| Er| Tm| Yb| Lu|\n\
-  --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n\
-  | 90| 91| 92| 93| 94| 95| 96| 97| 98| 99|100|101|102|103|\n\
-  | Th| Pa|  U| Np| Pu| Am| Cm| Bk| Cf| Es| Fm| Md| No| Lr|\n\
-  --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+  boost::test_tools::output_test_stream os;
+  os << pt;
+  BOOST_TEST(os.is_equal("PeriodicTable(118 elements)"));
+  os << pt_fail;
+  BOOST_TEST(os.is_empty());
+  os << " ---                                                                 --- \n";
+  os << "|  1|                                                               |  2|\n";
+  os << "|  H|                                                               | He|\n";
+  os << " --- ---                                         --- --- --- --- --- --- \n";
+  os << "|  3|  4|                                       |  5|  6|  7|  8|  9| 10|\n";
+  os << "| Li| Be|                                       |  B|  C|  N|  O|  F| Ne|\n";
+  os << " --- ---                                         --- --- --- --- --- --- \n";
+  os << "| 11| 12|                                       | 13| 14| 15| 16| 17| 18|\n";
+  os << "| Na| Mg|                                       | Al| Si|  P|  S| Cl| Ar|\n";
+  os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+  os << "| 19| 20| 21| 22| 23| 24| 25| 26| 27| 28| 29| 30| 31| 32| 33| 34| 35| 36|\n";
+  os << "|  K| Ca| Sc| Ti|  V| Cr| Mn| Fe| Co| Ni| Cu| Zn| Ga| Ge| As| Se| Br| Kr|\n";
+  os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+  os << "| 37| 38| 39| 40| 41| 42| 43| 44| 45| 46| 47| 48| 49| 50| 51| 52| 53| 54|\n";
+  os << "| Rb| Sr|  Y| Zr| Nb| Mo| Tc| Ru| Rh| Pd| Ag| Cd| In| Sn| Sb| Te|  I| Xe|\n";
+  os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+  os << "| 55| 56| 57| 72| 73| 74| 75| 76| 77| 78| 79| 80| 81| 82| 83| 84| 85| 86|\n";
+  os << "| Cs| Ba| La| Hf| Ta|  W| Re| Os| Ir| Pt| Au| Hg| Tl| Pb| Bi| Po| At| Rn|\n";
+  os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+  os << "| 87| 88| 89|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|\n";
+  os << "| Fr| Ra| Ac| Db| Jl| Rf| Bh| Hn| Mt| Ds| Rg| Cn| Nh| Fl| Mc| Lv| Ts| Og|\n";
+  os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+  os << "            | 58| 59| 60| 61| 62| 63| 64| 65| 66| 67| 68| 69| 70| 71|    \n";
+  os << "            | Ce| Pr| Nd| Pm| Sm| Eu| Gd| Tb| Dy| Ho| Er| Tm| Yb| Lu|    \n";
+  os << "             --- --- --- --- --- --- --- --- --- --- --- --- --- ---     \n";
+  os << "            | 90| 91| 92| 93| 94| 95| 96| 97| 98| 99|100|101|102|103|    \n";
+  os << "            | Th| Pa|  U| Np| Pu| Am| Cm| Bk| Cf| Es| Fm| Md| No| Lr|    \n";
+  os << "             --- --- --- --- --- --- --- --- --- --- --- --- --- --- ";
   
-  BOOST_TEST(pt->ToString() == ex);
+  BOOST_TEST(os.is_equal(pt->ToString()));
   
-  ss.str("");
-  Element c = pt->GetElement(6), element_fail = Element();
-  ss << element_fail;
-  BOOST_TEST(ss.str() == "");
-  ss << c;
-  BOOST_TEST(ss.str() == "Element(Carbon)");
-  BOOST_TEST(c->ToString() == "6-Carbon (C)");
-  
+  os << Element();
+  BOOST_TEST(os.is_empty());
+  os << pt->GetElement(6);
+  BOOST_TEST(os.is_equal("Element(Carbon)"));
+  os << "6-Carbon (C)";
+  BOOST_TEST(os.is_equal(pt->GetElement(6)->ToString()));
 }
 
 // Test element properties get
