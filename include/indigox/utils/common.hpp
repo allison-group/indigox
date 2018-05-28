@@ -52,6 +52,18 @@ namespace indigox::utils {
     if (!x) return e;
     return std::find_if(b, e, [x](std::weak_ptr<T> _x) { return _x.lock() == x; });
   }
+  
+  /*! \brief Check if a shared_ptr is pointing to a null member.
+   *  \details Types must implement a boolean operator which returns true if
+   *  that instance is considered a null instance.
+   *  \tparam T the stored type.
+   *  \param t the shared_ptr<T> to check.
+   *  \return if the shared_ptr references a null instance. */
+  template<typename T>
+  inline bool IsNull(std::shared_ptr<T> t) {
+    return !(t && *t);
+  }
+  
 }  // namespace indigox::utils
 
 
