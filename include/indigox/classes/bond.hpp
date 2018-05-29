@@ -52,11 +52,11 @@ namespace indigox {
     
   public: // public iterator aliases
     //! \brief Iterator over IXAtom references stored on an IXBond.
-    using BondAtomIter = BondAtoms::iterator;
+    using BondAtomIter = BondAtoms::const_iterator;
     //! \brief Iterator over IXAngle references stored on an IXBond.
-    using BondAngleIter = BondAngles::iterator;
+    using BondAngleIter = BondAngles::const_iterator;
     //! \brief Iterator over IXDihedral references stored on an IXBond.
-    using BondDihedralIter = BondDihedrals::iterator;
+    using BondDihedralIter = BondDihedrals::const_iterator;
     
   public:
     //! \brief Enum for the different possible bond stereochemistry states.

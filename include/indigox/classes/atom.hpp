@@ -62,11 +62,11 @@ namespace indigox {
     using AtomDihedrals = std::vector<_Dihedral>;
   public:  // Make the iterator aliases public for easier external usage
     //! \brief Iterator over IXBond references stored on an IXAtom
-    using AtomBondIter = AtomBonds::iterator;
+    using AtomBondIter = AtomBonds::const_iterator;
     //! \brief Iterator over IXAngle references stored on an IXAtom
-    using AtomAngleIter = AtomAngles::iterator;
+    using AtomAngleIter = AtomAngles::const_iterator;
     //! \brief Iterator over IXDihedral references stored on an IXAtom
-    using AtomDihedralIter = AtomDihedrals::iterator;
+    using AtomDihedralIter = AtomDihedrals::const_iterator;
     
   public:
     //! \brief Enum for the different types of atom stereochemistry
