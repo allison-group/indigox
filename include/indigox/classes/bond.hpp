@@ -20,20 +20,20 @@ namespace indigox {
   class IXMolecule;
   namespace test { class IXBond; }
   
-  typedef std::shared_ptr<IXAtom> Atom;
+  using Atom = std::shared_ptr<IXAtom>;
   //! \brief shared_ptr for normal use of the IXBond class.
-  typedef std::shared_ptr<IXBond> Bond;
-  typedef std::shared_ptr<IXAngle> Angle;
-  typedef std::shared_ptr<IXDihedral> Dihedral;
-  typedef std::shared_ptr<IXMolecule> Molecule;
+  using Bond = std::shared_ptr<IXBond>;
+  using Angle = std::shared_ptr<IXAngle>;
+  using Dihedral = std::shared_ptr<IXDihedral>;
+  using Molecule = std::shared_ptr<IXMolecule>;
   
-  typedef std::weak_ptr<IXAtom> _Atom;
+  using _Atom = std::weak_ptr<IXAtom>;
   /*! \brief weak_ptr for non-ownership reference to the IXBond class.
    *  \details Intended for internal use only. */
-  typedef std::weak_ptr<IXBond> _Bond;
-  typedef std::weak_ptr<IXAngle> _Angle;
-  typedef std::weak_ptr<IXDihedral> _Dihedral;
-  typedef std::weak_ptr<IXMolecule> _Molecule;
+  using _Bond = std::weak_ptr<IXBond>;
+  using _Angle = std::weak_ptr<IXAngle>;
+  using _Dihedral = std::weak_ptr<IXDihedral>;
+  using _Molecule = std::weak_ptr<IXMolecule>;
   
   class IXBond
   : public utils::IXCountableObject<IXBond>,
@@ -44,19 +44,19 @@ namespace indigox {
     friend class indigox::test::IXBond;
   private:
     //! \brief Container for storing IXAtom references assigned to an IXBond.
-    typedef std::array<_Atom, 2> BondAtoms;
+    using BondAtoms = std::array<_Atom, 2>;
     //! \brief Container for storing IXAngle references on an IXBond.
-    typedef std::vector<_Angle> BondAngles;
+    using BondAngles = std::vector<_Angle>;
     //! \brief Container for storing IXDihedral references on an IXBond.
-    typedef std::vector<_Dihedral> BondDihedrals;
+    using BondDihedrals = std::vector<_Dihedral>;
     
-  public: // public iterator typedefs
+  public: // public iterator aliases
     //! \brief Iterator over IXAtom references stored on an IXBond.
-    typedef BondAtoms::iterator BondAtomIter;
+    using BondAtomIter = BondAtoms::iterator;
     //! \brief Iterator over IXAngle references stored on an IXBond.
-    typedef BondAngles::iterator BondAngleIter;
+    using BondAngleIter = BondAngles::iterator;
     //! \brief Iterator over IXDihedral references stored on an IXBond.
-    typedef BondDihedrals::iterator BondDihedralIter;
+    using BondDihedralIter = BondDihedrals::iterator;
     
   public:
     //! \brief Enum for the different possible bond stereochemistry states.
@@ -256,9 +256,9 @@ namespace indigox {
   std::ostream& operator<<(std::ostream& os, Bond bnd);
   
   //! Type for the stereochemistry enum of a bond.
-  typedef indigox::IXBond::Stereo BondStereo;
+  using BondStereo = indigox::IXBond::Stereo;
   //! Type for the order of a bond.
-  typedef indigox::IXBond::Order BondOrder;
+  using BondOrder = indigox::IXBond::Order;
   
 }
 

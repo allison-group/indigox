@@ -16,7 +16,7 @@ namespace indigox::graph {
   //! \brief Type for specifying that a graph is directed.
   struct Directed {
     //! \brief Underlying boost type of a directed graph.
-    typedef boost::bidirectionalS is_directed_t;
+    using is_directed_t = boost::bidirectionalS;
     //! \brief Boolean that the type is directed.
     static constexpr bool is_directed = true;
   };
@@ -24,7 +24,7 @@ namespace indigox::graph {
   //! \brief Type for specifying that a graph is undirected.
   struct Undirected {
     //! \brief Underlying boost type of an undirected graph.
-    typedef boost::undirectedS is_directed_t;
+    using is_directed_t = boost::undirectedS;
     //! \brief Boolean that the type is not directed.
     static constexpr bool is_directed = false;
   };
@@ -51,39 +51,39 @@ namespace indigox::graph {
     };
     
     //! \brief Type of the underlying boost graph.
-    typedef boost::adjacency_list<boost::setS,               // Edge container
-    boost::listS,              // Vertex container
-    typename D::is_directed_t, // Directed nature
-    Label,                     // Vertex Properties
-    Label                      // Edge Properties
-    > G;
+    using graph_t = boost::adjacency_list<boost::setS,      // Edge container
+                                          boost::listS,     // Vertex container
+                              typename D::is_directed_t,    // Directed nature
+                                          Label,            // Vertex Properties
+                                          Label>;           // Edge Properties
     
-    // May need to replace G:: with boost::graph_traits<G>::
+    
+    // May need to replace graph_t:: with boost::graph_traits<graph_t>::
     //! \brief Type of the graph vertex descriptor.
-    typedef typename G::vertex_descriptor VertType;
+    using VertType = typename graph_t::vertex_descriptor;
     //! \brief Type of the properties of the vertex descriptor.
-    typedef Label VertProp;
+    using VertProp = Label;
     //! \brief Type for iterator over graph vertex descriptors.
-    typedef typename G::vertex_iterator VertIter;
+    using VertIter = typename graph_t::vertex_iterator;
     //! \brief Type for iterator over neighbours of vertex descriptor.
-    typedef typename G::adjacency_iterator NbrsIter;
+    using NbrsIter = typename graph_t::adjacency_iterator;
     //! \brief Type for iterator over predecessors of a vertex descriptor.
-    typedef typename G::inv_adjacency_iterator PredIter;
+    using PredIter = typename graph_t::inv_adjacency_iterator;
     //! \brief Type of the graph edge descriptor.
-    typedef typename G::edge_descriptor EdgeType;
+    using EdgeType = typename graph_t::edge_descriptor;
     //! \brief Type for iterator over edges.
-    typedef typename G::edge_iterator EdgeIter;
+    using EdgeIter = typename graph_t::edge_iterator;
     //! \brief Type of the properties of the edge descriptor.
-    typedef Label EdgeProp;
+    using EdgeProp = Label;
     
     //! \brief Type for bidirectional mapping of V to vertex descriptor type.
-    typedef indigox::utils::SimpleBiMap<V*, VertType> VertMap;
+    using VertMap = indigox::utils::SimpleBiMap<V*, VertType>;
     //! \brief Type for bidirectional mapping of E to edge descriptor type.
-    typedef indigox::utils::SimpleBiMap<E*, EdgeType> EdgeMap;
+    using EdgeMap = indigox::utils::SimpleBiMap<E*, EdgeType>;
     
   private:
     //! \brief Underlying boost graph.
-    std::shared_ptr<G> _graph;
+    std::shared_ptr<graph_t> _graph;
     //! \brief Map vertices to their descriptors.
     VertMap _verts;
     //! \brief Map edges to their descriptors.
@@ -91,7 +91,7 @@ namespace indigox::graph {
     
   public:
     //! \brief Default constructor
-    IXGraphBase() : _graph(std::make_shared<G>()) { }
+    IXGraphBase() : _graph(std::make_shared<graph_t>()) { }
     
     /*! \brief Add a new vertex to the graph.
      *  \details It is the callers responsability to ensure that the vertex
@@ -387,7 +387,7 @@ namespace indigox::graph {
      *  a part of. */
     size_ __connected_components_worker() {
       using namespace boost;
-      typedef std::map<VertType, size_> VertIdxMap;
+      using VertIdxMap = std::map<VertType, size_>;
       VertIdxMap data;
       associative_property_map<VertIdxMap> indexMap(data);
       auto verts = vertices(*_graph);

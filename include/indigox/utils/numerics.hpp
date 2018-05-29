@@ -5,19 +5,19 @@
 #include <string>
 
 namespace indigox {
-  typedef int8_t char_;
-  typedef uint8_t uchar_;
-  typedef int16_t short_;
-  typedef uint16_t ushort_;
-  typedef int32_t int_;
-  typedef uint32_t uint_;
-  typedef int64_t long_;
-  typedef uint64_t ulong_;
-  typedef double float_;
-  typedef size_t size_;
-  typedef uint64_t uid_;
+  using char_ = int8_t;
+  using uchar_ = uint8_t;
+  using short_ = int16_t;
+  using ushort_ = uint16_t;
+  using int_ = int32_t;
+  using uint_ = uint32_t;
+  using long_ = int64_t;
+  using ulong_ = uint64_t;
+  using float_ = double;
+  using size_ = size_t;
+  using uid_ = uint64_t;
   
-  typedef std::string string_;
+  using string_ = std::string;
 } // namespace indigox
 
 #endif /* INDIGOX_UTILS_NUMERICS_HPP */

@@ -23,7 +23,7 @@ namespace indigox {
   }
   
   //! \cond
-  typedef std::pair<Element, int> erow;
+  using erow = std::pair<Element, int>;
   
   std::ostream& operator<<(std::ostream& ss, erow er) {
     switch (er.second) {

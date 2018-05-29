@@ -21,25 +21,25 @@ namespace indigox {
   class IXElement;
   namespace graph {
     class IXMolecularGraph;
-    typedef std::shared_ptr<IXMolecularGraph> MolecularGraph;
+    using MolecularGraph = std::shared_ptr<IXMolecularGraph>;
   }
   
-  typedef std::shared_ptr<IXAtom> Atom;
-  typedef std::shared_ptr<IXBond> Bond;
-  typedef std::shared_ptr<IXAngle> Angle;
-  typedef std::shared_ptr<IXDihedral> Dihedral;
+  using Atom = std::shared_ptr<IXAtom>;
+  using Bond = std::shared_ptr<IXBond>;
+  using Angle = std::shared_ptr<IXAngle>;
+  using Dihedral = std::shared_ptr<IXDihedral>;
   //! \brief shared_ptr for normal use of the IXMolecule class.
-  typedef std::shared_ptr<IXMolecule> Molecule;
-  typedef std::shared_ptr<IXElement> Element;
+  using Molecule = std::shared_ptr<IXMolecule>;
+  using Element = std::shared_ptr<IXElement>;
   
-  typedef std::weak_ptr<IXAtom> _Atom;
-  typedef std::weak_ptr<IXBond> _Bond;
-  typedef std::weak_ptr<IXAngle> _Angle;
-  typedef std::weak_ptr<IXDihedral> _Dihedral;
+  using _Atom = std::weak_ptr<IXAtom>;
+  using _Bond = std::weak_ptr<IXBond>;
+  using _Angle = std::weak_ptr<IXAngle>;
+  using _Dihedral = std::weak_ptr<IXDihedral>;
   /*! \brief weak_ptr for non-ownership reference to the IXMolecule class.
    *  \details Intended for internal use only. */
-  typedef std::weak_ptr<IXMolecule> _Molecule;
-  typedef std::weak_ptr<IXElement> _Element;
+  using _Molecule = std::weak_ptr<IXMolecule>;
+  using _Element = std::weak_ptr<IXElement>;
   
   class IXMolecule : public utils::IXCountableObject<IXMolecule>,
   public std::enable_shared_from_this<IXMolecule> {
@@ -51,26 +51,26 @@ namespace indigox {
   private:
     /*! \brief Container for storing IXAtom instances.
      *  \details A molecule takes ownership of all atoms it contains. */
-    typedef std::vector<Atom> MolAtoms;
+    using MolAtoms = std::vector<Atom>;
     /*! \brief Container for storing IXBond instances.
      *  \details A molecule takes ownership of all bonds it contains. */
-    typedef std::vector<Bond> MolBonds;
+    using MolBonds = std::vector<Bond>;
     /*! \brief Container for storing IXAngle instances.
      *  \details A molecule takes ownership of all angles it contains. */
-    typedef std::vector<Angle> MolAngles;
+    using MolAngles = std::vector<Angle>;
     /*! \brief Container for storing IXDihedral instances.
      *  \details A molecule takes ownership of all dihedrals it contains. */
-    typedef std::vector<Dihedral> MolDihedrals;
+    using MolDihedrals = std::vector<Dihedral>;
     
-  public:   // Public iterator typedefs for easier external usage
+  public:   // Public iterator aliases for easier external usage
     //! \brief Iterator over owned IXAtom instances.
-    typedef MolAtoms::const_iterator MolAtomIter;
+    using MolAtomIter = MolAtoms::const_iterator;
     //! \brief Iterator over owned IXBond instances.
-    typedef MolBonds::const_iterator MolBondIter;
+    using MolBondIter = MolBonds::const_iterator;
     //! \brief Iterator over owned IXAngle instances.
-    typedef MolAngles::const_iterator MolAngleIter;
+    using MolAngleIter = MolAngles::const_iterator;
     //! \brief Iterator over owned IXDihedral instances.
-    typedef MolDihedrals::const_iterator MolDihedralIter;
+    using MolDihedralIter = MolDihedrals::const_iterator;
     
   public: // Public so that IXAtom etc can set when they're modified.
     /*! \brief Enum for the different types of properties a molecule has.
@@ -370,7 +370,7 @@ namespace indigox {
     Molecule m(new indigox::IXMolecule()); m->Init(); return m; }
   
   //! \brief Type for the modifiable properties of an IXMolecule
-  typedef indigox::IXMolecule::Property MolProperty;
+  using MolProperty = indigox::IXMolecule::Property;
   
 }
 

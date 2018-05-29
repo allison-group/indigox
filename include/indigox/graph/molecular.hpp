@@ -16,13 +16,13 @@ namespace indigox{
   class IXMolecule;
   namespace test { class IXMolecularGraph; }
   
-  typedef std::shared_ptr<IXAtom> Atom;
-  typedef std::shared_ptr<IXBond> Bond;
-  typedef std::shared_ptr<IXMolecule> Molecule;
+  using Atom = std::shared_ptr<IXAtom>;
+  using Bond = std::shared_ptr<IXBond>;
+  using Molecule = std::shared_ptr<IXMolecule>;
   
-  typedef std::weak_ptr<IXAtom> _Atom;
-  typedef std::weak_ptr<IXBond> _Bond;
-  typedef std::weak_ptr<IXMolecule> _Molecule;
+  using _Atom = std::weak_ptr<IXAtom>;
+  using _Bond = std::weak_ptr<IXBond>;
+  using _Molecule = std::weak_ptr<IXMolecule>;
   
   namespace graph {
     
@@ -30,21 +30,21 @@ namespace indigox{
     class IXMGVertex;
     class IXMGEdge;
     //! \brief shared_ptr for normal use of the IXMolecularGraph class.
-    typedef std::shared_ptr<IXMolecularGraph> MolecularGraph;
+    using MolecularGraph = std::shared_ptr<IXMolecularGraph>;
     //! \brief shared_ptr for normal use of the IXMGVertex class.
-    typedef std::shared_ptr<IXMGVertex> MGVertex;
+    using MGVertex = std::shared_ptr<IXMGVertex>;
     //! \brief shared_ptr for normal use of the IXMGEdge class.
-    typedef std::shared_ptr<IXMGEdge> MGEdge;
+    using MGEdge = std::shared_ptr<IXMGEdge>;
     /*! \brief weak_ptr for non-ownership reference to the IXMolecularGraph
      *  class.
      *  \details Intended for internal use only. */
-    typedef std::weak_ptr<IXMolecularGraph> _MolecularGraph;
+    using _MolecularGraph = std::weak_ptr<IXMolecularGraph>;
     /*! \brief weak_ptr for non-ownership reference to the IXMGVertex class.
      *  \details Intended for internal use only. */
-    typedef std::weak_ptr<IXMGVertex> _MGVertex;
+    using _MGVertex = std::weak_ptr<IXMGVertex>;
     /*! \brief weak_ptr for non-ownership reference to the IXMGEdge  .
      *  \details Intended for internal use only. */
-    typedef std::weak_ptr<IXMGEdge> _MGEdge;
+    using _MGEdge = std::weak_ptr<IXMGEdge>;
     
     /*! \brief Class for the vertices of a IXMolecularGraph. */
     class IXMGVertex : public std::enable_shared_from_this<IXMGVertex> {
@@ -98,15 +98,15 @@ namespace indigox{
       //! \brief Friendship allows IXMolecularGraph to be tested.
       friend class indigox::test::IXMolecularGraph;
       //! \brief Type of the underlying IXGraphBase
-      typedef IXGraphBase<IXMGVertex, IXMGEdge> graph_type;
+      using graph_type = IXGraphBase<IXMGVertex, IXMGEdge>;
       //! \brief Type of the iterator returned by GetEdges() method.
-      typedef std::vector<MGEdge>::const_iterator EdgeIter;
+      using EdgeIter = std::vector<MGEdge>::const_iterator;
       //! \brief Type of the iterator returned by GetVertices() method.
-      typedef std::vector<MGVertex>::const_iterator VertIter;
+      using VertIter = std::vector<MGVertex>::const_iterator;
       //! \brief Type of the iterator returned by GetNeighbours() method.
-      typedef std::vector<MGVertex>::const_iterator NbrsIter;
+      using NbrsIter = std::vector<MGVertex>::const_iterator;
       //! \brief Type of the iterator over components of the graph
-      typedef std::vector<std::vector<MGVertex>>::const_iterator CompIter;
+      using CompIter = std::vector<std::vector<MGVertex>>::const_iterator;
       
     public:
       IXMolecularGraph() = delete;  // no default constructor

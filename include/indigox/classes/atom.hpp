@@ -23,21 +23,21 @@ namespace indigox {
   namespace test { class IXAtom; }
   
   //! \brief shared_ptr for normal use of the IXAtom class.
-  typedef std::shared_ptr<IXAtom> Atom;
-  typedef std::shared_ptr<IXBond> Bond;
-  typedef std::shared_ptr<IXAngle> Angle;
-  typedef std::shared_ptr<IXDihedral> Dihedral;
-  typedef std::shared_ptr<IXMolecule> Molecule;
-  typedef std::shared_ptr<IXElement> Element;
+  using Atom = std::shared_ptr<IXAtom>;
+  using Bond = std::shared_ptr<IXBond>;
+  using Angle = std::shared_ptr<IXAngle>;
+  using Dihedral = std::shared_ptr<IXDihedral>;
+  using Molecule = std::shared_ptr<IXMolecule>;
+  using Element = std::shared_ptr<IXElement>;
   
   /*! \brief weak_ptr for non-ownership reference to the IXAtom class.
    *  \details Intended for internal use only. */
-  typedef std::weak_ptr<IXAtom> _Atom;
-  typedef std::weak_ptr<IXBond> _Bond;
-  typedef std::weak_ptr<IXAngle> _Angle;
-  typedef std::weak_ptr<IXDihedral> _Dihedral;
-  typedef std::weak_ptr<IXMolecule> _Molecule;
-  typedef std::weak_ptr<IXElement> _Element;
+  using _Atom = std::weak_ptr<IXAtom>;
+  using _Bond = std::weak_ptr<IXBond>;
+  using _Angle = std::weak_ptr<IXAngle>;
+  using _Dihedral = std::weak_ptr<IXDihedral>;
+  using _Molecule = std::weak_ptr<IXMolecule>;
+  using _Element = std::weak_ptr<IXElement>;
   
   //! \cond
   // Temporary defintion of Vec3 struct. Will make proper math stuff sometime.
@@ -54,20 +54,19 @@ namespace indigox {
     //! \brief Friendship allows IXAtom to be tested.
     friend class indigox::test::IXAtom;
   private:
-    // Typedefs
     //! \brief Container for storing IXBond references.
-    typedef std::vector<_Bond> AtomBonds;
+    using AtomBonds = std::vector<_Bond>;
     //! \brief Container for storing IXAngle references.
-    typedef std::vector<_Angle> AtomAngles;
+    using AtomAngles = std::vector<_Angle>;
     //! \brief Container for storing IXDihedral references.
-    typedef std::vector<_Dihedral> AtomDihedrals;
-  public:  // Make the iterator typedefs public for easier external usage
+    using AtomDihedrals = std::vector<_Dihedral>;
+  public:  // Make the iterator aliases public for easier external usage
     //! \brief Iterator over IXBond references stored on an IXAtom
-    typedef AtomBonds::iterator AtomBondIter;
+    using AtomBondIter = AtomBonds::iterator;
     //! \brief Iterator over IXAngle references stored on an IXAtom
-    typedef AtomAngles::iterator AtomAngleIter;
+    using AtomAngleIter = AtomAngles::iterator;
     //! \brief Iterator over IXDihedral references stored on an IXAtom
-    typedef AtomDihedrals::iterator AtomDihedralIter;
+    using AtomDihedralIter = AtomDihedrals::iterator;
     
   public:
     //! \brief Enum for the different types of atom stereochemistry
@@ -354,7 +353,7 @@ namespace indigox {
   std::ostream& operator<<(std::ostream& os, Atom atom);
   
   //! \brief Type for the stereochemistry enum of an atom.
-  typedef indigox::IXAtom::Stereo AtomStereo;
+  using AtomStereo = indigox::IXAtom::Stereo;
 }
 
 #endif /* INDIGOX_CLASSES_ATOM_HPP */

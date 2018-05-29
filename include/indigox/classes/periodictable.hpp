@@ -17,15 +17,15 @@ namespace indigox {
   
   
   //! \brief shared_ptr for normal use of the IXPeriodicTable class.
-  typedef std::shared_ptr<IXPeriodicTable> PeriodicTable;
+  using PeriodicTable = std::shared_ptr<IXPeriodicTable>;
   //! \brief shared_ptr for normal use of the IXElement class.
-  typedef std::shared_ptr<IXElement> Element;
+  using Element = std::shared_ptr<IXElement>;
   /*! \brief weak_ptr for non-ownership reference to the IXPeriodicTable class.
    *  \details Intended for internal use only. */
-  typedef std::weak_ptr<IXPeriodicTable> _PeriodicTable;
+  using _PeriodicTable = std::weak_ptr<IXPeriodicTable>;
   /*! \brief weak_ptr for non-ownership reference to the IXElement class.
    *  \details Intended for internal use only. */
-  typedef std::weak_ptr<IXElement> _Element;
+  using _Element = std::weak_ptr<IXElement>;
   
   /*! \class IXPeriodicTable periodictable.hpp indigox/classes/periodictable.hpp
    *  \brief Singleton class for storing and access elemental information.
