@@ -331,7 +331,7 @@ namespace indigox::graph {
     }
     
     /*! \brief Get the connected components of the graph.
-     *  \param components[out] where the connected components will be written to.
+     *  \param[out] components where the connected components will be written to.
      *  \return the number of connected components. */
     size_ ConnectedComponents(std::vector<std::vector<V*>>& components) {
       static_assert(!D::is_directed, "Requires an undirected graph.");
