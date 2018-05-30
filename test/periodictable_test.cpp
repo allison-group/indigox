@@ -3,7 +3,6 @@
 #include <boost/test/output_test_stream.hpp>
 
 #include <indigox/classes/periodictable.hpp>
-#include <indigox/utils/helpers.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -13,8 +12,7 @@ BOOST_AUTO_TEST_SUITE(ixperiodictable);
 
 using namespace indigox;
 // Test for the correct generation of PeriodicTable instances
-BOOST_AUTO_TEST_CASE(instance_constructor,
-                     *boost::unit_test::expected_failures(1)) {
+BOOST_AUTO_TEST_CASE(instance_constructor) {
   PeriodicTable pt = GetPeriodicTable();
   PeriodicTable pt2 = GetPeriodicTable();
   
