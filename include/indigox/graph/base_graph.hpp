@@ -47,8 +47,8 @@ namespace indigox::graph {
    *  \tparam E type of the graph edges.
    *  \tparam D type indicating the directed nature of the graph. Defaults to
    *  Undirected.
-   *  \tparam VL type of the label for a vertex. Defaults to GraphLabel.
-   *  \tparam EL type of the label for an edge. Defaults to GraphLabel.
+   *  \tparam VertProp type of the label for a vertex. Defaults to GraphLabel.
+   *  \tparam EdgeProp type of the label for an edge. Defaults to GraphLabel.
    *  \details Graph classes should contain an IXGraphBase member, not inherit
    *  from it. Vertex and Edge types are purely interacted with though the use
    *  of raw pointers. The IXGraphBase class will never deallocate any memory
@@ -56,23 +56,21 @@ namespace indigox::graph {
   template <class V,
             class E,
             class D=Undirected,
-            class VL=GraphLabel,
-            class EL=GraphLabel>
+            class VertProp=GraphLabel,
+            class EdgeProp=GraphLabel>
   class IXGraphBase final {
   private:
     //! \brief Type of the underlying boost graph.
     using graph_t = boost::adjacency_list<boost::setS,      // Edge container
                                           boost::listS,     // Vertex container
                               typename D::is_directed_t,    // Directed nature
-                                          VL,       // Vertex Properties
-                                          EL>;      // Edge Properties
+                                          VertProp,         // Vertex Properties
+                                          EdgeProp>;        // Edge Properties
     
     
     // May need to replace graph_t:: with boost::graph_traits<graph_t>::
     //! \brief Type of the graph vertex descriptor.
     using VertType = typename graph_t::vertex_descriptor;
-    //! \brief Type of the properties of the vertex descriptor.
-    using VertProp = VL;
     //! \brief Type for iterator over graph vertex descriptors.
     using VertIter = typename graph_t::vertex_iterator;
     //! \brief Type for iterator over neighbours of vertex descriptor.
@@ -83,8 +81,6 @@ namespace indigox::graph {
     using EdgeType = typename graph_t::edge_descriptor;
     //! \brief Type for iterator over edges.
     using EdgeIter = typename graph_t::edge_iterator;
-    //! \brief Type of the properties of the edge descriptor.
-    using EdgeProp = EL;
     
     //! \brief Type for bidirectional mapping of V to vertex descriptor type.
     using VertMap = indigox::utils::SimpleBiMap<V*, VertType>;
