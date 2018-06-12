@@ -5,6 +5,7 @@
 #include <indigox/classes/bond.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/periodictable.hpp>
+#include <indigox/graph/assignment.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/utils/numerics.hpp>
 
@@ -214,6 +215,25 @@ namespace indigox::test {
     inline void RemoveEdge(graph::MGEdge e) { g.RemoveEdge(e); }
     inline void RemoveEdge(graph::MGVertex u, graph::MGVertex v) { g.RemoveEdge(u,v); }
     inline void RemoveVertex(graph::MGVertex v) { g.RemoveVertex(v); }
+  };
+  
+  class IXAssignmentGraph {
+    graph::IXAssignmentGraph g;
+  public:
+    using VertIter = graph::IXAssignmentGraph::VertIter;
+    using NbrsIter = graph::IXAssignmentGraph::NbrsIter;
+    IXAssignmentGraph() = delete;
+    IXAssignmentGraph(graph::MolecularGraph G) : g(G) { }
+    inline bool HasVertex(graph::AGVertex v) { return g.HasVertex(v); }
+    inline bool HasVertex(graph::MGVertex v) { return g.HasVertex(v); }
+    inline bool HasVertex(graph::MGEdge e) { return g.HasVertex(e); }
+    inline graph::AGVertex GetVertex(graph::MGVertex v) { return g.GetVertex(v); }
+    inline graph::AGVertex GetVertex(graph::MGEdge v) { return g.GetVertex(v); }
+    inline size_ NumVertices() { return g.NumVertices(); }
+    inline size_ Degree(graph::AGVertex v) { return g.Degree(v); }
+    inline std::pair<NbrsIter, NbrsIter> GetNeighbours(graph::AGVertex v) { return g.GetNeighbours(v); }
+    inline std::pair<VertIter, VertIter> GetVertices() { return g.GetVertices(); }
+    inline bool IsConnected() { return g.IsConnected(); }
   };
 }
 
