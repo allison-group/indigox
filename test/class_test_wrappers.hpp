@@ -16,7 +16,7 @@ namespace indigox {
 }
 
 namespace indigox::test {
-  class IXAtom {
+  struct IXAtom {
     indigox::IXAtom a;
   public:
     typedef indigox::IXAtom::AtomAngleIter AtmAngIter;
@@ -78,7 +78,7 @@ namespace indigox::test {
     
   };
   
-  class IXBond {
+  struct IXBond {
     indigox::IXBond x;
   public:
     typedef indigox::IXBond::BondAtomIter BndAtmIter;
@@ -120,7 +120,7 @@ namespace indigox::test {
     inline uid_ GetUniqueID() { return x.GetUniqueID(); }
   };
   
-  class IXMolecule {
+  struct IXMolecule {
     Molecule m; // needs to be a shared_ptr due to MolecularGraph ownership.
   public:
     typedef indigox::IXMolecule::MolAtomIter MolAtmIter;
@@ -179,7 +179,7 @@ namespace indigox::test {
     inline size_ BondCapacity() { return m->_bonds.capacity(); }
   };
   
-  class IXMolecularGraph {
+  struct IXMolecularGraph {
     graph::IXMolecularGraph g;
   public:
     typedef graph::IXMolecularGraph::EdgeIter EdgeIter;
@@ -217,11 +217,17 @@ namespace indigox::test {
     inline void RemoveVertex(graph::MGVertex v) { g.RemoveVertex(v); }
   };
   
-  class IXAssignmentGraph {
+  struct IXAssignmentGraph {
     graph::IXAssignmentGraph g;
   public:
     using VertIter = graph::IXAssignmentGraph::VertIter;
     using NbrsIter = graph::IXAssignmentGraph::NbrsIter;
+    // private wrapping members
+    inline graph::AGVertex AddVertex(graph::MGVertex v) { return g.AddVertex(v); }
+    inline void AddEdges(graph::MGVertex s, graph::MGVertex t, graph::MGEdge e) { g.AddEdges(s,t,e); }
+    inline void DetermineAllNeighbours() { g.DetermineAllNeighbours(); }
+    
+    // public wrapping members
     IXAssignmentGraph() = delete;
     IXAssignmentGraph(graph::MolecularGraph G) : g(G) { }
     inline bool HasVertex(graph::AGVertex v) { return g.HasVertex(v); }

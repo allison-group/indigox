@@ -44,9 +44,6 @@ namespace indigox::graph {
   
   /*! \brief Class for the vertices of an IXAssignmentGraph. */
   class IXAGVertex : public std::enable_shared_from_this<IXAGVertex> {
-    //! \brief Friendship allows IXAssignmentGraph to add vertices
-    friend class IXAssignmentGraph;
-    
   public:
     IXAGVertex() = delete; // no default constructor
     
@@ -125,6 +122,8 @@ namespace indigox::graph {
   class IXAssignmentGraph {
     //! \brief Type of the internally utilised graph.
     using graph_type = IXGraphBase<IXAGVertex, std::nullptr_t>;
+    
+  public:
     //! \brief Type of the iterator returned by the GetVertices() method.
     using VertIter = std::vector<AGVertex>::const_iterator;
     //! \brief Type of the iterator returned by the GetNeihbours() method.
@@ -185,7 +184,7 @@ namespace indigox::graph {
      *  \details If the provided vertex is not part of the graph, the returned
      *  value is std::numeric_limits<size_>::max()
      *  \return the degree of the vertex. */
-    size_ Degree(const AGVertex& v) const {
+    inline size_ Degree(const AGVertex& v) const {
       return HasVertex(v) ? _g.Degree(v.get()) : std::numeric_limits<size_>::max();
     }
     
@@ -208,7 +207,24 @@ namespace indigox::graph {
     
     /*! \brief Check if the graph is connected.
      *  \return if the graph is connected or not. */
-    bool IsConnected() { return _g.NumConnectedComponents() == 1; }
+    inline bool IsConnected() { return _g.NumConnectedComponents() == 1; }
+    
+  private:
+    /*! \brief Add a vertex to the graph.
+     *  \param v the MGVertex associated with the new vertex.
+     *  \return the newly added vertex. */
+    AGVertex AddVertex(MGVertex v);
+    
+    /*! \brief Add edges to the graph.
+     *  \details Two edges are added. The first from \p s to \p e and the second
+     *  from \p e to \p t. If either \p s or \p t are not already added to the
+     *  graph, they will be added.
+     *  \param s,t the source and target vertices of \p e.
+     *  \param e the edge. */
+    void AddEdges(MGVertex s, MGVertex t, MGEdge e);
+    
+    //! \brief Populate the _nbrs member with all the correct neighbours.
+    void DetermineAllNeighbours();
     
   private:
     //! \brief Source molecular graph
@@ -223,8 +239,6 @@ namespace indigox::graph {
     std::vector<AGVertex> _verts;
     //! \brief Neighbours of vertices
     std::map<AGVertex, std::vector<AGVertex>> _nbrs;
-    
-    
   };
   
 }
