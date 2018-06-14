@@ -28,18 +28,18 @@ namespace indigox {
   std::ostream& operator<<(std::ostream& ss, erow er) {
     switch (er.second) {
       case 0:
-        return (ss << "--- ");
+        ss << "--- "; break;
       case 1:
-        return (ss << std::setw(3) << er.first->GetAtomicNumber() << '|');
+        ss << std::setw(3) << er.first->GetAtomicNumber() << '|'; break;
       case 2:
-        return (ss << std::setw(3) << er.first->GetSymbol() << '|');
+        ss << std::setw(3) << er.first->GetSymbol() << '|'; break;
       case 3:
-        return (ss << "    ");
+        ss << "    "; break;
       case 4:
-        return (ss << "   |");
       default:
-        return ss;
+        ss << "   |"; break;
     }
+    return ss;
   }
   //! \endcond
   
