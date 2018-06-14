@@ -12,6 +12,7 @@
 
 // Foward declares
 namespace indigox {
+  namespace test { class IXAssignmentGraph; }
   namespace graph {
     class IXMolecularGraph;
     class IXAssignmentGraph;
@@ -120,6 +121,9 @@ namespace indigox::graph {
    *  available for adding or removing vertices to/from an IXAssignmentGraph.
    *  Additionally, the edges of the graph are not accessible in any way. */
   class IXAssignmentGraph {
+    //! \brief Friendship allows IXAssignmentGraph to be properly tested
+    friend class indigox::test::IXAssignmentGraph;
+    
     //! \brief Type of the internally utilised graph.
     using graph_type = IXGraphBase<IXAGVertex, std::nullptr_t>;
     
