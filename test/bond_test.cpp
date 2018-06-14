@@ -16,25 +16,10 @@ namespace indigox::test {
     Molecule mol;
     Atom a1, a2, a3, a4;
     indigox::test::IXBond b1, b2;
-    size_ num_angles, num_dihedrals;
-    std::vector<Angle> angles;
-    std::vector<Dihedral> dihedrals;
     
     BondFixture() : mol(CreateMolecule()), a1(indigox::test::IXAtom::GetNewAtom()),
     a2(indigox::test::IXAtom::GetNewAtom(mol)), a3(indigox::test::IXAtom::GetNewAtom()),
     a4(indigox::test::IXAtom::GetNewAtom(mol)), b1(a1,a3,Molecule()), b2(a2,a4,mol) {
-      std::random_device rd;
-      std::mt19937 gen(rd());
-      std::uniform_int_distribution<size_> dist(3,10);
-      num_angles = dist(gen); num_dihedrals = dist(gen);
-      for (size_ i = 0; i < num_angles; ++i) {
-        angles.emplace_back(new indigox::IXAngle());
-        b2.AddAngle(angles.back());
-      }
-      for (size_ i = 0; i < num_dihedrals; ++i) {
-        dihedrals.emplace_back(new indigox::IXDihedral());
-        b2.AddDihedral(dihedrals.back());
-      }
     }
     
   };
@@ -115,52 +100,6 @@ BOOST_AUTO_TEST_CASE(tag_get_set) {
   BOOST_CHECK(b1.GetTag() == 123);
 }
 
-BOOST_AUTO_TEST_CASE(angle_add_remove) {
-  BOOST_CHECK(b1.NumAngles() == 0);
-  BOOST_CHECK(b2.NumAngles() == num_angles);
-  // Check iterators
-  auto angle_it = b2.GetAngleIters();
-  BOOST_CHECK(std::distance(angle_it.first, angle_it.second) == num_angles);
-  std::vector<Angle> stored_angles;
-  for (; angle_it.first != angle_it.second; ++angle_it.first)
-    stored_angles.emplace_back(angle_it.first->lock());
-  BOOST_CHECK_EQUAL_COLLECTIONS(angles.begin(), angles.end(),
-                                stored_angles.begin(), stored_angles.end());
-  // Remove the last angle
-  b2.RemoveAngle(angles.back());
-  BOOST_CHECK(b2.NumAngles() == num_angles - 1);
-  angle_it = b2.GetAngleIters();
-  BOOST_CHECK(std::distance(angle_it.first, angle_it.second) == num_angles - 1);
-  stored_angles.clear(); angles.resize(num_angles - 1);
-  for (; angle_it.first != angle_it.second; ++angle_it.first)
-    stored_angles.emplace_back(angle_it.first->lock());
-  BOOST_CHECK_EQUAL_COLLECTIONS(angles.begin(), angles.end(),
-                                stored_angles.begin(), stored_angles.end());
-}
-
-BOOST_AUTO_TEST_CASE(dihedrals_add_remove) {
-  BOOST_CHECK(b1.NumDihedrals() == 0);
-  BOOST_CHECK(b2.NumDihedrals() == num_dihedrals);
-  // Check iterators
-  auto dihedral_it = b2.GetDihedralIters();
-  BOOST_CHECK(std::distance(dihedral_it.first, dihedral_it.second) == num_dihedrals);
-  std::vector<Dihedral> stored_dihedrals;
-  for (; dihedral_it.first != dihedral_it.second; ++dihedral_it.first)
-    stored_dihedrals.emplace_back(dihedral_it.first->lock());
-  BOOST_CHECK_EQUAL_COLLECTIONS(dihedrals.begin(), dihedrals.end(),
-                                stored_dihedrals.begin(), stored_dihedrals.end());
-  // Remove the last dihedral
-  b2.RemoveDihedral(dihedrals.back());
-  BOOST_CHECK(b2.NumDihedrals() == num_dihedrals - 1);
-  dihedral_it = b2.GetDihedralIters();
-  BOOST_CHECK(std::distance(dihedral_it.first, dihedral_it.second) == num_dihedrals - 1);
-  stored_dihedrals.clear(); dihedrals.resize(num_dihedrals - 1);
-  for (; dihedral_it.first != dihedral_it.second; ++dihedral_it.first)
-    stored_dihedrals.emplace_back(dihedral_it.first->lock());
-  BOOST_CHECK_EQUAL_COLLECTIONS(dihedrals.begin(), dihedrals.end(),
-                                stored_dihedrals.begin(), stored_dihedrals.end());
-}
-
 BOOST_AUTO_TEST_CASE(printing_methods) {
   // Test ostream operator
   boost::test_tools::output_test_stream actual_output;
@@ -186,9 +125,7 @@ BOOST_AUTO_TEST_CASE(cleaning_methods) {
   BOOST_CHECK(b2.GetStereochemistry() == BondStereo::UNDEFINED);
   BOOST_CHECK(b2.GetTag() == 0);
   BOOST_CHECK(b2.GetTargetAtom() == Atom());
-  BOOST_CHECK(b2.NumAngles() == 0);
   BOOST_CHECK(b2.NumAtoms() == 2);
-  BOOST_CHECK(b2.NumDihedrals() == 0);
 }
 
 

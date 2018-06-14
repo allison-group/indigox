@@ -30,8 +30,6 @@ namespace indigox {
     _stereo = Stereo::UNDEFINED;
     _aromatic = false;
     _atms.fill(_Atom());
-    _angs.clear();
-    _dhds.clear();
   }
   
   std::ostream& operator<<(std::ostream& os, Bond bnd) {

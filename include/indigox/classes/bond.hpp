@@ -15,24 +15,18 @@
 namespace indigox {
   class IXAtom;
   class IXBond;
-  class IXAngle;
-  class IXDihedral;
   class IXMolecule;
   namespace test { class IXBond; }
   
   using Atom = std::shared_ptr<IXAtom>;
   //! \brief shared_ptr for normal use of the IXBond class.
   using Bond = std::shared_ptr<IXBond>;
-  using Angle = std::shared_ptr<IXAngle>;
-  using Dihedral = std::shared_ptr<IXDihedral>;
   using Molecule = std::shared_ptr<IXMolecule>;
   
   using _Atom = std::weak_ptr<IXAtom>;
   /*! \brief weak_ptr for non-ownership reference to the IXBond class.
    *  \details Intended for internal use only. */
   using _Bond = std::weak_ptr<IXBond>;
-  using _Angle = std::weak_ptr<IXAngle>;
-  using _Dihedral = std::weak_ptr<IXDihedral>;
   using _Molecule = std::weak_ptr<IXMolecule>;
   
   class IXBond
@@ -45,18 +39,10 @@ namespace indigox {
   private:
     //! \brief Container for storing IXAtom references assigned to an IXBond.
     using BondAtoms = std::array<_Atom, 2>;
-    //! \brief Container for storing IXAngle references on an IXBond.
-    using BondAngles = std::vector<_Angle>;
-    //! \brief Container for storing IXDihedral references on an IXBond.
-    using BondDihedrals = std::vector<_Dihedral>;
     
   public: // public iterator aliases
     //! \brief Iterator over IXAtom references stored on an IXBond.
     using BondAtomIter = BondAtoms::const_iterator;
-    //! \brief Iterator over IXAngle references stored on an IXBond.
-    using BondAngleIter = BondAngles::const_iterator;
-    //! \brief Iterator over IXDihedral references stored on an IXBond.
-    using BondDihedralIter = BondDihedrals::const_iterator;
     
   public:
     //! \brief Enum for the different possible bond stereochemistry states.
@@ -169,64 +155,16 @@ namespace indigox {
       return std::make_pair(_atms.begin(), _atms.end());
     }
     
-    /*! \brief Get iterator access to the angles the bond is involved in.
-     *  \details Intended for internal use only as the bond does not own any
-     *  of the angles being iterated over.
-     *  \return a pair of iterators for the beginning and end of the angles. */
-    std::pair<BondAngleIter, BondAngleIter> GetAngleIters() {
-      return std::make_pair(_angs.begin(), _angs.end());
-    }
-    
-    /*! \brief Get iterator access to the dihedrals the bond is involved in.
-     *  \details Intended for internal use only as the bond does not own any
-     *  of the dihedrals being iterated over.
-     *  \return a pair of iterators for the beginning and end of the dihedrals. */
-    std::pair<BondDihedralIter, BondDihedralIter> GetDihedralIters() {
-      return std::make_pair(_dhds.begin(), _dhds.end());
-    }
-    
   private:
     /*! \brief Clear all information.
      *  \details Erases all information stored on the bond, and resets
      *  everything back to a just created state. */
     void Clear();
     
-    /*! \brief Add an angle to this bond.
-     *  \details Assumes that the angle is not already added.
-     *  \param ang the angle to add. */
-    inline void AddAngle(Angle ang) { _angs.emplace_back(ang); }
-    
-    /*! \brief Add a dihedral to this bond.
-     *  \details Assumes that the dihedral is not already added.
-     *  \param dihed the dihedral to add. */
-    inline void AddDihedral(Dihedral dihed) { _dhds.emplace_back(dihed); }
-    
-    /*! \brief Remove an angle from this bond.
-     *  \details Assumes that the angle is already added.
-     *  \param ang the angle to remove. */
-    inline void RemoveAngle(Angle ang) {
-      _angs.erase(utils::WeakContainsShared(_angs.begin(), _angs.end(), ang));
-    }
-    
-    /*! \brief Remove a dihedral from this bond.
-     *  \details Assumes that the dihedral is already added.
-     *  \param dihed the dihedral to remove. */
-    inline void RemoveDihedral(Dihedral dihed) {
-      _dhds.erase(utils::WeakContainsShared(_dhds.begin(), _dhds.end(), dihed));
-    }
-    
   public:
     /*! \brief Number of atoms this bond is between.
      *  \returns 2. */
     size_ NumAtoms() const { return _atms.size(); }
-    
-    /*! \brief Number of valid angles this bond is a part of.
-     *  \returns the number of valid assigned angles. */
-    size_ NumAngles() const { return _angs.size(); }
-    
-    /*! \brief Number of valid dihedrals this bond is a part of.
-     *  \returns the number of valid assigned dihedrals. */
-    size_ NumDihedrals() const { return _dhds.size(); }
     
   private:
     //! The molecule this bond is assigned to.
@@ -242,10 +180,6 @@ namespace indigox {
     
     //! \brief Atoms which make up the bond.
     BondAtoms _atms;
-    //! \brief Angles which the bond is part of.
-    BondAngles _angs;
-    //! \brief Dihedrals which the bond is part of.
-    BondDihedrals _dhds;
   };
   
   /*! \brief Print a Bond to an output stream.
