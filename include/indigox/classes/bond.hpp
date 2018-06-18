@@ -77,7 +77,7 @@ namespace indigox {
     IXBond() = delete;  // no default constructor
     
     //! \brief Destructor
-    ~IXBond() { };
+    ~IXBond() { }
     
     /*! \brief Tag of the bond.
      *  \details This value may be modified without warning. Use with caution.
@@ -151,8 +151,14 @@ namespace indigox {
      *  \details Intended for internal use only as the bond does not own any
      *  of the atoms being iterated over.
      *  \return a pair of iterators for the beginning and end of the atoms. */
-    std::pair<BondAtomIter, BondAtomIter> GetAtomIters() {
+    inline std::pair<BondAtomIter, BondAtomIter> GetAtomIters() const {
       return std::make_pair(_atms.begin(), _atms.end());
+    }
+    
+    /*! \brief Get the atoms of the bond.
+     *  \return pair of the atoms of the bond. */
+    inline std::pair<Atom, Atom> GetAtoms() const {
+      return std::make_pair(_atms[0].lock(), _atms[1].lock());
     }
     
   private:

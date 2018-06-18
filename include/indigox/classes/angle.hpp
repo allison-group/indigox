@@ -1,0 +1,125 @@
+/*! \file angle.hpp */
+#include <array>
+#include <memory>
+
+#include "../utils/counter.hpp"
+#include "../utils/triple.hpp"
+
+#ifndef INDIGOX_CLASSES_ANGLE_HPP
+#define INDIGOX_CLASSES_ANGLE_HPP
+
+namespace indigox {
+  class IXAtom;
+  class IXAngle;
+  class IXMolecule;
+  namespace test { class IXAngle; }
+  
+  using Atom = std::shared_ptr<IXAtom>;
+  //! \brief shared_ptr for normal use of the IXAngle class.
+  using Angle = std::shared_ptr<IXAngle>;
+  using Molecule = std::shared_ptr<IXMolecule>;
+  
+  using _Atom = std::weak_ptr<IXAtom>;
+  /*! \brief weak_ptr for non-ownership reference to the IXAngle class.
+   *  \details Intended for internal use only. */
+  using _Angle = std::weak_ptr<IXAngle>;
+  using _Molecule = std::weak_ptr<IXMolecule>;
+  
+  class IXAngle
+  : public utils::IXCountableObject<IXAngle>,
+  public std::enable_shared_from_this<IXAngle> {
+    //! \brief Friendship allows IXMolecule to create new angles.
+    friend class indigox::IXMolecule;
+    //! \brief Friendship allows IXAngle to be tested.
+    friend class indigox::test::IXAngle;
+    
+  private:
+    //! \brief Container for storing IXAtom reference assigned to an IXAngle.
+    using AngleAtoms = std::array<_Atom, 3>;
+    
+  public:
+    // iterator aliases
+    //! \brief Iterator over IXAtom references stored on an IXAngle.
+    using AngleAtomIter = AngleAtoms::const_iterator;
+    
+  private:
+    /*! \brief Normal constructor.
+     *  \details Creates an angle between three atoms, linking it to the given
+     *  Molecule. Atom \p b is always the central atom of the angle.
+     *  \param a,b,c the three atoms to construct an angle between.
+     *  \param m the molecule to assign the angle to. */
+    IXAngle(Atom a, Atom b, Atom c, Molecule m);
+    
+  public:
+    IXAngle() = delete;   // no default constructor
+    
+    //! \brief Destructor
+    ~IXAngle() { }
+    
+    /*! \brief Tag of the angle.
+     *  \details This value may be modified without warning. Use with caution.
+     *  For a constant identifier to the angle, use the IXAngle::GetUniqueID().
+     *  \return the tag assigned to the angle. */
+    inline uid_ GetTag() const { return _tag; }
+    
+    /*! \brief Molecule this angle is associated with.
+     *  \details The returned shared_ptr is empty if the angle is not assigned
+     *  to a valid molecule.
+     *  \return the molecule associated with this angle. */
+    inline Molecule GetMolecule() const { return _mol.lock(); }
+    
+    /*! \brief String representation of the angle.
+     *  \details If any of the atoms of the angle are not valid, the returned
+     *  string is Angle(MALFORMED), otherwise it is of the form:
+     *  Angle(NAME_BEGIN, NAME_CENTRAL, NAME_END).
+     *  \return a string representation of the dihedral. */
+    string_ ToString() const;
+    
+    /*! \brief Set the tag of this angle.
+     *  \details The tag of an angle should not be considered stable. Use with
+     *  caution.
+     *  \param tag the tag to set. */
+    inline void SetTag(uid_ tag) { _tag = tag; }
+    
+    /*! \brief Switch the begin and end atoms of the angle.
+     *  \details The beginning atom will become the end atom and vice versa. The
+     *  central atom will always remain the central atom. */
+    inline void SwapOrder() { std::swap(_atms[0], _atms[2]); }
+    
+    /*! \brief Get iterator access to the atoms of the angle.
+     *  \details Intended for internal use only as the angle does not own any
+     *  of the atoms being iterated over.
+     *  \return a pair of iterators for the beginning and end of the atoms. */
+    inline std::pair<AngleAtomIter, AngleAtomIter> GetAtomIters() const {
+      return std::make_pair(_atms.begin(), _atms.end());
+    }
+    
+    /*! \brief Get the atoms of the angle.
+     *  \return triple of the atoms of the angle. */
+    inline stdx::triple<Atom, Atom, Atom> GetAtoms() const {
+      return stdx::make_triple(_atms[0].lock(), _atms[1].lock(), _atms[2].lock());
+    }
+    
+    /*! \brief Number of atoms this angle contains.
+     *  \return 3. */
+    size_ NumAtoms() const { return  _atms.size(); }
+    
+  private:
+    /*! \brief Clear all information.
+     *  \details Erases all information stored on the angle, and resets
+     *  everything back to a just created state. */
+    void Clear();
+    
+    
+  private:
+    //! The molecule this angle is assigned to.
+    _Molecule _mol;
+    //! Tag (unstable)
+    uid_ _tag;
+    
+    //! \brief Atoms which make up the angle.
+    AngleAtoms _atms;
+  };
+}
+
+#endif  /* INDIGOX_CLASSES_ANGLE_HPP */
