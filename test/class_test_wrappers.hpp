@@ -1,21 +1,42 @@
 #ifndef INDIGOX_TEST_CLASS_TEST_WRAPPERS_HPP
 #define INDIGOX_TEST_CLASS_TEST_WRAPPERS_HPP
 
+#include <indigox/classes/angle.hpp>
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
+#include <indigox/classes/dihedral.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/graph/assignment.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/utils/numerics.hpp>
-
-// Dummy classes
-namespace indigox {
-  class IXAngle { };
-  class IXDihedral { };
-}
+#include <indigox/utils/quad.hpp>
+#include <indigox/utils/triple.hpp>
 
 namespace indigox::test {
+  struct IXAngle {
+    indigox::IXAngle a;
+    using AngAtmIter = indigox::IXAngle::AngleAtomIter;
+    
+    static Angle GetNewAngle() { return Angle(new indigox::IXAngle(Atom(), Atom(), Atom(), Molecule())); }
+    static Angle GetNewAngle(Atom a, Atom b, Atom c, Molecule m) { return Angle(new indigox::IXAngle(a,b,c,m)); }
+    
+    // private wrapping members
+    IXAngle() : a(Atom(), Atom(), Atom(), Molecule()) { }
+    IXAngle(Atom i, Atom j, Atom k, Molecule m) : a(i,j,k,m) { }
+    inline void Clear() { a.Clear(); }
+    
+    // public wrapping members
+    inline uid_ GetTag() { return a.GetTag(); }
+    inline Molecule GetMolecule() { return a.GetMolecule(); }
+    inline string_ ToString() { return a.ToString(); }
+    inline void SetTag(uid_ t) { a.SetTag(t); }
+    inline void SwapOrder() { a.SwapOrder(); }
+    inline std::pair<AngAtmIter, AngAtmIter> GetAtomIters() { return a.GetAtomIters(); }
+    inline stdx::triple<Atom,Atom,Atom> GetAtoms() { return a.GetAtoms(); }
+    inline size_ NumAtoms() { return a.NumAtoms(); }
+  };
+  
   struct IXAtom {
     indigox::IXAtom a;
   public:
@@ -110,6 +131,28 @@ namespace indigox::test {
     inline uid_ GetUniqueID() { return x.GetUniqueID(); }
   };
   
+  struct IXDihedral {
+    indigox::IXDihedral x;
+    using DhdAtmIter = indigox::IXDihedral::DihedAtomIter;
+    
+    static Dihedral GetNewDihedral() { return Dihedral(new indigox::IXDihedral(Atom(), Atom(), Atom(), Atom(), Molecule())); }
+    static Dihedral GetNewDihedral(Atom a, Atom b, Atom c, Atom d, Molecule m) { return Dihedral(new indigox::IXDihedral(a,b,c,d,m)); }
+    
+    // private wrapping members
+    IXDihedral() : x(Atom(), Atom(), Atom(), Atom(), Molecule()) { }
+    IXDihedral(Atom a, Atom b, Atom c, Atom d, Molecule m) : x(a,b,c,d,m) { }
+    inline void Clear() { x.Clear(); }
+    
+    // public wrapping members
+    inline uid_ GetTag() { return x.GetTag(); }
+    inline Molecule GetMolecule() { return x.GetMolecule(); }
+    inline stdx::quad<Atom,Atom,Atom,Atom> GetAtoms() { return x.GetAtoms(); }
+    inline std::pair<DhdAtmIter,DhdAtmIter> GetAtomIters() { return x.GetAtomIters(); }
+    inline size_ NumAtoms() { return x.NumAtoms(); }
+    inline void SwapOrder() { x.SwapOrder(); }
+    inline string_ ToString() { return x.ToString(); }
+  };
+  
   struct IXMolecule {
     Molecule m; // needs to be a shared_ptr due to MolecularGraph ownership.
   public:
@@ -121,9 +164,14 @@ namespace indigox::test {
     typedef std::bitset<static_cast<size_>(Emergent::NUM_EMERGENTS)> EmergeSet;
     // private wrapping members
     IXMolecule() : m(CreateMolecule()) { }
+    inline Angle NewAngle(Atom a, Atom b, Atom c) { return m->NewAngle(a,b,c); }
     
     // public wrapping members
-//    inline std::pair<MolAngIter, MolAngIter> GetAngles() { return m->GetAngles(); }
+    inline std::pair<MolAngIter, MolAngIter> GetAngles() { return m->GetAngles(); }
+    inline Angle GetAngle(size_ pos) { return m->GetAngle(pos); }
+    inline Angle GetAngle(Atom a, Atom b, Atom c) { return m->GetAngle(a,b,c); }
+    inline Angle GetAngleTag(uid_ tag) { return m->GetAngleTag(tag); }
+    inline Angle GetAngleID(uid_ t) { return m->GetAngleID(t); }
     inline Atom GetAtom(size_ pos) { return m->GetAtom(pos); }
     inline Atom GetAtomID(uid_ id) { return m->GetAtomID(id); }
     inline std::pair<MolAtmIter, MolAtmIter> GetAtoms() { return m->GetAtoms(); }
@@ -141,12 +189,14 @@ namespace indigox::test {
     inline bool HasAtom(Atom a) { return m->HasAtom(a); }
     inline bool HasBond(Bond b) { return m->HasBond(b); }
     inline bool HasBond(Atom a, Atom b) { return m->HasBond(a,b); }
+    inline bool HasAngle(Angle a) { return m->HasAngle(a); }
+    inline bool HasAngle(Atom a, Atom b, Atom c) { return m->HasAngle(a,b,c); }
     inline Atom NewAtom() { return m->NewAtom(); }
     inline Atom NewAtom(Element e) { return m->NewAtom(e); }
     inline Atom NewAtom(string_ n) { return m->NewAtom(n); }
     inline Atom NewAtom(string_ n, Element e) { return m->NewAtom(n, e); }
     inline Bond NewBond(Atom a, Atom b) { return m->NewBond(a,b); }
-//    inline size_ NumAngles() { return m->NumAngles(); }
+    inline size_ NumAngles() { return m->NumAngles(); }
     inline size_ NumAtoms() { return m->NumAtoms(); }
     inline size_ NumBonds() { return m->NumBonds(); }
 //    inline size_ NumDihedrals() { return m->NumDihedrals(); }
@@ -158,6 +208,7 @@ namespace indigox::test {
     inline void SetMolecularCharge(int_ q) { m->SetMolecularCharge(q); }
     inline void SetName(string_ n) { m->SetName(n); }
     inline void SetPropertyModified(MolProperty p) { m->SetPropertyModified(p); }
+    inline size_ PerceiveAngles() { return m->PerceiveAngles(); }
     
     // internals wrapping members
     inline EmergeSet GetEmergentState() { return m->_emerge; }
@@ -165,8 +216,8 @@ namespace indigox::test {
     inline void SetEmergentState(size_ p) { m->_emerge.set(p); }
     inline void ResetEmergentState(size_ p) { m->_emerge.reset(p); }
     inline string_ GetFormulaCache() { return m->_formula_cache; }
-    inline size_ AtomCapacity() { return m->_atoms.capacity(); }
-    inline size_ BondCapacity() { return m->_bonds.capacity(); }
+    inline size_ AtomCapacity() { return m->_atms.capacity(); }
+    inline size_ BondCapacity() { return m->_bnds.capacity(); }
   };
   
   struct IXMolecularGraph {

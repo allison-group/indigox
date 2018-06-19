@@ -43,12 +43,12 @@ namespace indigox::test {
       }
       num_angles = dist(gen); angles.reserve(num_angles);
       for (size_ i = 0; i < num_angles; ++i) {
-        angles.emplace_back(new indigox::IXAngle());
+        angles.emplace_back(indigox::test::IXAngle::GetNewAngle());
         a2.AddAngle(angles.back());
       }
       num_dihedrals = dist(gen); dihedrals.reserve(num_dihedrals);
       for (size_ i = 0; i < num_dihedrals; ++i) {
-        dihedrals.emplace_back(new indigox::IXDihedral());
+        dihedrals.emplace_back(indigox::test::IXDihedral::GetNewDihedral());
         a2.AddDihedral(dihedrals.back());
       }
     }
