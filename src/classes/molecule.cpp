@@ -2,15 +2,20 @@
 #include <array>
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <sstream>
 
+#include <indigox/classes/angle.hpp>
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
+#include <indigox/classes/dihedral.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/utils/counter.hpp>
 #include <indigox/utils/numerics.hpp>
+#include <indigox/utils/quad.hpp>
+#include <indigox/utils/triple.hpp>
 
 
 namespace indigox {
@@ -46,42 +51,99 @@ namespace indigox {
     _g = graph::MolecularGraph(new graph::IXMolecularGraph(shared_from_this()));
   }
   
+  Angle IXMolecule::GetAngle(const Atom& a, const Atom&b, const Atom& c) {
+    PerceiveAngles();
+    auto pred = [a,b,c](Angle ang) {
+      stdx::triple<Atom, Atom, Atom> atms = ang->GetAtoms();
+      return ((atms.first == a && atms.second == b && atms.third == c)
+              || (atms.third == a && atms.second == b && atms.first == c));
+    };
+    auto pos = std::find_if(_angs.begin(), _angs.end(), pred);
+    return (pos == _angs.end()) ? Angle() : *pos;
+  }
+  
+  Angle IXMolecule::GetAngleTag(uid_ tag) const {
+    auto pred = [tag](Angle ang) { return ang->GetTag() == tag; };
+    auto pos = std::find_if(_angs.begin(), _angs.end(), pred);
+    return (pos == _angs.end()) ? Angle() : *pos;
+  }
+  
+  Angle IXMolecule::GetAngleID(uid_ id) const {
+    auto pred = [id](Angle ang) { return ang->GetUniqueID() == id; };
+    auto pos = std::find_if(_angs.begin(), _angs.end(), pred);
+    return (pos == _angs.end()) ? Angle() : *pos;
+  }
+  
+  size_ IXMolecule::PerceiveAngles() {
+    if (!_emerge[static_cast<size_>(Emergent::ANGLE_PERCEPTION)]) return 0;
+    auto verts = _g->GetVertices();
+    auto sum = [&](size_ current, graph::MGVertex v) -> size_ {
+      size_ degree = _g->Degree(v);
+      if (degree < 2) return 0;
+      return degree * (degree - 1) / 2;
+    };
+    // Expected number of angles
+    size_ count = std::accumulate(verts.first, verts.second, 0, sum);
+    _angs.reserve(count);
+    count = 0;
+    
+    for (; verts.first != verts.second; ++verts.first) {
+      graph::MGVertex b = *verts.first;
+      if (_g->Degree(b) < 2) continue;
+      auto nbrs_it = _g->GetNeighbours(b);
+      std::vector<graph::MGVertex> nbrs(nbrs_it.first, nbrs_it.second);
+      for (size_ i = 0; i < nbrs.size() - 1; ++i) {
+        graph::MGVertex a = nbrs[i];
+        for (size_ j = i + 1; j < nbrs.size(); ++j) {
+          graph::MGVertex c = nbrs[j];
+          if (HasAngle(a->GetAtom(), b->GetAtom(), c->GetAtom())) continue;
+          NewAngle(a->GetAtom(), b->GetAtom(), c->GetAtom());
+          ++count;
+        }
+      }
+    }
+    _emerge.reset(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
+    return count;
+  }
+  
   Atom IXMolecule::GetAtomTag(uid_ tag) const {
-    auto pos = std::find_if(_atoms.begin(), _atoms.end(),
-                       [tag](Atom a) { return a->GetTag() == tag; });
-    return (pos == _atoms.end()) ? Atom() : *pos;
+    auto pred = [tag](Atom a) { return a->GetTag() == tag; };
+    auto pos = std::find_if(_atms.begin(), _atms.end(), pred);
+    return (pos == _atms.end()) ? Atom() : *pos;
   }
   
   Atom IXMolecule::GetAtomID(uid_ id) const {
-    auto pos = std::find_if(_atoms.begin(), _atoms.end(),
-                            [id](Atom a) { return a->GetUniqueID() == id; });
-    return (pos == _atoms.end()) ? Atom() : *pos;
+    auto pred = [id](Atom a) { return a->GetUniqueID() == id; };
+    auto pos = std::find_if(_atms.begin(), _atms.end(), pred);
+    return (pos == _atms.end()) ? Atom() : *pos;
   }
   
-  Bond IXMolecule::GetBond(Atom a, Atom b) const {
-    auto pos = std::find_if(_bonds.begin(), _bonds.end(), [a,b](Bond b_) {
-      return ((b_->GetSourceAtom() == a && b_->GetTargetAtom() == b)
-              || (b_->GetSourceAtom() == b && b_->GetTargetAtom() == a));
-    });
-    return (pos == _bonds.end()) ? Bond() : *pos;
+  Bond IXMolecule::GetBond(const Atom& a, const Atom& b) const {
+    auto pred = [a,b](Bond bnd) {
+      std::pair<Atom, Atom> atms = bnd->GetAtoms();
+      return ((atms.first == a && atms.second == b)
+              || (atms.first == b && atms.second == a));
+    };
+    auto pos = std::find_if(_bnds.begin(), _bnds.end(), pred);
+    return (pos == _bnds.end()) ? Bond() : *pos;
   }
   
   Bond IXMolecule::GetBondTag(uid_ tag) const {
-    auto pos = std::find_if(_bonds.begin(), _bonds.end(),
-                            [tag](Bond b) { return  b->GetTag() == tag; });
-    return (pos == _bonds.end()) ? Bond() : *pos;
+    auto pred = [tag](Bond b) { return b->GetTag() == tag; };
+    auto pos = std::find_if(_bnds.begin(), _bnds.end(), pred);
+    return (pos == _bnds.end()) ? Bond() : *pos;
   }
   
   Bond IXMolecule::GetBondID(uid_ id) const {
-    auto pos = std::find_if(_bonds.begin(), _bonds.end(),
-                            [id](Bond b) { return b->GetUniqueID() == id; });
-    return (pos == _bonds.end()) ? Bond() : *pos;
+    auto pred = [id](Bond b) { return b->GetUniqueID() == id; };
+    auto pos = std::find_if(_bnds.begin(), _bnds.end(), pred);
+    return (pos == _bnds.end()) ? Bond() : *pos;
   }
   
   string_ IXMolecule::GetFormula() {
     if (_emerge[static_cast<size_>(Emergent::MOLECULAR_FORMULA)]) {
       std::map<std::string, size_t> e_count;
-      for (Atom atm : _atoms) e_count[atm->GetElement()->GetSymbol()]++;
+      for (Atom atm : _atms) e_count[atm->GetElement()->GetSymbol()]++;
       std::stringstream ss;
       if (e_count["C"]) ss << "C";
       if (e_count["C"] > 1) ss << e_count["C"];
@@ -98,23 +160,6 @@ namespace indigox {
     }
     return _formula_cache;
   }
-  
-//  size_ IXMolecule::NumAngles() {
-//    if (_emerge[static_cast<size_>(Emergent::ANGLE_PERCEPTION)]) {
-//      // DetermineAngles();
-//      _emerge.reset(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
-//    }
-//    return _angles.size();
-//  }
-  
-//  std::pair<IXMolecule::MolAngleIter, IXMolecule::MolAngleIter>
-//  IXMolecule::GetAngles() {
-//    if (_emerge[static_cast<size_>(Emergent::ANGLE_PERCEPTION)]) {
-//      // DetermineAngles();
-//      _emerge.reset(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
-//    }
-//    return {_angles.cbegin(), _angles.cend()};
-//  }
   
 //  size_ IXMolecule::NumDihedrals() {
 //    if (_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) {
@@ -138,27 +183,55 @@ namespace indigox {
     _q = q;
   }
   
-  bool IXMolecule::HasAtom(Atom atom) const {
-    auto pos = std::find(_atoms.begin(), _atoms.end(), atom);
-    return pos != _atoms.end();
+  bool IXMolecule::HasAtom(const Atom& atom) const {
+    if (!atom) return false;
+    return atom->GetMolecule() == shared_from_this();
   }
   
-  bool IXMolecule::HasBond(Bond bond) const {
-    auto pos = std::find(_bonds.begin(), _bonds.end(), bond);
-    return pos != _bonds.end();
+  bool IXMolecule::HasBond(const Bond& bond) const {
+    if (!bond) return false;
+    return bond->GetMolecule() == shared_from_this();
   }
   
-  bool IXMolecule::HasBond(Atom a, Atom b) const {
-    auto pos = std::find_if(_bonds.begin(), _bonds.end(), [a,b](Bond b_) {
-      return ((b_->GetSourceAtom() == a && b_->GetTargetAtom() == b)
-              || (b_->GetSourceAtom() == b && b_->GetTargetAtom() == a));
-    });
-    return (pos != _bonds.end());
+  bool IXMolecule::HasBond(const Atom& a, const Atom& b) const {
+    if (!a || !b) return false;
+    auto pred = [a,b](Bond bnd) {
+      std::pair<Atom, Atom> atms = bnd->GetAtoms();
+      return ((atms.first == a && atms.second == b)
+              || (atms.second == a && atms.first == b));
+    };
+    auto pos = std::find_if(_bnds.begin(), _bnds.end(), pred);
+    return (pos != _bnds.end());
+  }
+  
+  bool IXMolecule::HasAngle(const Angle& angle) const {
+    if (!angle) return false;
+    return angle->GetMolecule() == shared_from_this();
+  }
+  
+  bool IXMolecule::HasAngle(const Atom &a, const Atom &b, const Atom &c) {
+    PerceiveAngles();
+    auto pred = [a,b,c] (Angle ang) {
+      stdx::triple<Atom, Atom, Atom> atms = ang->GetAtoms();
+      return (b == atms.second && ((a == atms.first && c == atms.third)
+                                   || (a == atms.third && c == atms.first)));
+    };
+    auto pos = std::find_if(_angs.begin(), _angs.end(), pred);
+    return pos != _angs.end();
+  }
+  
+  Angle IXMolecule::NewAngle(const Atom &a, const Atom &b, const Atom &c) {
+    // No need for logic checks as no ability for user to add angles
+    _angs.emplace_back(new indigox::IXAngle(a, b, c, shared_from_this()));
+    a->AddAngle(_angs.back());
+    b->AddAngle(_angs.back());
+    c->AddAngle(_angs.back());
+    return _angs.back();
   }
   
   Atom IXMolecule::NewAtom() {
     Atom atom = Atom(new IXAtom(shared_from_this()));
-    _atoms.emplace_back(atom);
+    _atms.emplace_back(atom);
     _g->AddVertex(atom);
     SetPropertyModified(Property::ATOM_ELEMENTS);
     return atom;
@@ -188,7 +261,7 @@ namespace indigox {
     Bond bond = GetBond(a, b);
     if (bond) return Bond();
     bond = Bond(new indigox::IXBond(a, b, shared_from_this()));
-    _bonds.push_back(bond);
+    _bnds.push_back(bond);
     a->AddBond(bond);
     b->AddBond(bond);
     _g->AddEdge(bond);
@@ -200,21 +273,75 @@ namespace indigox {
     if (!atom || !HasAtom(atom)) return false;
     
     // Remove all bonds this atom is part of from molecule
-    std::vector<Bond> atm_bnds; atm_bnds.reserve(atom->NumBonds());
     if (atom->NumBonds()) SetPropertyModified(Property::CONNECTIVITY);
-    auto bnd_itr = atom->GetBondIters();
-    for (; bnd_itr.first != bnd_itr.second; ++ bnd_itr.first)
-      atm_bnds.emplace_back(bnd_itr.first->lock());
-    for (Bond b : atm_bnds) {
-      _bonds.erase(std::find(_bonds.begin(), _bonds.end(), b));
-      _g->RemoveEdge(_g->GetEdge(b));
+    auto bnd_pred = [atom](Bond bnd) {  // Predicate checks if atom in bnd
+      std::pair<Atom, Atom> atms = bnd->GetAtoms();
+      return !(atms.first == atom || atms.second == atom);
+    };
+    // Partition so can remove bonds from other atoms
+    auto bnd_pos = std::partition(_bnds.begin(), _bnds.end(), bnd_pred);
+    auto bnd_pos_erase = bnd_pos;
+    for (auto it = _bnds.end(); bnd_pos != it; ++bnd_pos) {
+      std::pair<Atom, Atom> atms = (*bnd_pos)->GetAtoms();
+      if (atms.first == atom) atms.second->RemoveBond(*bnd_pos);
+      else atms.first->RemoveBond(*bnd_pos);
     }
+    _bnds.erase(bnd_pos_erase, _bnds.end());
     
     // Remove all angles this atom is part of from molecule
+    auto ang_pred = [atom](Angle ang) {
+      stdx::triple<Atom, Atom, Atom> atms = ang->GetAtoms();
+      return !(atms.first == atom || atms.second == atom || atms.third == atom);
+    };
+    auto ang_pos = std::partition(_angs.begin(), _angs.end(), ang_pred);
+    auto ang_pos_erase = ang_pos;
+    for (auto it = _angs.end(); ang_pos != it; ++ang_pos) {
+      stdx::triple<Atom, Atom, Atom> atms = (*ang_pos)->GetAtoms();
+      if (atms.first == atom) {
+        atms.second->RemoveAngle(*ang_pos);
+        atms.third->RemoveAngle(*ang_pos);
+      } else if (atms.second == atom) {
+        atms.first->RemoveAngle(*ang_pos);
+        atms.third->RemoveAngle(*ang_pos);
+      } else {
+        atms.second->RemoveAngle(*ang_pos);
+        atms.third->RemoveAngle(*ang_pos);
+      }
+    }
+    _angs.erase(ang_pos_erase, _angs.end());
+    
     // Remove all dihedrals this atom is part of from molecule
+    auto dhd_pred = [atom](Dihedral dhd) {
+      stdx::quad<Atom, Atom, Atom, Atom> atms = dhd->GetAtoms();
+      return !(atms.first == atom || atms.second == atom
+               || atms.third == atom || atms.fourth == atom);
+    };
+    auto dhd_pos = std::partition(_dhds.begin(), _dhds.end(), dhd_pred);
+    auto dhd_pos_erase = dhd_pos;
+    for (auto it = _dhds.end(); dhd_pos != it; ++dhd_pos) {
+      stdx::quad<Atom, Atom, Atom, Atom> atms = (*dhd_pos)->GetAtoms();
+      if (atms.first == atom) {
+        atms.second->RemoveDihedral(*dhd_pos);
+        atms.third->RemoveDihedral(*dhd_pos);
+        atms.fourth->RemoveDihedral(*dhd_pos);
+      } else if (atms.second == atom) {
+        atms.first->RemoveDihedral(*dhd_pos);
+        atms.third->RemoveDihedral(*dhd_pos);
+        atms.fourth->RemoveDihedral(*dhd_pos);
+      } else if (atms.third == atom) {
+        atms.second->RemoveDihedral(*dhd_pos);
+        atms.first->RemoveDihedral(*dhd_pos);
+        atms.fourth->RemoveDihedral(*dhd_pos);
+      } else {
+        atms.second->RemoveDihedral(*dhd_pos);
+        atms.third->RemoveDihedral(*dhd_pos);
+        atms.first->RemoveDihedral(*dhd_pos);
+      }
+    }
+    _dhds.erase(dhd_pos_erase, _dhds.end());
     
     // Remove the atom from the molecule
-    _atoms.erase(std::find(_atoms.begin(), _atoms.end(), atom));
+    _atms.erase(std::find(_atms.begin(), _atms.end(), atom));
     _g->RemoveVertex(_g->GetVertex(atom));
     SetPropertyModified(Property::ATOM_ELEMENTS);
     
@@ -225,16 +352,49 @@ namespace indigox {
   
   bool IXMolecule::RemoveBond(Bond bond) {
     if (!bond || !HasBond(bond)) return false;
-    
+    Atom a, b;
+    std::tie(a, b) = bond->GetAtoms();
     // Remove the bond from each atom
-    bond->GetSourceAtom()->RemoveBond(bond);
-    bond->GetTargetAtom()->RemoveBond(bond);
+    a->RemoveBond(bond);
+    b->RemoveBond(bond);
     
-    // Remove all angles this bond is aprt of from molecule
+    // Remove all angles this bond is part of from molecule
+    auto ang_pred = [a,b] (Angle ang) {
+      stdx::triple<Atom, Atom, Atom> atms = ang->GetAtoms();
+      return ((a == atms.second && (b == atms.first || b == atms.third))
+              || (b == atms.second && (a == atms.first || a == atms.third)));
+    };
+    auto ang_pos = std::partition(_angs.begin(), _angs.end(), ang_pred);
+    auto ang_pos_erase = ang_pos;
+    for (auto it = _angs.end(); it != ang_pos; ++ang_pos) {
+      stdx::triple<Atom, Atom, Atom> atms = (*ang_pos)->GetAtoms();
+      atms.first->RemoveAngle(*ang_pos);
+      atms.second->RemoveAngle(*ang_pos);
+      atms.third->RemoveAngle(*ang_pos);
+    }
+    _angs.erase(ang_pos_erase, _angs.end());
+    
     // Remove all dihedrals this bond is part of from molecule
+    auto dhd_pred = [a,b] (Dihedral dhd) {
+      stdx::quad<Atom, Atom, Atom, Atom> atms = dhd->GetAtoms();
+      return ((a == atms.second && (b == atms.first || b == atms.third))
+              || (a == atms.third && (b == atms.second || b == atms.fourth))
+              || (b == atms.second && (a == atms.first || a == atms.third))
+              || (b == atms.third && (a == atms.second || a == atms.fourth)));
+    };
+    auto dhd_pos = std::partition(_dhds.begin(), _dhds.end(), dhd_pred);
+    auto dhd_pos_erase = dhd_pos;
+    for (auto it = _dhds.end(); dhd_pos != it; ++dhd_pos) {
+      stdx::quad<Atom, Atom, Atom, Atom> atms = (*dhd_pos)->GetAtoms();
+      atms.first->RemoveDihedral(*dhd_pos);
+      atms.second->RemoveDihedral(*dhd_pos);
+      atms.third->RemoveDihedral(*dhd_pos);
+      atms.fourth->RemoveDihedral(*dhd_pos);
+    }
+    _dhds.erase(dhd_pos_erase, _dhds.end());
     
     // Remove the bond from the molecule
-    _bonds.erase(std::find(_bonds.begin(), _bonds.end(), bond));
+    _bnds.erase(std::find(_bnds.begin(), _bnds.end(), bond));
     _g->RemoveEdge(_g->GetEdge(bond));
     SetPropertyModified(Property::CONNECTIVITY);
     
@@ -242,7 +402,6 @@ namespace indigox {
     bond->Clear();
     return true;
   }
-  
 }
 
 

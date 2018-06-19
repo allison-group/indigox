@@ -113,6 +113,43 @@ namespace indigox {
     //! \brief Destructor
     ~IXMolecule() { }
     
+    /*! \brief Get the angle at position \p pos.
+     *  \details Returns the angle at \p pos after a range check. If \p pos is
+     *  not a valid index, returns an empty shared_ptr. Positioning of atoms may
+     *  change during normal operations. Angles are not re-percieved prior to
+     *  retrieving the angle.
+     *  \param pos the position of the angle to get.
+     *  \return the angle at pos or an empty shared_ptr. */
+    inline Angle GetAngle(size_ pos) const {
+      return (pos < _angs.size()) ? _angs[pos] : Angle();
+    }
+    
+    /*! \brief Get the angle between three atoms, if it exists.
+     *  \details Searches for an angle between \p a, \p b and \p c and returns
+     *  it. If no angle is found, the returned shared_ptr is empty. If the
+     *  Emergent::ANGLE_PERCEPTION property is set, angles are re-percieved
+     *  prior to searching.
+     *  \param a,b,c the atoms to get the angle between. \p b is the central
+     *  atom.
+     *  \return the angle between \p a and \p c centred on \p b. */
+    Angle GetAngle(const Atom& a, const Atom& b, const Atom& c);
+    
+    /*! \brief Get the first angle with the given tag.
+     *  \details Returns the first angle with a tag matching that given. If no
+     *  such angle is found, returns an empty shared_ptr. As tags are not set on
+     *  creation of angles, angles are not re-percieved prior to searching.
+     *  \param tag the angle tag to search for.
+     *  \return the first angle with the tag or an empty shared_ptr. */
+    Angle GetAngleTag(uid_ tag) const;
+    
+    /*! \brief Get the angle with the given id.
+     *  \details Returns the angle with the given unique id. If no such angle is
+     *  found returns an empty shared_ptr. As the unique id of any created angles
+     *  will be unknown, angles are not re-percieved prior to searching.
+     *  \param id the unique id of the angle to retrieve.
+     *  \return the angle with the given id or an empty shared_ptr. */
+    Angle GetAngleID(uid_ id) const;
+    
     /*! \brief Get the atom at position \p pos.
      *  \details Returns that atom at \p pos after a range check. If \p pos is
      *  not a valid index, returns an empty shared_ptr. Positioning of atoms may
@@ -120,7 +157,7 @@ namespace indigox {
      *  \param pos the position of the atom to get.
      *  \return the atom at pos or an empty shared_ptr. */
     inline Atom GetAtom(size_ pos) const {
-      return (pos < _atoms.size()) ? _atoms[pos] : Atom();
+      return (pos < _atms.size()) ? _atms[pos] : Atom();
     }
     
     /*! \brief Get the first atom with the given tag.
@@ -144,7 +181,7 @@ namespace indigox {
      *  \param pos the position of the bond to get.
      *  \return the bond at pos or an empty shared_ptr. */
     inline Bond GetBond(size_ pos) const {
-      return (pos < _bonds.size()) ? _bonds[pos] : Bond();
+      return (pos < _bnds.size()) ? _bnds[pos] : Bond();
     }
     
     /*! \brief Get the bond between two atoms, if it exists.
@@ -152,7 +189,7 @@ namespace indigox {
      *  bond is found, returns an empty shared_ptr.
      *  \param a,b the atoms to get the bond between.
      *  \return the bond between \p a and \p b or an empty shared_ptr. */
-    Bond GetBond(Atom a, Atom b) const;
+    Bond GetBond(const Atom& a, const Atom& b) const;
     
     /*! \brief Get the first bond with the given tag.
      *  \details Returns the first bond with a tag matching that given. If no
@@ -191,17 +228,17 @@ namespace indigox {
     
     /*! \brief Get the number of atoms in the molecule.
      *  \return the number of atoms in the molecule. */
-    inline size_ NumAtoms() const { return _atoms.size(); }
+    inline size_ NumAtoms() const { return _atms.size(); }
     
     /*! \brief Get the number of bonds in the molecule.
      *  \return the number of bonds in the molecule. */
-    inline size_ NumBonds() const { return _bonds.size(); }
+    inline size_ NumBonds() const { return _bnds.size(); }
     
     /*! \brief Get the number of angles in the molecule.
-     *  \details If the CONNECTIVITY property has been modified, angles are
+     *  \details If the Emergent::ANGLE_PERCEPTION property is set, angles are
      *  re-calculated prior to determining how many there are in the molecule.
      *  \return the number of angles in the molecule. */
-//    size_ NumAngles();
+    inline size_ NumAngles() { PerceiveAngles(); return _angs.size(); }
     
     /*! \brief Get the number of dihedrals in the molecule.
      *  \details If the CONNECTIVITY property has been modified, dihedrals are
@@ -221,17 +258,30 @@ namespace indigox {
     /*! \brief Check if the atom is owned by this molecule.
      *  \param atom the atom to check for.
      *  \return if the atom is owned by this molecule. */
-    bool HasAtom(Atom atom) const;
+    bool HasAtom(const Atom& atom) const;
     
     /*! \brief Check if the bond is owned by this molecule.
      *  \param bond the bond to check for.
      *  \return if the bond is owned by this molecule. */
-    bool HasBond(Bond bond) const;
+    bool HasBond(const Bond& bond) const;
     
     /*! \brief Check if a bond between two atoms exists in this molecule.
      *  \param a,b the atoms the bond should be between.
      *  \return if there is a bond between the two atoms. */
-    bool HasBond(Atom a, Atom b) const;
+    bool HasBond(const Atom& a, const Atom& b) const;
+    
+    /*! \brief Check if the angle is owned by this molecule.
+     *  \param angle the angle to check for.
+     *  \return if the angle is owned by this molecule. */
+    bool HasAngle(const Angle& angle) const;
+    
+    /*! \brief Check if an angle between three atoms exists in this molecule.
+     *  \details If the Emergent::ANGLE_PERCEPTION property is set, angles are
+     *  re-percieved prior to check for the existance of the angle. \p b is the
+     *  central atom of the angle.
+     *  \param a,b,c the atoms the angle should be between.
+     *  \return if there is an angle between the three atoms. */
+    bool HasAngle(const Atom& a, const Atom& b, const Atom& c);
     
     /*! \brief Create a new atom owned by the molecule.
      *  \return the new atom. */
@@ -284,6 +334,22 @@ namespace indigox {
      *  \return if removal occured. */
     inline bool RemoveBond(Atom a, Atom b) { return RemoveBond(GetBond(a,b)); }
     
+  private:
+    /*! \brief Create an angle between three atoms.
+     *  \param a,b,c the atoms to create the angle between.
+     *  \return the new angle. */
+    Angle NewAngle(const Atom& a, const Atom& b, const Atom& c);
+    
+  public:
+    /*! \brief Determine angles in the molecule.
+     *  \details An angle is defined for each group of three connected atoms
+     *  within a molecule. That is, for every atom in the molecule with at least
+     *  two neighbouring atoms, an angle is defined for every pair of
+     *  neighbouring atoms. Subsequent calls to this method will only generate
+     *  angles which have not been previously generated. Additionally, angles
+     *  can only be removed by removing an atom or a bond.
+     *  \return the number of angles added. */
+    size_ PerceiveAngles();
 //    size_t AssignElectrons();
 //    bool ApplyElectronAssignment(size_t);
 //    FCSCORE GetMinimumElectronAssignmentScore();
@@ -294,7 +360,7 @@ namespace indigox {
      *  vector will not need to grow as more atoms are added.
      *  \param num the number of IXAtoms to reserve space for. */
     inline void ReserveAtoms(size_ num) {
-      if (_atoms.size() < num) _atoms.reserve(num);
+      if (_atms.size() < num) _atms.reserve(num);
     }
     
     /*! \brief Reserve storage space for bonds.
@@ -303,7 +369,7 @@ namespace indigox {
      *  vector will not need to grow as more bonds are added.
      *  \param num the number of IXBonds to reserve space for. */
     inline void ReserveBonds(size_ num) {
-      if (_bonds.size() < num ) _bonds.reserve(num);
+      if (_bnds.size() < num ) _bnds.reserve(num);
     }
     
     /*! \brief Set that the given property has been modified.
@@ -317,22 +383,23 @@ namespace indigox {
      *  \return a pair of iterators indicating the begining and end of the
      *  owned atoms. */
     inline std::pair<MolAtomIter, MolAtomIter> GetAtoms() const {
-      return {_atoms.begin(), _atoms.end()};
+      return std::make_pair(_atms.begin(), _atms.end());
     }
     
     /*! \brief Get iterator access to the owned bonds.
      *  \return a pair of iterators indication the beginning and end of the
      *  owned bonds. */
     inline std::pair<MolBondIter, MolBondIter> GetBonds() const {
-      return {_bonds.begin(), _bonds.end()};
+      return std::make_pair(_bnds.begin(), _bnds.end());
     }
     
     /*! \brief Get iterator access to the owned angles.
-     *  \details The set of angles are regenerated prior to returning iterator
-     *  access if the CONNECTIVITY property has been set.
-     *  \return a pair of iterators indication the beginning and end of the
-     *  owned angles. */
-//    std::pair<MolAngleIter, MolAngleIter> GetAngles();
+     *  \details Angles are re-percieved prior to returning the iterators.
+     *  \return a pair of iterators for the beginning and end of the angles. */
+    inline std::pair<MolAngleIter, MolAngleIter> GetAngles() {
+      PerceiveAngles();
+      return std::make_pair(_angs.begin(), _angs.end());
+    }
     
     /*! \brief Get iterator access to the owned dihedrals.
      *  \details The set of dihedrals are regenerated prior to returning iterator
@@ -347,13 +414,13 @@ namespace indigox {
     //! Molecular charge of the molecule
     int_ _q;
     //! Atoms owned by molecule
-    MolAtoms _atoms;
+    MolAtoms _atms;
     //! Bonds owned by molecule
-    MolBonds _bonds;
+    MolBonds _bnds;
     //! Angles owned by molecule
-    MolAngles _angles;
+    MolAngles _angs;
     //! Dihedrals owned by molecule
-    MolDihedrals _dihedrals;
+    MolDihedrals _dhds;
     //! Mask for modified emergent properties
     std::bitset<static_cast<size_>(Emergent::NUM_EMERGENTS)> _emerge;
     //! Molecular graph of molecule
