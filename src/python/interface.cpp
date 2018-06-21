@@ -1,25 +1,21 @@
-//
-//  python_interface.cpp
-//  indigox
-//
-//  Created by Ivan Welsh on 6/01/18.
-//  Copyright © 2018 Hermes Productions. All rights reserved.
-//
-
-#include "indigox/python/interface.hpp"
-
-
+#include <indigox/python/interface.hpp>
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(pyindigox, m) {
-  using namespace indigox;
   GenerateOptions(m);
+  // Base namespace
+  GeneratePyAngle(m);
   GeneratePyAtom(m);
   GeneratePyBond(m);
+  GeneratePyDihedral(m);
   GeneratePyElement(m);
   GeneratePyMolecule(m);
   GeneratePyPeriodicTable(m);
+  // Graph namespace
+  pybind11::module m_graph = m.def_submodule("graph");
+  GeneratePyMolecularGraph(m_graph);
+  GeneratePyElectronAssignmentGraph(m_graph);
 }
 
 
