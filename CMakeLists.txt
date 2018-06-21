@@ -12,7 +12,6 @@ SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 # Set defaults for available options
 OPTION(BUILD_PYTHON "Build Python bindings" ON)
-OPTION(USE_JAVA_QUICKBB "Build with Java interface to libtw so can use QuickBB tree-decomposition method" OFF)
 OPTION(BUILD_EXAMPLES "Build a few example programs" OFF)
 
 # Default to release mode build. Does Debug actually do anything?
@@ -44,31 +43,23 @@ ADD_DEFINITIONS(-DFCSCORE=uint32_t)
 
 # List all the files to compile into the indigox library
 SET(INDIGOX_LIB_SRCS
-    src/algorithm/electron_optimisation.cpp
-    src/algorithm/formalbonds/astar.cpp
-    src/algorithm/formalbonds/elimination_ordering.cpp
-    src/algorithm/formalbonds/electron_optimisation_algorithm.cpp
-    src/algorithm/formalbonds/fpt.cpp
-    src/algorithm/formalbonds/local_optimisation.cpp
+    src/classes/angle.cpp
     src/classes/atom.cpp
     src/classes/bond.cpp
-    src/classes/electron_graph.cpp
-#    src/classes/iters.cpp
-    src/classes/molecular_graph.cpp
+    src/classes/dihedral.cpp
     src/classes/molecule.cpp
-    src/classes/nicetreedecomp.cpp
     src/classes/periodictable.cpp
-    src/classes/permutablegraph.cpp
-    src/classes/treedecomp.cpp
+    src/graph/assignment.cpp
+    src/graph/molecular.cpp
     src/utils/common.cpp
     src/utils/filereader.cpp
-    src/utils/java_interface.cpp
     src/utils/options.cpp)
 
 # Build the library
 ADD_LIBRARY(indigox STATIC ${INDIGOX_LIB_SRCS})
 
-# We don't provide a boost version and it is required, so find it
+# We provide a boost version so only use system boost if it is newer than
+# provided boost
 # Sometime I need to figure out a minimum required version for it. :S
 FIND_PACKAGE(Boost 1.66.0)
 IF(NOT Boost_FOUND)
@@ -79,14 +70,6 @@ IF(NOT Boost_FOUND)
 ELSE()
   INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 ENDIF()
-
-# Add interface to java if it's requested.
-IF(USE_JAVA_QUICKBB)
-  FIND_PACKAGE(JNI REQUIRED)
-  ADD_DEFINITIONS(-DBUILD_JAVA)
-  INCLUDE_DIRECTORIES(${JNI_INCLUDE_DIRS})
-  TARGET_LINK_LIBRARIES(indigox ${JNI_LIBRARIES})
-ENDIF(USE_JAVA_QUICKBB)
 
 # Build bindings if requested
 IF(BUILD_PYTHON)
@@ -123,7 +106,6 @@ ELSE(DOXYGEN_FOUND)
 ENDIF(DOXYGEN_FOUND)
 
 FILE(COPY data DESTINATION .)
-FILE(COPY external/libtw.jar DESTINATION external)
 FILE(COPY examples/python_example.py DESTINATION examples)
 
 # Install examples
@@ -142,7 +124,6 @@ INSTALL(FILES data/atomenergies_def2svpd.txt
         data/bondenergies_def2tzvppd.txt
         data/bondenergies_def2tzvppd_withbsse.txt
         data/periodictable.txt
-        external/libtw.jar
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 # Install documentation
 INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
