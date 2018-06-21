@@ -43,23 +43,23 @@ void GeneratePyBond(py::module& m) {
   ;
   
   // BondOrder enum
-  //    py::enum_<BondOrder>("BondOrder")
-  //    .value("UNDEFINED", BondOrder::UNDEFINED)
-  //    .value("SINGLE", BondOrder::SINGLE)
-  //    .value("DOUBLE", BondOrder::DOUBLE)
-  //    .value("TRIPLE", BondOrder::TRIPLE)
-  //    .value("QUADRUPLE", BondOrder::QUADRUPLE)
-  //    .value("AROMATIC", BondOrder::AROMATIC)
-  //    .value("ONEANDAHALF", BondOrder::ONEANDAHALF)
-  //    .value("TWOANDAHALF", BondOrder::TWOANDAHALF)
-  //    ;
+  py::enum_<BondOrder>(m, "BondOrder")
+  .value("UNDEFINED", BondOrder::UNDEFINED)
+  .value("SINGLE", BondOrder::SINGLE)
+  .value("DOUBLE", BondOrder::DOUBLE)
+  .value("TRIPLE", BondOrder::TRIPLE)
+  .value("QUADRUPLE", BondOrder::QUADRUPLE)
+  .value("AROMATIC", BondOrder::AROMATIC)
+  .value("ONEANDAHALF", BondOrder::ONEANDAHALF)
+  .value("TWOANDAHALF", BondOrder::TWOANDAHALF)
+  ;
   
   // BondStereo enum
-  //    py::enum_<BondStereo>("BondStereo")
-  //    .value("UNDEFINED", BondStereo::UNDEFINED)
-  //    .value("NONE", BondStereo::NONE)
-  //    .value("E", BondStereo::E)
-  //    .value("Z", BondStereo::Z)
-  //    ;
+  py::enum_<BondStereo>(m, "BondStereo")
+  .value("UNDEFINED", BondStereo::UNDEFINED)
+  .value("NONE", BondStereo::NONE)
+  .value("E", BondStereo::E)
+  .value("Z", BondStereo::Z)
+  ;
 }
 

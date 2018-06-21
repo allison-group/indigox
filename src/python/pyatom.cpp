@@ -60,11 +60,11 @@ void GeneratePyAtom(pybind11::module& m) {
   ;
   
   // AtomStereo enum
-  //    py::enum_<AtomStereo>("AtomStereo")
-  //    .value("UNDEFINED", AtomStereo::UNDEFINED)
-  //    .value("ACHIRAL", AtomStereo::ACHIRAL)
-  //    .value("R", AtomStereo::R)
-  //    .value("S", AtomStereo::S)
-  //    ;
+  py::enum_<AtomStereo>(m, "AtomStereo")
+  .value("UNDEFINED", AtomStereo::UNDEFINED)
+  .value("ACHIRAL", AtomStereo::ACHIRAL)
+  .value("R", AtomStereo::R)
+  .value("S", AtomStereo::S)
+  ;
 }
 

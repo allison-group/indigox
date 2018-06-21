@@ -99,12 +99,10 @@ void GeneratePyMolecule(py::module& m) {
   .def("ReserveAtoms", &IXMolecule::ReserveAtoms)
   .def("ReserveBonds", &IXMolecule::ReserveBonds)
   ;
-  // Iterators
-  //    .def("GetAtoms", [](const Molecule m){
-  //      return py::make_iterator(m->BeginAtom(), m->EndAtom());
-  //    }, py::keep_alive<0, 1>())
-  //    .def("GetBonds", [](const Molecule m){
-  //      return py::make_iterator(m->BeginBond(), m->EndBond());
-  //    }, py::keep_alive<0, 1>())
-  //    ;
+  
+  py::enum_<MolProperty>(m, "MolProperty")
+  .value("ATOM_ELEMENTS", MolProperty::ATOM_ELEMENTS)
+  .value("CONNECTIVITY", MolProperty::CONNECTIVITY)
+  .value("ELECTRON_COUNT", MolProperty::ELECTRON_COUNT)
+  ;
 }
