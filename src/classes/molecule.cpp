@@ -51,15 +51,48 @@ namespace indigox {
     _g = graph::MolecularGraph(new graph::IXMolecularGraph(shared_from_this()));
   }
   
+  Bond IXMolecule::_FindBond(const Atom &a, const Atom &b) const {
+    auto pred = [a,b](Bond bnd) {
+      std::pair<Atom, Atom> atms = bnd->GetAtoms();
+      return ((atms.first == a && atms.second == b)
+              || (atms.first == b && atms.second == a));
+    };
+    MolBondIter pos = std::find_if(_bnds.begin(), _bnds.end(), pred);
+    return pos == _bnds.end() ? Bond() : *pos;
+  }
+  
+  Angle IXMolecule::_FindAngle(const Atom &a, const Atom &b, const Atom &c) const {
+    stdx::triple<Atom, Atom, Atom> a2c = stdx::make_triple(a, b, c);
+    stdx::triple<Atom, Atom, Atom> c2a = stdx::make_triple(c, b, a);
+    auto pred = [&a2c, &c2a] (Angle ang) {
+      stdx::triple<Atom, Atom, Atom> atms = ang->GetAtoms();
+      return (atms == a2c || atms == c2a);
+    };
+    MolAngleIter pos = std::find_if(_angs.begin(), _angs.end(), pred);
+    return pos == _angs.end() ? Angle() : *pos;
+  }
+  
+  Dihedral IXMolecule::_FindDihedral(const Atom &a, const Atom &b,
+                                     const Atom &c, const Atom &d) const {
+    stdx::quad<Atom, Atom, Atom, Atom> a2d = stdx::make_quad(a, b, c, d);
+    stdx::quad<Atom, Atom, Atom, Atom> d2a = stdx::make_quad(d, c, b, a);
+    auto pred = [&a2d, &d2a] (Dihedral dhd) {
+      stdx::quad<Atom, Atom, Atom, Atom> atms = dhd->GetAtoms();
+      return (atms == a2d || atms == d2a);
+    };
+    MolDihedralIter pos = std::find_if(_dhds.begin(), _dhds.end(), pred);
+    return pos == _dhds.end() ? Dihedral() : *pos;
+  }
+  
   Angle IXMolecule::GetAngle(const Atom& a, const Atom&b, const Atom& c) {
     PerceiveAngles();
-    auto pred = [a,b,c](Angle ang) {
-      stdx::triple<Atom, Atom, Atom> atms = ang->GetAtoms();
-      return ((atms.first == a && atms.second == b && atms.third == c)
-              || (atms.third == a && atms.second == b && atms.first == c));
-    };
-    auto pos = std::find_if(_angs.begin(), _angs.end(), pred);
-    return (pos == _angs.end()) ? Angle() : *pos;
+    return _FindAngle(a, b, c);
+  }
+  
+  Dihedral IXMolecule::GetDihedral(const Atom &a, const Atom &b,
+                                   const Atom &c, const Atom &d) {
+    PerceiveDihedrals();
+    return _FindDihedral(a, b, c, d);
   }
   
   Angle IXMolecule::GetAngleTag(uid_ tag) const {
@@ -68,41 +101,95 @@ namespace indigox {
     return (pos == _angs.end()) ? Angle() : *pos;
   }
   
+  Dihedral IXMolecule::GetDihedralTag(uid_ tag) const {
+    auto pred = [tag](Dihedral dhd) { return dhd->GetTag() == tag; };
+    auto pos = std::find_if(_dhds.begin(), _dhds.end(), pred);
+    return (pos == _dhds.end()) ? Dihedral() : *pos;
+  }
+  
   Angle IXMolecule::GetAngleID(uid_ id) const {
     auto pred = [id](Angle ang) { return ang->GetUniqueID() == id; };
     auto pos = std::find_if(_angs.begin(), _angs.end(), pred);
     return (pos == _angs.end()) ? Angle() : *pos;
   }
   
+  Dihedral IXMolecule::GetDihedralID(uid_ id) const {
+    auto pred = [id](Dihedral dhd) { return dhd->GetUniqueID() == id; };
+    auto pos = std::find_if(_dhds.begin(), _dhds.end(), pred);
+    return (pos == _dhds.end()) ? Dihedral() : *pos;
+  }
+  
   size_ IXMolecule::PerceiveAngles() {
+    using namespace indigox::graph;
     if (!_emerge[static_cast<size_>(Emergent::ANGLE_PERCEPTION)]) return 0;
-    auto verts = _g->GetVertices();
-    auto sum = [&](size_ current, graph::MGVertex v) -> size_ {
-      size_ degree = _g->Degree(v);
+    
+    // Expected number of angles
+    auto sum = [&](size_ current, Atom v) -> size_ {
+      size_ degree = v->NumBonds();
       if (degree < 2) return 0;
       return degree * (degree - 1) / 2;
     };
-    // Expected number of angles
-    size_ count = std::accumulate(verts.first, verts.second, 0, sum);
+    size_ count = std::accumulate(_atms.begin(), _atms.end(), 0, sum);
     _angs.reserve(count);
     count = 0;
     
-    for (; verts.first != verts.second; ++verts.first) {
-      graph::MGVertex b = *verts.first;
-      if (_g->Degree(b) < 2) continue;
-      auto nbrs_it = _g->GetNeighbours(b);
-      std::vector<graph::MGVertex> nbrs(nbrs_it.first, nbrs_it.second);
+    // Adding new angles
+    for (MolAtomIter b = _atms.begin(), e = _atms.end(); b != e; ++b) {
+      if ((*b)->NumBonds() < 2) continue;
+      auto nbrs_it = _g->GetNeighbours(_g->GetVertex(*b));
+      std::vector<MGVertex> nbrs(nbrs_it.first, nbrs_it.second);
       for (size_ i = 0; i < nbrs.size() - 1; ++i) {
-        graph::MGVertex a = nbrs[i];
+        Atom a = nbrs[i]->GetAtom();
         for (size_ j = i + 1; j < nbrs.size(); ++j) {
-          graph::MGVertex c = nbrs[j];
-          if (HasAngle(a->GetAtom(), b->GetAtom(), c->GetAtom())) continue;
-          NewAngle(a->GetAtom(), b->GetAtom(), c->GetAtom());
+          Atom c = nbrs[j]->GetAtom();
+          if (HasAngle(a, *b, c)) continue;
+          NewAngle(a, *b, c);
           ++count;
         }
       }
     }
     _emerge.reset(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
+    return count;
+  }
+  
+  size_ IXMolecule::PerceiveDihedrals() {
+    using namespace indigox::graph;
+    if (!_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) return 0;
+    
+    // Expected number of dihedrals
+    auto sum = [&](size_ current, Bond b) -> size_ {
+      size_ b_degree = b->GetSourceAtom()->NumBonds();
+      if (b_degree < 2) return 0;
+      size_ c_degree = b->GetTargetAtom()->NumBonds();
+      if (c_degree < 2) return 0;
+      return (b_degree - 1) * (c_degree - 1);
+    };
+    size_ count = std::accumulate(_bnds.begin(), _bnds.end(), 0, sum);
+    _dhds.reserve(count);
+    count = 0;
+    
+    // Adding new dihedrals
+    for (MolBondIter b = _bnds.begin(), e = _bnds.end(); b != e; ++b) {
+      Atom B, C;
+      std::tie(B,C) = (*b)->GetAtoms();
+      if (B->NumBonds() < 2 || C->NumBonds() < 2) continue;
+      auto nbrs_it = _g->GetNeighbours(_g->GetVertex(B));
+      std::vector<MGVertex> As(nbrs_it.first, nbrs_it.second);
+      nbrs_it = _g->GetNeighbours(_g->GetVertex(C));
+      std::vector<MGVertex> Ds(nbrs_it.first, nbrs_it.second);
+      for (size_ i = 0; i < As.size(); ++i) {
+        Atom A = As[i]->GetAtom();
+        if (A == C) continue;
+        for (size_ j = 0; j < Ds.size(); ++j) {
+          Atom D = Ds[j]->GetAtom();
+          if (D == B) continue;
+          if (HasDihedral(A, B, C, D)) continue;
+          NewDihedral(A, B, C, D);
+          ++count;
+        }
+      }
+    }
+    _emerge.reset(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
     return count;
   }
   
@@ -119,13 +206,7 @@ namespace indigox {
   }
   
   Bond IXMolecule::GetBond(const Atom& a, const Atom& b) const {
-    auto pred = [a,b](Bond bnd) {
-      std::pair<Atom, Atom> atms = bnd->GetAtoms();
-      return ((atms.first == a && atms.second == b)
-              || (atms.first == b && atms.second == a));
-    };
-    auto pos = std::find_if(_bnds.begin(), _bnds.end(), pred);
-    return (pos == _bnds.end()) ? Bond() : *pos;
+    return _FindBond(a, b);
   }
   
   Bond IXMolecule::GetBondTag(uid_ tag) const {
@@ -161,63 +242,22 @@ namespace indigox {
     return _formula_cache;
   }
   
-//  size_ IXMolecule::NumDihedrals() {
-//    if (_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) {
-//      // DetermineDihedrals();
-//      _emerge.reset(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
-//    }
-//    return _dihedrals.size();
-//  }
-  
-//  std::pair<IXMolecule::MolDihedralIter, IXMolecule::MolDihedralIter>
-//  IXMolecule::GetDihedrals() {
-//    if (_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) {
-//      // DetermineDihedrals();
-//      _emerge.reset(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
-//    }
-//    return {_dihedrals.cbegin(), _dihedrals.cend()};
-//  }
-  
-  void IXMolecule::SetMolecularCharge(int q) {
-    if (q != _q) SetPropertyModified(Property::ELECTRON_COUNT);
-    _q = q;
-  }
-  
-  bool IXMolecule::HasAtom(const Atom& atom) const {
-    if (!atom) return false;
-    return atom->GetMolecule() == shared_from_this();
-  }
-  
-  bool IXMolecule::HasBond(const Bond& bond) const {
-    if (!bond) return false;
-    return bond->GetMolecule() == shared_from_this();
-  }
-  
   bool IXMolecule::HasBond(const Atom& a, const Atom& b) const {
-    if (!a || !b) return false;
-    auto pred = [a,b](Bond bnd) {
-      std::pair<Atom, Atom> atms = bnd->GetAtoms();
-      return ((atms.first == a && atms.second == b)
-              || (atms.second == a && atms.first == b));
-    };
-    auto pos = std::find_if(_bnds.begin(), _bnds.end(), pred);
-    return (pos != _bnds.end());
-  }
-  
-  bool IXMolecule::HasAngle(const Angle& angle) const {
-    if (!angle) return false;
-    return angle->GetMolecule() == shared_from_this();
+    if (!HasAtom(a) || !HasAtom(b)) return false;
+    return bool(_FindBond(a, b));
   }
   
   bool IXMolecule::HasAngle(const Atom &a, const Atom &b, const Atom &c) {
+    if (!HasAtom(a) || !HasAtom(b) || !HasAtom(c)) return false;
     PerceiveAngles();
-    auto pred = [a,b,c] (Angle ang) {
-      stdx::triple<Atom, Atom, Atom> atms = ang->GetAtoms();
-      return (b == atms.second && ((a == atms.first && c == atms.third)
-                                   || (a == atms.third && c == atms.first)));
-    };
-    auto pos = std::find_if(_angs.begin(), _angs.end(), pred);
-    return pos != _angs.end();
+    return bool(_FindAngle(a, b, c));
+  }
+  
+  bool IXMolecule::HasDihedral(const Atom &a, const Atom &b,
+                               const Atom &c, const Atom &d) {
+    if (!HasAtom(a) || !HasAtom(b) || !HasAtom(c) || !HasAtom(d)) return false;
+    PerceiveDihedrals();
+    return bool(_FindDihedral(a, b, c, d));
   }
   
   Angle IXMolecule::NewAngle(const Atom &a, const Atom &b, const Atom &c) {
@@ -227,6 +267,17 @@ namespace indigox {
     b->AddAngle(_angs.back());
     c->AddAngle(_angs.back());
     return _angs.back();
+  }
+  
+  Dihedral IXMolecule::NewDihedral(const Atom &a, const Atom &b,
+                                   const Atom &c, const Atom &d) {
+    // No need for logic checks as no ability for user to add dihedrals
+    _dhds.emplace_back(new indigox::IXDihedral(a, b, c, d, shared_from_this()));
+    a->AddDihedral(_dhds.back());
+    b->AddDihedral(_dhds.back());
+    c->AddDihedral(_dhds.back());
+    d->AddDihedral(_dhds.back());
+    return _dhds.back();
   }
   
   Atom IXMolecule::NewAtom() {

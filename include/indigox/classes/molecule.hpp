@@ -4,6 +4,12 @@
 #include <unordered_map>
 #include <vector>
 
+#include "angle.hpp"
+#include "atom.hpp"
+#include "bond.hpp"
+#include "dihedral.hpp"
+#include "periodictable.hpp"
+#include "../graph/molecular.hpp"
 #include "../utils/counter.hpp"
 #include "../utils/numerics.hpp"
 
@@ -11,35 +17,16 @@
 #define INDIGOX_MOLECULE_HPP
 
 namespace indigox {
-  
-  class IXAtom;
-  class IXBond;
-  class IXAngle;
-  class IXDihedral;
+
   class IXMolecule;
   namespace test { class IXMolecule; }
-  class IXElement;
-  namespace graph {
-    class IXMolecularGraph;
-    using MolecularGraph = std::shared_ptr<IXMolecularGraph>;
-  }
-  
-  using Atom = std::shared_ptr<IXAtom>;
-  using Bond = std::shared_ptr<IXBond>;
-  using Angle = std::shared_ptr<IXAngle>;
-  using Dihedral = std::shared_ptr<IXDihedral>;
+
   //! \brief shared_ptr for normal use of the IXMolecule class.
   using Molecule = std::shared_ptr<IXMolecule>;
-  using Element = std::shared_ptr<IXElement>;
-  
-  using _Atom = std::weak_ptr<IXAtom>;
-  using _Bond = std::weak_ptr<IXBond>;
-  using _Angle = std::weak_ptr<IXAngle>;
-  using _Dihedral = std::weak_ptr<IXDihedral>;
+
   /*! \brief weak_ptr for non-ownership reference to the IXMolecule class.
    *  \details Intended for internal use only. */
   using _Molecule = std::weak_ptr<IXMolecule>;
-  using _Element = std::weak_ptr<IXElement>;
   
   class IXMolecule : public utils::IXCountableObject<IXMolecule>,
   public std::enable_shared_from_this<IXMolecule> {
@@ -115,7 +102,7 @@ namespace indigox {
     
     /*! \brief Get the angle at position \p pos.
      *  \details Returns the angle at \p pos after a range check. If \p pos is
-     *  not a valid index, returns an empty shared_ptr. Positioning of atoms may
+     *  not a valid index, returns an empty shared_ptr. Positioning of angles may
      *  change during normal operations. Angles are not re-percieved prior to
      *  retrieving the angle.
      *  \param pos the position of the angle to get.
@@ -124,15 +111,34 @@ namespace indigox {
       return (pos < _angs.size()) ? _angs[pos] : Angle();
     }
     
+    /*! \brief Get the angle at position \p pos.
+     *  \details Returns the dihedral at \p pos after a range check. If \p pos
+     *  is not a valid index, returns an empty shared_ptr. Positioning of
+     *  dihedrals may change during normal operations. Dihedrals are not
+     *  re-perceived prior to retrieving the dihedral.
+     *  \param pos the position of the dihedral to get.
+     *  \return the dihedral at pos or an empty shared_ptr. */
+    inline Dihedral GetDihedral(size_ pos) const {
+      return (pos < _dhds.size()) ? _dhds[pos] : Dihedral();
+    }
+    
     /*! \brief Get the angle between three atoms, if it exists.
-     *  \details Searches for an angle between \p a, \p b and \p c and returns
-     *  it. If no angle is found, the returned shared_ptr is empty. If the
-     *  Emergent::ANGLE_PERCEPTION property is set, angles are re-percieved
-     *  prior to searching.
+     *  \details Searches for an angle between the three atoms and returns it.
+     *  If no angle is found, the returned shared_ptr is empty. Angles are
+     *  re-perceived prior to searching.
      *  \param a,b,c the atoms to get the angle between. \p b is the central
      *  atom.
      *  \return the angle between \p a and \p c centred on \p b. */
     Angle GetAngle(const Atom& a, const Atom& b, const Atom& c);
+    
+    /*! \brief Get the dihedral between four atoms, it if exists.
+     *  \details Searches for a dihedral between the four atoms and returns it.
+     *  If no dihedral is found, the returned shared_ptr is empty. Dihedrals are
+     *  re-perceived prior to searching.
+     *  \param a,b,c,d the atoms to get the dihedral between.
+     *  \return the dihedral between \p a, \p b, \p c and \p d. */
+    Dihedral GetDihedral(const Atom& a, const Atom& b,
+                         const Atom& c, const Atom& d);
     
     /*! \brief Get the first angle with the given tag.
      *  \details Returns the first angle with a tag matching that given. If no
@@ -142,6 +148,15 @@ namespace indigox {
      *  \return the first angle with the tag or an empty shared_ptr. */
     Angle GetAngleTag(uid_ tag) const;
     
+    /*! \brief Get the first dihedral with the given tag.
+     *  \details Returns the first dihedral with a tag matching that given. If
+     *  no such dihedral is found, returns an empty shared_ptr. As tags are not
+     *  set on creation of dihedrals, dihedrals are not re-perceived prior to
+     *  searching.
+     *  \param tag the dihedral tag to search for.
+     *  \return the first dihedral with the tag or an empty shraed_ptr. */
+    Dihedral GetDihedralTag(uid_ tag) const;
+    
     /*! \brief Get the angle with the given id.
      *  \details Returns the angle with the given unique id. If no such angle is
      *  found returns an empty shared_ptr. As the unique id of any created angles
@@ -149,6 +164,15 @@ namespace indigox {
      *  \param id the unique id of the angle to retrieve.
      *  \return the angle with the given id or an empty shared_ptr. */
     Angle GetAngleID(uid_ id) const;
+    
+    /*! \brief Get the dihedral with the given id.
+     *  \details Returns the dihedral with the given unique id. If no such
+     *  dihedral is found returns an empty shared_ptr. As the unique id of any
+     *  created dihedrals will be unknown, dihedrals are not re-perceived prior
+     *  to searching.
+     *  \param id the unique id of the dihedral to retrieve.
+     *  \return the dihedral with the given id or an empty shared_ptr. */
+    Dihedral GetDihedralID(uid_ id) const;
     
     /*! \brief Get the atom at position \p pos.
      *  \details Returns that atom at \p pos after a range check. If \p pos is
@@ -244,7 +268,7 @@ namespace indigox {
      *  \details If the CONNECTIVITY property has been modified, dihedrals are
      *  re-calculated prior to determining how many there are in the molecule.
      *  \return the number of dihedrals in the molecule. */
-//    size_ NumDihedrals();
+    inline size_ NumDihedrals() { PerceiveDihedrals(); return _dhds.size(); }
     
     /*! \brief Set the name of the molecule.
      *  \param name the new to set. */
@@ -253,17 +277,24 @@ namespace indigox {
     /*! \brief Set the molecular charge of the molecule.
      *  \details Sets the IXMolecule::ELECTRON_COUNT property as modified.
      *  \param q the new charge to set. */
-    void SetMolecularCharge(int q);
+    inline void SetMolecularCharge(int q) {
+      if (q != _q) SetPropertyModified(Property::ELECTRON_COUNT);
+      _q = q;
+    }
     
     /*! \brief Check if the atom is owned by this molecule.
      *  \param atom the atom to check for.
      *  \return if the atom is owned by this molecule. */
-    bool HasAtom(const Atom& atom) const;
+    inline bool HasAtom(const Atom& atom) const {
+      return atom ? atom->GetMolecule() == shared_from_this() : false;
+    }
     
     /*! \brief Check if the bond is owned by this molecule.
      *  \param bond the bond to check for.
      *  \return if the bond is owned by this molecule. */
-    bool HasBond(const Bond& bond) const;
+    inline bool HasBond(const Bond& bond) const {
+      return bond ? bond->GetMolecule() == shared_from_this() : false;
+    }
     
     /*! \brief Check if a bond between two atoms exists in this molecule.
      *  \param a,b the atoms the bond should be between.
@@ -273,7 +304,9 @@ namespace indigox {
     /*! \brief Check if the angle is owned by this molecule.
      *  \param angle the angle to check for.
      *  \return if the angle is owned by this molecule. */
-    bool HasAngle(const Angle& angle) const;
+    inline bool HasAngle(const Angle& angle) const {
+      return angle ? angle->GetMolecule() == shared_from_this() : false;
+    }
     
     /*! \brief Check if an angle between three atoms exists in this molecule.
      *  \details If the Emergent::ANGLE_PERCEPTION property is set, angles are
@@ -282,6 +315,20 @@ namespace indigox {
      *  \param a,b,c the atoms the angle should be between.
      *  \return if there is an angle between the three atoms. */
     bool HasAngle(const Atom& a, const Atom& b, const Atom& c);
+    
+    /*! \brief Check if the dihedral is owned by this molecule.
+     *  \param dihedral the dihedral to check for.
+     *  \return if the dihedral is owned by this molecule. */
+    inline bool HasDihedral(const Dihedral& dihedral) const {
+      return dihedral ? dihedral->GetMolecule() == shared_from_this() : false;
+    }
+    
+    /*! \brief Check if a dihedral between four atoms exists in this molecule.
+     *  \details If the Emergent::DIHEDRAL_PERCEPTION property is set, dihedrals
+     *  are re-perceived prior to checking for the existance of the dihedral.
+     *  \param a,b,c,d the atoms the dihedral should be between.
+     *  \return if there is a dihedral between the four atoms. */
+    bool HasDihedral(const Atom& a, const Atom& b, const Atom& c, const Atom& d);
     
     /*! \brief Create a new atom owned by the molecule.
      *  \return the new atom. */
@@ -340,16 +387,35 @@ namespace indigox {
      *  \return the new angle. */
     Angle NewAngle(const Atom& a, const Atom& b, const Atom& c);
     
+    /*! \brief Create a dihedral between four atoms.
+     *  \param a,b,c,d the atoms to create the dihedral between.
+     *  \return the new dihedral. */
+    Dihedral NewDihedral(const Atom& a, const Atom& b,
+                         const Atom& c, const Atom& d);
+    
+    //! \cond
+    Bond _FindBond(const Atom& a, const Atom& b) const;
+    Angle _FindAngle(const Atom& a, const Atom& b, const Atom& c) const;
+    Dihedral _FindDihedral(const Atom& a, const Atom& b,
+                           const Atom& c, const Atom& d) const;
+    //! \endcond
+    
   public:
     /*! \brief Determine angles in the molecule.
      *  \details An angle is defined for each group of three connected atoms
-     *  within a molecule. That is, for every atom in the molecule with at least
-     *  two neighbouring atoms, an angle is defined for every pair of
-     *  neighbouring atoms. Subsequent calls to this method will only generate
+     *  within a molecule. Subsequent calls to this method will only generate
      *  angles which have not been previously generated. Additionally, angles
      *  can only be removed by removing an atom or a bond.
      *  \return the number of angles added. */
     size_ PerceiveAngles();
+    
+    /*! \brief Determine dihedrals in the molecule.
+     *  \details A dihedral is defined for each group of four connected atoms
+     *  within a molecule. Subsequent calls to this method will only generate
+     *  dihedrals which have not been previously generated. Additionally,
+     *  dihedrals can only be removed by removing an atom or bond.
+     *  \return the number of dihedrals added. */
+    size_ PerceiveDihedrals();
 //    size_t AssignElectrons();
 //    bool ApplyElectronAssignment(size_t);
 //    FCSCORE GetMinimumElectronAssignmentScore();
@@ -402,11 +468,13 @@ namespace indigox {
     }
     
     /*! \brief Get iterator access to the owned dihedrals.
-     *  \details The set of dihedrals are regenerated prior to returning iterator
-     *  access if the CONNECTIVITY property has been set.
+     *  \details Dihedrals are re-perceived prior to returning the iterators.
      *  \return a pair of iterators indication the beginning and end of the
      *  owned dihedrals. */
-//    std::pair<MolDihedralIter, MolDihedralIter> GetDihedrals();
+    inline std::pair<MolDihedralIter, MolDihedralIter> GetDihedrals() {
+      PerceiveDihedrals();
+      return std::make_pair(_dhds.begin(), _dhds.end());
+    }
     
   private:
     //! Name of the molecule
