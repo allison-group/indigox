@@ -1,17 +1,16 @@
-
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
 
-#include "indigox/python/interface.hpp"
+#include <indigox/python/interface.hpp>
 
-#include "indigox/utils/options.hpp"
+#include <indigox/utils/options.hpp>
 
 namespace py = pybind11;
-using namespace indigox;
 
-void indigox::GenerateOptions(py::module& m) {
+void GenerateOptions(py::module& m) {
+  using namespace indigox;
   // General options
   typedef Options o_;
   py::class_<o_, std::shared_ptr<o_>> PyOptions(m, "Options");

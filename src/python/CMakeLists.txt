@@ -1,12 +1,15 @@
 SET(INDIGOX_PYTHON_INTERFACE_SRCS
     interface.cpp
-    pickle.cpp
+    pyangle.cpp
     pyatom.cpp
     pybond.cpp
+    pydihedral.cpp
     pyelement.cpp
     pymolecule.cpp
     pyoptions.cpp
-    pyperiodictable.cpp)
+    pyperiodictable.cpp
+    pymoleculargraph.cpp
+    pyassignmentgraph.cpp)
 
 # Setup pybind11 properly
 SET(PYBIND11_PYTHON_VERSION 3.4)
