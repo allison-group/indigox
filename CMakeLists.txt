@@ -113,20 +113,20 @@ FILE(COPY examples/python_example.py DESTINATION examples)
 INSTALL(TARGETS indigox DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Install header files. This should includes boost if the repo version is being used
-INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/include/indigox
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+#INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/include/indigox
+#        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Install data files
-INSTALL(FILES data/atomenergies_def2svpd.txt
-        data/atomenergies_def2tzvppd.txt
-        data/bondenergies_def2svpd.txt
-        data/bondenergies_def2svpd_withbsse.txt
-        data/bondenergies_def2tzvppd.txt
-        data/bondenergies_def2tzvppd_withbsse.txt
-        data/periodictable.txt
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+#INSTALL(FILES data/atomenergies_def2svpd.txt
+#        data/atomenergies_def2tzvppd.txt
+#        data/bondenergies_def2svpd.txt
+#        data/bondenergies_def2svpd_withbsse.txt
+#        data/bondenergies_def2tzvppd.txt
+#        data/bondenergies_def2tzvppd_withbsse.txt
+#        data/periodictable.txt
+#        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 # Install documentation
-INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
+#INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
 
 # Uninstall target
 IF(NOT TARGET uninstall)
