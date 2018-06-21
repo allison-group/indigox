@@ -126,8 +126,8 @@ namespace indigox {
     // Expected number of angles
     auto sum = [&](size_ current, Atom v) -> size_ {
       size_ degree = v->NumBonds();
-      if (degree < 2) return 0;
-      return degree * (degree - 1) / 2;
+      if (degree < 2) return current;
+      return current + degree * (degree - 1) / 2;
     };
     size_ count = std::accumulate(_atms.begin(), _atms.end(), 0, sum);
     _angs.reserve(count);
@@ -142,7 +142,7 @@ namespace indigox {
         Atom a = nbrs[i]->GetAtom();
         for (size_ j = i + 1; j < nbrs.size(); ++j) {
           Atom c = nbrs[j]->GetAtom();
-          if (HasAngle(a, *b, c)) continue;
+          if (_FindAngle(a, *b, c)) continue;
           NewAngle(a, *b, c);
           ++count;
         }
@@ -159,10 +159,10 @@ namespace indigox {
     // Expected number of dihedrals
     auto sum = [&](size_ current, Bond b) -> size_ {
       size_ b_degree = b->GetSourceAtom()->NumBonds();
-      if (b_degree < 2) return 0;
+      if (b_degree < 2) return current;
       size_ c_degree = b->GetTargetAtom()->NumBonds();
-      if (c_degree < 2) return 0;
-      return (b_degree - 1) * (c_degree - 1);
+      if (c_degree < 2) return current;
+      return current + (b_degree - 1) * (c_degree - 1);
     };
     size_ count = std::accumulate(_bnds.begin(), _bnds.end(), 0, sum);
     _dhds.reserve(count);
@@ -183,7 +183,7 @@ namespace indigox {
         for (size_ j = 0; j < Ds.size(); ++j) {
           Atom D = Ds[j]->GetAtom();
           if (D == B) continue;
-          if (HasDihedral(A, B, C, D)) continue;
+          if (_FindDihedral(A, B, C, D)) continue;
           NewDihedral(A, B, C, D);
           ++count;
         }
