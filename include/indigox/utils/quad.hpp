@@ -123,7 +123,7 @@ namespace stdx {    // extended std namespace
     inline constexpr
     quad(_U1&& __u1, _U2&& __u2, _U3&& __u3, _U4&& __u4)
     : first(std::forward<_U1>(__u1)), second(std::forward<_U2>(__u2)),
-    third(std::forward<_U3>(__u3)), fourth(std::forward<_U4>(__u3))  {}
+    third(std::forward<_U3>(__u3)), fourth(std::forward<_U4>(__u4))  {}
     
     template<class _U1, class _U2, class _U3, class _U4, _EnableB<
     _CheckArgs::template __enable_explicit<_U1 const&, _U2 const&, _U3 const&, _U4 const&>()
