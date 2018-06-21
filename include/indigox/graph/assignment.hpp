@@ -47,8 +47,10 @@ namespace indigox::graph {
   class IXAGVertex : public std::enable_shared_from_this<IXAGVertex> {
   public:
     IXAGVertex() = delete; // no default constructor
+    //! \brief Friendship allows IXAssignmentGraph to construct vertices
+    friend class IXAssignmentGraph;
     
-  public:
+  private:
     /*! \brief Construct an IXAGVertex from an MGVertex.
      *  \param v the MGVertex to associate with this vertex. */
     IXAGVertex(const MGVertex v)
