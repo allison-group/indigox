@@ -72,16 +72,6 @@ BOOST_AUTO_TEST_CASE(atoms_get_swap) {
   b2.SwapSourceTarget();
   BOOST_CHECK(b2.GetSourceAtom() == a4);
   BOOST_CHECK(b2.GetTargetAtom() == a2);
-  
-  // Check iterators
-  auto atm_it = b2.GetAtomIters();
-  BOOST_CHECK(std::distance(atm_it.first, atm_it.second) == 2);
-  std::vector<Atom> expect_atm = {a4,a2};
-  std::vector<Atom> obtain_atm;
-  for (; atm_it.first != atm_it.second; ++atm_it.first)
-    obtain_atm.emplace_back(atm_it.first->lock());
-  BOOST_CHECK_EQUAL_COLLECTIONS(expect_atm.begin(), expect_atm.end(),
-                                obtain_atm.begin(), obtain_atm.end());
 }
 
 BOOST_AUTO_TEST_CASE(stereochemistry_get_set) {

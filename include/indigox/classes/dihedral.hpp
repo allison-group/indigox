@@ -75,14 +75,6 @@ namespace indigox {
                              _atms[2].lock(), _atms[3].lock());
     }
     
-    /*! \brief Get iterator access to the atoms of the dihedral.
-     *  \details Intended for internal use only as the dihedral does not own
-     *  any of the atoms being iterated over.
-     *  \return a pair of iterators for the beginning and end of the atoms. */
-    inline std::pair<DihedAtomIter, DihedAtomIter> GetAtomIters() const {
-      return std::make_pair(_atms.begin(), _atms.end());
-    }
-    
     /*! \brief Number of atoms this dihedral contains.
      *  \return 4. */
     size_ NumAtoms() const { return _atms.size(); }

@@ -147,14 +147,6 @@ namespace indigox {
      *  \param stereo the stereochemistry to set. */
     inline void SetStereochemistry(Stereo stereo) { _stereo = stereo; }
     
-    /*! \brief Get iterator access to the atoms of the bond.
-     *  \details Intended for internal use only as the bond does not own any
-     *  of the atoms being iterated over.
-     *  \return a pair of iterators for the beginning and end of the atoms. */
-    inline std::pair<BondAtomIter, BondAtomIter> GetAtomIters() const {
-      return std::make_pair(_atms.begin(), _atms.end());
-    }
-    
     /*! \brief Get the atoms of the bond.
      *  \return pair of the atoms of the bond. */
     inline std::pair<Atom, Atom> GetAtoms() const {

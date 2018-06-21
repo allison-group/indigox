@@ -27,7 +27,6 @@ namespace indigox::test {
     inline void Clear() { a.Clear(); }
     
     // public wrapping members
-    inline std::pair<AngAtmIter, AngAtmIter> GetAtomIters() { return a.GetAtomIters(); }
     inline stdx::triple<Atom,Atom,Atom> GetAtoms() { return a.GetAtoms(); }
     inline Molecule GetMolecule() { return a.GetMolecule(); }
     inline uid_ GetTag() { return a.GetTag(); }
@@ -115,7 +114,6 @@ namespace indigox::test {
     
     // public wrapping members
     inline bool GetAromaticity() { return x.GetAromaticity(); }
-    inline std::pair<BndAtmIter, BndAtmIter> GetAtomIters() { return x.GetAtomIters(); }
     inline std::pair<Atom, Atom> GetAtoms() { return x.GetAtoms(); }
     inline Molecule GetMolecule() { return x.GetMolecule(); }
     inline BondOrder GetOrder() { return x.GetOrder(); }
@@ -146,7 +144,6 @@ namespace indigox::test {
     inline void Clear() { x.Clear(); }
     
     // public wrapping members
-    inline std::pair<DhdAtmIter,DhdAtmIter> GetAtomIters() { return x.GetAtomIters(); }
     inline stdx::quad<Atom,Atom,Atom,Atom> GetAtoms() { return x.GetAtoms(); }
     inline Molecule GetMolecule() { return x.GetMolecule(); }
     inline uid_ GetTag() { return x.GetTag(); }

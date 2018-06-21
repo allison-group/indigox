@@ -85,15 +85,7 @@ namespace indigox {
      *  \details The beginning atom will become the end atom and vice versa. The
      *  central atom will always remain the central atom. */
     inline void SwapOrder() { std::swap(_atms[0], _atms[2]); }
-    
-    /*! \brief Get iterator access to the atoms of the angle.
-     *  \details Intended for internal use only as the angle does not own any
-     *  of the atoms being iterated over.
-     *  \return a pair of iterators for the beginning and end of the atoms. */
-    inline std::pair<AngleAtomIter, AngleAtomIter> GetAtomIters() const {
-      return std::make_pair(_atms.begin(), _atms.end());
-    }
-    
+        
     /*! \brief Get the atoms of the angle.
      *  \return triple of the atoms of the angle. */
     inline stdx::triple<Atom, Atom, Atom> GetAtoms() const {
