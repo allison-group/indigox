@@ -26,7 +26,7 @@ namespace indigox::graph {
   }
   
   AGVertex IXAssignmentGraph::AddVertex(MGVertex v) {
-    AGVertex va = std::make_shared<IXAGVertex>(v);
+    AGVertex va = AGVertex(new IXAGVertex(v));
     _verts_v.emplace(v, va);
     _verts.emplace_back(va);
     _g.AddVertex(va.get());
@@ -36,18 +36,18 @@ namespace indigox::graph {
   void IXAssignmentGraph::AddEdges(MGVertex s, MGVertex t, MGEdge e) {
     AGVertex sv, tv;
     if (_verts_v.find(s) == _verts_v.end()) {
-      sv = std::make_shared<IXAGVertex>(s);
+      sv = AGVertex(new IXAGVertex(s));
       _verts.emplace_back(sv);
       _verts_v.emplace(s, sv);
     }
     else sv = _verts_v.at(s);
     if (_verts_v.find(t) == _verts_v.end()) {
-      tv = std::make_shared<IXAGVertex>(t);
+      tv = AGVertex(new IXAGVertex(t));
       _verts.emplace_back(tv);
       _verts_v.emplace(t, tv);
     }
     else tv = _verts_v.at(t);
-    AGVertex ev = std::make_shared<IXAGVertex>(e);
+    AGVertex ev = AGVertex(new IXAGVertex(e));
     _verts.emplace_back(ev);
     _verts_e.emplace(e, ev);
     
