@@ -27,14 +27,15 @@ namespace indigox::test {
     inline void Clear() { a.Clear(); }
     
     // public wrapping members
-    inline uid_ GetTag() { return a.GetTag(); }
-    inline Molecule GetMolecule() { return a.GetMolecule(); }
-    inline string_ ToString() { return a.ToString(); }
-    inline void SetTag(uid_ t) { a.SetTag(t); }
-    inline void SwapOrder() { a.SwapOrder(); }
     inline std::pair<AngAtmIter, AngAtmIter> GetAtomIters() { return a.GetAtomIters(); }
     inline stdx::triple<Atom,Atom,Atom> GetAtoms() { return a.GetAtoms(); }
+    inline Molecule GetMolecule() { return a.GetMolecule(); }
+    inline uid_ GetTag() { return a.GetTag(); }
+    inline uid_ GetUniqueID() { return a.GetUniqueID(); }
     inline size_ NumAtoms() { return a.NumAtoms(); }
+    inline void SetTag(uid_ t) { a.SetTag(t); }
+    inline void SwapOrder() { a.SwapOrder(); }
+    inline string_ ToString() { return a.ToString(); }
   };
   
   struct IXAtom {
@@ -72,6 +73,7 @@ namespace indigox::test {
     inline float_ GetPartialCharge() { return a.GetPartialCharge(); }
     inline AtomStereo GetStereochemistry() { return a.GetStereochemistry(); }
     inline uint_ GetTag() { return a.GetTag(); }
+    inline uid_ GetUniqueID() { return a.GetUniqueID(); }
     inline Vec3 GetVector() { return a.GetVector(); }
     inline float_ GetX() { return a.GetX(); }
     inline float_ GetY() { return a.GetY(); }
@@ -95,7 +97,6 @@ namespace indigox::test {
     inline void SetY(float_ i) { a.SetY(i); }
     inline void SetZ(float_ i) { a.SetZ(i); }
     inline string_ ToString() { return a.ToString(); }
-    inline uid_ GetUniqueID() { return a.GetUniqueID(); }
     
   };
   
@@ -115,12 +116,14 @@ namespace indigox::test {
     // public wrapping members
     inline bool GetAromaticity() { return x.GetAromaticity(); }
     inline std::pair<BndAtmIter, BndAtmIter> GetAtomIters() { return x.GetAtomIters(); }
+    inline std::pair<Atom, Atom> GetAtoms() { return x.GetAtoms(); }
     inline Molecule GetMolecule() { return x.GetMolecule(); }
     inline BondOrder GetOrder() { return x.GetOrder(); }
     inline Atom GetSourceAtom() { return x.GetSourceAtom(); }
     inline BondStereo GetStereochemistry() { return x.GetStereochemistry(); }
     inline uid_ GetTag() { return x.GetTag(); }
     inline Atom GetTargetAtom() { return x.GetTargetAtom(); }
+    inline uid_ GetUniqueID() { return x.GetUniqueID(); }
     inline size_ NumAtoms() { return x.NumAtoms(); }
     inline void SetAromaticity(bool a) { x.SetAromaticity(a); }
     inline void SetOrder(BondOrder a) { x.SetOrder(a); }
@@ -128,7 +131,6 @@ namespace indigox::test {
     inline void SetTag(uid_ tag) { x.SetTag(tag); }
     inline void SwapSourceTarget() { x.SwapSourceTarget(); }
     inline string_ ToString() { return x.ToString(); }
-    inline uid_ GetUniqueID() { return x.GetUniqueID(); }
   };
   
   struct IXDihedral {
@@ -144,13 +146,20 @@ namespace indigox::test {
     inline void Clear() { x.Clear(); }
     
     // public wrapping members
-    inline uid_ GetTag() { return x.GetTag(); }
-    inline Molecule GetMolecule() { return x.GetMolecule(); }
-    inline stdx::quad<Atom,Atom,Atom,Atom> GetAtoms() { return x.GetAtoms(); }
     inline std::pair<DhdAtmIter,DhdAtmIter> GetAtomIters() { return x.GetAtomIters(); }
+    inline stdx::quad<Atom,Atom,Atom,Atom> GetAtoms() { return x.GetAtoms(); }
+    inline Molecule GetMolecule() { return x.GetMolecule(); }
+    inline uid_ GetTag() { return x.GetTag(); }
+    inline uid_ GetUniqueId() { return x.GetUniqueID(); }
     inline size_ NumAtoms() { return x.NumAtoms(); }
+    inline void SetTag(uid_ tag) { x.SetTag(tag); }
     inline void SwapOrder() { x.SwapOrder(); }
     inline string_ ToString() { return x.ToString(); }
+  };
+  
+  struct IXElement {
+    indigox::IXElement e;
+    
   };
   
   struct IXMolecule {
@@ -164,14 +173,16 @@ namespace indigox::test {
     typedef std::bitset<static_cast<size_>(Emergent::NUM_EMERGENTS)> EmergeSet;
     // private wrapping members
     IXMolecule() : m(CreateMolecule()) { }
+    inline void Init() { m->Init(); }
     inline Angle NewAngle(Atom a, Atom b, Atom c) { return m->NewAngle(a,b,c); }
+    inline Dihedral NewDihedral(Atom a, Atom b, Atom c, Atom d) { return m->NewDihedral(a,b,c,d); }
     
     // public wrapping members
-    inline std::pair<MolAngIter, MolAngIter> GetAngles() { return m->GetAngles(); }
     inline Angle GetAngle(size_ pos) { return m->GetAngle(pos); }
     inline Angle GetAngle(Atom a, Atom b, Atom c) { return m->GetAngle(a,b,c); }
-    inline Angle GetAngleTag(uid_ tag) { return m->GetAngleTag(tag); }
     inline Angle GetAngleID(uid_ t) { return m->GetAngleID(t); }
+    inline std::pair<MolAngIter, MolAngIter> GetAngles() { return m->GetAngles(); }
+    inline Angle GetAngleTag(uid_ tag) { return m->GetAngleTag(tag); }
     inline Atom GetAtom(size_ pos) { return m->GetAtom(pos); }
     inline Atom GetAtomID(uid_ id) { return m->GetAtomID(id); }
     inline std::pair<MolAtmIter, MolAtmIter> GetAtoms() { return m->GetAtoms(); }
@@ -181,16 +192,23 @@ namespace indigox::test {
     inline Bond GetBondID(uid_ i) { return m->GetBondID(i); }
     inline std::pair<MolBndIter, MolBndIter> GetBonds() { return m->GetBonds(); }
     inline Bond GetBondTag(uid_ t) { return m->GetBondTag(t); }
-//    inline std::pair<MolDhdIter, MolDhdIter> GetDihedrals() { return m->GetDihedrals(); }
+    inline Dihedral GetDihedral(size_ p) { return m->GetDihedral(p); }
+    inline Dihedral GetDihedral(Atom a, Atom b, Atom c, Atom d) { return m->GetDihedral(a,b,c,d); }
+    inline Dihedral GetDihedralID(uid_ i) { return m->GetDihedralID(i); }
+    inline std::pair<MolDhdIter, MolDhdIter> GetDihedrals() { return m->GetDihedrals(); }
+    inline Dihedral GetDihedralTag(uid_ t) { return m->GetDihedralTag(t); }
     inline string_ GetFormula() { return m->GetFormula(); }
     inline graph::MolecularGraph GetGraph() { return m->GetGraph(); }
     inline int_ GetMolecularCharge() { return m->GetMolecularCharge(); }
     inline string_ GetName() { return m->GetName(); }
+    inline uid_ GetUniqueID() { return m->GetUniqueID(); }
+    inline bool HasAngle(Angle a) { return m->HasAngle(a); }
+    inline bool HasAngle(Atom a, Atom b, Atom c) { return m->HasAngle(a,b,c); }
     inline bool HasAtom(Atom a) { return m->HasAtom(a); }
     inline bool HasBond(Bond b) { return m->HasBond(b); }
     inline bool HasBond(Atom a, Atom b) { return m->HasBond(a,b); }
-    inline bool HasAngle(Angle a) { return m->HasAngle(a); }
-    inline bool HasAngle(Atom a, Atom b, Atom c) { return m->HasAngle(a,b,c); }
+    inline bool HasDihedral(Dihedral d) { return m->HasDihedral(d); }
+    inline bool HasDihedral(Atom a, Atom b, Atom c, Atom d) { return m->HasDihedral(a,b,c,d); }
     inline Atom NewAtom() { return m->NewAtom(); }
     inline Atom NewAtom(Element e) { return m->NewAtom(e); }
     inline Atom NewAtom(string_ n) { return m->NewAtom(n); }
@@ -199,25 +217,58 @@ namespace indigox::test {
     inline size_ NumAngles() { return m->NumAngles(); }
     inline size_ NumAtoms() { return m->NumAtoms(); }
     inline size_ NumBonds() { return m->NumBonds(); }
-//    inline size_ NumDihedrals() { return m->NumDihedrals(); }
+    inline size_ NumDihedrals() { return m->NumDihedrals(); }
+    inline size_ PerceiveAngles() { return m->PerceiveAngles(); }
+    inline size_ PerceiveDihedrals() { return m->PerceiveDihedrals(); }
     inline bool RemoveAtom(Atom a) { return m->RemoveAtom(a); }
-    inline bool RemoveBond(Atom a, Atom b) { return m->RemoveBond(a,b); }
     inline bool RemoveBond(Bond b) { return m->RemoveBond(b); }
+    inline bool RemoveBond(Atom a, Atom b) { return m->RemoveBond(a,b); }
     inline void ReserveAtoms(size_ n) { m->ReserveAtoms(n); }
     inline void ReserveBonds(size_ n) { m->ReserveBonds(n); }
     inline void SetMolecularCharge(int_ q) { m->SetMolecularCharge(q); }
     inline void SetName(string_ n) { m->SetName(n); }
     inline void SetPropertyModified(MolProperty p) { m->SetPropertyModified(p); }
-    inline size_ PerceiveAngles() { return m->PerceiveAngles(); }
     
     // internals wrapping members
+    // Emergent state
     inline EmergeSet GetEmergentState() { return m->_emerge; }
     inline void ResetEmergentState() { m->_emerge.reset(); }
-    inline void SetEmergentState(size_ p) { m->_emerge.set(p); }
     inline void ResetEmergentState(size_ p) { m->_emerge.reset(p); }
+    inline void SetEmergentState(size_ p) { m->_emerge.set(p); }
+    // Cached values
     inline string_ GetFormulaCache() { return m->_formula_cache; }
+    // Container contains
     inline size_ AtomCapacity() { return m->_atms.capacity(); }
     inline size_ BondCapacity() { return m->_bnds.capacity(); }
+  };
+  
+  struct IXPeriodicTable {
+    indigox::IXPeriodicTable t;
+  };
+  
+  struct IXAssignmentGraph {
+    graph::IXAssignmentGraph g;
+  public:
+    using VertIter = graph::IXAssignmentGraph::VertIter;
+    using NbrsIter = graph::IXAssignmentGraph::NbrsIter;
+    // private wrapping members
+    IXAssignmentGraph() : g(graph::MolecularGraph()) { }
+    inline void AddEdges(graph::MGVertex s, graph::MGVertex t, graph::MGEdge e) { g.AddEdges(s,t,e); }
+    inline graph::AGVertex AddVertex(graph::MGVertex v) { return g.AddVertex(v); }
+    inline void DetermineAllNeighbours() { g.DetermineAllNeighbours(); }
+    
+    // public wrapping members
+    IXAssignmentGraph(graph::MolecularGraph G) : g(G) { }
+    inline size_ Degree(graph::AGVertex v) { return g.Degree(v); }
+    inline std::pair<NbrsIter, NbrsIter> GetNeighbours(graph::AGVertex v) { return g.GetNeighbours(v); }
+    inline graph::AGVertex GetVertex(graph::MGVertex v) { return g.GetVertex(v); }
+    inline graph::AGVertex GetVertex(graph::MGEdge v) { return g.GetVertex(v); }
+    inline std::pair<VertIter, VertIter> GetVertices() { return g.GetVertices(); }
+    inline bool HasVertex(graph::AGVertex v) { return g.HasVertex(v); }
+    inline bool HasVertex(graph::MGVertex v) { return g.HasVertex(v); }
+    inline bool HasVertex(graph::MGEdge e) { return g.HasVertex(e); }
+    inline bool IsConnected() { return g.IsConnected(); }
+    inline size_ NumVertices() { return g.NumVertices(); }
   };
   
   struct IXMolecularGraph {
@@ -227,9 +278,20 @@ namespace indigox::test {
     typedef graph::IXMolecularGraph::NbrsIter NbrsIter;
     typedef graph::IXMolecularGraph::VertIter VertIter;
     typedef graph::IXMolecularGraph::CompIter CompIter;
-    IXMolecularGraph() = delete;
+    
+    // private wrapping members
+    IXMolecularGraph() : g(Molecule()) { }
     IXMolecularGraph(Molecule m) : g(m) {}
+    inline graph::MGEdge AddEdge(Bond bnd) { return g.AddEdge(bnd); }
+    inline graph::MGVertex AddVertex(Atom atm) { return g.AddVertex(atm); }
+    inline void Clear() { g.Clear(); }
+    inline void RemoveEdge(graph::MGEdge e) { g.RemoveEdge(e); }
+    inline void RemoveEdge(graph::MGVertex u, graph::MGVertex v) { g.RemoveEdge(u,v); }
+    inline void RemoveVertex(graph::MGVertex v) { g.RemoveVertex(v); }
+    
+    // public wrapping methods
     inline size_ Degree(graph::MGVertex v) { return g.Degree(v); }
+    inline std::pair<CompIter, CompIter> GetConnectedComponents() { return g.GetConnectedComponents(); }
     inline graph::MGEdge GetEdge(graph::MGVertex u, graph::MGVertex v) { return g.GetEdge(u, v); }
     inline graph::MGEdge GetEdge(Bond b) { return g.GetEdge(b); }
     inline std::pair<EdgeIter, EdgeIter> GetEdges() { return g.GetEdges(); }
@@ -246,42 +308,11 @@ namespace indigox::test {
     inline bool HasVertex(graph::MGVertex v) { return g.HasVertex(v); }
     inline bool IsConnected() { return g.IsConnected(); }
     inline size_ NumConnectedComponents() { return g.NumConnectedComponents(); }
-    inline std::pair<CompIter, CompIter> GetConnectedComponents() { return g.GetConnectedComponents(); }
     inline size_ NumEdges() { return g.NumEdges(); }
     inline size_ NumVertices() { return g.NumVertices(); }
-    //
-    inline graph::MGEdge AddEdge(Bond bnd) { return g.AddEdge(bnd); }
-    inline graph::MGVertex AddVertex(Atom atm) { return g.AddVertex(atm); }
-    inline void Clear() { g.Clear(); }
-    inline void RemoveEdge(graph::MGEdge e) { g.RemoveEdge(e); }
-    inline void RemoveEdge(graph::MGVertex u, graph::MGVertex v) { g.RemoveEdge(u,v); }
-    inline void RemoveVertex(graph::MGVertex v) { g.RemoveVertex(v); }
   };
   
-  struct IXAssignmentGraph {
-    graph::IXAssignmentGraph g;
-  public:
-    using VertIter = graph::IXAssignmentGraph::VertIter;
-    using NbrsIter = graph::IXAssignmentGraph::NbrsIter;
-    // private wrapping members
-    inline graph::AGVertex AddVertex(graph::MGVertex v) { return g.AddVertex(v); }
-    inline void AddEdges(graph::MGVertex s, graph::MGVertex t, graph::MGEdge e) { g.AddEdges(s,t,e); }
-    inline void DetermineAllNeighbours() { g.DetermineAllNeighbours(); }
-    
-    // public wrapping members
-    IXAssignmentGraph() = delete;
-    IXAssignmentGraph(graph::MolecularGraph G) : g(G) { }
-    inline bool HasVertex(graph::AGVertex v) { return g.HasVertex(v); }
-    inline bool HasVertex(graph::MGVertex v) { return g.HasVertex(v); }
-    inline bool HasVertex(graph::MGEdge e) { return g.HasVertex(e); }
-    inline graph::AGVertex GetVertex(graph::MGVertex v) { return g.GetVertex(v); }
-    inline graph::AGVertex GetVertex(graph::MGEdge v) { return g.GetVertex(v); }
-    inline size_ NumVertices() { return g.NumVertices(); }
-    inline size_ Degree(graph::AGVertex v) { return g.Degree(v); }
-    inline std::pair<NbrsIter, NbrsIter> GetNeighbours(graph::AGVertex v) { return g.GetNeighbours(v); }
-    inline std::pair<VertIter, VertIter> GetVertices() { return g.GetVertices(); }
-    inline bool IsConnected() { return g.IsConnected(); }
-  };
+  
 }
 
 #endif /* INDIGOX_TEST_CLASS_TEST_WRAPPERS_HPP */
