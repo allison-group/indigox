@@ -15,7 +15,6 @@ namespace indigox {
   class IXPeriodicTable;
   class IXElement;
   
-  
   //! \brief shared_ptr for normal use of the IXPeriodicTable class.
   using PeriodicTable = std::shared_ptr<IXPeriodicTable>;
   //! \brief shared_ptr for normal use of the IXElement class.

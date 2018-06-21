@@ -30,6 +30,8 @@ using namespace indigox;
 BOOST_FIXTURE_TEST_SUITE(ixbond, indigox::test::BondFixture);
 
 BOOST_AUTO_TEST_CASE(constructor) {
+  BOOST_CHECK_NO_THROW(test::IXBond());
+  BOOST_CHECK_NO_THROW(test::IXBond(a2,a3,mol));
   BOOST_CHECK(b1.GetUniqueID());
   BOOST_CHECK(b2.GetUniqueID());
   BOOST_CHECK(b1.GetUniqueID() != b2.GetUniqueID());
@@ -98,15 +100,14 @@ BOOST_AUTO_TEST_CASE(printing_methods) {
   
   // Test ToString
   BOOST_CHECK(b1.ToString() == "Bond(Atom(, XX), Atom(, XX))");
-  a1->SetName("Romeo"); a1->SetElement("U");
-  a3->SetName("Foxtrot"); a3->SetElement("F");
-  b1.SwapSourceTarget();
-  BOOST_CHECK(b1.ToString() == "Bond(Atom(Foxtrot, F), Atom(Romeo, U))");
   a3.reset();  // malformed checking
   BOOST_CHECK(b1.ToString() == "Bond(MALFORMED)");
 }
 
 BOOST_AUTO_TEST_CASE(cleaning_methods) {
+  b2.SetOrder(BondOrder::TRIPLE);
+  b2.SetStereochemistry(BondStereo::Z);
+  b2.SetTag(72);
   b2.Clear();
   BOOST_CHECK(b2.GetAromaticity() == false);
   BOOST_CHECK(b2.GetMolecule() == Molecule());
