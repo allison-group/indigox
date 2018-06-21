@@ -102,6 +102,12 @@ namespace indigox {
      *  \return a string representation of the dihedral. */
     string_ ToString() const;
     
+    /*! \brief Set the tag of this dihedral.
+     *  \details The tag of a dihedral should not be considered stable. Use with
+     *  caution.
+     *  \param tag the tag to set. */
+    inline void SetTag(uid_ tag) { _tag = tag; }
+    
   private:
     /*! \brief Clear all informations.
      *  \details Erases all information stored on the angle, and resets
