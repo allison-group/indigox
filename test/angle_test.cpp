@@ -67,10 +67,6 @@ BOOST_AUTO_TEST_CASE(atoms_get_swap) {
 BOOST_AUTO_TEST_CASE(printing_methods) {
   // Test ToString
   BOOST_CHECK(n1.ToString() == "Angle(Atom(, XX), Atom(, XX), Atom(, XX))");
-  a1->SetName("A1"); a1->SetElement("B");
-  a2->SetName("A2"); a2->SetElement("W");
-  a3->SetName("A3");
-  BOOST_CHECK(n1.ToString() == "Angle(Atom(A1, B), Atom(A2, W), Atom(A3, XX))");
   a3.reset();
   BOOST_CHECK(n1.ToString() == "Angle(MALFORMED)");
 }
