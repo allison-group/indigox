@@ -10,48 +10,40 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <vector>
 
-#include "indigox/utils/filereader.hpp"
+#include <boost/algorithm/string.hpp>
+
+#include <indigox/utils/filereader.hpp>
 
 
-namespace indigox {
-  namespace utils {
-    
-    /** @details Sets the path of a file to read.
-     *  @param file path to the file to read.
-     */
-    FileReader::FileReader(const std::string& file)
-    : path_(file) {}
-    
-    /** @details Loads the given file and reads it itemwise (white space
-     *  seperator). Lines begining with the comment character (\#) are
-     *  ignored. If the comment character appears in a line, the remainder
-     *  of the line is ignored.
-     *  @param[out] out_items a vector to store the items from the file.
-     */
-    void FileReader::GetAllItems(std::vector<std::string> &out_items)
-    {
-      std::string next_item, line;
-      std::ifstream infile;
-      infile.open(path_);
-      
-      /// @todo Throw an exception when can't open file.
-      if (!infile) {
-        std::cerr << "Unable to open file: " << path_ << std::endl;
-        std::exit(1);
-      }
-      
-      while (std::getline(infile, line)) {
-        std::istringstream itemiser(line);
-        while (itemiser >> next_item) {
-          if (next_item.at(0) == '#') break;
-          out_items.push_back(next_item);
-        }
-      }
-      
-      infile.close();
+namespace indigox::utils {
+  
+  /** @details Sets the path of a file to read.
+   *  @param file path to the file to read.
+   */
+  FileReader::FileReader(const string_& file)
+  : path_(file) {}
+  
+  /** @details Loads the given file and reads it itemwise (white space
+   *  seperator). Lines begining with the comment character (\#) are
+   *  ignored. If the comment character appears in a line, the remainder
+   *  of the line is ignored.
+   *  @param[out] out_items a vector to store the items from the file.
+   */
+  void FileReader::GetAllLines(std::vector<string_> &out_items)
+  {
+    out_items.clear();
+    string_ next_item, line;
+    std::ifstream infile;
+    infile.open(path_);
+    if (!infile) throw std::invalid_argument("File can't be opened.");
+    while (std::getline(infile, line)) {
+      boost::trim(line);
+      out_items.push_back(line);
     }
-    
+    infile.close();
   }
+  
 }

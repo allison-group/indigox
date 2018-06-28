@@ -12,6 +12,8 @@
 
 #include <vector>
 
+#include "numerics.hpp"
+
 namespace indigox {
   namespace utils {
     
@@ -23,17 +25,16 @@ namespace indigox {
     class FileReader {
       
     public:
+      FileReader() = delete;  // No default constructor
       /// @brief Normal constructor.
-      FileReader(const std::string&);
+      FileReader(const string_&);
       
       /// @brief Reads the file from disk.
-      void GetAllItems(std::vector<std::string>&);
+      void GetAllLines(std::vector<string_>&);
+      inline void SetFilePath(const string_& p) { path_ = p; }
       
     private:
-      const std::string path_;
-      
-    private:
-      FileReader() = default;  // No default constructor
+      string_ path_;
       
     };
     
