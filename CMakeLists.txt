@@ -32,17 +32,18 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 # Set default install prefix to /usr/local/opt/indigox
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)    # Requires Cmake >= 3.7
   # Becuase I don't like populating /usr/local, make it in /usr/local/opt by default
-  SET(CMAKE_INSTALL_PREFIX "/usr/local/opt/${PROJECT_NAME}" CACHE PATH "..." FORCE)
+  SET(CMAKE_INSTALL_PREFIX /usr/local/opt/${PROJECT_NAME} CACHE PATH "..." FORCE)
 ELSE()
-  SET(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME} CACHE PATH "..." FORCE)
+  SET(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "..." FORCE)
 ENDIF()
 # Setup install directories
 INCLUDE(GNUInstallDirs)
-ADD_DEFINITIONS(-DDFT_DATA_DIR=${CMAKE_INSTALL_FULL_DATAROOTDIR})
-ADD_DEFINITIONS(-DFCSCORE=uint32_t)
+ADD_DEFINITIONS(-DIX_DATA_DIRECTORY="${CMAKE_INSTALL_FULL_DATAROOTDIR}")
+
 
 # List all the files to compile into the indigox library
 SET(INDIGOX_LIB_SRCS
+    src/algorithm/electron_assignment/assigner.cpp
     src/classes/angle.cpp
     src/classes/atom.cpp
     src/classes/bond.cpp
@@ -113,20 +114,20 @@ FILE(COPY examples/python_example.py DESTINATION examples)
 INSTALL(TARGETS indigox DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Install header files. This should includes boost if the repo version is being used
-#INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/include/indigox
-#        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/include/indigox
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Install data files
-#INSTALL(FILES data/atomenergies_def2svpd.txt
+INSTALL(FILES data/assignment_scores.dat
 #        data/atomenergies_def2tzvppd.txt
 #        data/bondenergies_def2svpd.txt
 #        data/bondenergies_def2svpd_withbsse.txt
 #        data/bondenergies_def2tzvppd.txt
 #        data/bondenergies_def2tzvppd_withbsse.txt
 #        data/periodictable.txt
-#        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 # Install documentation
-#INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
+INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
 
 # Uninstall target
 IF(NOT TARGET uninstall)

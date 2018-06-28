@@ -14,6 +14,10 @@
 #ifndef INDIGOX_UTILS_OPTIONS_HPP
 #define INDIGOX_UTILS_OPTIONS_HPP
 
+#ifndef FCSCORE
+#define FCSCORE uint32_t
+#endif
+
 namespace indigox {
   
   /** @struct Options options.hpp utils/options.hpp
