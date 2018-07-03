@@ -57,9 +57,11 @@ namespace indigox::graph {
     : _source_vert(v), _source_edge(), _pre(0), _count(0) { }
     
     /*! \brief Construct an IXAGVertex from an MGEdge.
+     *  \details As all bonds must have an order of at least one, the
+     *  preassigned count of all edge mapped vertices is always set to two.
      *  \param e the MGEdge to associate with this vertex. */
     IXAGVertex(const MGEdge e)
-    : _source_vert(), _source_edge(e), _pre(0), _count(0) { }
+    : _source_vert(), _source_edge(e), _pre(2), _count(0) { }
     
   public:
     /*! \brief Is the associated IXMolecularGraph member a vertex.
@@ -94,6 +96,11 @@ namespace indigox::graph {
      *  \details ElectronAssignerAlgorithms will not modify this value.
      *  \param count the number of electrons to pre-assign. */
     inline void SetPreAssignedCount(const uint_ count) { _pre = count; }
+    
+    /*! \brief Get the number of assigned electrons.
+     *  \details Does not include preassigned electrons.
+     *  \return the number of assigned electrons. */
+    inline uint_ GetAssignedCount() const { return _count; }
     
     /*! \brief Get the total number of assigned electrons.
      *  \details The total number of electrons is the sum of the number of
@@ -214,6 +221,17 @@ namespace indigox::graph {
     /*! \brief Check if the graph is connected.
      *  \return if the graph is connected or not. */
     inline bool IsConnected() { return _g.NumConnectedComponents() == 1; }
+    
+    /*! \brief Populate the pre-assigned state of all vertices.
+     *  \details The assigned electrons are as follows:
+     *
+     *  - Six electrons on one coordinate F, Cl, and Br.
+     *  - Four electrons on one coordinate O, and S.
+     *  - Two electrons on one coordinate N.
+     *  - Four electrons on two coordinate O, and S.
+     *  - No electrons on all other types of atoms.
+     *  - Two electrons on all bonds. */
+    void PreassignElectrons();
     
   private:
     /*! \brief Add a vertex to the graph.

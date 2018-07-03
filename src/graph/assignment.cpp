@@ -67,5 +67,46 @@ namespace indigox::graph {
     }
   }
   
+  uint_ __VertexPrePlace(size_ degree, const Element& element) {
+    switch (degree) {
+      case 1:
+        switch (element->GetAtomicNumber()) {
+          case 9:   // F
+          case 17:  // Cl
+          case 35:  // Br
+            return 6;
+          case 8:   // O
+          case 16:  // S
+            return 4;
+          case 7:   // N
+            return 2;
+          default:  // All others
+            return 0;
+        }
+        break;
+      case 2:
+        switch (element->GetAtomicNumber()) {
+          case 8:   // O
+          case 16:  // S
+            return 4;
+          default:
+            return 0;
+        }
+      default:
+        return 0;
+    }
+  }
+  
+  void IXAssignmentGraph::PreassignElectrons() {
+    for (AGVertex v : _verts) {
+      uint_ preassign = 0;
+      if (v->IsEdgeMapped()) {  // no preassigning is performed on bonds
+      } else {
+        preassign = __VertexPrePlace(Degree(v),
+                                v->GetSourceVertex()->GetAtom()->GetElement());
+      }
+      v->SetPreAssignedCount(preassign);
+    }
+  }
   
 }
