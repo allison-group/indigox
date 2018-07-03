@@ -11,6 +11,26 @@
 //! utils namespace for useful utility functions
 namespace indigox::utils {
   
+  enum class Option {
+    Yes     = 1,
+    No      = Yes << 1,
+    Auto    = Yes << 2,
+    Default = Yes << 3,
+    All     = Yes << 4,
+    Some    = Yes << 5,
+    None    = Yes << 6
+  };
+    
+  inline Option operator|(Option l, Option r) {
+    using under = std::underlying_type<Option>::type;
+    return static_cast<Option>(static_cast<under>(l) | static_cast<under>(r));
+  }
+    
+  inline Option operator&(Option l, Option r) {
+    using under = std::underlying_type<Option>::type;
+    return static_cast<Option>(static_cast<under>(l) & static_cast<under>(r));
+  }
+  
   /*! \brief Convert a string to upper case.
    *  \param s the string to convert.
    *  \return the uppercase version of s. */

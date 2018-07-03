@@ -40,8 +40,18 @@ namespace indigox::algorithm {
     friend ElectronAssigner CreateElectronAssigner(const Molecule& m);
     
   public:
-    //! \brief Base class for an electron assignment algorithm.
+    /*! \brief Base class for an electron assignment algorithm.
+     *  \details An AssignAlgorithm is an algorithm for assigning electrons to
+     *  an AssignmentGraph. Possible locations to assign electrons are stored
+     *  in a vector. If a location can have multiple electrons assigned, it
+     *  appears multiple times in the locations vector. An assignment is given
+     *  by a bitset with the same length as the locations vector. Each position
+     *  in the bitset indicates if the corresponding location should have
+     *  electrons assigned, where the position is set if the location should
+     *  have electrons assigned, and unset otherwise.
+     */
     class AssignAlgorithm {
+    protected:
       //! \brief Normal enum for algorithm option indexing.
       enum _bool_opts {
         __pairs,      //!< Use pairs of electrons.
@@ -64,6 +74,12 @@ namespace indigox::algorithm {
       virtual ~AssignAlgorithm() { }
       
       /*! \brief Initalise an assignment algorithm.
+       *  \details Initalisation occurs in the following order. First an
+       *  AssignmentGraph is generated from the molecule. The number of
+       *  electrons to assign are then calculated, accounting for any
+       *  preassigned electrons. Finally, the possible locations to assign
+       *  electrons are determined. Throughout the initalisation process, sanity
+       *  checks are performed to ensure that the initialised state is valid.
        *  \param m the molecule to assign electrons to. */
       virtual void Initalise(const Molecule& m);
       
@@ -161,7 +177,6 @@ namespace indigox::algorithm {
        *  \throws std::runtime_error if the method is called before initalistion.
        */
       void SetAssignment(const AssignMask& a);
-      
       
     protected:
       //! \brief Molecule working with

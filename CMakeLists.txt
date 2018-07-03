@@ -21,7 +21,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 # Setup some compile flags, for all versions and specific versions
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-deprecated-declarations -Wno-deprecated")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-deprecated-declarations -Wno-deprecated -Wpedantic")
 IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 ENDIF()
@@ -40,10 +40,11 @@ ENDIF()
 INCLUDE(GNUInstallDirs)
 ADD_DEFINITIONS(-DIX_DATA_DIRECTORY="${CMAKE_INSTALL_FULL_DATAROOTDIR}")
 
-
 # List all the files to compile into the indigox library
 SET(INDIGOX_LIB_SRCS
     src/algorithm/electron_assignment/assigner.cpp
+    src/algorithm/electron_assignment/astar_optimisation.cpp
+    src/algorithm/electron_assignment/local_optimisation.cpp
     src/classes/angle.cpp
     src/classes/atom.cpp
     src/classes/bond.cpp
@@ -53,8 +54,7 @@ SET(INDIGOX_LIB_SRCS
     src/graph/assignment.cpp
     src/graph/molecular.cpp
     src/utils/common.cpp
-    src/utils/filereader.cpp
-    src/utils/options.cpp)
+    src/utils/filereader.cpp)
 
 # Build the library
 ADD_LIBRARY(indigox STATIC ${INDIGOX_LIB_SRCS})

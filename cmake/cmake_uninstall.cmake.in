@@ -23,8 +23,7 @@ IF(EXISTS ${MANIFEST})
     ENDFOREACH(file)
     LIST(APPEND dirs @CMAKE_INSTALL_FULL_INCLUDEDIR@ 
                      @CMAKE_INSTALL_FULL_DATAROOTDIR@ 
-                     @CMAKE_INSTALL_FULL_LIBDIR@
-                     @CMAKE_INSTALL_PREFIX@)
+                     @CMAKE_INSTALL_FULL_LIBDIR@)
             
     LIST(REMOVE_DUPLICATES dirs)
     LIST(SORT dirs)

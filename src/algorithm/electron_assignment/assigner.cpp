@@ -8,6 +8,7 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <indigox/algorithm/electron_assignment/astar_optimisation.hpp>
 #include <indigox/algorithm/electron_assignment/assigner.hpp>
 #include <indigox/algorithm/electron_assignment/local_optimisation.hpp>
 #include <indigox/graph/assignment.hpp>
@@ -49,8 +50,8 @@ namespace indigox::algorithm {
   AAlgo::AssignAlgorithm(const ScoreTable& t)
   : _mol(), _g(), _locs(), _num_e(0), _opts(0), _inf(settings::INFINITY_VALUE),
   _min_score(_inf), _limit(_inf), _results(),
-  _max_charge(settings::MAXIMUM_CHARGE_MAGNITUDE),
-  _max_results(settings::MAXIMUM_RESULT_COUNT) ,_table(t), _previous_mask(0)
+  _table(t), _max_charge(settings::MAXIMUM_CHARGE_MAGNITUDE),
+  _max_results(settings::MAXIMUM_RESULT_COUNT), _previous_mask(0)
   {
     if (settings::ELECTRON_PAIRS == Option::Yes
         || settings::ELECTRON_PAIRS == Option::Default)
@@ -89,6 +90,9 @@ namespace indigox::algorithm {
       throw std::runtime_error("Odd number of electrons when using pairs");
     else if (_opts[__pairs]) count /= 2;
     
+    uint_ delta = 2;
+    if (!_opts[__pairs]) delta = 1;
+    
     // Range sanity checks
     if (count < 0)
       throw std::runtime_error("Negative electrons to assign");
@@ -118,8 +122,7 @@ namespace indigox::algorithm {
       
       while (missing) {
         _locs.emplace_back(av);
-        if (_opts[__pairs]) missing -= 2;
-        else missing -= 1;
+        missing -= delta;
       }
     }
     
@@ -144,21 +147,15 @@ namespace indigox::algorithm {
       int_ v_missing = v_oct - v_bonded;
       
       indigox::graph::AGVertex av = _g->GetVertex(e);
-      int_ missing = 2 * settings::MAXIMUM_BOND_ORDER;
+      uint_ missing = 2 * settings::MAXIMUM_BOND_ORDER;
       if (missing < av->GetPreAssignedCount())
         throw std::runtime_error("Too many pre-assigned electrons");
       missing -= av->GetPreAssignedCount();
       while (missing > 0 && u_missing > 0 && v_missing > 0) {
         _locs.emplace_back(av);
-        if (_opts[__pairs]) {
-          missing -= 2;
-          u_missing -= 2;
-          v_missing -= 2;
-        } else {
-          --missing;
-          --u_missing;
-          --v_missing;
-        }
+        missing -= delta;
+        u_missing -= delta;
+        v_missing -= delta;
       }
     }
     // Final range sanity check
@@ -464,7 +461,9 @@ namespace indigox::algorithm {
       case Algorithm::LOCAL_OPTIMISATION:
         _algo = std::make_unique<IXLocalOptimisation>(_table);
         break;
-        
+      case Algorithm::ASTAR:
+        _algo = std::make_unique<IXAStarOptimisation>(_table);
+        break;
       default:
         throw std::runtime_error("Unsupported optimisation algorithm");
     }
