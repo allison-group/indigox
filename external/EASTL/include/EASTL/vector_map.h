@@ -287,6 +287,10 @@ namespace eastl
 			mapped_type& operator[](key_type&& k);
 		#endif
 
+    // IDW: Adding at functions
+    mapped_type& at(const key_type& k);
+    const mapped_type& at(const key_type& k) const;
+    
 		// Functions which are disallowed due to being unsafe. We are looking for a way to disable these at
 		// compile-time. Declaring but not defining them doesn't work due to explicit template instantiations.
 		//
@@ -837,7 +841,24 @@ namespace eastl
 			return (*itLB).second;
 		}
 	#endif
-
+  
+  template <typename K, typename T, typename C, typename A, typename RAC>
+  inline T& vector_map<K, T, C, A, RAC>::at(const key_type& k)
+  {
+    iterator itLB(lower_bound(k));
+    
+    if (itLB == end()) throw std::out_of_range("map::at key does not exist");
+    return (*itLB).second;
+  }
+  
+  template <typename K, typename T, typename C, typename A, typename RAC>
+  inline const T& vector_map<K, T, C, A, RAC>::at(const key_type& k) const
+  {
+    const_iterator itLB(lower_bound(k));
+    
+    if (itLB == end()) throw std::out_of_range("map::at key does not exist");
+    return (*itLB).second;
+  }
 
 
 	///////////////////////////////////////////////////////////////////////////
