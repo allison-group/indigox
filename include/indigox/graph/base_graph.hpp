@@ -29,6 +29,11 @@ namespace indigox::graph {
     static constexpr bool is_directed = false;
   };
   
+  template <class T>
+  class Component : std::vector<T> {
+    using std::vector<T>::vector;
+  };
+  
   //! \brief Type for applying a numerical label to a vertex or edge.
   struct GraphLabel{
     //! \brief Union to allow different label types in the same memory space.

@@ -7,6 +7,8 @@
 #include <memory>
 #include <vector>
 
+#include <EASTL/vector_map.h>
+
 #include "base_graph.hpp"
 #include "../utils/numerics.hpp"
 
@@ -135,12 +137,14 @@ namespace indigox::graph {
     
     //! \brief Type of the internally utilised graph.
     using graph_type = IXGraphBase<IXAGVertex, std::nullptr_t>;
+    //! \brief Container for vertices
+    using VertContain = std::vector<AGVertex>;
     
   public:
     //! \brief Type of the iterator returned by the GetVertices() method.
-    using VertIter = std::vector<AGVertex>::const_iterator;
+    using VertIter = VertContain::const_iterator;
     //! \brief Type of the iterator returned by the GetNeihbours() method.
-    using NbrsIter = std::vector<AGVertex>::const_iterator;
+    using NbrsIter = VertContain::const_iterator;
     
   public:
     IXAssignmentGraph() = delete; // no default constructor
@@ -161,14 +165,14 @@ namespace indigox::graph {
      *  \param v the IXMGVertex to check for.
      *  \return if \p v is associated with the graph or not. */
     inline bool HasVertex(const MGVertex& v) const {
-      return _verts_v.find(v) != _verts_v.end();
+      return _v2v.find(v) != _v2v.end();
     }
     
     /*! \brief Check if an IXMGEdge has an associated vertex in this graph.
      *  \param e the edge to check for.
      *  \return if \p e is associated with the graph or not. */
     inline bool HasVertex(const MGEdge& e) const {
-      return _verts_e.find(e) != _verts_e.end();
+      return _e2v.find(e) != _e2v.end();
     }
     
     /*! \brief Get the AGVertex associated with an MGVertex.
@@ -177,7 +181,7 @@ namespace indigox::graph {
      *  \param v the MGVertex to get associated AGVertex for.
      *  \return the AGVertex associated with the MGVertex. */
     inline AGVertex GetVertex(const MGVertex& v) const {
-      return HasVertex(v) ? _verts_v.at(v) : AGVertex();
+      return HasVertex(v) ? _v2v.at(v) : AGVertex();
     }
     
     /*! \brief Get the AGVertex associated with an MGEdge.
@@ -186,7 +190,7 @@ namespace indigox::graph {
      *  \param e the MGEdge to get associated AGVertex for.
      *  \return the AGVertex associated with the MGEdge. */
     inline AGVertex GetVertex(const MGEdge& e) const {
-      return HasVertex(e) ? _verts_e.at(e) : AGVertex();
+      return HasVertex(e) ? _e2v.at(e) : AGVertex();
     }
     
     /*! \brief Get the number of vertices in the graph.
@@ -207,15 +211,14 @@ namespace indigox::graph {
      *  \param v the vertex to get neighbours of.
      *  \return a pair of iterators across the neighbours of the vertex. */
     inline std::pair<NbrsIter, NbrsIter> GetNeighbours(const AGVertex& v) const {
-      return HasVertex(v)
-        ? std::make_pair(_nbrs.at(v).begin(), _nbrs.at(v).end())
-        : std::make_pair(_nbrs.begin()->second.end(), _nbrs.begin()->second.end());
+      return HasVertex(v) ? std::make_pair(_n.at(v).begin(), _n.at(v).end())
+        : std::make_pair(_v.end(), _v.end());
     }
     
     /*! \brief Get the vertices of the graph
      *  \return a pair of iterators across the vertices of the graph. */
     inline std::pair<VertIter, VertIter> GetVertices() const {
-      return {_verts.begin(), _verts.end()};
+      return {_v.begin(), _v.end()};
     }
     
     /*! \brief Check if the graph is connected.
@@ -256,13 +259,13 @@ namespace indigox::graph {
     //! \brief Underlying graph
     graph_type _g;
     //! \brief Map MGVertices to their corresponding AGVertex
-    std::map<MGVertex, AGVertex> _verts_v;
+    eastl::vector_map<MGVertex, AGVertex> _v2v;
     //! \brief Map MGEdges to their corresponding AGVertex
-    std::map<MGEdge, AGVertex> _verts_e;
+    eastl::vector_map<MGEdge, AGVertex> _e2v;
     //! \brief All vertices in the graphs
-    std::vector<AGVertex> _verts;
+    VertContain _v;
     //! \brief Neighbours of vertices
-    std::map<AGVertex, std::vector<AGVertex>> _nbrs;
+    std::map<AGVertex, VertContain> _n;
   };
   
 }
