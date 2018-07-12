@@ -12,7 +12,7 @@ namespace indigox::algorithm {
   using AA_Settings = IXElectronAssigner::Settings;
   using LO_Settings = IXLocalOptimisation::Settings;
   
-  Option LO_Settings::OPTIMISE_LEVEL = Option::Default;
+  Option LO_Settings::OPTIMISE_LEVEL = Option::All;
   uint_ LO_Settings::TIMEOUT = 1000;
   Option LO_Settings::USE_CACHE = Option::Default;
   

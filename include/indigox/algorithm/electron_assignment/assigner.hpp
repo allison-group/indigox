@@ -208,27 +208,27 @@ namespace indigox::algorithm {
     };
     
     //! \brief Enum of the various electron assignment optimisation algorithms
-    enum class Algorithm {
-      LOCAL_OPTIMISATION, //!< The local optimisation method.
-      ASTAR,              //!< An A* path finding method.
+    enum class AssignerAlgorithm {
+      LocalOptimisation, //!< The local optimisation method.
+      AStar,              //!< An A* path finding method.
       FPT                 //!< A dynamic programming method.
     };
     
     struct Settings {
       /*! \brief Which algorithm to use to assign electrons.
        *  \details The default algorithm is the local optimisation method. */
-      static Algorithm ALGORITHM;
+      static AssignerAlgorithm Algorithm;
       
       /*! \brief Assign electrons in pairs instead of singly.
        *  \details The default option (Auto) assigns pairs of electrons when
        *  there is an even number of electrons, and singly if there are an odd
        *  number of electrons. Valid options are Yes, No, Default and Auto. */
-      static utils::Option ELECTRON_PAIRS;
+      static utils::Option ElectronPairs;
       
       /*! \brief Allow carbons to have non zero formal charges.
        *  \details Default option is to allow. Valid options are Yes, No and
        *  Default. */
-      static utils::Option CHARGED_CARBON;
+      static utils::Option ChargedCarbon;
       
       /*! \brief Assign some electrons prior to performing optimisation.
        *  \details Default is to do so. Valid options are Yes, No and Default.
@@ -241,32 +241,32 @@ namespace indigox::algorithm {
        *  - Four electrons on two coordinate O, and S.
        *  - No electrons on all other types of atoms.
        *  - Two electrons on all bonds. */
-      static utils::Option PREASSIGN;
+      static utils::Option Preassign;
       
       /*! \brief Path to the assignment score file.
        *  \details The assignment score file contains the scores to be assigned
        *  to the various formal charge and bond order states obtained through
        *  an electron assignment. The path should be either relative to the data
        *  directory, or an absolute path. */
-      static string_ ASSIGNMENT_SCORE_FILE;
+      static string_ ScoreFile;
       
       /*! \brief Value of an infinite score.
        *  \details Default value (which probably should not need to be changed)
        *  is std::numeric_limits<score_t>::max(). Any electron assignment
        *  with a final score of the infinite value is considered invalid. */
-      static score_t INFINITY_VALUE;
+      static score_t Infinity;
       
       /*! \brief Maximum bond order to assign.
        *  \details This limits the number of electrons which can be assigned
        *  to a bond to twice this value. Default value is 3.
        *  \todo Convert to using the BondOrder enum. */
-      static uint_ MAXIMUM_BOND_ORDER;
+      static uint_ MaxBondOrder;
       
       /*! \brief The maximum allowed charge magnitude on an atom.
        *  \details Any assignment which results in the formal charge of an atom
        *  being larger than this value will be given an infinte score. If this
        *  value is negative, there is no limit applied. Default value is -1. */
-      static int_ MAXIMUM_CHARGE_MAGNITUDE;
+      static int_ MaxChargeMagnitude;
       
       /*! \brief Maximum number of degenerate score results to calculate.
        *  \details Optimisation algorithms are capable to returning multiple
@@ -276,7 +276,7 @@ namespace indigox::algorithm {
        *  a correct minimum. Large values may result in large amounts of memory
        *  and computational time being required. If set to 0, all results will
        *  be returned. Default value is 64. */
-      static uint_ MAXIMUM_RESULT_COUNT;
+      static uint_ MaxNumResults;
       
       /*! \brief Set of elements for which scores are available.
        *  \details If a molecule contains elements not in this list, the
@@ -285,7 +285,7 @@ namespace indigox::algorithm {
        *  set if they have scores available. The default set of elements, given
        *  the default assignment score file, is: H, C, N, O, S, P, F, Cl, and
        *  Br. */
-      static std::set<Element> ALLOWED_ELEMENTS;
+      static std::set<Element> AllowedElements;
     };
     
   public:
@@ -293,7 +293,7 @@ namespace indigox::algorithm {
    
   private:
     /*! \brief Normal constructor. */
-    IXElectronAssigner(const Molecule& mol);
+    IXElectronAssigner(const Molecule& mol) : _mol(mol) { }
     
   public:
     /*! \brief Run the electron assignment.
@@ -328,8 +328,11 @@ namespace indigox::algorithm {
       return _algo->ApplyAssignment(idx);
     }
     
+    inline size_ GetOptimalCount() const { return _algo->GetOptimalCount(); }
+    inline score_t GetOptimisedScore() const { return _algo->GetOptimisedScore(); }
+    
   private:
-    //! \brief Reference to the currently assigned molecule.
+    //! \brief Reference to the assigned molecule.
     _Molecule _mol;
     //! \brief Assignment algorithm
     std::unique_ptr<AssignAlgorithm> _algo;
@@ -341,7 +344,7 @@ namespace indigox::algorithm {
   };
   
   //! \brief Type for the enum of available assignment algorithms
-  using AssignerAlgorithm = IXElectronAssigner::Algorithm;
+  using AssignerAlgorithm = IXElectronAssigner::AssignerAlgorithm;
   
   /*! \brief Create an ElectronAssigner.
    *  \param m the molecule this electron assigner is for.
