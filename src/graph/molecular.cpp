@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <limits>
 
 #include <indigox/classes/atom.hpp>
@@ -16,26 +17,41 @@ namespace indigox::graph {
     MGVertex u = GetVertex(source);
     MGVertex v = GetVertex(target);
     MGEdge e = MGEdge(new IXMGEdge(bnd));
-    _edges.emplace(bnd, e);
+    _bn2e.emplace(bnd, e);
+    _e.emplace_back(e);
+    _n[u].emplace_back(v);
+    _n[v].emplace_back(u);
     _g.AddEdge(u.get(), v.get(), e.get());
     return e;
   }
   
   MGVertex IXMolecularGraph::AddVertex(const Atom atm) {
-    _verts.emplace(atm, MGVertex(new IXMGVertex(atm)));
-    _g.AddVertex(_verts.at(atm).get());
-    return _verts.at(atm);
+    MGVertex v = MGVertex(new IXMGVertex(atm));
+    _at2v.emplace(atm, v);
+    _v.emplace_back(v);
+    _n.emplace(v, std::vector<MGVertex>());
+    _g.AddVertex(v.get());
+    return v;
   }
   
   void IXMolecularGraph::Clear() {
     _g.Clear();
-    _verts.clear();
-    _edges.clear();
+    _at2v.clear();
+    _bn2e.clear();
+    _v.clear();
+    _e.clear();
+    _n.clear();
+    _c.clear();
   }
   
   void IXMolecularGraph::RemoveEdge(const MGEdge e) {
     _g.RemoveEdge(e.get());
-    _edges.erase(e->GetBond());
+    _bn2e.erase(e->GetBond());
+    _e.erase(std::find(_e.begin(), _e.end(), e));
+    MGVertex u = _at2v[e->GetBond()->GetSourceAtom()];
+    MGVertex v = _at2v[e->GetBond()->GetSourceAtom()];
+    _n[u].erase(std::find(_n[u].begin(), _n[u].end(), v));
+    _n[v].erase(std::find(_n[v].begin(), _n[v].end(), u));
   }
   
   void IXMolecularGraph::RemoveEdge(const MGVertex u, const MGVertex v) {
@@ -43,11 +59,12 @@ namespace indigox::graph {
   }
   
   void IXMolecularGraph::RemoveVertex(const MGVertex v) {
-    std::vector<IXMGVertex*> nbrs;
-    _g.GetNeighbours(v.get(), nbrs);
-    for (auto n : nbrs) RemoveEdge(v, n->shared_from_this());
+    std::vector<MGVertex> nbrs(_n[v].begin(), _n[v].end());
+    for (MGVertex n : nbrs) RemoveEdge(v, n);
     _g.RemoveVertex(v.get());
-    _verts.erase(v->GetAtom());
+    _at2v.erase(v->GetAtom());
+    _v.erase(std::find(_v.begin(), _v.end(), v));
+    _n.erase(v);
   }
   
   size_ IXMolecularGraph::Degree(const MGVertex v) const {
@@ -62,12 +79,12 @@ namespace indigox::graph {
   
   MGEdge IXMolecularGraph::GetEdge(const Bond bnd) const {
     if (!HasEdge(bnd)) return MGEdge();
-    return _edges.at(bnd);
+    return _bn2e.at(bnd);
   }
   
   MGVertex IXMolecularGraph::GetVertex(const Atom atm) const {
     if (!HasVertex(atm)) return MGVertex();
-    return _verts.at(atm);
+    return _at2v.at(atm);
   }
   
   MGVertex IXMolecularGraph::GetSource(const MGEdge e) const {
@@ -87,46 +104,22 @@ namespace indigox::graph {
     return {res.first->shared_from_this(), res.second->shared_from_this()};
   }
   
-  std::pair<IXMolecularGraph::VertIter, IXMolecularGraph::VertIter>
-  IXMolecularGraph::GetVertices() {
-    _vert_access.clear(); _vert_access.reserve(NumVertices());
-    std::vector<IXMGVertex*> vert_itrs; _g.GetVertices(vert_itrs);
-    for (auto& i : vert_itrs) _vert_access.emplace_back(i->shared_from_this());
-    return {_vert_access.cbegin(), _vert_access.cend()};
-  }
-  
-  std::pair<IXMolecularGraph::EdgeIter, IXMolecularGraph::EdgeIter>
-  IXMolecularGraph::GetEdges() {
-    _edge_access.clear(); _edge_access.reserve(NumEdges());
-    std::vector<IXMGEdge*> edge_itrs; _g.GetEdges(edge_itrs);
-    for (auto i : edge_itrs) _edge_access.emplace_back(i->shared_from_this());
-    return {_edge_access.cbegin(), _edge_access.cend()};
-  }
-  
-  std::pair<IXMolecularGraph::NbrsIter, IXMolecularGraph::NbrsIter>
-  IXMolecularGraph::GetNeighbours(const MGVertex v) {
-    _nbrs_access.clear();
-    if (HasVertex(v)) {
-      std::vector<IXMGVertex*> nbrs; _g.GetNeighbours(v.get(), nbrs);
-      _nbrs_access.reserve(nbrs.size());
-      for (auto i : nbrs) _nbrs_access.emplace_back(i->shared_from_this());
-    }
-    return {_nbrs_access.cbegin(), _nbrs_access.cend()};
-  }
   
   std::pair<IXMolecularGraph::CompIter, IXMolecularGraph::CompIter>
   IXMolecularGraph::GetConnectedComponents() {
-    _components.clear();
+    _c.clear();
     std::vector<std::vector<IXMGVertex*>> ptr_components;
     size_ num = _g.ConnectedComponents(ptr_components);
-    _components.reserve(num);
+    _c.reserve(num);
     for (auto component : ptr_components) {
-      _components.push_back(std::vector<MGVertex>());
-      _components.back().reserve(component.size());
+      std::vector<MGVertex> c;
+      c.reserve(component.size());
       for (IXMGVertex* v : component)
-        _components.back().emplace_back(v->shared_from_this());
+        c.emplace_back(v->shared_from_this());
+      _c.emplace_back(c.begin(), c.end());
     }
-    return {_components.cbegin(), _components.cend()};
+    return {_c.cbegin(), _c.cend()};
   }
   
 }
+

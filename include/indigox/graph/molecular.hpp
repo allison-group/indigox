@@ -2,12 +2,17 @@
 #ifndef INDIGOX_GRAPH_MOLECULAR_HPP
 #define INDIGOX_GRAPH_MOLECULAR_HPP
 
+#include <iterator>
 #include <map>
 #include <memory>
 #include <set>
 #include <stdexcept>
+#include <vector>
+
+#include <EASTL/vector_map.h>
 
 #include "base_graph.hpp"
+#include "../algorithm/graph/cycles.hpp"
 #include "../utils/numerics.hpp"
 
 // Forward declares
@@ -104,14 +109,22 @@ namespace indigox::graph {
     friend class indigox::test::IXMolecularGraph;
     //! \brief Type of the underlying IXGraphBase
     using graph_type = IXGraphBase<IXMGVertex, IXMGEdge>;
+    //! \brief Container for vertices
+    using VertContain = std::vector<MGVertex>;
+    //! \brief Container for edges
+    using EdgeContain = std::vector<MGEdge>;
+    
+  public:
+    //! \brief Container for components
+    using Component_t = Component<MGVertex>;
     //! \brief Type of the iterator returned by GetEdges() method.
-    using EdgeIter = std::vector<MGEdge>::const_iterator;
+    using EdgeIter = EdgeContain::const_iterator;
     //! \brief Type of the iterator returned by GetVertices() method.
-    using VertIter = std::vector<MGVertex>::const_iterator;
+    using VertIter = VertContain::const_iterator;
     //! \brief Type of the iterator returned by GetNeighbours() method.
     using NbrsIter = std::vector<MGVertex>::const_iterator;
     //! \brief Type of the iterator over components of the graph
-    using CompIter = std::vector<std::vector<MGVertex>>::const_iterator;
+    using CompIter = std::vector<Component_t>::const_iterator;
     
   public:
     IXMolecularGraph() = delete;  // no default constructor
@@ -188,23 +201,22 @@ namespace indigox::graph {
     MGVertex GetVertex(const Atom atm) const;
     
     /*! \brief Get iterators across the edges of the graph.
-     *  \details Iterators are valid for the graph state at the point the
-     *  method was called. Subsequent method calls will invalidate all
-     *  previous iterators.
      *  \return a pair of iterators marking the begining and end of the
      *  edges in the graph. */
-    std::pair<EdgeIter, EdgeIter> GetEdges();
+    inline std::pair<EdgeIter, EdgeIter> GetEdges() const {
+      return std::make_pair(_e.begin(), _e.end());
+    }
     
     /*! \brief Get iterator access to the neighbours of a vertex.
-     *  \details Iterators are valid for the graph state at the point the
-     *  method was called. Any subsequent method calls will invalidate all
-     *  previously returned iterators, regardless of what vertex they were
-     *  called for. If the vertex is not a part of the graph, the range will
+     *  \details If the vertex is not a part of the graph, the range will
      *  be empty.
      *  \param v the vertex to get the neighbours of.
      *  \return a pair of iterators marking the beginning and end of the
      *  neighbours of v. */
-    std::pair<NbrsIter, NbrsIter> GetNeighbours(const MGVertex v);
+    inline std::pair<NbrsIter, NbrsIter> GetNeighbours(const MGVertex v) const {
+      if (!HasVertex(v)) return std::make_pair(_v.end(), _v.end());
+      else return std::make_pair(_n.at(v).begin(), _n.at(v).end());
+    }
     
     /*! \brief Get the source vertex of an edge.
      *  \details If the edge is not a part of the graph, the returned vertex
@@ -228,19 +240,18 @@ namespace indigox::graph {
     std::pair<MGVertex, MGVertex> GetVertices(const MGEdge e) const;
     
     /*! \brief Get iterators across the vertices of the graph.
-     *  \details Iterators are valid for the graph state at the point the
-     *  method was called. Subsequent method calls  will invalidate all
-     *  previous iterators.
      *  \return a pair of iterators marking the begining and end of the
      *  vertices in the graph. */
-    std::pair<VertIter, VertIter> GetVertices();
+    inline std::pair<VertIter, VertIter> GetVertices() const {
+      return std::make_pair(_v.begin(), _v.end());
+    }
     
     /*! \brief Check if the graph has a vertex associated with an atom.
      *  \param v that atom to check for.
      *  \return if the atom is associated with the graph or not. */
     inline bool HasVertex(const Atom v) const {
       if (!v) return false;
-      return _verts.find(v) != _verts.end();
+      return _at2v.find(v) != _at2v.end();
     }
     
     /*! \brief Check if the graph has a vertex.
@@ -256,7 +267,7 @@ namespace indigox::graph {
      *  \return if the bond is associated with the graph or not. */
     inline bool HasEdge(const Bond e) const {
       if (!e) return false;
-      return _edges.find(e) != _edges.end();
+      return _bn2e.find(e) != _bn2e.end();
     }
     
     /*! \brief Check if the graph has a edge.
@@ -305,17 +316,17 @@ namespace indigox::graph {
     //! \brief Underlying graph
     graph_type _g;
     //! \brief Map Atoms to their corresponding MGVertex
-    std::map<Atom, MGVertex> _verts;
+    eastl::vector_map<Atom, MGVertex> _at2v;
     //! \brief Map Bonds to their corresponding MGEdge
-    std::map<Bond, MGEdge> _edges;
+    eastl::vector_map<Bond, MGEdge> _bn2e;
     //! \brief Container for giving iterator access to all vertices in graph.
-    std::vector<MGVertex> _vert_access;
+    VertContain _v;
     //! \brief Container for giving iterator access to all edges in graph.
-    std::vector<MGEdge> _edge_access;
+    EdgeContain _e;
     //! \brief Container for neighbours of a vertex
-    std::vector<MGVertex> _nbrs_access;
+    std::map<MGVertex, VertContain> _n;
     //! \brief Container for components of the graph
-    std::vector<std::vector<MGVertex>> _components;
+    std::vector<const Component_t> _c;
     
   };
 }  // namespace indigox::graph
