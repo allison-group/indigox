@@ -26,16 +26,16 @@ namespace indigox::algorithm {
   using AAlgo = IXElectronAssigner::AssignAlgorithm;
   
   // Default states for the ElectronAssigner settings
-  AssignerAlgorithm settings::ALGORITHM = AssignerAlgorithm::LOCAL_OPTIMISATION;
-  Option settings::ELECTRON_PAIRS = Option::Default;
-  Option settings::CHARGED_CARBON = Option::Default;
-  Option settings::PREASSIGN = Option::Default;
-  string_ settings::ASSIGNMENT_SCORE_FILE = "assignment_scores.dat";
-  score_t settings::INFINITY_VALUE = std::numeric_limits<score_t>::max();
-  uint_ settings::MAXIMUM_BOND_ORDER = 3;
-  int_ settings::MAXIMUM_CHARGE_MAGNITUDE = -1;
-  uint_ settings::MAXIMUM_RESULT_COUNT = 64;
-  std::set<Element> settings::ALLOWED_ELEMENTS = {
+  AssignerAlgorithm settings::Algorithm = AssignerAlgorithm::AStar;
+  Option settings::ElectronPairs = Option::Default;
+  Option settings::ChargedCarbon = Option::Default;
+  Option settings::Preassign = Option::Default;
+  string_ settings::ScoreFile = "assignment_scores.dat";
+  score_t settings::Infinity = std::numeric_limits<score_t>::max();
+  uint_ settings::MaxBondOrder = 3;
+  int_ settings::MaxChargeMagnitude = -1;
+  uint_ settings::MaxNumResults = 64;
+  std::set<Element> settings::AllowedElements = {
     GetPeriodicTable()->GetElement("H"),
     GetPeriodicTable()->GetElement("C"),
     GetPeriodicTable()->GetElement("N"),
@@ -48,19 +48,19 @@ namespace indigox::algorithm {
   };
   
   AAlgo::AssignAlgorithm(const ScoreTable& t)
-  : _mol(), _g(), _locs(), _num_e(0), _opts(0), _inf(settings::INFINITY_VALUE),
+  : _mol(), _g(), _locs(), _num_e(0), _opts(0), _inf(settings::Infinity),
   _min_score(_inf), _limit(_inf), _results(),
-  _table(t), _max_charge(settings::MAXIMUM_CHARGE_MAGNITUDE),
-  _max_results(settings::MAXIMUM_RESULT_COUNT), _previous_mask(0)
+  _table(t), _max_charge(settings::MaxChargeMagnitude),
+  _max_results(settings::MaxNumResults), _previous_mask(0)
   {
-    if (settings::ELECTRON_PAIRS == Option::Yes
-        || settings::ELECTRON_PAIRS == Option::Default)
+    if (settings::ElectronPairs == Option::Yes
+        || settings::ElectronPairs == Option::Default)
       _opts.set(__pairs);
-    if (settings::CHARGED_CARBON == Option::Yes
-        || settings::CHARGED_CARBON == Option::Default)
+    if (settings::ChargedCarbon == Option::Yes
+        || settings::ChargedCarbon == Option::Default)
       _opts.set(__charged_c);
-    if (settings::PREASSIGN == Option::Yes
-        || settings::PREASSIGN == Option::Default)
+    if (settings::Preassign == Option::Yes
+        || settings::Preassign == Option::Default)
       _opts.set(__preplace);
   }
   
@@ -80,9 +80,9 @@ namespace indigox::algorithm {
       count -= (*its.first)->GetPreAssignedCount();
     
     // Set if using pairs or not
-    if (settings::ELECTRON_PAIRS == Option::Auto && count % 2)
+    if (settings::ElectronPairs == Option::Auto && count % 2)
       _opts.reset(__pairs);
-    else if (settings::ELECTRON_PAIRS == Option::Auto)
+    else if (settings::ElectronPairs == Option::Auto)
       _opts.set(__pairs);
     
     // Pairs sanity checl
@@ -147,7 +147,7 @@ namespace indigox::algorithm {
       int_ v_missing = v_oct - v_bonded;
       
       indigox::graph::AGVertex av = _g->GetVertex(e);
-      uint_ missing = 2 * settings::MAXIMUM_BOND_ORDER;
+      uint_ missing = 2 * settings::MaxBondOrder;
       if (missing < av->GetPreAssignedCount())
         throw std::runtime_error("Too many pre-assigned electrons");
       missing -= av->GetPreAssignedCount();
@@ -159,7 +159,7 @@ namespace indigox::algorithm {
       }
     }
     // Final range sanity check
-    if (_num_e < _locs.size())
+    if (_num_e > _locs.size())
       throw std::runtime_error("More to assign than places to put.");
     
     // Set the initial bitset value
@@ -334,13 +334,13 @@ namespace indigox::algorithm {
   void IXElectronAssigner::LoadScoreTable() {
     string_ ddir_path = string_(IX_DATA_DIRECTORY);
     if (ddir_path.back() != '/') ddir_path.append("/");
-    ddir_path.append(settings::ASSIGNMENT_SCORE_FILE);
+    ddir_path.append(settings::ScoreFile);
     utils::FileReader file(ddir_path);
     std::vector<string_> lines;
     try {
       file.GetAllLines(lines);
     } catch (const std::invalid_argument& e) {
-      file.SetFilePath(settings::ASSIGNMENT_SCORE_FILE);
+      file.SetFilePath(settings::ScoreFile);
       file.GetAllLines(lines);
     }
     
@@ -398,9 +398,8 @@ namespace indigox::algorithm {
         if (s < global_min) global_min = s;
       }
     }
-    
     for (auto eets_quad : tmp_dat) {
-      if (eets_quad.second == PT.GetUndefined()) {
+      if (!(*eets_quad.second)) {
         key_t k = eets_quad.first->GetAtomicNumber();
         k += std::abs(eets_quad.third) << 8;
         if (eets_quad.third < 0) k += 1 << 15;
@@ -413,7 +412,7 @@ namespace indigox::algorithm {
         _table.emplace(k, eets_quad.fourth - local_bond_min.at(ee));
       }
     }
-    _current_file = settings::ASSIGNMENT_SCORE_FILE;
+    _current_file = settings::ScoreFile;
   }
   
   size_ IXElectronAssigner::Run() {
@@ -422,10 +421,10 @@ namespace indigox::algorithm {
     Molecule mol = _mol.lock();
     if (!mol) throw std::runtime_error("Molecule is invalid");
     
-    auto allow_end = settings::ALLOWED_ELEMENTS.cend();
+    auto allow_end = settings::AllowedElements.cend();
     for (auto its = mol->GetAtoms(); its.first != its.second; ++its.first) {
       Element e = (*its.first)->GetElement();
-      if (settings::ALLOWED_ELEMENTS.find(e) == allow_end)
+      if (settings::AllowedElements.find(e) == allow_end)
         throw std::runtime_error("Invalid element in molecule");
     }
     
@@ -435,40 +434,38 @@ namespace indigox::algorithm {
     static const op valid_pre = op::Yes|op::No|op::Default;
     static const op valid_lo_level = op::All|op::Some|op::Default;
     static const op valid_lo_cache = op::All|op::Some|op::None|op::Default;
-    if ((settings::ELECTRON_PAIRS & valid_pairs) != settings::ELECTRON_PAIRS)
+    if ((settings::ElectronPairs & valid_pairs) != settings::ElectronPairs)
       throw std::runtime_error("Invalid pairs option.");
-    if ((settings::CHARGED_CARBON & valid_cc) != settings::CHARGED_CARBON)
+    if ((settings::ChargedCarbon & valid_cc) != settings::ChargedCarbon)
       throw std::runtime_error("Invalid charged carbon option.");
-    if ((settings::PREASSIGN & valid_pre) != settings::PREASSIGN)
+    if ((settings::Preassign & valid_pre) != settings::Preassign)
       throw std::runtime_error("Invalid pre assign option.");
-    if (settings::MAXIMUM_BOND_ORDER == 0)
+    if (settings::MaxBondOrder == 0)
       throw std::runtime_error("Maximum bond order of 0 is invalid.");
     
-    if (Settings::ALGORITHM == Algorithm::LOCAL_OPTIMISATION) {
+    if (Settings::Algorithm == AssignerAlgorithm::LocalOptimisation) {
       using loset = IXLocalOptimisation::Settings;
       if ((loset::OPTIMISE_LEVEL & valid_lo_level) != loset::OPTIMISE_LEVEL)
         throw std::runtime_error("Invalid optimise level.");
       if ((loset::USE_CACHE & valid_lo_cache) != loset::USE_CACHE)
         throw std::runtime_error("Invalid cache usage.");
     }
-    
     // Load the score table
-    if (_table.empty() || settings::ASSIGNMENT_SCORE_FILE != _current_file)
+    if (_table.empty() || settings::ScoreFile != _current_file)
       LoadScoreTable();
     
     // Create the algorithm
-    switch (Settings::ALGORITHM) {
-      case Algorithm::LOCAL_OPTIMISATION:
+    switch (Settings::Algorithm) {
+      case AssignerAlgorithm::LocalOptimisation:
         _algo = std::make_unique<IXLocalOptimisation>(_table);
         break;
-      case Algorithm::ASTAR:
+      case AssignerAlgorithm::AStar:
         _algo = std::make_unique<IXAStarOptimisation>(_table);
         break;
       default:
         throw std::runtime_error("Unsupported optimisation algorithm");
     }
     _algo->Initalise(mol);
-    
     // Run the algorithm
     _algo->Run();
     return _algo->GetOptimalCount();
