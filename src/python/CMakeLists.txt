@@ -1,12 +1,12 @@
 SET(INDIGOX_PYTHON_INTERFACE_SRCS
     interface.cpp
     pyangle.cpp
+    pyassigner.cpp
     pyatom.cpp
     pybond.cpp
     pydihedral.cpp
     pyelement.cpp
     pymolecule.cpp
-    pyoptions.cpp
     pyperiodictable.cpp
     pymoleculargraph.cpp
     pyassignmentgraph.cpp)

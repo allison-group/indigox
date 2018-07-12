@@ -59,6 +59,9 @@ SET(INDIGOX_LIB_SRCS
 # Build the library
 ADD_LIBRARY(indigox STATIC ${INDIGOX_LIB_SRCS})
 
+# Add EASTL path to include directories
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/EASTL/include)
+
 # We provide a boost version so only use system boost if it is newer than
 # provided boost
 # Sometime I need to figure out a minimum required version for it. :S
@@ -114,8 +117,8 @@ FILE(COPY examples/python_example.py DESTINATION examples)
 INSTALL(TARGETS indigox DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Install header files. This should includes boost if the repo version is being used
-INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/include/indigox
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+#INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/include/indigox
+#        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Install data files
 INSTALL(FILES data/assignment_scores.dat
@@ -127,7 +130,7 @@ INSTALL(FILES data/assignment_scores.dat
 #        data/periodictable.txt
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 # Install documentation
-INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
+#INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
 
 # Uninstall target
 IF(NOT TARGET uninstall)
