@@ -4,6 +4,17 @@
 #include <indigox/utils/common.hpp>
 #include <indigox/utils/numerics.hpp>
 
+#include <new>
+
+void* operator new[](unsigned long size, char const*, int, unsigned int, char const*, int) {
+  return ::operator new(size);
+}
+
+void* operator new[](unsigned long size, unsigned long align, unsigned long, char const*, int, unsigned int, char const*, int) {
+  return ::operator new(size, std::align_val_t(align));
+}
+
+
 namespace indigox::utils {
   
   string_ ToUpper(const string_& s){
