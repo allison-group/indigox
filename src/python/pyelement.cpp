@@ -1,9 +1,13 @@
 #include <cstdint>
+#include <set>
 #include <sstream>
 #include <string>
 
+#include <boost/algorithm/string/join.hpp>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+#include <pybind11/stl.h>
 
 #include <indigox/python/interface.hpp>
 #include <indigox/classes/periodictable.hpp>
@@ -43,5 +47,31 @@ void GeneratePyElement(py::module& m) {
   .def("ToString", &IXElement::ToString)
   // No pickling support
   ;
+  
+  using ElementSet = std::set<Element>;
+  py::class_<ElementSet>(m, "ElementSet")
+  .def(py::init<>())
+  .def("__len__", [](const ElementSet& s) { return s.size(); })
+  .def("__iter__", [](ElementSet& s) {
+    return py::make_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
+  .def("__contains__", [](const ElementSet& s, const Element& e) {
+    return bool(s.count(e)); })
+  .def("__repr__", [](const ElementSet& s) {
+    std::vector<string_> strs;
+    strs.reserve(s.size());
+    std::stringstream ss;
+    for (Element e : s) {
+      ss << e;
+      strs.push_back(ss.str());
+      ss.str("");
+    }
+    ss << "{" << boost::join(strs, ", ") << "}";
+    return ss.str();
+  })
+  .def("clear", &ElementSet::clear)
+  .def("insert", (std::pair<ElementSet::iterator, bool> (ElementSet::*)(const Element&)) &ElementSet::insert)
+  .def("erase", (size_t (ElementSet::*)(const Element&)) &ElementSet::erase)
+  ;
+  
 }
 
