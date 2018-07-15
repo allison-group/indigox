@@ -88,7 +88,7 @@ namespace indigox {
   Element IXPeriodicTable::GetElement(const uint8_t z) const {
     if (_z_to.find(z) != _z_to.end())
       return _z_to.at(z);
-    throw std::invalid_argument("Requested element is invalid.");
+    return _null;
   }
   
   Element IXPeriodicTable::GetElement(const std::string name) const {
@@ -98,7 +98,7 @@ namespace indigox {
     if (_name_to.find(u) != _name_to.end()) {
       return _name_to.at(u);
     }
-    throw std::invalid_argument("Requested element is invalid.");
+    return _null;
   }
   
   void IXPeriodicTable::GeneratePeriodicTable() {
