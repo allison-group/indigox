@@ -53,6 +53,9 @@ namespace indigox {
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXAtom to be tested.
     friend class indigox::test::IXAtom;
+    //! \brief Friendship allows IXAtom to be serialised.
+    friend class cereal::access;
+    
   private:
     //! \brief Container for storing IXBond references.
     using AtomBonds = std::vector<_Bond>;
@@ -83,8 +86,13 @@ namespace indigox {
      *  \param m the molecule to assign this atom to. */
     IXAtom(Molecule m);
     
+    
+    IXAtom() = default;  // default constructor for serialise access
+    
+    template <typename Archive>
+    void Serialise(Archive& archive, const uint32_t version);
+    
   public:
-    IXAtom() = delete;  // no default constructor
     
     //! \brief Destructor
     ~IXAtom() { };

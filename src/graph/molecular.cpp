@@ -3,10 +3,52 @@
 
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
+#include <indigox/classes/molecule.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/utils/numerics.hpp>
+#include <indigox/utils/serialise.hpp>
 
 namespace indigox::graph {
+  
+  template <typename Archive>
+  void IXMGVertex::Serialise(Archive &archive, const uint32_t) {
+    archive(INDIGOX_SERIAL_NVP("source_atom", _atom));
+  }
+  
+  template <typename Archive>
+  void IXMGEdge::Serialise(Archive &archive, const uint32_t) {
+    archive(INDIGOX_SERIAL_NVP("source_bond", _bond));
+  }
+  
+  template <typename Archive>
+  void IXMolecularGraph::Serialise(Archive &archive, const uint32_t) {
+    archive(INDIGOX_SERIAL_NVP("source_molecule", _source),
+            INDIGOX_SERIAL_NVP("vertices", _v),
+            INDIGOX_SERIAL_NVP("edges", _e));
+    
+    if (INDIGOX_IS_INPUT_ARCHIVE) {
+      // Rebuild the underlying graph
+      for (MGVertex v : _v) {
+        _at2v.emplace(v->GetAtom(), v);
+        _n.emplace(v, VertContain());
+        _g.AddVertex(v.get());
+      }
+      for (MGEdge e : _e) {
+        Bond b = e->GetBond();
+        _bn2e.emplace(b, e);
+        MGVertex u = _at2v.at(b->GetSourceAtom());
+        MGVertex v = _at2v.at(b->GetTargetAtom());
+        _n[u].emplace_back(v);
+        _n[v].emplace_back(u);
+        _g.AddEdge(u.get(), v.get(), e.get());
+      }
+    }
+      
+  }
+  
+  INDIGOX_SERIALISE(IXMGVertex);
+  INDIGOX_SERIALISE(IXMGEdge);
+  INDIGOX_SERIALISE(IXMolecularGraph);
   
   MGEdge IXMolecularGraph::AddEdge(const Bond bnd) {
     Atom source = bnd->GetSourceAtom();
@@ -29,7 +71,7 @@ namespace indigox::graph {
     MGVertex v = MGVertex(new IXMGVertex(atm));
     _at2v.emplace(atm, v);
     _v.emplace_back(v);
-    _n.emplace(v, std::vector<MGVertex>());
+    _n.emplace(v, VertContain());
     _g.AddVertex(v.get());
     return v;
   }

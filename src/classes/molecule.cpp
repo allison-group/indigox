@@ -15,10 +15,46 @@
 #include <indigox/utils/counter.hpp>
 #include <indigox/utils/numerics.hpp>
 #include <indigox/utils/quad.hpp>
+#include <indigox/utils/serialise.hpp>
 #include <indigox/utils/triple.hpp>
 
 
 namespace indigox {
+  
+  template <typename Archive>
+  void IXMolecule::Serialise(Archive &archive, const uint32_t) {
+    if (INDIGOX_IS_INPUT_ARCHIVE) Init();   // needed???
+    
+    if (INDIGOX_IS_OUTPUT_ARCHIVE) {
+      // Change tags to be incremental
+      size_ t = 0;
+      for (auto at = GetAtoms(); at.first != at.second; ++at.first, ++t)
+        (*at.first)->SetTag(t);
+      t = 0;
+      for (auto bn = GetBonds(); bn.first != bn.second; ++bn.first, ++t)
+        (*bn.first)->SetTag(t);
+      t = 0;
+      for (auto an = GetAngles(); an.first != an.second; ++an.first, ++t)
+        (*an.first)->SetTag(t);
+      t = 0;
+      for (auto dh = GetDihedrals(); dh.first != dh.second; ++dh.first, ++t)
+        (*dh.first)->SetTag(t);
+    }
+    
+    
+    archive(INDIGOX_SERIAL_NVP("atoms", _atms),
+            INDIGOX_SERIAL_NVP("bonds", _bnds),
+            INDIGOX_SERIAL_NVP("angles", _angs),
+            INDIGOX_SERIAL_NVP("dihedrals", _dhds),
+            INDIGOX_SERIAL_NVP("name", _name),
+            INDIGOX_SERIAL_NVP("molecular_charge", _q),
+            INDIGOX_SERIAL_NVP("emergent_property_mask", _emerge),
+            INDIGOX_SERIAL_NVP("molecular_graph", _g),
+            INDIGOX_SERIAL_NVP("cached_formula", _formula_cache)
+            );
+  }
+  
+  INDIGOX_SERIALISE(IXMolecule);
   
   void IXMolecule::SetPropertyModified(Property prop) {
     std::bitset<static_cast<size_t>(Emergent::NUM_EMERGENTS)> mask(0);

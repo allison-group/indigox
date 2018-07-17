@@ -8,6 +8,15 @@
 
 #include "numerics.hpp"
 
+// forward definitions of serilisation stuff
+namespace cereal {
+  class access;
+  class PortableBinaryInputArchive;
+  class PortableBinaryOutputArchive;
+  class JSONInputArchive;
+  class JSONOutputArchive;
+}
+
 //! utils namespace for useful utility functions
 namespace indigox::utils {
   

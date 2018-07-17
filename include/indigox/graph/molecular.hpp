@@ -13,6 +13,7 @@
 
 #include "base_graph.hpp"
 #include "../algorithm/graph/cycles.hpp"
+#include "../utils/common.hpp"
 #include "../utils/numerics.hpp"
 
 // Forward declares
@@ -60,8 +61,10 @@ namespace indigox::graph {
   class IXMGVertex : public std::enable_shared_from_this<IXMGVertex> {
     //! \brief Friendship allows IXMolecularGraph to add vertices.
     friend class IXMolecularGraph;
+    //! \brief Friendship allows for serialisation
+    friend class cereal::access;
+    
   public:
-    IXMGVertex() = delete;  // no default constructor
     /*! \brief Get the atom associated with this vertex.
      *  \return the atom associated with this vertex, if it is still alive. */
     inline Atom GetAtom() const { return _atom.lock(); }
@@ -72,6 +75,11 @@ namespace indigox::graph {
      *  \param a the atom to associate with this vertex. */
     IXMGVertex(Atom a) : _atom(a) { }
     
+    IXMGVertex() = default;  // default constructor for serialisation
+    
+    template <typename Archive>
+    void Serialise(Archive& archive, const uint32_t version);
+    
     //! \brief Reference to the atom this edge is associated with.
     _Atom _atom;
   };
@@ -80,8 +88,9 @@ namespace indigox::graph {
   class IXMGEdge : public std::enable_shared_from_this<IXMGEdge> {
     //! \brief Friendship allows IXMolecularGraph to add edges.
     friend class IXMolecularGraph;
+    //! \brief Friendship allows for serialisation
+    friend class cereal::access;
   public:
-    IXMGEdge() = delete;  // no default constructor
     /*! \brief Get the bond associated with this edge.
      *  \return the bond associated with this edge, if it is still alive. */
     Bond GetBond() const { return _bond.lock(); }
@@ -91,6 +100,11 @@ namespace indigox::graph {
      *  create IXMGEdge instances.
      *  \param b the bond to associate with this edge. */
     IXMGEdge(Bond b) : _bond(b) { }
+    
+    IXMGEdge() = default;  // default constructor for serialisation
+    
+    template <typename Archive>
+    void Serialise(Archive& archive, const uint32_t version);
     
     //! \brief Reference to the bond this edge is associated with.
     _Bond _bond;
@@ -107,6 +121,9 @@ namespace indigox::graph {
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXMolecularGraph to be tested.
     friend class indigox::test::IXMolecularGraph;
+    //! \brief Friendship allows serialisation
+    friend class cereal::access;
+    
     //! \brief Type of the underlying IXGraphBase
     using graph_type = IXGraphBase<IXMGVertex, IXMGEdge>;
     //! \brief Container for vertices
@@ -126,13 +143,15 @@ namespace indigox::graph {
     //! \brief Type of the iterator over components of the graph
     using CompIter = std::vector<Component_t>::const_iterator;
     
-  public:
-    IXMolecularGraph() = delete;  // no default constructor
-    
   private:
     /*! \brief Construct with a molecule.
      *  \param mol the molecule to reference to. */
     IXMolecularGraph(const Molecule mol) : _source(mol), _g() { }
+    
+    IXMolecularGraph() = default;  // default constructor for serialisation
+    
+    template <typename Archive>
+    void Serialise(Archive& archive, const uint32_t version);
     
     // modifcation methods are private so that the structure of the graph can
     // be controlled only by the molecule owning it.

@@ -61,6 +61,7 @@ ADD_LIBRARY(indigox STATIC ${INDIGOX_LIB_SRCS})
 
 # Add EASTL path to include directories
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/EASTL/include)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/cereal/include)
 
 # We provide a boost version so only use system boost if it is newer than
 # provided boost

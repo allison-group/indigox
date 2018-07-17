@@ -2,6 +2,7 @@
 #include <array>
 #include <memory>
 
+#include "../utils/common.hpp"
 #include "../utils/counter.hpp"
 #include "../utils/triple.hpp"
 
@@ -32,6 +33,8 @@ namespace indigox {
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXAngle to be tested.
     friend class indigox::test::IXAngle;
+    //! \brief Friendship allows serialisation.
+    friend class cereal::access;
     
   private:
     //! \brief Container for storing IXAtom reference assigned to an IXAngle.
@@ -50,8 +53,13 @@ namespace indigox {
      *  \param m the molecule to assign the angle to. */
     IXAngle(Atom a, Atom b, Atom c, Molecule m);
     
+    
+    IXAngle() = default;  // default constructor for serialise access
+    
+    template <typename Archive>
+    void Serialise(Archive& archive, const uint32_t version);
+    
   public:
-    IXAngle() = delete;   // no default constructor
     
     //! \brief Destructor
     ~IXAngle() { }

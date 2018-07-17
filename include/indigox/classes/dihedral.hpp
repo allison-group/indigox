@@ -33,6 +33,8 @@ namespace indigox {
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXDihedral to be tested.
     friend class indigox::test::IXDihedral;
+    //! \brief Friendship allows serialisation
+    friend class cereal::access;
     
   private:
     //! \brief Container for storing IXAtom references assigned to an IXDihedral.
@@ -50,9 +52,12 @@ namespace indigox {
      *  \param m the molecule to assign the angle to. */
     IXDihedral(Atom a, Atom b, Atom c, Atom d, Molecule m);
     
-  public:
-    IXDihedral() = delete;    // no default constructor
+    IXDihedral() = default;  // default constructor for serialise access
     
+    template <typename Archive>
+    void Serialise(Archive& archive, const uint32_t version);
+    
+  public:
     //! \brief Destructor
     ~IXDihedral() { }
     

@@ -34,6 +34,8 @@ namespace indigox {
     friend Molecule CreateMolecule();
     //! \brief Friendship allows IXMolecule internals to be tested.
     friend class indigox::test::IXMolecule;
+    //! \brief Friendship allows serialisation
+    friend class cereal::access;
     
   private:
     /*! \brief Container for storing IXAtom instances.
@@ -95,6 +97,9 @@ namespace indigox {
      *  a Molecule for construction, which can not be done until the IXMolecule
      *  has completed construction. */
     void Init();
+    
+    template <typename Archive>
+    void Serialise(Archive& archive, const uint32_t version);
     
   public:
     //! \brief Destructor
