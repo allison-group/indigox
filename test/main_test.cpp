@@ -1,21 +1,16 @@
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE indigoX
-#include <boost/test/unit_test.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <indigox/utils/doctest_proxy.hpp>
 
-#include <indigox/utils/counter.hpp>
 #include <indigox/utils/common.hpp>
+#include <indigox/utils/counter.hpp>
 
-using namespace indigox::utils;
-
-
-BOOST_AUTO_TEST_CASE(ixcountableobject) {
-  auto int_a = IXCountableObject<int>();
-  auto int_b = IXCountableObject<int>();
-  auto float_a = IXCountableObject<float>();
-  auto float_b = IXCountableObject<float>();
-  
-  BOOST_TEST(int_a.GetUniqueID() + 1 == int_b.GetUniqueID());
-  BOOST_TEST(float_a.GetUniqueID() + 1 == float_b.GetUniqueID());
-  BOOST_TEST(int_a.GetUniqueID() == float_a.GetUniqueID());
-}
-
+//test_case("IXCountableObject counts correctly") {
+//  auto int_a = indigox::utils::IXCountableObject<int>();
+//  auto int_b = indigox::utils::IXCountableObject<int>();
+//  auto float_a = indigox::utils::IXCountableObject<float>();
+//  auto float_b = indigox::utils::IXCountableObject<float>();
+//  
+//  check(int_a.GetUniqueID() + 1 == int_b.GetUniqueID());
+//  check(float_a.GetUniqueID() + 1 == float_b.GetUniqueID());
+//  check(int_a.GetUniqueID() == float_a.GetUniqueID());
+//}

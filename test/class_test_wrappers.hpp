@@ -154,10 +154,6 @@ namespace indigox::test {
     inline string_ ToString() { return x.ToString(); }
   };
   
-  struct IXElement {
-    indigox::IXElement e;
-    
-  };
   
   struct IXMolecule {
     Molecule m; // needs to be a shared_ptr due to MolecularGraph ownership.
@@ -237,11 +233,10 @@ namespace indigox::test {
     // Container contains
     inline size_ AtomCapacity() { return m->_atms.capacity(); }
     inline size_ BondCapacity() { return m->_bnds.capacity(); }
+    inline size_ CurrentAngleCount() { return m->_angs.size(); }
+    inline size_ CurrentDihedralCount() { return m->_dhds.size(); }
   };
   
-  struct IXPeriodicTable {
-    indigox::IXPeriodicTable t;
-  };
   
   struct IXAssignmentGraph {
     graph::IXAssignmentGraph g;

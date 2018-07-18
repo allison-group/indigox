@@ -12,6 +12,11 @@
 
 namespace indigox {
   
+  namespace test {
+    struct TestPeriodicTable;
+    struct TestElement;
+  }
+  
   class IXPeriodicTable;
   class IXElement;
   
@@ -33,6 +38,9 @@ namespace indigox {
    *  using the GetInstance() method. Like most other classes in the indigoX
    *  library, usage is primarily intended through the use of smart pointers. */
   class IXPeriodicTable {
+    using element_type = Element;
+    using atomic_number_map_type = std::map<uchar_, element_type>;
+    using atomic_symbol_map_type = std::map<string_, element_type>;
     
   public:
     /*! \brief Get the element with the given atomic number.
@@ -40,7 +48,7 @@ namespace indigox {
      *  \returns the requested element.
      *  \throw std::invalid_argument If the requested atomic number does not exist
      *  within the PeriodicTable. */
-    Element GetElement(const uchar_ z) const;
+    Element GetElement(const uchar_ z) const noexcept;
     
     /*! \brief Get the element with the given name or symbol.
      *  \details Name based matches are made ignoring case. Symbol matches are
@@ -49,19 +57,21 @@ namespace indigox {
      *  \returns the requested element.
      *  \throw std::invalid_argument If the requested name or symbol does not
      *  exist within the PeriodicTable. */
-    Element GetElement(const string_ name) const;
+    Element GetElement(const string_ name) const noexcept;
     
     /*! \brief Get the element with the given atomic number.
      *  \param z the atomic number of the element to get.
      *  \return the requested element.
      *  \see IXPeriodicTable::GetElement(const uint8_t) const */
-    Element operator[](const uchar_ z) const { return GetElement(z); }
+    Element operator[](const uchar_ z) const noexcept { return GetElement(z); }
     
     /*! \brief Get the element with the given name or symbol.
      *  \param name the name or symbol of the element to get.
      *  \return the requested element.
      *  \see IXPeriodicTable::GetElement(const std::string) const */
-    Element operator[](const string_ name) const { return GetElement(name); }
+    Element operator[](const string_ name) const noexcept {
+      return GetElement(name);
+    }
     
     /*! \brief Get the element for use when an element is not defined.
      *  \details As there is not much point in an undefined element, this
@@ -93,14 +103,17 @@ namespace indigox {
     
     //! Friendship allows for access to a single IXPeriodicTable instance.
     friend PeriodicTable GetPeriodicTable();
+    
+    //! Friendship allws for testing implementation
+    friend struct indigox::test::TestPeriodicTable;
   
   private:
     //! Undefined element.
-    Element _null;
+    element_type _null;
     //! Map atomic numbers to elements.
-    std::map<uchar_, Element> _z_to;
+    atomic_number_map_type _z_to;
     //! Map symbol and name to elements.
-    std::map<string_, Element> _name_to;
+    atomic_symbol_map_type _name_to;
   };
   
   /*! \class IXElement periodictable.hpp indigox/classes/periodictable.hpp
@@ -115,9 +128,13 @@ namespace indigox {
    *  the use of smart pointers.
    */
   class IXElement {
-  public:
-    //! Allow IXPeriodicTable to create new IXElement instances.
+    //! Friendship allows IXPeriodicTable to create new IXElement instances.
     friend class IXPeriodicTable;
+    
+    //! Friendship allows testing
+    friend struct indigox::test::TestElement;
+    
+  public:
     
     // No default constructor provided
     IXElement() = delete;
@@ -184,10 +201,6 @@ namespace indigox {
      *  \return textutal representation of the element. */
     string_ ToString() const;
     
-    //! \cond
-    operator bool() { return bool(_Z); }
-    //! \endcond
-    
   private:
     /*! \property _nme
      *  \brief Element name.
@@ -246,8 +259,11 @@ namespace indigox {
    *  \param os output stream to print to.
    *  \param e Element to print.
    *  \return the output stream. */
-  inline std::ostream& operator<<(std::ostream& os, Element e) {
-    return e ? (os << "Element(" << e->GetName() << ")") : os;
+  inline std::ostream& operator<<(std::ostream& os, const IXElement& e) {
+    return os << "Element(" << e.GetName() << ")";
+  }
+  inline std::ostream& operator<<(std::ostream& os, const Element& e) {
+    return e ? (os << *e) : os;
   }
   
   /*! \brief Print a PeriodicTable to an output stream.
@@ -255,8 +271,11 @@ namespace indigox {
    *  \param os output stream to print to.
    *  \param pt PeriodicTable to print.
    *  \return the output stream. */
-  inline std::ostream& operator<<(std::ostream& os, PeriodicTable pt) {
-    return pt ? (os << "PeriodicTable(" << pt->NumElements() << " elements)") : os;
+  inline std::ostream& operator<<(std::ostream& os, const IXPeriodicTable& pt) {
+    return os << "PeriodicTable(" << pt.NumElements() << " elements)";
+  }
+  inline std::ostream& operator<<(std::ostream& os, const PeriodicTable& pt) {
+    return pt ? (os << *pt) : os;
   }
   
   // Comparison operators
@@ -266,9 +285,11 @@ namespace indigox {
    *  always be false.
    *  \param l, r element and integer to compare.
    *  \return if the element has the given atomic number. */
-  inline bool operator==(Element l, uint8_t r) {
-    return (l && *l) ? l->GetAtomicNumber() == r : false;
+  inline bool operator==(const IXElement& l, uchar_ r) {
+    return l.GetAtomicNumber() == r;
   }
+  inline bool operator==(const Element& l, uchar_ r) { return l && *l == r; }
+  
   /*! \brief Equality test of Element and string.
    *  \details If the size of r is less than or equal to two, compares if the
    *  element has the given atomic symbol. This comparison is case-sensitive.
@@ -277,19 +298,31 @@ namespace indigox {
    *  the undefined element, result will always be false.
    *  \param l, r element and string to compare.
    *  \return if the element has the given atomic symbol or name. */
-  inline bool operator==(Element l, std::string r) {
-    if (!l || !*l) return false;
-    else return r.size() <= 2 ? (l->GetSymbol() == r)
-      : (l->GetName() == utils::ToUpperFirst(r));
+  inline bool operator==(const IXElement& l, string_ r) {
+    return r.size() <= 2 ? (l.GetSymbol() == r)
+          : (l.GetName() == utils::ToUpperFirst(r));
   }
+  inline bool operator==(const Element& l, string_ r) { return l && *l == r; }
+  
   /*! \brief Equality test of two Elements.
    *  \details Checks if the stored pointers are equivalent. If either of the
    *  Elements is an empty pointer or the undefined element, result will always
    *  be false.
    *  \param l, r elements to compare.
    *  \return if the elements are the name. */
-  inline bool operator==(Element l, Element r) {
-    return (l && *l && r && *r) ? l.get() == r.get() : false;
+  inline bool operator==(const IXElement& l, const IXElement& r) {
+    return (l.GetAtomicNumber() == r.GetAtomicNumber()
+            && l.GetSymbol() == r.GetSymbol()
+            && l.GetName() == r.GetName());
+  }
+  inline bool operator==(const Element& l, const IXElement& r) {
+    return l && *l == r;
+  }
+  inline bool operator==(const IXElement& l, const Element& r) {
+    return r && l == *r;
+  }
+  inline bool operator==(const Element& l, const Element& r) {
+    return l && r && *l == *r;
   }
   
   // Inverse eq operators
@@ -297,43 +330,58 @@ namespace indigox {
    *  \param l, r integer and Element to compare.
    *  \return if the element has the given atomic number.
    *  \see operator==(Element, uint8_t) */
-  inline bool operator==(uint8_t l, Element r) { return r == l; }
-  /*! \brief Equality test of strinf and Element.
+  inline bool operator==(uchar_ l, const IXElement& r) { return r == l; }
+  inline bool operator==(uchar_ l, const Element& r) { return r == l; }
+  
+  /*! \brief Equality test of string and Element.
    *  \param l, r string and Element to compare.
    *  \return if the element has the given atomic symbol or name.
    *  \see operator==(Element, std::string) */
-  inline bool operator==(std::string l, Element r) { return r == l; }
+  inline bool operator==(string_ l, const IXElement& r) { return r == l; }
+  inline bool operator==(string_ l, const Element& r) { return r == l; }
   
   // Neq operators
   /*! \brief Inequality test of Element and integer.
    *  \param l, r Element and integer to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, uint8_t) */
-  inline bool operator!=(Element l, uint8_t r) { return !(l == r); }
+  inline bool operator!=(const IXElement& l, uchar_ r) { return !(l == r); }
+  inline bool operator!=(const Element& l, uchar_ r) { return !(l == r); }
   /*! \brief Inequality test of integer and Element.
    *  \param l, r integer and Element to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, uint8_t) */
-  inline bool operator!=(uint8_t l, Element r) { return !(r == l); }
+  inline bool operator!=(uchar_ l, const IXElement& r) { return !(r == l); }
+  inline bool operator!=(uchar_ l, const Element& r) { return !(r == l); }
   /*! \brief Inequality test of Element and string.
    *  \param l, r Element and string to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, std::string) */
-  inline bool operator!=(Element l, std::string r) { return !(l == r); }
+  inline bool operator!=(const IXElement& l, string_ r) { return !(l == r); }
+  inline bool operator!=(const Element& l, string_ r) { return !(l == r); }
   /*! \brief Inequality test of string and Element.
    *  \param l, r string and Element to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, std::string) */
-  inline bool operator!=(std::string l, Element r) { return !(r == l); }
+  inline bool operator!=(string_ l, const IXElement& r) { return !(r == l); }
+  inline bool operator!=(string_ l, const Element& r) { return !(r == l); }
   /*! \brief Inequality test of two Elements.
    *  \param l, r Elements to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, Element) */
-  inline bool operator!=(Element l, Element r) { return !(l == r); }
+  inline bool operator!=(const IXElement& l, const IXElement& r) { return !(l == r); }
+  inline bool operator!=(const IXElement& l, const Element& r) { return !(l == r); }
+  inline bool operator!=(const Element& l, const IXElement& r) { return !(l == r); }
+  inline bool operator!=(const Element& l, const Element& r) { return !(l == r); }
 
   // Helper access function
   PeriodicTable GetPeriodicTable();
   
 } // namespace indigox
+
+
+#ifndef INDIGOX_DISABLE_TESTS
+#include "../test/periodictable_test.hpp"
+#endif
 
 #endif /* INDIGOX_CLASSES_PERIODIC_TABLE_HPP */
