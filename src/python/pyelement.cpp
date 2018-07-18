@@ -9,8 +9,9 @@
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 
-#include <indigox/python/interface.hpp>
 #include <indigox/classes/periodictable.hpp>
+#include <indigox/python/interface.hpp>
+#include <indigox/utils/numerics.hpp>
 
 namespace py = pybind11;
 
@@ -18,17 +19,17 @@ void GeneratePyElement(py::module& m) {
   using namespace indigox;
   py::class_<IXElement, Element>(m, "Element")
   // No constructor
-  .def("__eq__", py::overload_cast<Element, uint8_t>(&operator==))
-  .def("__eq__", py::overload_cast<uint8_t, Element>(&operator==))
-  .def("__eq__", py::overload_cast<Element, std::string>(&operator==))
-  .def("__eq__", py::overload_cast<std::string, Element>(&operator==))
-  .def("__eq__", py::overload_cast<Element, Element>(&operator==))
-  .def("__ne__", py::overload_cast<Element, uint8_t>(&operator!=))
-  .def("__ne__", py::overload_cast<uint8_t, Element>(&operator!=))
-  .def("__ne__", py::overload_cast<Element, std::string>(&operator!=))
-  .def("__ne__", py::overload_cast<std::string, Element>(&operator!=))
-  .def("__ne__", py::overload_cast<Element, Element>(&operator!=))
-  .def("__repr__", [](Element e) {
+  .def("__eq__", py::overload_cast<const Element&, uchar_>(&operator==))
+  .def("__eq__", py::overload_cast<uchar_, const Element&>(&operator==))
+  .def("__eq__", py::overload_cast<const Element&, string_>(&operator==))
+  .def("__eq__", py::overload_cast<string_, const Element&>(&operator==))
+  .def("__eq__", py::overload_cast<const Element&, const Element&>(&operator==))
+  .def("__ne__", py::overload_cast<const Element&, uchar_>(&operator!=))
+  .def("__ne__", py::overload_cast<uchar_, const Element&>(&operator!=))
+  .def("__ne__", py::overload_cast<const Element&, string_>(&operator!=))
+  .def("__ne__", py::overload_cast<string_, const Element&>(&operator!=))
+  .def("__ne__", py::overload_cast<const Element&, const Element&>(&operator!=))
+  .def("__repr__", [](const Element& e) {
     std::stringstream ss; ss << e; return ss.str();
   }) // Data print for developers
   .def("GetAtomicMass", &IXElement::GetAtomicMass)
