@@ -91,7 +91,7 @@ namespace indigox {
   
   string_ IXAtom::ToString() {
     std::stringstream ss;
-    ss << "Atom(" << _name << ", " << GetElement()->GetSymbol() << ")";
+    ss << "Atom(" << GetIndex() << ", " << GetElement()->GetSymbol() << ")";
     return ss.str();
   }
 
@@ -100,6 +100,15 @@ namespace indigox {
       _elem = e;
       __set_property_modified(_mol, MolProperty::ATOM_ELEMENTS);
     }
+  }
+  
+  size_ IXAtom::GetIndex() const {
+    Molecule mol = _mol.lock();
+    if (!mol) return GetTag();
+    auto be = mol->GetAtoms();
+    auto pos = std::find(be.first, be.second, shared_from_this());
+    if (pos == be.second) return GetTag();
+    return std::distance(be.first, pos);
   }
   
   void IXAtom::Clear() {
@@ -119,10 +128,7 @@ namespace indigox {
   }
   
   std::ostream& operator<<(std::ostream& os, Atom atom) {
-    if (atom) {
-      os << "Atom(" << atom->GetUniqueID() << ", "
-      << atom->GetElement()->GetSymbol() << ")";
-    }
+    if (atom) os << "Atom(" << atom->GetIndex() << ")";
     return os;
   }
 }

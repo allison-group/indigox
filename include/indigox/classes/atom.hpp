@@ -320,6 +320,8 @@ namespace indigox {
      *  \returns the number of valid assigned dihedrals. */
     size_ NumDihedrals() const { return _dhds.size(); }
     
+    size_ GetIndex() const;
+    
   private:
     //! The molecule this atom is assigned to.
     _Molecule _mol;
