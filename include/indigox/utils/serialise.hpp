@@ -16,15 +16,27 @@
 #include <cereal/types/memory.hpp>
 #include <cereal/types/vector.hpp>
 
-#define INDIGOX_SERIALISE(Class_name) \
-template void Class_name::Serialise<cereal::PortableBinaryInputArchive>\
-(cereal::PortableBinaryInputArchive&, const uint32_t); \
-template void Class_name::Serialise<cereal::PortableBinaryOutputArchive>\
-(cereal::PortableBinaryOutputArchive&, const uint32_t); \
-template void Class_name::Serialise<cereal::JSONInputArchive>\
-(cereal::JSONInputArchive&, const uint32_t); \
-template void Class_name::Serialise<cereal::JSONOutputArchive>\
-(cereal::JSONOutputArchive&, const uint32_t);
+#define __hr_out  cereal::JSONOutputArchive
+#define __hr_in   cereal::JSONInputArchive
+#define __cr_out  cereal::PortableBinaryOutputArchive
+#define __cr_in   cereal::PortableBinaryInputArchive
+
+#define __ix_serialise(class_name, archive_t) \
+template void class_name::Serialise<archive_t> (archive_t&, const uint32_t);
+
+#define __ix_serialise_split(class_name, in_archive_t, out_archive_t) \
+template void class_name::save<out_archive_t> (out_archive_t&, const uint32_t) const; \
+template void class_name::load<in_archive_t> (in_archive_t&, const uint32_t); \
+template void class_name::load_and_construct<in_archive_t> \
+(in_archive_t&, cereal::construct<class_name>&, const uint32_t);
+
+#define INDIGOX_SERIALISE(class_name) \
+__ix_serialise(class_name, __hr_out) __ix_serialise(class_name, __cr_out) \
+__ix_serialise(class_name, __hr_in) __ix_serialise(class_name, __cr_in)
+
+#define INDIGOX_SERIALISE_SPLIT(class_name) \
+__ix_serialise_split(class_name, __hr_in, __hr_out) \
+__ix_serialise_split(class_name, __cr_in, __cr_out)
 
 #define INDIGOX_SERIAL_NVP(name, value) cereal::make_nvp<Archive>(name, value)
 

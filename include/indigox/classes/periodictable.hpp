@@ -379,9 +379,4 @@ namespace indigox {
   
 } // namespace indigox
 
-
-#ifndef INDIGOX_DISABLE_TESTS
-#include "../test/periodictable_test.hpp"
-#endif
-
 #endif /* INDIGOX_CLASSES_PERIODIC_TABLE_HPP */

@@ -13,7 +13,7 @@ namespace indigox {
   class IXAtom;
   class IXAngle;
   class IXMolecule;
-  namespace test { class IXAngle; }
+  namespace test { struct TestAngle; }
   
   using Atom = std::shared_ptr<IXAtom>;
   //! \brief shared_ptr for normal use of the IXAngle class.
@@ -32,7 +32,7 @@ namespace indigox {
     //! \brief Friendship allows IXMolecule to create new angles.
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXAngle to be tested.
-    friend class indigox::test::IXAngle;
+    friend struct indigox::test::TestAngle;
     //! \brief Friendship allows serialisation.
     friend class cereal::access;
     
@@ -54,12 +54,19 @@ namespace indigox {
     IXAngle(Atom a, Atom b, Atom c, Molecule m);
     
     
-    IXAngle() = default;  // default constructor for serialise access
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t version) const;
     
     template <typename Archive>
-    void Serialise(Archive& archive, const uint32_t version);
+    void load(Archive& archive, const uint32_t version);
+    
+    template <typename Archive>
+    static void load_and_construct(Archive& archive,
+                                   cereal::construct<IXAngle>& construct,
+                                   const uint32_t version);
     
   public:
+    IXAngle() = delete;  // no default constructor
     
     //! \brief Destructor
     ~IXAngle() { }
@@ -120,6 +127,11 @@ namespace indigox {
     //! \brief Atoms which make up the angle.
     AngleAtoms _atms;
   };
+  
+  std::ostream& operator<<(std::ostream& os, const IXAngle& ang);
+  inline std::ostream& operator<<(std::ostream& os, const Angle& ang) {
+    return ang ? os << *ang : os;
+  }
 }
 
 #endif  /* INDIGOX_CLASSES_ANGLE_HPP */

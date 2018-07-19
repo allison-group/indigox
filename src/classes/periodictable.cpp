@@ -8,6 +8,10 @@
 #include <indigox/utils/numerics.hpp>
 #include <indigox/utils/doctest_proxy.hpp>
 
+#ifndef INDIGOX_DISABLE_TESTS
+#include <indigox/test/periodictable_test.hpp>
+#endif
+
 namespace indigox {
   
   test_suite_open("IXElement");
@@ -458,6 +462,7 @@ namespace indigox {
       check_eq(null_.GetName(), "Undefined");
       check_eq(null_.GetSymbol(), "XX");
       check_eq(null_.GetAtomicNumber(), 0);
+      check_eq(PT.NumElements(), INDIGOX_NUM_ELEMENTS);
     }
     
   }
@@ -471,7 +476,7 @@ namespace indigox {
     return instance;
   }
   
-  test_case("GetPeriodicTable") {
+  test_case("IXPeriodicTable GetPeriodicTable helper method") {
     PeriodicTable PT = GetPeriodicTable();
     check_eq(PT->NumElements(), INDIGOX_NUM_ELEMENTS);
     PeriodicTable PT2 = GetPeriodicTable();

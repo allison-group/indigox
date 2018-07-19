@@ -15,6 +15,8 @@ namespace cereal {
   class PortableBinaryOutputArchive;
   class JSONInputArchive;
   class JSONOutputArchive;
+  template <class T>
+  class construct;
 }
 
 //! utils namespace for useful utility functions
