@@ -22,6 +22,19 @@
 #define check_gt          DOCTEST_FAST_CHECK_GT
 #define check_lt          DOCTEST_FAST_CHECK_LT
 
+#ifndef INDIGOX_DISABLE_TESTS
 using approximately = doctest::Approx;
 using should_fail = doctest::should_fail;
 using expected_fails = doctest::expected_failures;
+#endif
+
+template <class T1, class T2, class U>
+struct TestTypePair {
+  using t1 = T1;
+  using t2 = T2;
+};
+
+#include "serialise.hpp"
+template <class U>
+using ixserial = doctest::Types<TestTypePair<__hr_in, __hr_out, U>,
+                                TestTypePair<__cr_in, __cr_out, U>>;

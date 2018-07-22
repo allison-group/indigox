@@ -6,11 +6,9 @@
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/utils/common.hpp>
 #include <indigox/utils/numerics.hpp>
-#include <indigox/utils/doctest_proxy.hpp>
 
-#ifndef INDIGOX_DISABLE_TESTS
+#include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/test/periodictable_test.hpp>
-#endif
 
 namespace indigox {
   

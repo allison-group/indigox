@@ -13,7 +13,7 @@ namespace indigox {
   class IXAtom;
   class IXDihedral;
   class IXMolecule;
-  namespace test { class IXDihedral; }
+  namespace test { class TestDihedral; }
   
   using Atom = std::shared_ptr<IXAtom>;
   //! \brief shared_ptr for normal use of the IXDihedral class.
@@ -32,7 +32,7 @@ namespace indigox {
     //! \brief Friendship allows IXMolecule to create new dihedrals.
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXDihedral to be tested.
-    friend class indigox::test::IXDihedral;
+    friend class indigox::test::TestDihedral;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
     
@@ -52,12 +52,17 @@ namespace indigox {
      *  \param m the molecule to assign the angle to. */
     IXDihedral(Atom a, Atom b, Atom c, Atom d, Molecule m);
     
-    IXDihedral() = default;  // default constructor for serialise access
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t version) const;
     
     template <typename Archive>
-    void Serialise(Archive& archive, const uint32_t version);
+    static void load_and_construct(Archive& archive,
+                                   cereal::construct<IXDihedral>& construct,
+                                   const uint32_t version);
     
   public:
+    IXDihedral() = delete;  // no default constructor
+    
     //! \brief Destructor
     ~IXDihedral() { }
     
@@ -119,6 +124,11 @@ namespace indigox {
     //! \brief Atoms which make up the dihedral.
     DihedAtoms _atms;
   };
+  
+  std::ostream& operator<<(std::ostream& os, const IXDihedral& dhd);
+  inline std::ostream& operator<<(std::ostream& os, const Dihedral& dhd) {
+    return dhd ? os << *dhd : os;
+  }
 }
 
 #endif /* INDIGOX_CLASSES_DIHEDRAL_HPP */

@@ -4,96 +4,119 @@
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/utils/counter.hpp>
-#include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/utils/numerics.hpp>
 #include <indigox/utils/serialise.hpp>
 
-#ifndef INDIGOX_DISABLE_TESTS
+#include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/test/angle_test.hpp>
-#endif
 
 namespace indigox {
+  test_suite_open("IXAngle");
   
   // Serialisation of IXAngle
   template <typename Archive>
   void IXAngle::save(Archive &archive, const uint32_t) const {
     // Serialising molecule first sets all the tags correctly
     archive(INDIGOX_SERIAL_NVP("molecule", _mol));
-    std::vector<uint_> atoms;
-    for (_Atom at : _atms) atoms.emplace_back(at.lock()->GetTag());
+    std::vector<Atom> atoms;
+    for (_Atom at : _atms) atoms.emplace_back(at.lock());
     archive(INDIGOX_SERIAL_NVP("atoms", atoms),
             INDIGOX_SERIAL_NVP("tag", _tag));
   }
   
   template <typename Archive>
-  void IXAngle::load(Archive &, const uint32_t) { }
-  
-  template <typename Archive>
-  void IXAngle::load_and_construct(Archive &archive, cereal::construct<IXAngle> &construct, const uint32_t) {
-    std::vector<uint_> atoms;
-    uid_ t;
+  void IXAngle::load_and_construct(Archive &archive,
+                                   cereal::construct<IXAngle> &construct,
+                                   const uint32_t) {
+    std::vector<Atom> atoms;
     Molecule m;
     
     archive(INDIGOX_SERIAL_NVP("molecule", m),
-            INDIGOX_SERIAL_NVP("atoms", atoms),
-            INDIGOX_SERIAL_NVP("tag", t)
+            INDIGOX_SERIAL_NVP("atoms", atoms)
             );
 
-    construct(m->GetAtom(atoms[0]),
-              m->GetAtom(atoms[1]),
-              m->GetAtom(atoms[2]),
-              m);
+    construct(atoms[0], atoms[1], atoms[2], m);
     
-    construct->_tag = t;
+    archive(INDIGOX_SERIAL_NVP("tag", construct->_tag));
   }
-  
   INDIGOX_SERIALISE_SPLIT(IXAngle);
   
-  test_suite_open("IXAngle");
+  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXAngle serialisation", T, id) {
+    using In = typename T::t1;
+    using Out = typename T::t2;
+    test::AngleTestFixture fixture;
+    Angle saved = fixture.ang.imp;
+    
+    saved->SetTag(23);
+    
+    std::ostringstream os;
+    {
+      Out oar(os);
+      check_nothrow(oar(saved, saved->GetAtoms(), saved->GetMolecule()));
+    }
+    
+    Angle loaded;
+    test::TestAngle::Atoms atoms;
+    Molecule mol;
+    std::istringstream is(os.str());
+    {
+      In iar(is);
+      check_nothrow(iar(loaded, atoms, mol));
+    }
+    fixture.ang.imp = loaded;
+    check(!fixture.ang.get_atms()[0].expired());
+    check(!fixture.ang.get_atms()[1].expired());
+    check(!fixture.ang.get_atms()[2].expired());
+    check(!fixture.ang.get_mol().expired());
+    check_eq(saved->GetTag(), loaded->GetTag());
+    check_eq(atoms.first->GetTag(), loaded->GetAtoms().first->GetTag());
+    check_eq(atoms.second->GetTag(), loaded->GetAtoms().second->GetTag());
+    check_eq(atoms.third->GetTag(), loaded->GetAtoms().third->GetTag());
+  }
+  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(id, ixserial<IXAngle>);
   
   IXAngle::IXAngle(Atom a, Atom b, Atom c, Molecule m)
   : utils::IXCountableObject<IXAngle>(), _mol(m), _tag(0), _atms({{a,b,c}}) { }
 
   test_case_fixture(test::AngleTestFixture, "IXAngle construction") {
     check_nothrow(test::TestAngle(a,b,c,mol));
-    check_eq(a, ang.get_atms()[0].lock());
-    check_ne(a, ang.get_atms()[1].lock());
-    check_ne(a, ang.get_atms()[2].lock());
-    check_eq(b, ang.get_atms()[1].lock());
-    check_ne(b, ang.get_atms()[0].lock());
-    check_ne(b, ang.get_atms()[2].lock());
-    check_eq(c, ang.get_atms()[2].lock());
-    check_ne(c, ang.get_atms()[0].lock());
-    check_ne(c, ang.get_atms()[1].lock());
-    check_eq(0, ang.get_tag());
     check_eq(mol, ang.get_mol().lock());
+    check_eq(0, ang.get_tag());
+    check_eq(a, ang.get_atms()[0].lock());
+    check_eq(b, ang.get_atms()[1].lock());
+    check_eq(c, ang.get_atms()[2].lock());
+    
+    // Check unique IDs correctly update
+    test::TestAngle ang1(a,b,c,mol);
+    test::TestAngle ang2(a,b,c,mol);
+    check_ne(ang1.GetUniqueID(), ang2.GetUniqueID());
+    check_eq(ang1.GetUniqueID() + 1, ang2.GetUniqueID());
   }
   
   test_case_fixture(test::AngleTestFixture, "IXAngle getting and setting") {
-    check_eq(0, ang.GetTag());
+    // Check no throwing
+    check_nothrow(ang.GetTag());
     check_nothrow(ang.SetTag(72));
+    check_nothrow(ang.GetMolecule());
+    check_nothrow(ang.GetAtoms());
+    check_nothrow(ang.SwapOrder());
+    check_nothrow(ang.NumAtoms());
+    
+    // Check correctness of gets
     check_eq(72, ang.GetTag());
     check_eq(72, ang.get_tag());
-    
     check_eq(mol, ang.GetMolecule());
+    check_eq(mol, ang.get_mol().lock());
+    check_eq(stdx::make_triple(c, b, a), ang.GetAtoms());
+    
+    // Check correct no owning of molecule
     mol.reset();
-    check(!ang.GetMolecule());
+    check(ang.get_mol().expired());
     check_eq(Molecule(), ang.GetMolecule());
     
-    auto atoms = ang.GetAtoms();
-    check_eq(a, atoms.first);
-    check_eq(b, atoms.second);
-    check_eq(c, atoms.third);
-    atoms = ang_2.GetAtoms();
-    check_eq(c, atoms.first);
-    check_eq(a, atoms.second);
-    check_eq(b, atoms.third);
-    ang_2.SwapOrder();
-    atoms = ang_2.GetAtoms();
-    check_eq(b, atoms.first);
-    check_eq(a, atoms.second);
-    check_eq(c, atoms.third);
-    
+    // Check num atoms doesn't depend on being active
+    check_eq(3, ang.NumAtoms());
+    a.reset(); b.reset(); c.reset();
     check_eq(3, ang.NumAtoms());
   }
   
@@ -122,21 +145,25 @@ namespace indigox {
   }
   
   test_case_fixture(test::AngleTestFixture, "IXAngle printing methods") {
-    check_eq("Angle(Atom(0, XX), Atom(1, XX), Atom(2, XX))", ang.ToString());
+    // Check ordering is correct
+    std::stringstream ss; ss << ang.imp;
+    check_eq("Angle(Atom(0, C), Atom(1, O), Atom(2, N))", ang.ToString());
+    check_eq("Angle(0, 1, 2)", ss.str());
     ang.SwapOrder();
-    check_eq("Angle(Atom(2, XX), Atom(1, XX), Atom(0, XX))", ang.ToString());
+    ss.str(""); ss << ang.imp;
+    check_eq("Angle(Atom(2, N), Atom(1, O), Atom(0, C))", ang.ToString());
+    check_eq("Angle(2, 1, 0)", ss.str());
     
-    std::stringstream ss;
-    ss << ang_2.imp;
-    check_eq("Angle(2, 0, 1)", ss.str());
-    ang_2.SwapOrder(); ss.str(""); ss << ang_2.imp;
-    check_eq("Angle(1, 0, 2)", ss.str());
-    
+    // Check having bad atoms is handled correctly
     a.reset();
+    ss.str(""); ss << ang.imp;
     check_eq("Angle(MALFORMED)", ang.ToString());
-    b.reset(); c.reset();
-    ss.str(""); ss << ang_2.imp;
-    check_eq("Angle(, , )", ss.str());
+    check_eq("Angle(2, 1, )", ss.str());
+    
+    // Check empty angle to ostream does nothing
+    ss.str("");
+    check_nothrow(ss << Angle());
+    check_eq("", ss.str());
   }
   
   void IXAngle::Clear() {
@@ -149,6 +176,7 @@ namespace indigox {
   
   test_case_fixture(test::AngleTestFixture, "IXAngle clearing methods") {
     ang.SetTag(72);
+    // Pre checks
     check_eq(ang.get_tag(), 72);
     check_eq(ang.get_mol().lock(), mol);
     check_eq(ang.get_atms()[0].lock(), a);
@@ -156,6 +184,7 @@ namespace indigox {
     check_eq(ang.get_atms()[2].lock(), c);
     
     ang.Clear();
+    // Post checks
     check_ne(ang.get_tag(), 72);
     check_ne(ang.get_mol().lock(), mol);
     check_ne(ang.get_atms()[0].lock(), a);

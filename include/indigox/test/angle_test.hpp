@@ -45,9 +45,9 @@ namespace indigox::test {
     Atom b = CreateGenericTestAtom().imp;
     Atom c = CreateGenericTestAtom().imp;
     TestAngle ang = TestAngle(a,b,c,mol);
-    TestAngle ang_2 = TestAngle(c,a,b,mol);
     AngleTestFixture() {
       a->SetTag(0); b->SetTag(1); c->SetTag(2);
+      a->SetElement("C"); b->SetElement("O"); c->SetElement("N");
     }
   };
 }

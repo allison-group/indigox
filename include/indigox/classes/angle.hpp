@@ -58,9 +58,6 @@ namespace indigox {
     void save(Archive& archive, const uint32_t version) const;
     
     template <typename Archive>
-    void load(Archive& archive, const uint32_t version);
-    
-    template <typename Archive>
     static void load_and_construct(Archive& archive,
                                    cereal::construct<IXAngle>& construct,
                                    const uint32_t version);

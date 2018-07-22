@@ -6,32 +6,120 @@
 #include <indigox/utils/numerics.hpp>
 #include <indigox/utils/serialise.hpp>
 
+#include <indigox/utils/doctest_proxy.hpp>
+#include <indigox/test/dihedral_test.hpp>
+
 namespace indigox {
+  test_suite_open("IXDihedral");
   
   template <typename Archive>
-  void IXDihedral::Serialise(Archive &archive, const uint32_t) {
+  void IXDihedral::save(Archive &archive, const uint32_t) const {
+    std::vector<Atom> atoms;
+    for (_Atom at : _atms) atoms.emplace_back(at.lock());
     archive(INDIGOX_SERIAL_NVP("molecule", _mol),
+            INDIGOX_SERIAL_NVP("atoms", atoms),
             INDIGOX_SERIAL_NVP("tag", _tag)
             );
-    
-    // Things that are different between save and load
-    std::vector<uint_> atoms;
-    if (INDIGOX_IS_OUTPUT_ARCHIVE)
-      for (_Atom at : _atms) atoms.emplace_back(at.lock()->GetTag());
-    archive(INDIGOX_SERIAL_NVP("atoms", atoms));
-    if (INDIGOX_IS_INPUT_ARCHIVE) {
-      Molecule m = _mol.lock();
-      _atms[0] = m->GetAtom(atoms[0]);
-      _atms[1] = m->GetAtom(atoms[1]);
-      _atms[2] = m->GetAtom(atoms[2]);
-      _atms[3] = m->GetAtom(atoms[3]);
-    }
   }
   
-  INDIGOX_SERIALISE(IXDihedral);
+  template <typename Archive>
+  void IXDihedral::load_and_construct(Archive &archive,
+                                      cereal::construct<IXDihedral> &construct,
+                                      const uint32_t) {
+    std::vector<Atom> atoms;
+    Molecule m;
+    
+    archive(INDIGOX_SERIAL_NVP("molecule", m),
+            INDIGOX_SERIAL_NVP("atoms", atoms));
+    
+    construct(atoms[0], atoms[1], atoms[2], atoms[3], m);
+    
+    archive(INDIGOX_SERIAL_NVP("tag", construct->_tag));
+  }
+  INDIGOX_SERIALISE_SPLIT(IXDihedral);
+  
+  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXDihedral serialisation", T, id) {
+    using In = typename T::t1;
+    using Out = typename T::t2;
+    test::DihedralTestFixture fixture;
+    Dihedral saved = fixture.dhd.imp;
+    
+    saved->SetTag(45);
+    
+    std::ostringstream os;
+    {
+      Out oar(os);
+      check_nothrow(oar(saved, saved->GetAtoms(), saved->GetMolecule()));
+    }
+    
+    Dihedral loaded;
+    test::TestDihedral::Atoms atoms;
+    Molecule mol;
+    std::istringstream is(os.str());
+    {
+      In iar(is);
+      check_nothrow(iar(loaded, atoms, mol));
+    }
+    fixture.dhd.imp = loaded;
+    check(!fixture.dhd.get_atms()[0].expired());
+    check(!fixture.dhd.get_atms()[1].expired());
+    check(!fixture.dhd.get_atms()[2].expired());
+    check(!fixture.dhd.get_atms()[3].expired());
+    check(!fixture.dhd.get_mol().expired());
+    check_eq(saved->GetTag(), loaded->GetTag());
+    check_eq(atoms.first->GetTag(), loaded->GetAtoms().first->GetTag());
+    check_eq(atoms.second->GetTag(), loaded->GetAtoms().second->GetTag());
+    check_eq(atoms.third->GetTag(), loaded->GetAtoms().third->GetTag());
+    check_eq(atoms.fourth->GetTag(), loaded->GetAtoms().fourth->GetTag());
+  }
+  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(id, ixserial<IXDihedral>);
+  
   
   IXDihedral::IXDihedral(Atom a, Atom b, Atom c, Atom d, Molecule m)
   : _mol(m), _tag(0), _atms({{a,b,c,d}}) { }
+  
+  test_case_fixture(test::DihedralTestFixture, "IXDihedral construction") {
+    check_nothrow(test::TestDihedral(a,b,c,d,mol));
+    check_eq(mol, dhd.get_mol().lock());
+    check_eq(0, dhd.get_tag());
+    check_eq(a, dhd.get_atms()[0].lock());
+    check_eq(b, dhd.get_atms()[1].lock());
+    check_eq(c, dhd.get_atms()[2].lock());
+    check_eq(d, dhd.get_atms()[3].lock());
+    
+    // Check unique IDs correctly update
+    test::TestDihedral dhd1(a,b,c,d,mol);
+    test::TestDihedral dhd2(a,b,c,d,mol);
+    check_ne(dhd1.GetUniqueID(), dhd2.GetUniqueID());
+    check_eq(dhd1.GetUniqueID() + 1, dhd2.GetUniqueID());
+  }
+  
+  test_case_fixture(test::DihedralTestFixture, "IXDihedral getting and setting") {
+    // check no throwing
+    check_nothrow(dhd.GetTag());
+    check_nothrow(dhd.SetTag(72));
+    check_nothrow(dhd.GetMolecule());
+    check_nothrow(dhd.GetAtoms());
+    check_nothrow(dhd.SwapOrder());
+    check_nothrow(dhd.NumAtoms());
+    
+    // Check correctness of gets
+    check_eq(72, dhd.GetTag());
+    check_eq(72, dhd.get_tag());
+    check_eq(mol, dhd.GetMolecule());
+    check_eq(mol, dhd.get_mol().lock());
+    check_eq(stdx::make_quad(d, c, b, a), dhd.GetAtoms());
+    
+    // Check correct no owning of molecule
+    mol.reset();
+    check(dhd.get_mol().expired());
+    check_eq(Molecule(), dhd.GetMolecule());
+    
+    // Check num atoms doesn't depend on being active
+    check_eq(4, dhd.NumAtoms());
+    a.reset(); b.reset(); c.reset(); d.reset();
+    check_eq(4, dhd.NumAtoms());
+  }
   
   string_ IXDihedral::ToString() const {
     std::stringstream ss;
@@ -49,6 +137,44 @@ namespace indigox {
     return ss.str();
   }
   
+  std::ostream& operator<<(std::ostream& os, const IXDihedral& dhd) {
+    auto atoms = dhd.GetAtoms();
+    os << "Dihedral(";
+    if (atoms.first) os << atoms.first->GetIndex();
+    os << ", ";
+    if (atoms.second) os << atoms.second->GetIndex();
+    os << ", ";
+    if (atoms.third) os << atoms.third->GetIndex();
+    os << ", ";
+    if (atoms.fourth) os << atoms.fourth->GetIndex();
+    os << ")";
+    return os;
+  }
+  
+  test_case_fixture(test::DihedralTestFixture, "IXDihedral printing methods") {
+    // Check ordering is correct
+    std::stringstream ss; ss << dhd.imp;
+    check_eq("Dihedral(Atom(0, C), Atom(1, O), Atom(2, F), Atom(3, N))",
+             dhd.ToString());
+    check_eq("Dihedral(0, 1, 2, 3)", ss.str());
+    dhd.SwapOrder();
+    ss.str(""); ss << dhd.imp;
+    check_eq("Dihedral(Atom(3, N), Atom(2, F), Atom(1, O), Atom(0, C))",
+             dhd.ToString());
+    check_eq("Dihedral(3, 2, 1, 0)", ss.str());
+    
+    // Check having bad atoms is handled correctly
+    a.reset(); d.reset();
+    ss.str(""); ss << dhd.imp;
+    check_eq("Dihedral(MALFORMED)", dhd.ToString());
+    check_eq("Dihedral(, 2, 1, )", ss.str());
+    
+    // Check empty dihedral to ostream does nothing
+    ss.str("");
+    check_nothrow(ss << Dihedral());
+    check_eq("", ss.str());
+  }
+  
   void IXDihedral::Clear() {
     _mol.reset();
     _tag = 0;
@@ -57,4 +183,32 @@ namespace indigox {
     _atms[2].reset();
     _atms[3].reset();
   }
+  
+  test_case_fixture(test::DihedralTestFixture, "IXDihedral clearing methods") {
+    dhd.SetTag(72);
+    // Pre checks
+    check_eq(dhd.get_tag(), 72);
+    check_eq(dhd.get_mol().lock(), mol);
+    check_eq(dhd.get_atms()[0].lock(), a);
+    check_eq(dhd.get_atms()[1].lock(), b);
+    check_eq(dhd.get_atms()[2].lock(), c);
+    check_eq(dhd.get_atms()[3].lock(), d);
+    
+    dhd.Clear();
+    // Post checks
+    check_ne(dhd.get_tag(), 72);
+    check_ne(dhd.get_mol().lock(), mol);
+    check_ne(dhd.get_atms()[0].lock(), a);
+    check_ne(dhd.get_atms()[1].lock(), b);
+    check_ne(dhd.get_atms()[2].lock(), c);
+    check_ne(dhd.get_atms()[3].lock(), d);
+    check_eq(dhd.get_tag(), 0);
+    check_eq(dhd.get_mol().lock(), Molecule());
+    check_eq(dhd.get_atms()[0].lock(), Atom());
+    check_eq(dhd.get_atms()[1].lock(), Atom());
+    check_eq(dhd.get_atms()[2].lock(), Atom());
+    check_eq(dhd.get_atms()[3].lock(), Atom());
+  }
+  
+  test_suite_close();
 }

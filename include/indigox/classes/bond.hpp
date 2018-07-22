@@ -16,7 +16,7 @@ namespace indigox {
   class IXAtom;
   class IXBond;
   class IXMolecule;
-  namespace test { class IXBond; }
+  namespace test { struct TestBond; }
   
   using Atom = std::shared_ptr<IXAtom>;
   //! \brief shared_ptr for normal use of the IXBond class.
@@ -35,7 +35,7 @@ namespace indigox {
     //! \brief Friendship allows IXMolecule to create new bonds.
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXBond to be tested.
-    friend class indigox::test::IXBond;
+    friend struct indigox::test::TestBond;
     //! \brief Friendship allows serialisation.
     friend class cereal::access;
     
@@ -76,13 +76,17 @@ namespace indigox {
      *  \param m the molecule to assign the bond to. */
     IXBond(Atom a, Atom b, Molecule m);
     
-    
-    IXBond() = default;  // default constructor for serialise access
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t version) const;
     
     template <typename Archive>
-    void Serialise(Archive& archive, const uint32_t version);
+    static void load_and_construct(Archive& archive,
+                                   cereal::construct<IXBond>& construct,
+                                   const uint32_t version);
     
   public:
+    IXBond() = delete;  // no default constructor
+    
     //! \brief Destructor
     ~IXBond() { }
     
@@ -192,7 +196,10 @@ namespace indigox {
    *  \param os the output stream to print to.
    *  \param bnd the Bond to print.
    *  \return the output stream after printing. */
-  std::ostream& operator<<(std::ostream& os, Bond bnd);
+  std::ostream& operator<<(std::ostream& os, const IXBond& bnd);
+  inline std::ostream& operator<<(std::ostream& os, const Bond& bnd) {
+    return bnd ? os << *bnd : os;
+  }
   
   //! Type for the stereochemistry enum of a bond.
   using BondStereo = indigox::IXBond::Stereo;
