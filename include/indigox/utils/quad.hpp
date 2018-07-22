@@ -3,6 +3,8 @@
 #ifndef INDIGOX_UTILS_QUAD_HPP
 #define INDIGOX_UTILS_QUAD_HPP
 
+#include "serialise.hpp"
+
 namespace stdx {    // extended std namespace
   
   template <class _T1, class _T2, class _T3, class _T4>
@@ -206,6 +208,16 @@ namespace stdx {    // extended std namespace
       swap(third, __p.third);
       swap(fourth, __p.fourth);
     }
+    
+    template <typename Archive>
+    void Serialise(Archive& archive, const uint32_t) {
+      archive(INDIGOX_SERIAL_NVP("first", first),
+              INDIGOX_SERIAL_NVP("second", second),
+              INDIGOX_SERIAL_NVP("third", third),
+              INDIGOX_SERIAL_NVP("fourth", fourth));
+      
+    }
+    
   };
   
   template <class _T1, class _T2, class _T3, class _T4>
