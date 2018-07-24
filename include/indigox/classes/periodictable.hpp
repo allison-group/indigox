@@ -322,7 +322,7 @@ namespace indigox {
     return r && l == *r;
   }
   inline bool operator==(const Element& l, const Element& r) {
-    return l && r && *l == *r;
+    return (!l || !r) ? l.get() == r.get() : *l == *r;
   }
   
   // Inverse eq operators
