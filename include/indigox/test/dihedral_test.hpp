@@ -26,6 +26,7 @@ namespace indigox::test {
     void SwapOrder() { imp->SwapOrder(); }
     string_ ToString() const { return imp->ToString(); }
     void SetTag(uid_ t) { imp->SetTag(t); }
+    size_ GetIndex() const { return imp->GetIndex(); }
     
     // Internals access
     _Molecule get_mol() const { return imp->_mol; }

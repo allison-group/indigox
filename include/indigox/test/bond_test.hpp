@@ -33,6 +33,7 @@ namespace indigox::test {
     Atoms GetAtoms() const { return imp->GetAtoms(); }
     size_ NumAtoms() const { return imp->NumAtoms(); }
     uid_ GetUniqueID() const { return imp->GetUniqueID(); }
+    size_ GetIndex() const { return imp->GetIndex(); }
     
     // Internals access
     _Molecule get_mol() const { return imp->_mol; }

@@ -16,11 +16,10 @@ namespace indigox {
   // Serialisation of IXAngle
   template <typename Archive>
   void IXAngle::save(Archive &archive, const uint32_t) const {
-    // Serialising molecule first sets all the tags correctly
-    archive(INDIGOX_SERIAL_NVP("molecule", _mol));
     std::vector<Atom> atoms;
     for (_Atom at : _atms) atoms.emplace_back(at.lock());
-    archive(INDIGOX_SERIAL_NVP("atoms", atoms),
+    archive(INDIGOX_SERIAL_NVP("molecule", _mol),
+            INDIGOX_SERIAL_NVP("atoms", atoms),
             INDIGOX_SERIAL_NVP("tag", _tag));
   }
   
@@ -30,7 +29,6 @@ namespace indigox {
                                    const uint32_t) {
     std::vector<Atom> atoms;
     Molecule m;
-    
     archive(INDIGOX_SERIAL_NVP("molecule", m),
             INDIGOX_SERIAL_NVP("atoms", atoms)
             );
@@ -41,9 +39,9 @@ namespace indigox {
   }
   INDIGOX_SERIALISE_SPLIT(IXAngle);
   
-  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXAngle serialisation", T, id) {
+  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXAngle serialisation", T, ixangle_serial) {
     using In = typename T::t1;
-    using Out = typename T::t2;
+    using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     test::AngleTestFixture fixture;
     Angle saved = fixture.ang.imp;
     
@@ -69,28 +67,39 @@ namespace indigox {
     check(!fixture.ang.get_atms()[2].expired());
     check(!fixture.ang.get_mol().expired());
     check_eq(saved->GetTag(), loaded->GetTag());
-    check_eq(atoms.first->GetTag(), loaded->GetAtoms().first->GetTag());
-    check_eq(atoms.second->GetTag(), loaded->GetAtoms().second->GetTag());
-    check_eq(atoms.third->GetTag(), loaded->GetAtoms().third->GetTag());
+    check_eq(atoms.first->GetTag(), saved->GetAtoms().first->GetTag());
+    check_eq(atoms.second->GetTag(), saved->GetAtoms().second->GetTag());
+    check_eq(atoms.third->GetTag(), saved->GetAtoms().third->GetTag());
+    check_eq(atoms, loaded->GetAtoms());
   }
-  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(id, ixserial<IXAngle>);
+  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixangle_serial, ixserial<IXAngle>);
   
   IXAngle::IXAngle(Atom a, Atom b, Atom c, Molecule m)
   : utils::IXCountableObject<IXAngle>(), _mol(m), _tag(0), _atms({{a,b,c}}) { }
 
   test_case_fixture(test::AngleTestFixture, "IXAngle construction") {
-    check_nothrow(test::TestAngle(a,b,c,mol));
-    check_eq(mol, ang.get_mol().lock());
-    check_eq(0, ang.get_tag());
-    check_eq(a, ang.get_atms()[0].lock());
-    check_eq(b, ang.get_atms()[1].lock());
-    check_eq(c, ang.get_atms()[2].lock());
+    check_nothrow(test::TestAngle tang(a,b,c,mol));
+    test::TestAngle tang(a,b,c,mol);
+    check_eq(mol, tang.get_mol().lock());
+    check_eq(0, tang.get_tag());
+    check_eq(a, tang.get_atms()[0].lock());
+    check_eq(b, tang.get_atms()[1].lock());
+    check_eq(c, tang.get_atms()[2].lock());
     
     // Check unique IDs correctly update
     test::TestAngle ang1(a,b,c,mol);
     test::TestAngle ang2(a,b,c,mol);
     check_ne(ang1.GetUniqueID(), ang2.GetUniqueID());
     check_eq(ang1.GetUniqueID() + 1, ang2.GetUniqueID());
+  }
+  
+  size_ IXAngle::GetIndex() const {
+    Molecule mol = _mol.lock();
+    if (!mol) return GetTag();
+    auto be = mol->GetAngles();
+    auto pos = std::find(be.first, be.second, shared_from_this());
+    if (pos == be.second) return GetTag();
+    return std::distance(be.first, pos);
   }
   
   test_case_fixture(test::AngleTestFixture, "IXAngle getting and setting") {
@@ -108,11 +117,15 @@ namespace indigox {
     check_eq(mol, ang.GetMolecule());
     check_eq(mol, ang.get_mol().lock());
     check_eq(stdx::make_triple(c, b, a), ang.GetAtoms());
+    check_eq(ang.GetTag(), ang.GetIndex());
     
     // Check correct no owning of molecule
     mol.reset();
     check(ang.get_mol().expired());
     check_eq(Molecule(), ang.GetMolecule());
+    
+    // Check get index returns tag when molecule dead
+    check_eq(ang.GetTag(), ang.GetIndex());
     
     // Check num atoms doesn't depend on being active
     check_eq(3, ang.NumAtoms());

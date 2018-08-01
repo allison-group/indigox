@@ -38,9 +38,9 @@ namespace indigox {
   }
   INDIGOX_SERIALISE_SPLIT(IXDihedral);
   
-  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXDihedral serialisation", T, id) {
+  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXDihedral serialisation", T, ixdihed_serial) {
     using In = typename T::t1;
-    using Out = typename T::t2;
+    using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     test::DihedralTestFixture fixture;
     Dihedral saved = fixture.dhd.imp;
     
@@ -67,31 +67,42 @@ namespace indigox {
     check(!fixture.dhd.get_atms()[3].expired());
     check(!fixture.dhd.get_mol().expired());
     check_eq(saved->GetTag(), loaded->GetTag());
-    check_eq(atoms.first->GetTag(), loaded->GetAtoms().first->GetTag());
-    check_eq(atoms.second->GetTag(), loaded->GetAtoms().second->GetTag());
-    check_eq(atoms.third->GetTag(), loaded->GetAtoms().third->GetTag());
-    check_eq(atoms.fourth->GetTag(), loaded->GetAtoms().fourth->GetTag());
+    check_eq(atoms.first->GetTag(), saved->GetAtoms().first->GetTag());
+    check_eq(atoms.second->GetTag(), saved->GetAtoms().second->GetTag());
+    check_eq(atoms.third->GetTag(), saved->GetAtoms().third->GetTag());
+    check_eq(atoms.fourth->GetTag(), saved->GetAtoms().fourth->GetTag());
+    check_eq(atoms, loaded->GetAtoms());
   }
-  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(id, ixserial<IXDihedral>);
+  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixdihed_serial, ixserial<IXDihedral>);
   
   
   IXDihedral::IXDihedral(Atom a, Atom b, Atom c, Atom d, Molecule m)
   : _mol(m), _tag(0), _atms({{a,b,c,d}}) { }
   
   test_case_fixture(test::DihedralTestFixture, "IXDihedral construction") {
-    check_nothrow(test::TestDihedral(a,b,c,d,mol));
-    check_eq(mol, dhd.get_mol().lock());
-    check_eq(0, dhd.get_tag());
-    check_eq(a, dhd.get_atms()[0].lock());
-    check_eq(b, dhd.get_atms()[1].lock());
-    check_eq(c, dhd.get_atms()[2].lock());
-    check_eq(d, dhd.get_atms()[3].lock());
+    check_nothrow(test::TestDihedral tdhd(a,b,c,d,mol));
+    test::TestDihedral tdhd(a,b,c,d,mol);
+    check_eq(mol, tdhd.get_mol().lock());
+    check_eq(0, tdhd.get_tag());
+    check_eq(a, tdhd.get_atms()[0].lock());
+    check_eq(b, tdhd.get_atms()[1].lock());
+    check_eq(c, tdhd.get_atms()[2].lock());
+    check_eq(d, tdhd.get_atms()[3].lock());
     
     // Check unique IDs correctly update
     test::TestDihedral dhd1(a,b,c,d,mol);
     test::TestDihedral dhd2(a,b,c,d,mol);
     check_ne(dhd1.GetUniqueID(), dhd2.GetUniqueID());
     check_eq(dhd1.GetUniqueID() + 1, dhd2.GetUniqueID());
+  }
+  
+  size_ IXDihedral::GetIndex() const {
+    Molecule mol = _mol.lock();
+    if (!mol) return GetTag();
+    auto be = mol->GetDihedrals();
+    auto pos = std::find(be.first, be.second, shared_from_this());
+    if (pos == be.second) return GetTag();
+    return std::distance(be.first, pos);
   }
   
   test_case_fixture(test::DihedralTestFixture, "IXDihedral getting and setting") {
@@ -109,11 +120,15 @@ namespace indigox {
     check_eq(mol, dhd.GetMolecule());
     check_eq(mol, dhd.get_mol().lock());
     check_eq(stdx::make_quad(d, c, b, a), dhd.GetAtoms());
+    check_eq(dhd.GetTag(), dhd.GetIndex());
     
     // Check correct no owning of molecule
     mol.reset();
     check(dhd.get_mol().expired());
     check_eq(Molecule(), dhd.GetMolecule());
+    
+    // Check still gets tag when mol is dead
+    check_eq(dhd.GetTag(), dhd.GetIndex());
     
     // Check num atoms doesn't depend on being active
     check_eq(4, dhd.NumAtoms());

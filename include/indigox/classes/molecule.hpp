@@ -19,7 +19,7 @@
 namespace indigox {
 
   class IXMolecule;
-  namespace test { class IXMolecule; }
+  namespace test { struct TestMolecule; }
 
   //! \brief shared_ptr for normal use of the IXMolecule class.
   using Molecule = std::shared_ptr<IXMolecule>;
@@ -33,33 +33,9 @@ namespace indigox {
     //! \brief Friendship allows generation of molecules.
     friend Molecule CreateMolecule();
     //! \brief Friendship allows IXMolecule internals to be tested.
-    friend class indigox::test::IXMolecule;
+    friend struct indigox::test::TestMolecule;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
-    
-  private:
-    /*! \brief Container for storing IXAtom instances.
-     *  \details A molecule takes ownership of all atoms it contains. */
-    using MolAtoms = std::vector<Atom>;
-    /*! \brief Container for storing IXBond instances.
-     *  \details A molecule takes ownership of all bonds it contains. */
-    using MolBonds = std::vector<Bond>;
-    /*! \brief Container for storing IXAngle instances.
-     *  \details A molecule takes ownership of all angles it contains. */
-    using MolAngles = std::vector<Angle>;
-    /*! \brief Container for storing IXDihedral instances.
-     *  \details A molecule takes ownership of all dihedrals it contains. */
-    using MolDihedrals = std::vector<Dihedral>;
-    
-  public:   // Public iterator aliases for easier external usage
-    //! \brief Iterator over owned IXAtom instances.
-    using MolAtomIter = MolAtoms::const_iterator;
-    //! \brief Iterator over owned IXBond instances.
-    using MolBondIter = MolBonds::const_iterator;
-    //! \brief Iterator over owned IXAngle instances.
-    using MolAngleIter = MolAngles::const_iterator;
-    //! \brief Iterator over owned IXDihedral instances.
-    using MolDihedralIter = MolDihedrals::const_iterator;
     
   public: // Public so that IXAtom etc can set when they're modified.
     /*! \brief Enum for the different types of properties a molecule has.
@@ -85,6 +61,32 @@ namespace indigox {
       DIHEDRAL_PERCEPTION,  //!< Redetermine dihedrals in molecule.
       NUM_EMERGENTS         //!< Number of emergent properties.
     };
+    
+  private:
+    /*! \brief Container for storing IXAtom instances.
+     *  \details A molecule takes ownership of all atoms it contains. */
+    using MolAtoms = std::vector<Atom>;
+    /*! \brief Container for storing IXBond instances.
+     *  \details A molecule takes ownership of all bonds it contains. */
+    using MolBonds = std::vector<Bond>;
+    /*! \brief Container for storing IXAngle instances.
+     *  \details A molecule takes ownership of all angles it contains. */
+    using MolAngles = std::vector<Angle>;
+    /*! \brief Container for storing IXDihedral instances.
+     *  \details A molecule takes ownership of all dihedrals it contains. */
+    using MolDihedrals = std::vector<Dihedral>;
+    //! \brief Bitset for emergent property states.
+    using EmergeSet = std::bitset<static_cast<size_>(Emergent::NUM_EMERGENTS)>;
+    
+  public:   // Public iterator aliases for easier external usage
+    //! \brief Iterator over owned IXAtom instances.
+    using MolAtomIter = MolAtoms::const_iterator;
+    //! \brief Iterator over owned IXBond instances.
+    using MolBondIter = MolBonds::const_iterator;
+    //! \brief Iterator over owned IXAngle instances.
+    using MolAngleIter = MolAngles::const_iterator;
+    //! \brief Iterator over owned IXDihedral instances.
+    using MolDihedralIter = MolDihedrals::const_iterator;
     
   private:
     /*! \brief Default constructor
@@ -245,7 +247,7 @@ namespace indigox {
     
     /*! \brief Get the molecular graph for this molecule.
      *  \return the molecular graph of this molecule. */
-    inline graph::MolecularGraph GetGraph() const { return _g; }
+    inline const graph::MolecularGraph& GetGraph() const { return _g; }
     
     /*! \brief Get the name of the molecule.
      *  \return the name of the molecule. */
@@ -282,7 +284,7 @@ namespace indigox {
     /*! \brief Set the molecular charge of the molecule.
      *  \details Sets the IXMolecule::ELECTRON_COUNT property as modified.
      *  \param q the new charge to set. */
-    inline void SetMolecularCharge(int q) {
+    inline void SetMolecularCharge(int_ q) {
       if (q != _q) SetPropertyModified(Property::ELECTRON_COUNT);
       _q = q;
     }
@@ -495,7 +497,7 @@ namespace indigox {
     //! Dihedrals owned by molecule
     MolDihedrals _dhds;
     //! Mask for modified emergent properties
-    std::bitset<static_cast<size_>(Emergent::NUM_EMERGENTS)> _emerge;
+    EmergeSet _emerge;
     //! Molecular graph of molecule
     graph::MolecularGraph _g;
     //! Cached molecular formula string

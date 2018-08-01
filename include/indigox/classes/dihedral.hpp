@@ -13,7 +13,7 @@ namespace indigox {
   class IXAtom;
   class IXDihedral;
   class IXMolecule;
-  namespace test { class TestDihedral; }
+  namespace test { struct TestDihedral; }
   
   using Atom = std::shared_ptr<IXAtom>;
   //! \brief shared_ptr for normal use of the IXDihedral class.
@@ -32,7 +32,7 @@ namespace indigox {
     //! \brief Friendship allows IXMolecule to create new dihedrals.
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXDihedral to be tested.
-    friend class indigox::test::TestDihedral;
+    friend struct indigox::test::TestDihedral;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
     
@@ -109,6 +109,8 @@ namespace indigox {
      *  caution.
      *  \param tag the tag to set. */
     inline void SetTag(uid_ tag) { _tag = tag; }
+    
+    size_ GetIndex() const;
     
   private:
     /*! \brief Clear all informations.

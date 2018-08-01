@@ -20,7 +20,7 @@ namespace indigox {
   class IXDihedral;
   class IXMolecule;
   class IXElement;
-  namespace test { class IXAtom; }
+  namespace test { struct TestAtom; }
   
   //! \brief shared_ptr for normal use of the IXAtom class.
   using Atom = std::shared_ptr<IXAtom>;
@@ -42,7 +42,15 @@ namespace indigox {
   //! \cond
   // Temporary defintion of Vec3 struct. Will make proper math stuff sometime.
   struct Vec3 {
-    float_ x = 0.0, y = 0.0, z = 0.0;
+    float_ x, y, z;
+    Vec3() : x(0.0), y(0.0), z(0.0) { }
+    Vec3(float_ x_, float_ y_, float_ z_) : x(x_), y(y_), z(z_) { }
+    friend inline bool operator==(const Vec3& v, const Vec3& u) {
+      return v.x == u.x && v.y == u.y && v.z == u.z;
+    }
+    friend inline bool operator!=(const Vec3& v, const Vec3& u) {
+      return !(v == u);
+    }
   };
   //! \endcond
   
@@ -52,7 +60,7 @@ namespace indigox {
     //! \brief Friendship allows IXMolecule to create new atoms.
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXAtom to be tested.
-    friend class indigox::test::IXAtom;
+    friend struct indigox::test::TestAtom;
     //! \brief Friendship allows IXAtom to be serialised.
     friend class cereal::access;
     
@@ -86,13 +94,16 @@ namespace indigox {
      *  \param m the molecule to assign this atom to. */
     IXAtom(Molecule m);
     
-    
-    IXAtom() = default;  // default constructor for serialise access
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t version) const;
     
     template <typename Archive>
-    void Serialise(Archive& archive, const uint32_t version);
+    static void load_and_construct(Archive& archive,
+                                   cereal::construct<IXAtom>& construct,
+                                   const uint32_t version);
     
   public:
+    IXAtom() = delete;  // default constructor for serialise access
     
     //! \brief Destructor
     ~IXAtom() { };
@@ -156,7 +167,7 @@ namespace indigox {
     
     /*! \brief Vector of the atom's position.
      *  \return the atoms position. */
-    inline Vec3 GetVector() const { return _pos; }
+    inline const Vec3& GetVector() const { return _pos; }
     
     /*! \brief String representation of the atom.
      *  \details The returned string is of the form: Atom(NAME, SYMBOL).
@@ -229,11 +240,11 @@ namespace indigox {
     
     /*! \brief Get the stereochemistry of the atom.
      *  \return the stereochemistry of the atom. */
-    inline Stereo GetStereochemistry() { return _stereo; }
+    inline Stereo GetStereochemistry() const { return _stereo; }
     
     /*! \brief Get the aromaticity of an atom.
      *  \return if the atom is aromatic or not. */
-    inline bool GetAromaticity() { return _aromatic; }
+    inline bool GetAromaticity() const { return _aromatic; }
     
   private:
     /*! \brief Add a bond to this atom.
@@ -287,7 +298,7 @@ namespace indigox {
      *  \details Intended primarily for internal use as the iterators are to
      *  weak_ptrs.
      *  \returns a pair of iterators for the beginning and end of the bonds. */
-    std::pair<AtomBondIter, AtomBondIter> GetBondIters() {
+    std::pair<AtomBondIter, AtomBondIter> GetBondIters() const {
       return std::make_pair(_bnds.begin(), _bnds.end());
     }
     
@@ -295,7 +306,7 @@ namespace indigox {
      *  \details Intended primarily for internal use as the iterators are to
      *  weak_ptrs.
      *  \returns a pair of iterators for the beginning and end of the angles. */
-    std::pair<AtomAngleIter, AtomAngleIter> GetAngleIters() {
+    std::pair<AtomAngleIter, AtomAngleIter> GetAngleIters() const {
       return std::make_pair(_angs.begin(), _angs.end());
     }
     
@@ -304,7 +315,7 @@ namespace indigox {
      *  weak_ptrs.
      *  \returns a pair of iterators for the beginning and end of the
      *  dihedrals. */
-    std::pair<AtomDihedralIter, AtomDihedralIter> GetDihedralIters() {
+    std::pair<AtomDihedralIter, AtomDihedralIter> GetDihedralIters() const {
       return std::make_pair(_dhds.begin(), _dhds.end());
     }
     
@@ -360,7 +371,12 @@ namespace indigox {
    *  \param os the output stream to print to.
    *  \param atom the Atom to print.
    *  \return the output stream after printing. */
-  std::ostream& operator<<(std::ostream& os, Atom atom);
+  inline std::ostream& operator<<(std::ostream& os, const IXAtom& atom) {
+    return (os << "Atom(" << atom.GetIndex() << ")");
+  }
+  inline std::ostream& operator<<(std::ostream& os, const Atom& atom) {
+    return atom ? os << *atom : os;
+  }
   
   //! \brief Type for the stereochemistry enum of an atom.
   using AtomStereo = indigox::IXAtom::Stereo;

@@ -17,6 +17,7 @@
 #define check_nothrow     DOCTEST_CHECK_NOTHROW
 
 #define check             DOCTEST_FAST_CHECK_UNARY
+#define check_false       DOCTEST_FAST_CHECK_UNARY_FALSE
 #define check_eq          DOCTEST_FAST_CHECK_EQ
 #define check_ne          DOCTEST_FAST_CHECK_NE
 #define check_gt          DOCTEST_FAST_CHECK_GT
@@ -28,13 +29,14 @@ using should_fail = doctest::should_fail;
 using expected_fails = doctest::expected_failures;
 #endif
 
-template <class T1, class T2, class U>
-struct TestTypePair {
+template <class T1, class T2>
+struct TTPair {
   using t1 = T1;
   using t2 = T2;
 };
 
 #include "serialise.hpp"
 template <class U>
-using ixserial = doctest::Types<TestTypePair<__hr_in, __hr_out, U>,
-                                TestTypePair<__cr_in, __cr_out, U>>;
+using ixserial = doctest::Types<TTPair<__hr_in,U>, TTPair<__cr_in,U>>;
+DOCTEST_TYPE_TO_STRING(__hr_in);
+DOCTEST_TYPE_TO_STRING(__cr_in);

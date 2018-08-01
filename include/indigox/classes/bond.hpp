@@ -175,6 +175,8 @@ namespace indigox {
      *  \returns 2. */
     size_ NumAtoms() const { return _atms.size(); }
     
+    size_ GetIndex() const;
+    
   private:
     //! The molecule this bond is assigned to.
     _Molecule _mol;

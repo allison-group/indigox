@@ -1,69 +1,96 @@
 #ifndef INDIGOX_TEST_ATOM_TEST_HPP
 #define INDIGOX_TEST_ATOM_TEST_HPP
 
+#include <random>
+
 namespace indigox::test {
   struct TestAtom {
-    indigox::IXAtom a;
-    Atom imp;
-    typedef indigox::IXAtom::AtomAngleIter AtmAngIter;
-    typedef indigox::IXAtom::AtomBondIter AtmBndIter;
-    typedef indigox::IXAtom::AtomDihedralIter AtmDhdIter;
+    // Typedefs
+    using IAngles = IXAtom::AtomAngles;
+    using IBonds = IXAtom::AtomBonds;
+    using IDihedrals = IXAtom::AtomDihedrals;
+    using Angles = std::pair<IXAtom::AtomAngleIter, IXAtom::AtomAngleIter>;
+    using Bonds = std::pair<IXAtom::AtomBondIter, IXAtom::AtomBondIter>;
+    using Dihedrals = std::pair<IXAtom::AtomDihedralIter, IXAtom::AtomDihedralIter>;
     
-    // private wrapping members
+    indigox::Atom imp;
+    
+    // Private wrapping members
     TestAtom() = delete;
-    TestAtom(Molecule m) : a(m), imp(new IXAtom(m)) { }
-    inline void AddAngle(Angle i) { a.AddAngle(i); }
-    inline void AddBond(Bond i) { a.AddBond(i); }
-    inline void AddDihedral(Dihedral i) { a.AddDihedral(i); }
-    inline void Clear() { a.Clear(); }
-    inline void RemoveAngle(Angle i) { a.RemoveAngle(i); }
-    inline void RemoveBond(Bond i) { a.RemoveBond(i); }
-    inline void RemoveDihedral(Dihedral i) { a.RemoveDihedral(i); }
+    TestAtom(Molecule m) : imp(new IXAtom(m)) { }
+    void AddAngle(Angle a) { imp->AddAngle(a); }
+    void AddBond(Bond b) { imp->AddBond(b); }
+    void AddDihedral(Dihedral d) { imp->AddDihedral(d); }
+    void Clear() { imp->Clear(); }
+    void RemoveAngle(Angle a) { imp->RemoveAngle(a); }
+    void RemoveBond(Bond b) { imp->RemoveBond(b); }
+    void RemoveDihedral(Dihedral d) { imp->RemoveDihedral(d); }
     
-    // public wrapping members
-    inline uint_ AddImplicitHydrogen() { return a.AddImplicitHydrogen(); }
-    inline std::pair<AtmAngIter, AtmAngIter> GetAngleIters() { return a.GetAngleIters(); }
-    inline bool GetAromaticity() { return a.GetAromaticity(); }
-    inline std::pair<AtmBndIter, AtmBndIter> GetBondIters() { return a.GetBondIters(); }
-    inline std::pair<AtmDhdIter, AtmDhdIter> GetDihedralIters() { return a.GetDihedralIters(); }
-    inline Element GetElement() { return a.GetElement(); }
-    inline int_ GetFormalCharge() { return a.GetFormalCharge(); }
-    inline uint_ GetImplicitCount() { return a.GetImplicitCount(); }
-    inline Molecule GetMolecule() { return a.GetMolecule(); }
-    inline string_ GetName() { return a.GetName(); }
-    inline float_ GetPartialCharge() { return a.GetPartialCharge(); }
-    inline AtomStereo GetStereochemistry() { return a.GetStereochemistry(); }
-    inline uint_ GetTag() { return a.GetTag(); }
-    inline uid_ GetUniqueID() { return a.GetUniqueID(); }
-    inline Vec3 GetVector() { return a.GetVector(); }
-    inline float_ GetX() { return a.GetX(); }
-    inline float_ GetY() { return a.GetY(); }
-    inline float_ GetZ() { return a.GetZ(); }
-    inline size_ NumAngles() { return a.NumAngles(); }
-    inline size_ NumBonds() { return a.NumBonds(); }
-    inline size_ NumDihedrals() { return a.NumDihedrals(); }
-    inline uint_ RemoveImplicitHydrogen() { return a.RemoveImplicitHydrogen(); }
-    inline void SetAromaticity(bool i) { a.SetAromaticity(i); }
-    inline void SetElement(Element i) { a.SetElement(i); }
-    inline void SetElement(string_ i) { a.SetElement(i); }
-    inline void SetElement(uint_ i) { a.SetElement(i); }
-    inline void SetFormalCharge(int_ i) { a.SetFormalCharge(i); }
-    inline void SetImplicitCount(uint_ i) { a.SetImplicitCount(i); }
-    inline void SetName(string_ i) { a.SetName(i); }
-    inline void SetPartialCharge(float_ i) { a.SetPartialCharge(i); }
-    inline void SetPosition(float_ x, float_ y, float_ z) { a.SetPosition(x,y,z); }
-    inline void SetStereochemistry(AtomStereo i) { a.SetStereochemistry(i); }
-    inline void SetTag(uint_ i) { a.SetTag(i); }
-    inline void SetX(float_ i) { a.SetX(i); }
-    inline void SetY(float_ i) { a.SetY(i); }
-    inline void SetZ(float_ i) { a.SetZ(i); }
-    inline string_ ToString() { return a.ToString(); }
-    
+    // Public wrapping members
+    uid_ GetUniqueID() const { return imp->GetUniqueID(); }
+    Element GetElement() const { return imp->GetElement(); }
+    int_ GetFormalCharge() const { return imp->GetFormalCharge(); }
+    float_ GetPartialCharge() const { return imp->GetPartialCharge(); }
+    uint_ GetTag() const { return imp->GetTag(); }
+    uint_ GetImplicitCount() const { return imp->GetImplicitCount(); }
+    uint_ AddImplicitHydrogen() { return imp->AddImplicitHydrogen(); }
+    uint_ RemoveImplicitHydrogen() { return imp->RemoveImplicitHydrogen(); }
+    Molecule GetMolecule() const { return imp->GetMolecule(); }
+    string_ GetName() const { return imp->GetName(); }
+    float_ GetX() const { return imp->GetX(); }
+    float_ GetY() const { return imp->GetY(); }
+    float_ GetZ() const { return imp->GetZ(); }
+    const Vec3& GetVector() const { return imp->GetVector(); }
+    string_ ToString() const { return imp->ToString(); }
+    void SetElement(Element e) { imp->SetElement(e); }
+    void SetElement(string_ e) { imp->SetElement(e); }
+    void SetElement(uint_ e) { imp->SetElement(e); }
+    void SetFormalCharge(int_ q) { imp->SetFormalCharge(q); }
+    void SetPartialCharge(float_ q) { imp->SetPartialCharge(q); }
+    void SetImplicitCount(uint_ h) { imp->SetImplicitCount(h); }
+    void SetTag(uint_ t) { imp->SetTag(t); }
+    void SetName(string_ n) { imp->SetName(n); }
+    void SetX(float_ x) { imp->SetX(x); }
+    void SetY(float_ y) { imp->SetY(y); }
+    void SetZ(float_ z) { imp->SetZ(z); }
+    void SetPosition(float_ x, float_ y, float_ z) { imp->SetPosition(x,y,z); }
+    void SetStereochemistry(AtomStereo s) { imp->SetStereochemistry(s); }
+    void SetAromaticity(bool a) { imp->SetAromaticity(a); }
+    AtomStereo GetStereochemistry() const { return imp->GetStereochemistry(); }
+    bool GetAromaticity() const { return imp->GetAromaticity(); }
+    Bonds GetBondIters() const { return imp->GetBondIters(); }
+    Angles GetAngleIters() const { return imp->GetAngleIters(); }
+    Dihedrals GetDihedralIters() const { return imp->GetDihedralIters(); }
+    size_ NumBonds() const { return imp->NumBonds(); }
+    size_ NumAngles() const { return imp->NumAngles(); }
+    size_ NumDihedrals() const { return imp->NumDihedrals(); }
+    size_ GetIndex() const { return imp->GetIndex(); }
+
+    // Internals access
+    _Molecule get_mol() const { return imp->_mol; }
+    _Element get_elem() const { return imp->_elem; }
+    int_ get_fc() const { return imp->_fc; }
+    uint_ get_tag() const { return imp->_tag; }
+    uint_ get_implicitH() const { return imp->_implicitH; }
+    string_ get_name() const { return imp->_name; }
+    const Vec3& get_pos() const { return imp->_pos; }
+    float_ get_partial() const { return imp->_partial; }
+    AtomStereo get_stereo() const { return imp->_stereo; }
+    bool get_aromatic() const { return imp->_aromatic; }
+    const IBonds& get_bnds() const { return imp->_bnds; }
+    const IAngles& get_angs() const { return imp->_angs; }
+    const IDihedrals& get_dhds() const { return imp->_dhds; }
   };
   
   inline TestAtom CreateGenericTestAtom() {
     return TestAtom(Molecule());
   }
+  
+  struct AtomTestFixture {
+    Molecule mol = CreateMolecule();
+    TestAtom atm;
+    AtomTestFixture() : mol(CreateMolecule()), atm(mol) { }
+  };
 }
 
 #endif /* INDIGOX_TEST_ATOM_TEST_HPP */

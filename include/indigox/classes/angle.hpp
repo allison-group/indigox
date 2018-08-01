@@ -108,6 +108,8 @@ namespace indigox {
      *  \return 3. */
     size_ NumAtoms() const { return  _atms.size(); }
     
+    size_ GetIndex() const;
+    
   private:
     /*! \brief Clear all information.
      *  \details Erases all information stored on the angle, and resets
