@@ -1050,7 +1050,7 @@ namespace eastl
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef EASTL_STD_ITERATOR_CATEGORY_ENABLED
-	#define EASTL_STD_ITERATOR_CATEGORY_ENABLED 0
+	#define EASTL_STD_ITERATOR_CATEGORY_ENABLED 1
 #endif
 
 #if EASTL_STD_ITERATOR_CATEGORY_ENABLED
