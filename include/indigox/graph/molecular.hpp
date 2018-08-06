@@ -21,7 +21,11 @@ namespace indigox{
   class IXAtom;
   class IXBond;
   class IXMolecule;
-  namespace test { class IXMolecularGraph; }
+  namespace test {
+    struct TestMolecularGraph;
+    struct TestMolecularVertex;
+    struct TestMolecularEdge;
+  }
   
   using Atom = std::shared_ptr<IXAtom>;
   using Bond = std::shared_ptr<IXBond>;
@@ -63,11 +67,16 @@ namespace indigox::graph {
     friend class IXMolecularGraph;
     //! \brief Friendship allows for serialisation
     friend class cereal::access;
+    //! \brief Friendship allows for testing
+    friend struct indigox::test::TestMolecularVertex;
     
   public:
     /*! \brief Get the atom associated with this vertex.
      *  \return the atom associated with this vertex, if it is still alive. */
     inline Atom GetAtom() const { return _atom.lock(); }
+    
+    IXMGVertex() = delete;  // no default constructor
+    
   private:
     /*! \brief Construct a vertex from an atom.
      *  \details Private constructor ensures that only IXMolecularGraph can
@@ -75,10 +84,13 @@ namespace indigox::graph {
      *  \param a the atom to associate with this vertex. */
     IXMGVertex(Atom a) : _atom(a) { }
     
-    IXMGVertex() = default;  // default constructor for serialisation
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t version) const;
     
     template <typename Archive>
-    void Serialise(Archive& archive, const uint32_t version);
+    static void load_and_construct(Archive& archive,
+                                   cereal::construct<IXMGVertex>& construct,
+                                   const uint32_t version);
     
     //! \brief Reference to the atom this edge is associated with.
     _Atom _atom;
@@ -90,10 +102,16 @@ namespace indigox::graph {
     friend class IXMolecularGraph;
     //! \brief Friendship allows for serialisation
     friend class cereal::access;
+    //! \brief Friendship allows for testing
+    friend struct indigox::test::TestMolecularEdge;
+    
   public:
     /*! \brief Get the bond associated with this edge.
      *  \return the bond associated with this edge, if it is still alive. */
     Bond GetBond() const { return _bond.lock(); }
+    
+    IXMGEdge() = delete;  // no default constructor
+    
   private:
     /*! \brief Construct an edge from a bond.
      *  \details Private constructor ensures that only IXMolecularGraph can
@@ -101,10 +119,13 @@ namespace indigox::graph {
      *  \param b the bond to associate with this edge. */
     IXMGEdge(Bond b) : _bond(b) { }
     
-    IXMGEdge() = default;  // default constructor for serialisation
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t version) const;
     
     template <typename Archive>
-    void Serialise(Archive& archive, const uint32_t version);
+    static void load_and_construct(Archive& archive,
+                                   cereal::construct<IXMGEdge>& construct,
+                                   const uint32_t version);
     
     //! \brief Reference to the bond this edge is associated with.
     _Bond _bond;
@@ -120,9 +141,11 @@ namespace indigox::graph {
     //! \brief Friendship allows an IXMolecule to own a graph.
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXMolecularGraph to be tested.
-    friend class indigox::test::IXMolecularGraph;
+    friend struct indigox::test::TestMolecularGraph;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
+    //! \brief Friendship allows graph algorithms access to underlying graph
+    friend struct indigox::graph::access;
     
     //! \brief Type of the underlying IXGraphBase
     using graph_type = IXGraphBase<IXMGVertex, IXMGEdge>;
@@ -130,28 +153,33 @@ namespace indigox::graph {
     using VertContain = std::vector<MGVertex>;
     //! \brief Container for edges
     using EdgeContain = std::vector<MGEdge>;
+    //! \brief Container for neighbours of vertices
+    using NbrsContain = std::map<MGVertex, VertContain>;
+    //! \brief Container for mapping atoms to vertices
+    using AtomMap = eastl::vector_map<Atom, MGVertex>;
+    //! \brief Container for mapping bonds to edges
+    using BondMap = eastl::vector_map<Bond, MGEdge>;
     
   public:
-    //! \brief Container for components
-    using Component_t = Component<MGVertex>;
     //! \brief Type of the iterator returned by GetEdges() method.
     using EdgeIter = EdgeContain::const_iterator;
     //! \brief Type of the iterator returned by GetVertices() method.
     using VertIter = VertContain::const_iterator;
     //! \brief Type of the iterator returned by GetNeighbours() method.
     using NbrsIter = std::vector<MGVertex>::const_iterator;
-    //! \brief Type of the iterator over components of the graph
-    using CompIter = std::vector<Component_t>::const_iterator;
     
   private:
     /*! \brief Construct with a molecule.
      *  \param mol the molecule to reference to. */
     IXMolecularGraph(const Molecule mol) : _source(mol), _g() { }
     
-    IXMolecularGraph() = default;  // default constructor for serialisation
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t version) const;
     
     template <typename Archive>
-    void Serialise(Archive& archive, const uint32_t version);
+    static void load_and_construct(Archive& archive,
+                                   cereal::construct<IXMolecularGraph>& construct,
+                                   const uint32_t version);
     
     // modifcation methods are private so that the structure of the graph can
     // be controlled only by the molecule owning it.
@@ -191,6 +219,8 @@ namespace indigox::graph {
     void RemoveVertex(const MGVertex v);
     
   public:
+    IXMolecularGraph() = delete;  // no default constructor
+    
     /*! \brief The degree of a vertex.
      *  \details If the vertex is not part of the graph, the returned value is
      *  std::numeric_limits<size_>::max().
@@ -313,22 +343,6 @@ namespace indigox::graph {
      *  \return the number of vertices. */
     inline size_ NumVertices() const { return _g.NumVertices(); }
     
-    /*! \brief Determine if the graph is connected.
-     *  \details A graph is connected if it contains only one connected
-     *  component. Here, a graph is also deemed to be connected if it contains
-     *  no vertices.
-     *  \return if the graph is connected or not. */
-    inline bool IsConnected() { return _g.NumConnectedComponents() <= 1; }
-    
-    /*! \brief Calculate number of connected components.
-     *  \return the number of connected components of the graph. */
-    inline size_ NumConnectedComponents() { return _g.NumConnectedComponents(); }
-    
-    /*! \brief Calculate the connected components.
-     *  \return a pair of iterators providing access to the components. Each
-     *  component is a std::vector<MGVertex>. */
-    std::pair<CompIter, CompIter> GetConnectedComponents();
-    
   private:
     //! \brief Source molecule of the molecular graph.
     _Molecule _source;
@@ -343,9 +357,7 @@ namespace indigox::graph {
     //! \brief Container for giving iterator access to all edges in graph.
     EdgeContain _e;
     //! \brief Container for neighbours of a vertex
-    std::map<MGVertex, VertContain> _n;
-    //! \brief Container for components of the graph
-    std::vector<const Component_t> _c;
+    NbrsContain _n;
     
   };
 }  // namespace indigox::graph

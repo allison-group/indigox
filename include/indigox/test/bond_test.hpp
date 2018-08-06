@@ -50,6 +50,10 @@ namespace indigox::test {
                     Molecule());
   }
   
+  inline TestBond CreateGenericTestBond(const Atom& u, const Atom& v) {
+    return TestBond(u,v,Molecule());
+  }
+  
   struct BondTestFixture {
     Molecule mol = CreateMolecule();
     Atom a = CreateGenericTestAtom().imp;

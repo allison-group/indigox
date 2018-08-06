@@ -30,7 +30,7 @@ namespace indigox::graph {
   };
   
   template <class T>
-  class Component : std::vector<T> {
+  class Component : public std::vector<T> {
     using std::vector<T>::vector;
   };
   
@@ -45,6 +45,13 @@ namespace indigox::graph {
       //! \brief A floating point label
       float_ flabel;
     };
+  };
+  
+  struct access {
+    template <class graph_type, class T>
+    inline static graph_type& member_graph(const std::shared_ptr<T>& t) {
+      return t->_g;
+    }
   };
   
   /*! \brief Template base class for all graphs used in the indigoX library.
@@ -91,10 +98,12 @@ namespace indigox::graph {
     using VertMap = indigox::utils::SimpleBiMap<V*, VertType>;
     //! \brief Type for bidirectional mapping of E to edge descriptor type.
     using EdgeMap = indigox::utils::SimpleBiMap<E*, EdgeType>;
+    //! \brief Friendship allows algorithms access to the underlying boost graph.
+    friend struct access;
     
   private:
     //! \brief Underlying boost graph.
-    std::shared_ptr<graph_t> _graph;
+    std::shared_ptr<graph_t> _g;
     //! \brief Map vertices to their descriptors.
     VertMap _verts;
     //! \brief Map edges to their descriptors.
@@ -102,7 +111,7 @@ namespace indigox::graph {
     
   public:
     //! \brief Default constructor
-    IXGraphBase() : _graph(std::make_shared<graph_t>()) { }
+    IXGraphBase() : _g(std::make_shared<graph_t>()) { }
     
     /*! \brief Add a new vertex to the graph.
      *  \details It is the callers responsability to ensure that the vertex
@@ -111,7 +120,7 @@ namespace indigox::graph {
      *  the graph may arise.
      *  \param v the vertex to add. */
     void AddVertex(V* v) {
-      VertType v_ = boost::add_vertex(VertProp(), *_graph);
+      VertType v_ = boost::add_vertex(VertProp(), *_g);
       _verts.insert(v, v_);
     }
     
@@ -124,22 +133,22 @@ namespace indigox::graph {
       VertType v_ = GetDescriptor(v);
       // Remove adjacent edges
       NbrsIter vi, vi_end;
-      std::tie(vi, vi_end) = boost::adjacent_vertices(v_, *_graph);
+      std::tie(vi, vi_end) = boost::adjacent_vertices(v_, *_g);
       for (; vi != vi_end; ++vi) {
-        _edges.erase(boost::edge(v_, *vi, *_graph).first);
+        _edges.erase(boost::edge(v_, *vi, *_g).first);
       }
       // Remove incident edges of directed graphs
       if (D::is_directed) {
         PredIter vp, vp_end;
-        std::tie(vp, vp_end) = boost::inv_adjacent_vertices(v_, *_graph);
+        std::tie(vp, vp_end) = boost::inv_adjacent_vertices(v_, *_g);
         for (; vp != vp_end; ++vp) {
-          _edges.erase(boost::edge(*vp, v_, *_graph).first);
+          _edges.erase(boost::edge(*vp, v_, *_g).first);
         }
       }
       // Remove the vertex
       _verts.erase(v_);
-      boost::clear_vertex(v_, *_graph);
-      boost::remove_vertex(v_, *_graph);
+      boost::clear_vertex(v_, *_g);
+      boost::remove_vertex(v_, *_g);
     }
     
     /*! \brief Add a new edge to the graph.
@@ -154,7 +163,7 @@ namespace indigox::graph {
       VertType u_ = GetDescriptor(u);
       VertType v_ = GetDescriptor(v);
       
-      EdgeType e_ = boost::add_edge(u_, v_, EdgeProp(), *_graph).first;
+      EdgeType e_ = boost::add_edge(u_, v_, EdgeProp(), *_g).first;
       _edges.insert(e, e_);
     }
     
@@ -165,7 +174,7 @@ namespace indigox::graph {
     void RemoveEdge(E* e) {
       EdgeType e_ = GetDescriptor(e);
       _edges.erase(e_);
-      boost::remove_edge(e_, *_graph);
+      boost::remove_edge(e_, *_g);
     }
     
     /*! \brief Remove an edge from the graph.
@@ -175,9 +184,9 @@ namespace indigox::graph {
     void RemoveEdge(V* u, V* v) {
       VertType u_ = GetDescriptor(u);
       VertType v_ = GetDescriptor(v);
-      EdgeType e = boost::edge(u_, v_, *_graph).first;
+      EdgeType e = boost::edge(u_, v_, *_g).first;
       _edges.erase(e);
-      boost::remove_edge(e, *_graph);
+      boost::remove_edge(e, *_g);
     }
     
     /*! \brief Is the vertex in the graph.
@@ -201,20 +210,20 @@ namespace indigox::graph {
       if (!HasVertex(u) || !HasVertex(v)) return false;
       VertType u_ = GetDescriptor(u);
       VertType v_ = GetDescriptor(v);
-      return boost::edge(u_, v_, *_graph).second;
+      return boost::edge(u_, v_, *_g).second;
     }
     
     /*! \brief Number of vertices in the graph.
      *  \return the number of vertices in the graph. */
-    size_ NumVertices() const { return boost::num_vertices(*_graph); }
+    size_ NumVertices() const { return boost::num_vertices(*_g); }
     
     /*! \brief Number of edges in the graph.
      *  \return the number of edges in the graph. */
-    size_ NumEdges() const { return boost::num_edges(*_graph); }
+    size_ NumEdges() const { return boost::num_edges(*_g); }
     
     //! \brief Removes all edges and vertices from the graph.
     void Clear() {
-      _graph->clear();
+      _g->clear();
       _verts.clear();
       _edges.clear();
     }
@@ -251,7 +260,7 @@ namespace indigox::graph {
       VertType v_ = GetDescriptor(v);
       nbrs.clear(); nbrs.reserve(OutDegree(v_));
       NbrsIter begin, end;
-      std::tie(begin, end) = boost::adjacent_vertices(v_, *_graph);
+      std::tie(begin, end) = boost::adjacent_vertices(v_, *_g);
       for (; begin != end; ++begin) nbrs.push_back(_verts.right.at(*begin));
     }
     
@@ -272,7 +281,7 @@ namespace indigox::graph {
       VertType v_ = GetDescriptor(v);
       pres.clear(); pres.reserve(InDegree(v_));
       PredIter begin, end;
-      std::tie(begin, end) = boost::inv_adjacent_vertices(v_, *_graph);
+      std::tie(begin, end) = boost::inv_adjacent_vertices(v_, *_g);
       for (; begin != end; ++begin) pres.push_back(_verts.right.at(*begin));
     }
     
@@ -284,8 +293,8 @@ namespace indigox::graph {
      *  they are valid. */
     std::pair<V*, V*> GetVertices(E* e) const {
       EdgeType e_ = GetDescriptor(e);
-      VertType u = boost::source(e_, *_graph);
-      VertType v = boost::target(e_, *_graph);
+      VertType u = boost::source(e_, *_g);
+      VertType v = boost::target(e_, *_g);
       return {_verts.right.at(u), _verts.right.at(v)};
     }
     
@@ -308,7 +317,7 @@ namespace indigox::graph {
     size_ GetEdges(std::vector<E*>& edges) const {
       edges.clear(); edges.reserve(NumEdges());
       EdgeIter begin, end;
-      std::tie(begin, end) = boost::edges(*_graph);
+      std::tie(begin, end) = boost::edges(*_g);
       for (; begin != end; ++begin) edges.push_back(_edges.right.at(*begin));
       return edges.size();
     }
@@ -319,7 +328,7 @@ namespace indigox::graph {
      *  \param u, v vertices to get the edge between.
      *  \return a pair of the edge between the two vertces and if it is valid.*/
     E* GetEdge(V* u, V* v) const {
-      auto e = boost::edge(GetDescriptor(u), GetDescriptor(v), *_graph);
+      auto e = boost::edge(GetDescriptor(u), GetDescriptor(v), *_g);
       return _edges.right.at(e.first);
     }
     
@@ -329,7 +338,7 @@ namespace indigox::graph {
      *  \param e the edge to get the source of.
      *  \return a pair of the source vertex of the edge and if it is valid. */
     V* GetSource(E* e) const {
-      return _verts.right.at(boost::source(_edges.left.at(e), *_graph));
+      return _verts.right.at(boost::source(_edges.left.at(e), *_g));
     }
     
     /*! \brief Get the target vertex of an edge.
@@ -338,28 +347,28 @@ namespace indigox::graph {
      *  \param e the edge to get the target of.
      *  \return the target vertex of the edge. */
     V* GetTarget(E* e) const {
-      return _verts.right.at(boost::target(_edges.left.at(e), *_graph));
+      return _verts.right.at(boost::target(_edges.left.at(e), *_g));
     }
     
     /*! \brief Get the connected components of the graph.
      *  \param[out] components where the connected components will be written to.
      *  \return the number of connected components. */
-    size_ ConnectedComponents(std::vector<std::vector<V*>>& components) {
-      static_assert(!D::is_directed, "Requires an undirected graph.");
-      size_ num = __connected_components_worker();
-      components.clear();
-      components.assign(num, std::vector<V*>());
-      for (auto v : _verts.right)
-        components[(*_graph)[v.first].ilabel].push_back(v.second);
-      return num;
-    }
+//    size_ ConnectedComponents(std::vector<std::vector<V*>>& components) {
+//      static_assert(!D::is_directed, "Requires an undirected graph.");
+//      size_ num = __connected_components_worker();
+//      components.clear();
+//      components.assign(num, std::vector<V*>());
+//      for (auto v : _verts.right)
+//        components[(*_graph)[v.first].ilabel].push_back(v.second);
+//      return num;
+//    }
     
     /*! \brief Number of connected components of the graph.
      *  \return the number of connected components. */
-    size_ NumConnectedComponents() {
-      static_assert(!D::is_directed, "Requires an undirected graph.");
-      return __connected_components_worker();
-    }
+//    size_ NumConnectedComponents() {
+//      static_assert(!D::is_directed, "Requires an undirected graph.");
+//      return __connected_components_worker();
+//    }
     
   private:
     /*! \brief Get vertex descriptor of a vertex.
@@ -385,31 +394,31 @@ namespace indigox::graph {
     /*! \brief Outdegree of a vertex.
      *  \param v vertex descriptor to get outdegree of.
      *  \return the degree of the given vertex descriptor. */
-    size_ OutDegree(VertType v) const { return boost::out_degree(v, *_graph); }
+    size_ OutDegree(VertType v) const { return boost::out_degree(v, *_g); }
     
     /*! \brief Indegree of a vertex.
      *  \param v vertex descriptor to get indegree of.
      *  \return the indegree of the given vertex descriptor. */
-    size_ InDegree(VertType v) const { return boost::in_degree(v, *_graph); }
+    size_ InDegree(VertType v) const { return boost::in_degree(v, *_g); }
     
     //! \cond
     /*! \brief Worker method for calculating connected components.
      *  \details Each vertex is labeled with the ID of the component it is
      *  a part of. */
-    size_ __connected_components_worker() {
-      using namespace boost;
-      using VertIdxMap = std::map<VertType, size_>;
-      VertIdxMap data;
-      associative_property_map<VertIdxMap> indexMap(data);
-      auto verts = vertices(*_graph);
-      for (size_ i = 0; verts.first != verts.second; ++verts.first, ++i)
-        put(indexMap, *verts.first, i);
-      
-      auto num = connected_components(*_graph,
-                                      get(&VertProp::component, *_graph),
-                                      vertex_index_map(indexMap));
-      return static_cast<size_>(num);
-    }
+//    size_ __connected_components_worker() {
+//      using namespace boost;
+//      using VertIdxMap = std::map<VertType, size_>;
+//      VertIdxMap data;
+//      associative_property_map<VertIdxMap> indexMap(data);
+//      auto verts = vertices(*_graph);
+//      for (size_ i = 0; verts.first != verts.second; ++verts.first, ++i)
+//        put(indexMap, *verts.first, i);
+//
+//      auto num = connected_components(*_graph,
+//                                      get(&VertProp::component, *_graph),
+//                                      vertex_index_map(indexMap));
+//      return static_cast<size_>(num);
+//    }
     //! \endcond
   };
   

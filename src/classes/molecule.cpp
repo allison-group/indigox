@@ -1093,18 +1093,21 @@ namespace indigox {
     Atom test_norm = blankmol.NewAtom();
     check_ne(Atom(), test_norm);
     check_eq(1, blankmol.NumAtoms());
+    check_eq(blankmol.NumAtoms(), blankmol.GetGraph()->NumVertices());
     
     // New atom with element
     Atom test_elem = blankmol.NewAtom(test_element);
     check_ne(Atom(), test_elem);
     check_eq(2, blankmol.NumAtoms());
     check_eq(test_element, test_elem->GetElement());
+    check_eq(blankmol.NumAtoms(), blankmol.GetGraph()->NumVertices());
     
     // New atom with name
     Atom test_name = blankmol.NewAtom("TestAtom");
     check_ne(Atom(), test_name);
     check_eq(3, blankmol.NumAtoms());
     check_eq("TestAtom", test_name->GetName());
+    check_eq(blankmol.NumAtoms(), blankmol.GetGraph()->NumVertices());
     
     // New atom with name and element
     Atom test_name_elem = blankmol.NewAtom("TestAtomMore", test_element);
@@ -1112,12 +1115,14 @@ namespace indigox {
     check_eq(4, blankmol.NumAtoms());
     check_eq("TestAtomMore", test_name_elem->GetName());
     check_eq(test_element, test_name_elem->GetElement());
+    check_eq(blankmol.NumAtoms(), blankmol.GetGraph()->NumVertices());
     
     // Removing an atom
     check(blankmol.RemoveAtom(test_name_elem));
     check_eq(3, blankmol.NumAtoms());
     check_false(blankmol.HasAtom(test_name_elem));
     check_eq(Molecule(), test_name_elem->GetMolecule());
+    check_eq(blankmol.NumAtoms(), blankmol.GetGraph()->NumVertices());
     
     // Fail cases
     check_false(blankmol.RemoveAtom(test_name_elem));
@@ -1127,7 +1132,9 @@ namespace indigox {
     // Removing an atom should remove all bonds, angles and dihedrals tied to it
     check(benzene.RemoveAtom(a_benzene.front()));
     check_eq(11, benzene.get_atms().size());
+    check_eq(11, benzene.GetGraph()->NumVertices());
     check_eq(9, benzene.get_bnds().size());
+    check_eq(9, benzene.GetGraph()->NumEdges());
     check_eq(11, benzene.get_angs().size());
     check_eq(12, benzene.get_dhds().size());
   }
@@ -1216,28 +1223,34 @@ namespace indigox {
     Bond test_bnd =  blankmol.NewBond(atm1, atm2);
     check_ne(Bond(), test_bnd);
     check_eq(1, blankmol.NumBonds());
+    check_eq(blankmol.NumBonds(), blankmol.GetGraph()->NumEdges());
     
     // New bond between existing should fail
     check_eq(Bond(), blankmol.NewBond(atm2, atm1));
     check_eq(1, blankmol.NumBonds());
+    check_eq(blankmol.NumBonds(), blankmol.GetGraph()->NumEdges());
     
     // New bond with unowned atom should fail
     check_eq(Bond(), blankmol.NewBond(atm3, a_benzene.front()));
     check_eq(1, blankmol.NumBonds());
+    check_eq(blankmol.NumBonds(), blankmol.GetGraph()->NumEdges());
     
     // New bond with null atom should fail
     check_eq(Bond(), blankmol.NewBond(atm4, Atom()));
     check_eq(1, blankmol.NumBonds());
+    check_eq(blankmol.NumBonds(), blankmol.GetGraph()->NumEdges());
     Bond test_bnd2 = blankmol.NewBond(atm3, atm4);
     
     // Remove a bond
     check(blankmol.RemoveBond(test_bnd));
     check_eq(1, blankmol.NumBonds());
+    check_eq(blankmol.NumBonds(), blankmol.GetGraph()->NumEdges());
     check_eq(Molecule(), test_bnd->GetMolecule());
     
     // Remove a bond between atoms
     check(blankmol.RemoveBond(atm4, atm3));
     check_eq(0, blankmol.NumBonds());
+    check_eq(blankmol.NumBonds(), blankmol.GetGraph()->NumEdges());
     check_eq(Molecule(), test_bnd2->GetMolecule());
     
     // Fail cases
@@ -1251,6 +1264,7 @@ namespace indigox {
     check_false(benzene.HasBond(a_benzene[0], a_benzene[1]));
     check_eq(12, benzene.get_atms().size());
     check_eq(11, benzene.get_bnds().size());
+    check_eq(11, benzene.GetGraph()->NumEdges());
     check_eq(14, benzene.get_angs().size());
     check_eq(16, benzene.get_dhds().size());
   }
@@ -1287,93 +1301,3 @@ namespace indigox {
   
   test_suite_close();
 }
-
-
-//using namespace indigox;
-
-
-
-
-/*
- * Molecule implementation
- */
-
-//size_t IXMolecule::AssignElectrons() {
-//  // check is single component (use graph)
-//  /// @todo
-//  if (graph_->NumConnectedComponents() != 1) {
-//    std::cerr << "Electrons can only be assigned when molecule has only one component." << std::endl;
-//    return 0;
-//  }
-//
-//  // check all elements valid.
-//  typedef Options::AssignElectrons opt_;
-//  for (Atom atm : _atoms) {
-//    if (!atm->GetElement()) {
-//      std::cerr << "Not all atoms have elements assigned." << std::endl;
-//      return 0;
-//    }
-//    if (opt_::ALLOWED_ELEMENTS.find(atm->GetElement()->GetSymbol())
-//        == opt_::ALLOWED_ELEMENTS.end()) {
-//      std::cerr << atm->GetElement() << " is not an allowed element for the algorithm." << std::endl;
-//      return 0;
-//    }
-//  }
-//
-//  // Set the ElectronOpt graph
-//  elnopt_->SetMolecularGraph(graph_);
-//  modified_ = false;
-//  size_t num = (size_t)elnopt_->Run();
-//  if (num) ApplyElectronAssignment(0);
-//  for (auto& tmp : idx_to_atom_) {
-//    Atom_p atom = tmp.second.lock();
-//    if (atom->GetFormalCharge() != 0) {
-//      std::cout << tmp.first << " : " << atom->GetFormalCharge() << std::endl;
-//    }
-//  }
-//
-//  for (auto& tmp : idx_to_bond_) {
-//    Bond_p bond = tmp.second.lock();
-//    if (bond->GetOrder() != Order::SINGLE_BOND) {
-//      uid_t a = bond->GetSourceAtom()->GetIndex();
-//      uid_t b = bond->GetTargetAtom()->GetIndex();
-//      if (a <= b) std::cout << a << "-" << b << " : " << bond->GetOrder() << std::endl;
-//      else std::cout << b << "-" << a << " : " << bond->GetOrder() << std::endl;
-//    }
-//  }
-//  return num;
-//}
-//
-//FCSCORE IXMolecule::GetMinimumElectronAssignmentScore() {
-//  if (modified_) {
-//    std::cerr << "Molecule has been modified since assignment. Please re-assign." << std::endl;
-//    return Options::AssignElectrons::INF;
-//  }
-//  return elnopt_->GetMinimisedEnergy();
-//}
-//
-//bool IXMolecule::ApplyElectronAssignment(size_t idx) {
-//  if (modified_) {
-//    std::cerr << "Molecule has been modified since assignment. Please re-assign." << std::endl;
-//    return false;
-//  }
-//  return elnopt_->ApplyElectronAssigment(idx);
-//}
-//
-//// Iterator methods
-//Atom IXMolecule::Begin(MolAtomIterator &it) {
-//  it = _atoms.begin();
-//  return (it == _atoms.end()) ? Atom() : *it;
-//}
-//
-//Atom IXMolecule::Next(MolAtomIterator &it) {
-//  ++it;
-//  return (it == _atoms.end()) ? Atom() : *it;
-//}
-//
-//MolAtomIterator IXMolecule::BeginAtom() { return _atoms.begin(); }
-//MolAtomIterator IXMolecule::EndAtom() { return _atoms.end(); }
-//MolBondIterator IXMolecule::BeginBond() { return _bonds.begin(); }
-//MolBondIterator IXMolecule::EndBond() { return _bonds.end(); }
-
-

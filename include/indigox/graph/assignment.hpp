@@ -10,6 +10,7 @@
 #include <EASTL/vector_map.h>
 
 #include "base_graph.hpp"
+#include "../utils/common.hpp"
 #include "../utils/numerics.hpp"
 
 // Foward declares
@@ -51,6 +52,7 @@ namespace indigox::graph {
     IXAGVertex() = delete; // no default constructor
     //! \brief Friendship allows IXAssignmentGraph to construct vertices
     friend class IXAssignmentGraph;
+    //! \brief Friendship allows serialisation
     
   private:
     /*! \brief Construct an IXAGVertex from an MGVertex.
@@ -223,7 +225,7 @@ namespace indigox::graph {
     
     /*! \brief Check if the graph is connected.
      *  \return if the graph is connected or not. */
-    inline bool IsConnected() { return _g.NumConnectedComponents() == 1; }
+//    inline bool IsConnected() { return _g.NumConnectedComponents() == 1; }
     
     /*! \brief Populate the pre-assigned state of all vertices.
      *  \details The assigned electrons are as follows:

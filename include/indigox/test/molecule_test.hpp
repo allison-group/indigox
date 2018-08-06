@@ -1,6 +1,8 @@
 #ifndef INDIGOX_TEST_MOLECULE_TEST_HPP
 #define INDIGOX_TEST_MOLECULE_TEST_HPP
 
+#include <random>
+
 namespace indigox::test {
   struct TestMolecule {
     // Typedefs
