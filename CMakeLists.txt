@@ -21,7 +21,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 # Setup some compile flags, for all versions and specific versions
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-deprecated-declarations -Wno-deprecated -Wpedantic")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-private-field -Wpedantic")
 IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 ENDIF()
@@ -39,6 +39,7 @@ ENDIF()
 # Setup install directories
 INCLUDE(GNUInstallDirs)
 ADD_DEFINITIONS(-DIX_DATA_DIRECTORY="${CMAKE_INSTALL_FULL_DATAROOTDIR}")
+ADD_DEFINITIONS(-DINDIGOX_DISABLE_TESTS=1)
 
 # List all the files to compile into the indigox library
 SET(INDIGOX_LIB_SRCS
@@ -49,6 +50,7 @@ SET(INDIGOX_LIB_SRCS
     src/classes/atom.cpp
     src/classes/bond.cpp
     src/classes/dihedral.cpp
+    src/classes/forcefield.cpp
     src/classes/molecule.cpp
     src/classes/periodictable.cpp
     src/graph/assignment.cpp
@@ -79,6 +81,7 @@ ENDIF()
 
 # Build bindings if requested
 IF(BUILD_PYTHON)
+  ADD_DEFINITIONS(-DINDIGOX_DISABLE_TESTS=1)
   ADD_SUBDIRECTORY(src/python)
 ELSE()
   MESSAGE(STATUS "Building of Python bindings disabled.")

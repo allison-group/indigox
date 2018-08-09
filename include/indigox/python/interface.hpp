@@ -18,6 +18,7 @@ void GeneratePyPeriodicTable(pybind11::module& m);
 void GeneratePyElement(pybind11::module& m);
 void GeneratePyElectronAssignmentGraph(pybind11::module& m);
 void GeneratePyElectronAssigner(pybind11::module& m);
+void GeneratePyForcefield(pybind11::module& m);
 
 
 

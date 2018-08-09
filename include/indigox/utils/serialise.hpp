@@ -39,6 +39,9 @@ __ix_serialise_split(class_name, __cr_in, __cr_out)
 
 #define INDIGOX_SERIAL_NVP(name, value) cereal::make_nvp<Archive>(name, value)
 
+#define INDIGOX_SERIALISE_VERSION(class_name, version) \
+CEREAL_CLASS_VERSION(class_name, version);
+
 #define INDIGOX_IS_OUTPUT_ARCHIVE(archive_t) \
 std::is_base_of<cereal::detail::OutputArchiveBase, archive_t>::value
 

@@ -5,6 +5,7 @@ SET(INDIGOX_PYTHON_INTERFACE_SRCS
     pyatom.cpp
     pybond.cpp
     pydihedral.cpp
+    pyforcefield.cpp
     pyelement.cpp
     pymolecule.cpp
     pyperiodictable.cpp
@@ -36,3 +37,4 @@ TARGET_LINK_LIBRARIES(pyindigox PRIVATE indigox)
 # Set install rules
 INSTALL(TARGETS pyindigox DESTINATION ${PYTHON_SITE_PACKAGES}/indigox)
 INSTALL(FILES __init__.py DESTINATION ${PYTHON_SITE_PACKAGES}/indigox)
+INSTALL(FILES io/__init__.py io/misc.py io/parser.py DESTINATION ${PYTHON_SITE_PACKAGES}/indigox/io)
