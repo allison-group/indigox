@@ -7,6 +7,7 @@
 #include <indigox/python/pickle.hpp>
 
 #include <indigox/classes/atom.hpp>
+#include <indigox/classes/forcefield.hpp>
 
 namespace py = pybind11;
 
@@ -36,6 +37,7 @@ void GeneratePyAtom(pybind11::module& m) {
   .def("NumBonds", &IXAtom::NumBonds)
   .def("NumDihedrals", &IXAtom::NumDihedrals)
   .def("GetUniqueID", &IXAtom::GetUniqueID)
+  .def("GetType", &IXAtom::GetType)
   // Setters
   .def("SetAromaticity", &IXAtom::SetAromaticity)
   .def("SetElement", py::overload_cast<Element>(&IXAtom::SetElement))
@@ -51,6 +53,7 @@ void GeneratePyAtom(pybind11::module& m) {
   .def("SetX", &IXAtom::SetX)
   .def("SetY", &IXAtom::SetY)
   .def("SetZ", &IXAtom::SetZ)
+  .def("SetType", &IXAtom::SetType)
   // Other
   .def("AddImplicitHydrogen", &IXAtom::AddImplicitHydrogen)
   .def("RemoveImplicitHydrogen", &IXAtom::RemoveImplicitHydrogen)

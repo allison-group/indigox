@@ -3,99 +3,111 @@
 
 namespace indigox::test {
   
-  struct TestDihedralType {
+  struct TestFFDihedral {
     // Typedefs
-    using DataStore = indigox::IXFFDihedralType::DataStore;
-    using AllowMask = indigox::IXFFDihedralType::AllowedMask;
-    using AllowEnum = indigox::IXFFDihedralType::AllowEnum;
-    using StoreEnum = indigox::IXFFDihedralType::StoreEnum;
+    using DataStore = indigox::IXFFDihedral::DataStore;
+    using AllowMask = indigox::IXFFDihedral::AllowedMask;
+    using AllowEnum = indigox::IXFFDihedral::AllowEnum;
+    using StoreEnum = indigox::IXFFDihedral::StoreEnum;
     
-    indigox::FFDihedralType imp;
+    indigox::FFDihedral imp;
     
     // Private wrapping functions
-    TestDihedralType() = delete;
-    TestDihedralType(DihedralFunctionType t, int_ i, std::initializer_list<float_> l)
-    : imp(new IXFFDihedralType(t,i,l)) { }
+    TestFFDihedral() = delete;
+    TestFFDihedral(DihedralType t, int_ i, std::initializer_list<float_> l)
+    : imp(new IXFFDihedral(t,i,l)) { }
     
     // Public wrapping functions
     float_ GetPhaseShift() const { return imp->GetPhaseShift(); }
     float_ GetForceConstant() const { return imp->GetForceConstant(); }
     uint_ GetMultiplicity() const { return imp->GetMultiplicity(); }
     float_ GetIdealAngle() const { return imp->GetIdealAngle(); }
-    DihedralFunctionType GetType() const { return imp->GetType(); }
+    DihedralType GetType() const { return imp->GetType(); }
     int_ GetID() const { return imp->GetID(); }
     
     // Internals access
-    DihedralFunctionType get_type() const { return imp->_type; }
+    DihedralType get_type() const { return imp->_type; }
     int_ get_id() const { return imp->_id; }
     const DataStore& get_dat() const { return imp->_dat; }
     AllowMask& get_mask() const { return imp->_mask; }
     
   };
   
-  struct TestAngleType {
+  inline TestFFDihedral CreateGenericTestFFDihedral() {
+    return TestFFDihedral(DihedralType::Improper, 3, {0.95, 1.37});
+  }
+  
+  struct TestFFAngle {
     // Typedefs
-    using DataStore = indigox::IXFFAngleType::DataStore;
-    using AllowMask = indigox::IXFFAngleType::AllowedMask;
-    using AllowEnum = indigox::IXFFAngleType::AllowEnum;
-    using StoreEnum = indigox::IXFFAngleType::StoreEnum;
+    using DataStore = indigox::IXFFAngle::DataStore;
+    using AllowMask = indigox::IXFFAngle::AllowedMask;
+    using AllowEnum = indigox::IXFFAngle::AllowEnum;
+    using StoreEnum = indigox::IXFFAngle::StoreEnum;
     
-    indigox::FFAngleType imp;
+    indigox::FFAngle imp;
     
     // Private wrapping functions
-    TestAngleType() = delete;
-    TestAngleType(AngleFunctionType t, int_ i, std::initializer_list<float_> l)
-    : imp(new IXFFAngleType(t,i,l)) { }
+    TestFFAngle() = delete;
+    TestFFAngle(AngleType t, int_ i, std::initializer_list<float_> l)
+    : imp(new IXFFAngle(t,i,l)) { }
     
     // Public wrapping functions
     float_ GetForceConstant() const { return imp->GetForceConstant(); }
     float_ GetIdealAngle() const { return imp->GetIdealAngle(); }
-    AngleFunctionType GetType() const { return imp->GetType(); }
+    AngleType GetType() const { return imp->GetType(); }
     int_ GetID() const { return imp->GetID(); }
     
     // Internals access
-    AngleFunctionType get_type() const { return imp->_type; }
+    AngleType get_type() const { return imp->_type; }
     int_ get_id() const { return imp->_id; }
     const DataStore& get_dat() const { return imp->_dat; }
     AllowMask& get_mask() const { return imp->_mask; }
     
   };
   
-  struct TestBondType {
+  inline TestFFAngle CreateGenericTestFFAngle() {
+    return TestFFAngle(AngleType::Harmonic, 3, {0.56,0.0098});
+  }
+  
+  struct TestFFBond {
     // Typedefs
-    using DataStore = indigox::IXFFBondType::DataStore;
-    using AllowMask = indigox::IXFFBondType::AllowedMask;
-    using AllowEnum = indigox::IXFFBondType::AllowEnum;
-    using StoreEnum = indigox::IXFFBondType::StoreEnum;
+    using DataStore = indigox::IXFFBond::DataStore;
+    using AllowMask = indigox::IXFFBond::AllowedMask;
+    using AllowEnum = indigox::IXFFBond::AllowEnum;
+    using StoreEnum = indigox::IXFFBond::StoreEnum;
     
-    indigox::FFBondType imp;
+    indigox::FFBond imp;
     
     // Private wrapping functions
-    TestBondType() = delete;
-    TestBondType(BondFunctionType t, int_ i, std::initializer_list<float_> l)
-    : imp(new IXFFBondType(t,i,l)) { }
+    TestFFBond() = delete;
+    TestFFBond(BondType t, int_ i, std::initializer_list<float_> l)
+    : imp(new IXFFBond(t,i,l)) { }
     
     // Public wrapping functions
     float_ GetForceConstant() const { return imp->GetForceConstant(); }
     float_ GetIdealLength() const { return imp->GetIdealLength(); }
-    BondFunctionType GetType() const { return imp->GetType(); }
+    BondType GetType() const { return imp->GetType(); }
     int_ GetID() const { return imp->GetID(); }
     
     // Internals access
-    BondFunctionType get_type() const { return imp->_type; }
+    BondType get_type() const { return imp->_type; }
     int_ get_id() const { return imp->_id; }
     const DataStore& get_dat() const { return imp->_dat; }
     AllowMask& get_mask() const { return imp->_mask; }
   };
   
-  struct TestAtomType {
+  inline TestFFBond CreateGenericTestFFBond() {
+    return TestFFBond(BondType::Harmonic, 4, {0.567, 9.732});
+  }
+  
+  struct TestFFAtom {
     // Typedefs
     
-    indigox::FFAtomType imp;
+    indigox::FFAtom imp;
     
     // Private wrapping functions
-    TestAtomType() = delete;
-    TestAtomType(int_ i, string_ n) : imp(new IXFFAtomType(i,n)) { }
+    TestFFAtom() = delete;
+    TestFFAtom(int_ i, string_ n) : imp(new IXFFAtom(i,n)) { }
     
     // Public wrapping functions
     int_ GetID() const { return imp->GetID(); }
@@ -106,81 +118,85 @@ namespace indigox::test {
     string_ get_name() const { return imp->_name; }
   };
   
+  inline TestFFAtom CreateGenericTestFFAtom() {
+    return TestFFAtom(7, "GEN");
+  }
+  
   struct TestForcefield {
     // Typedefs
     using AtomTypes = indigox::IXForcefield::AtomTypes;
     using BondTypes = indigox::IXForcefield::BondTypes;
     using AngleTypes = indigox::IXForcefield::AngleTypes;
     using DihedralTypes = indigox::IXForcefield::DihedralTypes;
-    using BndT = BondFunctionType;
-    using AngT = AngleFunctionType;
-    using DhdT = DihedralFunctionType;
+    using BndT = BondType;
+    using AngT = AngleType;
+    using DhdT = DihedralType;
     using ParmT = std::initializer_list<float_>;
     
     indigox::Forcefield imp;
     
     // Private wrapping functions
-    FFBondType NewBondType(BndT t, int_ i, ParmT p) {
+    FFBond NewBondType(BndT t, int_ i, ParmT p) {
       return imp->NewBondType(t, i, p);
     }
-    FFAngleType NewAngleType(AngT t, int_ i, ParmT p) {
+    FFAngle NewAngleType(AngT t, int_ i, ParmT p) {
       return imp->NewAngleType(t, i, p);
     }
-    FFDihedralType NewDihedralType(DhdT t, int_ i, ParmT p) {
+    FFDihedral NewDihedralType(DhdT t, int_ i, ParmT p) {
       return imp->NewDihedralType(t, i, p);
     }
     
     // Public wrapping functions
     TestForcefield() = delete;
-    TestForcefield(ForcefieldFamily f, string_ n) : imp(new IXForcefield(f,n)) { }
+    TestForcefield(FFFamily f, string_ n) : imp(new IXForcefield(f,n)) { }
     void ReserveAtomTypes(size_ s) { imp->ReserveAtomTypes(s); }
     void ReserveBondTypes(BndT t, size_ s) { imp->ReserveBondTypes(t, s); }
     void ReserveAngleTypes(AngT t, size_ s) { imp->ReserveAngleTypes(t, s); }
     void ReserveDihedralTypes(DhdT t, size_ s) { imp->ReserveDihedralTypes(t, s); }
-    ForcefieldFamily GetFamily() const { return imp->GetFamily(); }
+    FFFamily GetFamily() const { return imp->GetFamily(); }
     string_ GetName() const { return imp->GetName(); }
-    FFAtomType NewAtomType(int_ i, string_ n) { return imp->NewAtomType(i,n); }
-    FFAtomType GetAtomType(string_ n) const { return imp->GetAtomType(n); }
-    FFAtomType GetAtomType(int_ i) const { return imp->GetAtomType(i); }
-    FFBondType NewHarmonicBondType(int_ i, float_ k, float_ l) {
+    FFAtom NewAtomType(int_ i, string_ n) { return imp->NewAtomType(i,n); }
+    FFAtom GetAtomType(string_ n) const { return imp->GetAtomType(n); }
+    FFAtom GetAtomType(int_ i) const { return imp->GetAtomType(i); }
+    FFBond NewHarmonicBondType(int_ i, float_ k, float_ l) {
       return imp->NewHarmonicBondType(i, k, l);
     }
-    FFBondType NewQuarticBondType(int_ i, float_ k, float_ l) {
+    FFBond NewQuarticBondType(int_ i, float_ k, float_ l) {
       return imp->NewQuarticBondType(i, k, l);
     }
-    FFBondType GetBondType(BndT t, int_ i) const { return imp->GetBondType(t,i); }
-    FFBondType GetHarmonicBondType(int_ i) const {
+    FFBond GetBondType(BndT t, int_ i) const { return imp->GetBondType(t,i); }
+    FFBond GetHarmonicBondType(int_ i) const {
       return imp->GetHarmonicBondType(i);
     }
-    FFBondType GetQuarticBondType(int_ i) const {
+    FFBond GetQuarticBondType(int_ i) const {
       return imp->GetQuarticBondType(i);
     }
-    FFAngleType NewHarmonicAngleType(int_ i, float_ k, float_ t) {
+    FFAngle NewHarmonicAngleType(int_ i, float_ k, float_ t) {
       return imp->NewHarmonicAngleType(i, k, t);
     }
-    FFAngleType NewCosineHarmonicAngleType(int_ i, float_ k, float_ t) {
+    FFAngle NewCosineHarmonicAngleType(int_ i, float_ k, float_ t) {
       return imp->NewCosineHarmonicAngleType(i, k, t);
     }
-    FFAngleType GetAngleType(AngT t, int_ i) const { return imp->GetAngleType(t, i); }
-    FFAngleType GetHarmonicAngleType(int_ i) const {
+    FFAngle GetAngleType(AngT t, int_ i) const { return imp->GetAngleType(t, i); }
+    FFAngle GetHarmonicAngleType(int_ i) const {
       return imp->GetHarmonicAngleType(i);
     }
-    FFAngleType GetCosineHarmonicAngleType(int_ i) const {
+    FFAngle GetCosineHarmonicAngleType(int_ i) const {
       return imp->GetCosineHarmonicAngleType(i);
     }
-    FFDihedralType NewProperDihedralType(int_ i, float_ k, float_ p, uint_ m) {
+    FFDihedral NewProperDihedralType(int_ i, float_ k, float_ p, uint_ m) {
       return imp->NewProperDihedralType(i, k, p, m);
     }
-    FFDihedralType NewImproperDihedralType(int_ i, float_ k, float_ t) {
+    FFDihedral NewImproperDihedralType(int_ i, float_ k, float_ t) {
       return imp->NewImproperDihedralType(i, k, t);
     }
-    FFDihedralType GetDihedralType(DhdT t, int_ i) const {
+    FFDihedral GetDihedralType(DhdT t, int_ i) const {
       return imp->GetDihedralType(t, i);
     }
-    FFDihedralType GetImproperDihedralType(int_ i) const {
+    FFDihedral GetImproperDihedralType(int_ i) const {
       return imp->GetImproperDihedralType(i);
     }
-    FFDihedralType GetProperDihedralType(int_ i) const {
+    FFDihedral GetProperDihedralType(int_ i) const {
       return imp->GetProperDihedralType(i);
     }
     size_ NumAtomTypes() const { return imp->NumAtomTypes(); }

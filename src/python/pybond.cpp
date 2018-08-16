@@ -7,6 +7,7 @@
 #include <indigox/python/pickle.hpp>
 
 #include <indigox/classes/bond.hpp>
+#include <indigox/classes/forcefield.hpp>
 
 namespace py = pybind11;
 
@@ -30,11 +31,13 @@ void GeneratePyBond(py::module& m) {
   .def("GetTargetAtom", &IXBond::GetTargetAtom)
   .def("NumAtoms", &IXBond::NumAtoms)
   .def("GetUniqueID", &IXBond::GetUniqueID)
+  .def("GetType", &IXBond::GetType)
   // Setters
   .def("SetAromaticity", &IXBond::SetAromaticity)
   .def("SetOrder", &IXBond::SetOrder)
   .def("SetStereochemistry", &IXBond::SetStereochemistry)
   .def("SetTag", &IXBond::SetTag)
+  .def("SetType", &IXBond::SetType)
   // Other
   .def("SwapSourceTarget", &IXBond::SwapSourceTarget)
   .def("ToString", &IXBond::ToString)

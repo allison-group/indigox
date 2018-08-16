@@ -65,6 +65,8 @@ namespace indigox::test {
     size_ NumAngles() const { return imp->NumAngles(); }
     size_ NumDihedrals() const { return imp->NumDihedrals(); }
     size_ GetIndex() const { return imp->GetIndex(); }
+    FFAtom GetType() const { return imp->GetType(); }
+    void SetType(FFAtom t) { imp->SetType(t); }
 
     // Internals access
     _Molecule get_mol() const { return imp->_mol; }
@@ -80,6 +82,7 @@ namespace indigox::test {
     const IBonds& get_bnds() const { return imp->_bnds; }
     const IAngles& get_angs() const { return imp->_angs; }
     const IDihedrals& get_dhds() const { return imp->_dhds; }
+    FFAtom get_type() const { return imp->_type; }
   };
   
   inline TestAtom CreateGenericTestAtom() {
@@ -89,7 +92,8 @@ namespace indigox::test {
   struct AtomTestFixture {
     Molecule mol = CreateMolecule();
     TestAtom atm;
-    AtomTestFixture() : mol(CreateMolecule()), atm(mol) { }
+    FFAtom fftype;
+    AtomTestFixture();
   };
 }
 

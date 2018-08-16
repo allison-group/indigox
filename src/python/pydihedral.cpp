@@ -7,6 +7,7 @@
 
 #include <indigox/classes/dihedral.hpp>
 #include <indigox/classes/molecule.hpp>
+#include <indigox/classes/forcefield.hpp>
 
 namespace py = pybind11;
 
@@ -30,8 +31,10 @@ void GeneratePyDihedral(pybind11::module& m) {
   .def("GetTag", &IXDihedral::GetTag)
   .def("NumAtoms", &IXDihedral::NumAtoms)
   .def("GetUniqueID", &IXDihedral::GetUniqueID)
+  .def("GetType", &IXDihedral::GetType)
   // Setters
   .def("SetTag", &IXDihedral::SetTag)
+  .def("SetType", &IXDihedral::SetType)
   // Other
   .def("SwapOrder", &IXDihedral::SwapOrder)
   .def("ToString", &IXDihedral::ToString)

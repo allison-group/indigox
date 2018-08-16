@@ -12,6 +12,7 @@
 namespace indigox {
   class IXAtom;
   class IXAngle;
+  class IXFFAngle;
   class IXMolecule;
   namespace test { struct TestAngle; }
   
@@ -19,6 +20,7 @@ namespace indigox {
   //! \brief shared_ptr for normal use of the IXAngle class.
   using Angle = std::shared_ptr<IXAngle>;
   using Molecule = std::shared_ptr<IXMolecule>;
+  using FFAngle = std::shared_ptr<IXFFAngle>;
   
   using _Atom = std::weak_ptr<IXAtom>;
   /*! \brief weak_ptr for non-ownership reference to the IXAngle class.
@@ -108,7 +110,20 @@ namespace indigox {
      *  \return 3. */
     size_ NumAtoms() const { return  _atms.size(); }
     
+    /*! \brief Get the index from the molecule.
+     *  \details Calculates the index of the angle in the container of angles
+     *  of the molecule it is a part of. If the molecule is dead, the index
+     *  returned is the tag of the angle.
+     *  \return the index of the angle. */
     size_ GetIndex() const;
+    
+    /*! \brief Get the assigned type.
+     *  \return the assigned ff type for the angle. */
+    FFAngle GetType() const { return _type; }
+    
+    /*! \brief Assign an FFAngle type.
+     *  \param type the FFAngle type to assign. */
+    void SetType(FFAngle type) { _type = type; }
     
   private:
     /*! \brief Clear all information.
@@ -122,7 +137,8 @@ namespace indigox {
     _Molecule _mol;
     //! Tag (unstable)
     uid_ _tag;
-    
+    //! MM angle type
+    FFAngle _type;
     //! \brief Atoms which make up the angle.
     AngleAtoms _atms;
   };

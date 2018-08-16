@@ -3,6 +3,7 @@
 
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
+#include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/utils/counter.hpp>
 #include <indigox/utils/common.hpp>
@@ -10,8 +11,15 @@
 
 #include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/test/bond_test.hpp>
+#include <indigox/test/forcefield_test.hpp>
 
 namespace indigox {
+  test::BondTestFixture::BondTestFixture()
+  : fftype(test::CreateGenericTestFFBond().imp) {
+    a->SetTag(0); b->SetTag(1);
+    a->SetElement("C"); b->SetElement("O");
+  }
+  
   using namespace indigox::utils; // for IXCountableObject and WeakContains
   
   test_suite_open("IXBond");
@@ -27,7 +35,8 @@ namespace indigox {
             INDIGOX_SERIAL_NVP("tag", _tag),
             INDIGOX_SERIAL_NVP("bond_order", _order),
             INDIGOX_SERIAL_NVP("is_aromatic", _aromatic),
-            INDIGOX_SERIAL_NVP("stereochemistry", _stereo)
+            INDIGOX_SERIAL_NVP("stereochemistry", _stereo),
+            INDIGOX_SERIAL_NVP("type", _type)
             );
   }
   
@@ -44,7 +53,8 @@ namespace indigox {
     archive(INDIGOX_SERIAL_NVP("tag", construct->_tag),
             INDIGOX_SERIAL_NVP("bond_order", construct->_order),
             INDIGOX_SERIAL_NVP("is_aromatic", construct->_aromatic),
-            INDIGOX_SERIAL_NVP("stereochemistry", construct->_stereo)
+            INDIGOX_SERIAL_NVP("stereochemistry", construct->_stereo),
+            INDIGOX_SERIAL_NVP("type", construct->_type)
             );
   }
   INDIGOX_SERIALISE_SPLIT(IXBond);
@@ -59,22 +69,24 @@ namespace indigox {
     saved->SetOrder(BondOrder::TRIPLE);
     saved->SetAromaticity(true);
     saved->SetStereochemistry(BondStereo::Z);
+    saved->SetType(fixture.fftype);
     
     std::ostringstream os;
     {
       Out oar(os);
       // atoms and molecule saved so they can be kept alive on load
       check_nothrow(oar(saved, saved->GetSourceAtom(), saved->GetTargetAtom(),
-                        saved->GetMolecule()));
+                        saved->GetMolecule(), fixture.fftype));
     }
     
     Bond loaded;
     Atom source, target;
     Molecule mol;
+    FFBond typ_loaded;
     std::istringstream is(os.str());
     {
       In iar(is);
-      check_nothrow(iar(loaded, source, target, mol));
+      check_nothrow(iar(loaded, source, target, mol, typ_loaded));
     }
     fixture.bnd.imp = loaded;
     check(!fixture.bnd.get_atms()[0].expired());
@@ -89,6 +101,7 @@ namespace indigox {
     check_eq(source, loaded->GetSourceAtom());
     check_eq(target, loaded->GetTargetAtom());
     check_eq(mol, loaded->GetMolecule());
+    check_eq(typ_loaded, loaded->GetType());
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixbond_serial, ixserial<IXBond>);
   
@@ -106,6 +119,7 @@ namespace indigox {
     check_eq(BondStereo::UNDEFINED, tbnd.get_stereo());
     check_eq(a, tbnd.get_atms()[0].lock());
     check_eq(b, tbnd.get_atms()[1].lock());
+    check_eq(FFBond(), tbnd.get_type());
     
     // Check unique IDs correctly update
     test::TestBond bnd1(a,b,mol);
@@ -130,6 +144,7 @@ namespace indigox {
     check_nothrow(bnd.SetAromaticity(true));
     check_nothrow(bnd.SetStereochemistry(BondStereo::NONE));
     check_nothrow(bnd.SwapSourceTarget());
+    check_nothrow(bnd.SetType(fftype));
     
     // Check correctness of gets
     check_eq(12, bnd.GetTag());
@@ -148,6 +163,7 @@ namespace indigox {
     check_eq(BondStereo::NONE, bnd.get_stereo());
     check_eq(std::make_pair(b,a), bnd.GetAtoms());
     check_eq(bnd.GetTag(), bnd.GetIndex());
+    check_eq(fftype, bnd.GetType());
     
     // Check no owning of molecule
     mol.reset();
@@ -215,6 +231,7 @@ namespace indigox {
     _stereo = Stereo::UNDEFINED;
     _aromatic = false;
     _atms.fill(_Atom());
+    _type.reset();
   }
   
   test_case_fixture(test::BondTestFixture, "IXBond clearing methods") {
@@ -222,6 +239,7 @@ namespace indigox {
     bnd.SetOrder(BondOrder::DOUBLE);
     bnd.SetAromaticity(true);
     bnd.SetStereochemistry(BondStereo::E);
+    bnd.SetType(fftype);
     // Pre checks
     check_eq(mol, bnd.get_mol().lock());
     check_eq(12, bnd.get_tag());
@@ -230,6 +248,7 @@ namespace indigox {
     check_eq(BondStereo::E, bnd.get_stereo());
     check_eq(a, bnd.get_atms()[0].lock());
     check_eq(b, bnd.get_atms()[1].lock());
+    check_eq(fftype, bnd.get_type());
     
     bnd.Clear();
     // Post checks
@@ -240,6 +259,7 @@ namespace indigox {
     check_ne(BondStereo::E, bnd.get_stereo());
     check_ne(a, bnd.get_atms()[0].lock());
     check_ne(b, bnd.get_atms()[1].lock());
+    check_ne(fftype, bnd.get_type());
     check_eq(Molecule(), bnd.get_mol().lock());
     check_eq(0, bnd.get_tag());
     check_eq(BondOrder::UNDEFINED, bnd.get_order());
@@ -247,6 +267,7 @@ namespace indigox {
     check_eq(BondStereo::UNDEFINED, bnd.get_stereo());
     check_eq(Atom(), bnd.get_atms()[0].lock());
     check_eq(Atom(), bnd.get_atms()[1].lock());
+    check_eq(FFBond(), bnd.get_type());
   }
   
   test_suite_close();

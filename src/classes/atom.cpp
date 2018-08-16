@@ -11,6 +11,7 @@
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/periodictable.hpp>
+#include <indigox/classes/forcefield.hpp>
 #include <indigox/utils/common.hpp>
 #include <indigox/utils/counter.hpp>
 #include <indigox/utils/numerics.hpp>
@@ -21,8 +22,12 @@
 #include <indigox/test/angle_test.hpp>
 #include <indigox/test/bond_test.hpp>
 #include <indigox/test/dihedral_test.hpp>
+#include <indigox/test/forcefield_test.hpp>
 
 namespace indigox {
+  
+  test::AtomTestFixture::AtomTestFixture()
+  : mol(CreateMolecule()), atm(mol), fftype(CreateGenericTestFFAtom().imp) { }
   
   test_suite_open("IXAtom");
   
@@ -41,6 +46,7 @@ namespace indigox {
             INDIGOX_SERIAL_NVP("partial_charge", _partial),
             INDIGOX_SERIAL_NVP("stereochemistry", _stereo),
             INDIGOX_SERIAL_NVP("is_aromatic", _aromatic),
+            INDIGOX_SERIAL_NVP("type", _type),
             INDIGOX_SERIAL_NVP("bonds", _bnds),
             INDIGOX_SERIAL_NVP("angles", _angs),
             INDIGOX_SERIAL_NVP("dihedrals", _dhds)
@@ -66,6 +72,7 @@ namespace indigox {
             INDIGOX_SERIAL_NVP("partial_charge", construct->_partial),
             INDIGOX_SERIAL_NVP("stereochemistry", construct->_stereo),
             INDIGOX_SERIAL_NVP("is_aromatic", construct->_aromatic),
+            INDIGOX_SERIAL_NVP("type", construct->_type),
             INDIGOX_SERIAL_NVP("bonds", construct->_bnds),
             INDIGOX_SERIAL_NVP("angles", construct->_angs),
             INDIGOX_SERIAL_NVP("dihedrals", construct->_dhds));
@@ -95,11 +102,12 @@ namespace indigox {
     fixture.atm.AddAngle(angle);
     fixture.atm.AddDihedral(dihedral);
     fixture.atm.AddBond(bond);
+    saved->SetType(fixture.fftype);
     
     std::ostringstream os;
     {
       Out oar(os);
-      check_nothrow(oar(saved, bond, angle, dihedral, fixture.mol));
+      check_nothrow(oar(saved, bond, angle, dihedral, fixture.mol, fixture.fftype));
     }
     
     Atom loaded;
@@ -107,11 +115,12 @@ namespace indigox {
     Angle angle_loaded;
     Dihedral dihedral_loaded;
     Molecule mol_loaded;
+    FFAtom fftype_loaded;
     std::istringstream is(os.str());
     {
       In iar(is);
       check_nothrow(iar(loaded, bond_loaded, angle_loaded, dihedral_loaded,
-                        mol_loaded));
+                        mol_loaded, fftype_loaded));
     }
     
     fixture.atm.imp = loaded;
@@ -130,6 +139,7 @@ namespace indigox {
     check_eq(bond_loaded, fixture.atm.get_bnds().front().lock());
     check_eq(angle_loaded, fixture.atm.get_angs().front().lock());
     check_eq(dihedral_loaded, fixture.atm.get_dhds().front().lock());
+    check_eq(fftype_loaded, loaded->GetType());
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixatom_serial, ixserial<IXAtom>);
   
@@ -158,6 +168,7 @@ namespace indigox {
     check_eq(0, tatm.get_bnds().size());
     check_eq(0, tatm.get_angs().size());
     check_eq(0, tatm.get_dhds().size());
+    check_eq(FFAtom(), tatm.get_type());
     
     // Check unique IDs correctly update
     test::TestAtom atm1(mol);
@@ -200,6 +211,7 @@ namespace indigox {
     check_nothrow(atm.SetPosition(4.5, -7.9002, 0.00004));
     check_nothrow(atm.SetStereochemistry(AtomStereo::ACHIRAL));
     check_nothrow(atm.SetAromaticity(true));
+    check_nothrow(atm.SetType(fftype));
     
     // Check correctness of gets
     check_eq(GetPeriodicTable()->GetElement(32), atm.GetElement());
@@ -226,6 +238,7 @@ namespace indigox {
     check_eq(true, atm.GetAromaticity());
     check_eq(true, atm.get_aromatic());
     check_eq(atm.GetTag(), atm.GetIndex());
+    check_eq(fftype, atm.GetType());
     
     // Check no owning of molecule
     mol.reset();
@@ -245,8 +258,6 @@ namespace indigox {
     check_eq(e2, atm.get_elem().lock());
     atm.SetElement(e3->GetAtomicNumber());
     check_eq(e3, atm.get_elem().lock());
-    
-    
   }
   
   test_case_fixture(test::AtomTestFixture, "IXAtom adding and removing") {
@@ -396,6 +407,7 @@ namespace indigox {
     _partial = 0.0;
     _stereo = Stereo::UNDEFINED;
     _aromatic = false;
+    _type.reset();
     _bnds.clear();
     _angs.clear();
     _dhds.clear();
@@ -411,6 +423,7 @@ namespace indigox {
     atm.SetPartialCharge(-0.009);
     atm.SetStereochemistry(AtomStereo::R);
     atm.SetAromaticity(true);
+    atm.SetType(fftype);
     atm.AddBond(test::CreateGenericTestBond().imp);
     atm.AddAngle(test::CreateGenericTestAngle().imp);
     atm.AddDihedral(test::CreateGenericTestDihedral().imp);
@@ -425,6 +438,7 @@ namespace indigox {
     check_eq(approximately(-0.009), atm.get_partial());
     check_eq(AtomStereo::R, atm.get_stereo());
     check_eq(true, atm.get_aromatic());
+    check_eq(fftype, atm.get_type());
     check_eq(1, atm.get_bnds().size());
     check_eq(1, atm.get_angs().size());
     check_eq(1, atm.get_dhds().size());
@@ -440,6 +454,7 @@ namespace indigox {
     check_ne(approximately(-0.009), atm.get_partial());
     check_ne(AtomStereo::R, atm.get_stereo());
     check_ne(true, atm.get_aromatic());
+    check_ne(fftype, atm.get_type());
     check_ne(1, atm.get_bnds().size());
     check_ne(1, atm.get_angs().size());
     check_ne(1, atm.get_dhds().size());
@@ -452,6 +467,7 @@ namespace indigox {
     check_eq(0.0, atm.get_partial());
     check_eq(AtomStereo::UNDEFINED, atm.get_stereo());
     check_eq(false, atm.get_aromatic());
+    check_eq(FFAtom(), atm.get_type());
     check_eq(0, atm.get_bnds().size());
     check_eq(0, atm.get_angs().size());
     check_eq(0, atm.get_dhds().size());

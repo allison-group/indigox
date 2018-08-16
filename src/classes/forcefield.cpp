@@ -15,11 +15,11 @@ namespace indigox {
   test_suite_open("IXForcefield and types");
   
 // ============================================================================
-// == IXFFDihedralType Serialisation ==========================================
+// == IXFFDihedral Serialisation ==========================================
 // ============================================================================
   
   template <class Archive>
-  void IXFFDihedralType::save(Archive &archive, const uint32_t) const {
+  void IXFFDihedral::save(Archive &archive, const uint32_t) const {
     archive(INDIGOX_SERIAL_NVP("type", _type),
             INDIGOX_SERIAL_NVP("id", _id),
             INDIGOX_SERIAL_NVP("data", _dat),
@@ -27,22 +27,22 @@ namespace indigox {
   }
   
   template <class Archive>
-  void IXFFDihedralType::load_and_construct(Archive &archive,
-                                            cereal::construct<IXFFDihedralType> &construct,
+  void IXFFDihedral::load_and_construct(Archive &archive,
+                                            cereal::construct<IXFFDihedral> &construct,
                                             const uint32_t) {
-    construct(DihedralFunctionType::Empty, 0, std::initializer_list<float_>());
+    construct(DihedralType::Empty, 0, std::initializer_list<float_>());
     archive(INDIGOX_SERIAL_NVP("type", construct->_type),
             INDIGOX_SERIAL_NVP("id", construct->_id),
             INDIGOX_SERIAL_NVP("data", construct->_dat),
             INDIGOX_SERIAL_NVP("mask", construct->_mask));
   }
-  INDIGOX_SERIALISE_SPLIT(IXFFDihedralType);
+  INDIGOX_SERIALISE_SPLIT(IXFFDihedral);
   
   DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFDihedral serilisation", T, ixffdhd_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     
-    test::TestDihedralType saved(DihedralFunctionType::Proper, 72, {0.1,0.2,0.3});
+    test::TestFFDihedral saved(DihedralType::Proper, 72, {0.1,0.2,0.3});
     
     std::ostringstream os;
     {
@@ -50,7 +50,7 @@ namespace indigox {
       check_nothrow(oar(saved.imp));
     }
     
-    test::TestDihedralType loaded(DihedralFunctionType::Empty, 0, {});
+    test::TestFFDihedral loaded(DihedralType::Empty, 0, {});
     std::istringstream is(os.str());
     {
       In iar(is);
@@ -62,19 +62,19 @@ namespace indigox {
     check_eq(saved.get_mask(), loaded.get_mask());
     check_eq(saved.get_type(), loaded.get_type());
   }
-  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffdhd_serial, ixserial<IXFFDihedralType>);
+  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffdhd_serial, ixserial<IXFFDihedral>);
   
 // ============================================================================
-// == IXFFDihedralType Construction ===========================================
+// == IXFFDihedral Construction ===========================================
 // ============================================================================
   
-  IXFFDihedralType::IXFFDihedralType(DihedralFunctionType type, int_ id,
+  IXFFDihedral::IXFFDihedral(DihedralType type, int_ id,
                                      std::initializer_list<float_> parameters)
   : _type(type), _id(id) {
     // Allow phase, force constant, multiplicty
-    if (_type == DihedralFunctionType::Proper) _mask.from_uint32(7);
+    if (_type == DihedralType::Proper) _mask.from_uint32(7);
     // Allow force constant, ideal angle
-    if (_type == DihedralFunctionType::Improper) _mask.from_uint32(10);
+    if (_type == DihedralType::Improper) _mask.from_uint32(10);
     
     size_ expected_size = _mask.count();
     if (parameters.size() != expected_size)
@@ -85,10 +85,10 @@ namespace indigox {
   }
   
   test_case("IXFFDihedral") {
-    using FTyp = DihedralFunctionType;
-    using TDhd = test::TestDihedralType;
-    using AllowEnum = indigox::test::TestDihedralType::AllowEnum;
-    using StoreEnum = indigox::test::TestDihedralType::StoreEnum;
+    using FTyp = DihedralType;
+    using TDhd = test::TestFFDihedral;
+    using AllowEnum = indigox::test::TestFFDihedral::AllowEnum;
+    using StoreEnum = indigox::test::TestFFDihedral::StoreEnum;
     
     subcase("Empty check") {
       check_nothrow(TDhd t(FTyp::Empty, 4, {}));
@@ -170,11 +170,11 @@ namespace indigox {
   }
   
 // ============================================================================
-// == IXFFAngleType Serialisation =============================================
+// == IXFFAngle Serialisation =============================================
 // ============================================================================
   
   template <class Archive>
-  void IXFFAngleType::save(Archive &archive, const uint32_t) const {
+  void IXFFAngle::save(Archive &archive, const uint32_t) const {
     archive(INDIGOX_SERIAL_NVP("type", _type),
             INDIGOX_SERIAL_NVP("id", _id),
             INDIGOX_SERIAL_NVP("data", _dat),
@@ -182,22 +182,22 @@ namespace indigox {
   }
   
   template <class Archive>
-  void IXFFAngleType::load_and_construct(Archive &archive,
-                                            cereal::construct<IXFFAngleType> &construct,
+  void IXFFAngle::load_and_construct(Archive &archive,
+                                            cereal::construct<IXFFAngle> &construct,
                                             const uint32_t) {
-    construct(AngleFunctionType::Empty, 0, std::initializer_list<float_>());
+    construct(AngleType::Empty, 0, std::initializer_list<float_>());
     archive(INDIGOX_SERIAL_NVP("type", construct->_type),
             INDIGOX_SERIAL_NVP("id", construct->_id),
             INDIGOX_SERIAL_NVP("data", construct->_dat),
             INDIGOX_SERIAL_NVP("mask", construct->_mask));
   }
-  INDIGOX_SERIALISE_SPLIT(IXFFAngleType);
+  INDIGOX_SERIALISE_SPLIT(IXFFAngle);
   
   DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFAngle serilisation", T, ixffang_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     
-    test::TestAngleType saved(AngleFunctionType::Harmonic, 2, {0.1,0.2});
+    test::TestFFAngle saved(AngleType::Harmonic, 2, {0.1,0.2});
     
     std::ostringstream os;
     {
@@ -205,7 +205,7 @@ namespace indigox {
       check_nothrow(oar(saved.imp));
     }
     
-    test::TestAngleType loaded(AngleFunctionType::Empty, 0, {});
+    test::TestFFAngle loaded(AngleType::Empty, 0, {});
     std::istringstream is(os.str());
     {
       In iar(is);
@@ -217,19 +217,19 @@ namespace indigox {
     check_eq(saved.get_mask(), loaded.get_mask());
     check_eq(saved.get_type(), loaded.get_type());
   }
-  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffang_serial, ixserial<IXFFAngleType>);
+  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffang_serial, ixserial<IXFFAngle>);
   
 // ============================================================================
-// == IXFFAngleType Construction ==============================================
+// == IXFFAngle Construction ==============================================
 // ============================================================================
   
-  IXFFAngleType::IXFFAngleType(AngleFunctionType type, int_ id,
+  IXFFAngle::IXFFAngle(AngleType type, int_ id,
                                std::initializer_list<float_> parameters)
   : _type(type), _id(id) {
     // Allow force constant and ideal angle
-    if (_type == AngleFunctionType::Harmonic) _mask.from_uint32(3);
+    if (_type == AngleType::Harmonic) _mask.from_uint32(3);
     // Allow force constant and ideal angle
-    if (_type == AngleFunctionType::CosineHarmonic) _mask.from_uint32(3);
+    if (_type == AngleType::CosineHarmonic) _mask.from_uint32(3);
     
     size_ expected_size = _mask.count();
     if (parameters.size() != expected_size)
@@ -240,10 +240,10 @@ namespace indigox {
   }
   
   test_case("IXFFAngle") {
-    using FTyp = AngleFunctionType;
-    using TAng = test::TestAngleType;
-    using AllowEnum = indigox::test::TestAngleType::AllowEnum;
-    using StoreEnum = indigox::test::TestAngleType::StoreEnum;
+    using FTyp = AngleType;
+    using TAng = test::TestFFAngle;
+    using AllowEnum = indigox::test::TestFFAngle::AllowEnum;
+    using StoreEnum = indigox::test::TestFFAngle::StoreEnum;
     
     subcase("Empty check") {
       check_nothrow(TAng t(FTyp::Empty, 4, {}));
@@ -313,11 +313,11 @@ namespace indigox {
   }
 
 // ============================================================================
-// == IXFFBondType Serialisation ==============================================
+// == IXFFBond Serialisation ==============================================
 // ============================================================================
   
   template <class Archive>
-  void IXFFBondType::save(Archive &archive, const uint32_t) const {
+  void IXFFBond::save(Archive &archive, const uint32_t) const {
     archive(INDIGOX_SERIAL_NVP("type", _type),
             INDIGOX_SERIAL_NVP("id", _id),
             INDIGOX_SERIAL_NVP("data", _dat),
@@ -325,22 +325,22 @@ namespace indigox {
   }
   
   template <class Archive>
-  void IXFFBondType::load_and_construct(Archive &archive,
-                                        cereal::construct<IXFFBondType> &construct,
+  void IXFFBond::load_and_construct(Archive &archive,
+                                        cereal::construct<IXFFBond> &construct,
                                         const uint32_t) {
-    construct(BondFunctionType::Empty, 0, std::initializer_list<float_>());
+    construct(BondType::Empty, 0, std::initializer_list<float_>());
     archive(INDIGOX_SERIAL_NVP("type", construct->_type),
             INDIGOX_SERIAL_NVP("id", construct->_id),
             INDIGOX_SERIAL_NVP("data", construct->_dat),
             INDIGOX_SERIAL_NVP("mask", construct->_mask));
   }
-  INDIGOX_SERIALISE_SPLIT(IXFFBondType);
+  INDIGOX_SERIALISE_SPLIT(IXFFBond);
   
   DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFBond serilisation", T, ixffbnd_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     
-    test::TestBondType saved(BondFunctionType::Harmonic, 2, {0.1,0.2});
+    test::TestFFBond saved(BondType::Harmonic, 2, {0.1,0.2});
     
     std::ostringstream os;
     {
@@ -348,7 +348,7 @@ namespace indigox {
       check_nothrow(oar(saved.imp));
     }
     
-    test::TestBondType loaded(BondFunctionType::Empty, 0, {});
+    test::TestFFBond loaded(BondType::Empty, 0, {});
     std::istringstream is(os.str());
     {
       In iar(is);
@@ -360,19 +360,19 @@ namespace indigox {
     check_eq(saved.get_mask(), loaded.get_mask());
     check_eq(saved.get_type(), loaded.get_type());
   }
-  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffbnd_serial, ixserial<IXFFBondType>);
+  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffbnd_serial, ixserial<IXFFBond>);
   
 // ============================================================================
-// == IXFFBondType Construction ===============================================
+// == IXFFBond Construction ===============================================
 // ============================================================================
   
-  IXFFBondType::IXFFBondType(BondFunctionType type, int_ id,
+  IXFFBond::IXFFBond(BondType type, int_ id,
                              std::initializer_list<float_> parameters)
   : _type(type), _id(id) {
     // Allow force constant and ideal length
-    if (_type == BondFunctionType::Harmonic) _mask.from_uint32(3);
+    if (_type == BondType::Harmonic) _mask.from_uint32(3);
     // Allow force constant and ideal length
-    if (_type == BondFunctionType::Quartic) _mask.from_uint32(3);
+    if (_type == BondType::Quartic) _mask.from_uint32(3);
     
     size_ expected_size = _mask.count();
     if (parameters.size() != expected_size)
@@ -383,10 +383,10 @@ namespace indigox {
   }
   
   test_case("IXFFBond") {
-    using FTyp = BondFunctionType;
-    using TBnd = test::TestBondType;
-    using AllowEnum = indigox::test::TestBondType::AllowEnum;
-    using StoreEnum = indigox::test::TestBondType::StoreEnum;
+    using FTyp = BondType;
+    using TBnd = test::TestFFBond;
+    using AllowEnum = indigox::test::TestFFBond::AllowEnum;
+    using StoreEnum = indigox::test::TestFFBond::StoreEnum;
     
     subcase("Empty check") {
       check_nothrow(TBnd t(FTyp::Empty, 4, {}));
@@ -456,30 +456,30 @@ namespace indigox {
   }
   
 // ============================================================================
-// == IXFFAtomType Serialisation ==============================================
+// == IXFFAtom Serialisation ==============================================
 // ============================================================================
   
   template <class Archive>
-  void IXFFAtomType::save(Archive &archive, const uint32_t) const {
+  void IXFFAtom::save(Archive &archive, const uint32_t) const {
     archive(INDIGOX_SERIAL_NVP("id", _id),
             INDIGOX_SERIAL_NVP("name", _name));
   }
   
   template <class Archive>
-  void IXFFAtomType::load_and_construct(Archive &archive,
-                                        cereal::construct<IXFFAtomType> &construct,
+  void IXFFAtom::load_and_construct(Archive &archive,
+                                        cereal::construct<IXFFAtom> &construct,
                                         const uint32_t) {
     construct(0, "blank");
     archive(INDIGOX_SERIAL_NVP("id", construct->_id),
             INDIGOX_SERIAL_NVP("name", construct->_name));
   }
-  INDIGOX_SERIALISE_SPLIT(IXFFAtomType);
+  INDIGOX_SERIALISE_SPLIT(IXFFAtom);
   
   DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFAtom serialisation", T, ixffatm_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     
-    test::TestAtomType saved(12, "tester");
+    test::TestFFAtom saved(12, "tester");
     
     std::ostringstream os;
     {
@@ -487,7 +487,7 @@ namespace indigox {
       check_nothrow(oar(saved.imp));
     }
     
-    test::TestAtomType loaded(0,"");
+    test::TestFFAtom loaded(0,"");
     std::istringstream is(os.str());
     {
       In iar(is);
@@ -497,19 +497,19 @@ namespace indigox {
     check_eq(saved.get_id(), loaded.get_id());
     check_eq(saved.get_name(), loaded.get_name());
   }
-  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffatm_serial, ixserial<IXFFAtomType>);
+  DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffatm_serial, ixserial<IXFFAtom>);
   
 // ============================================================================
-// == IXFFAtomType Construction ===============================================
+// == IXFFAtom Construction ===============================================
 // ============================================================================
   
-  IXFFAtomType::IXFFAtomType(int_ id, string_ name) : _id(id), _name(name) { }
+  IXFFAtom::IXFFAtom(int_ id, string_ name) : _id(id), _name(name) { }
   
   test_case("IXFFAtom") {
     subcase("Construction check") {
-      check_nothrow(test::TestAtomType t(0, ""));
+      check_nothrow(test::TestFFAtom t(0, ""));
       
-      test::TestAtomType testatm(2, "CH0");
+      test::TestFFAtom testatm(2, "CH0");
       check_eq(2, testatm.GetID());
       check_eq("CH0", testatm.GetName());
     }
@@ -533,7 +533,7 @@ namespace indigox {
   void IXForcefield::load_and_construct(Archive &archive,
                                         cereal::construct<IXForcefield> &construct,
                                         const uint32_t) {
-    construct(ForcefieldFamily::Empty, "");
+    construct(FFFamily::Empty, "");
     archive(INDIGOX_SERIAL_NVP("family", construct->_family),
             INDIGOX_SERIAL_NVP("name", construct->_name),
             INDIGOX_SERIAL_NVP("atom_types", construct->_atms),
@@ -546,33 +546,33 @@ namespace indigox {
 // == IXForcefield Construction ===============================================
 // ============================================================================
   
-  IXForcefield::IXForcefield(ForcefieldFamily family, string_ name)
+  IXForcefield::IXForcefield(FFFamily family, string_ name)
   : _family(family), _name(name) {
     
-    if (family == ForcefieldFamily::GROMOS) {
-      _bnds.emplace(BondFunctionType::Harmonic, BondTypes::mapped_type());
-      _bnds.emplace(BondFunctionType::Quartic, BondTypes::mapped_type());
-      _angs.emplace(AngleFunctionType::Harmonic, AngleTypes::mapped_type());
-      _angs.emplace(AngleFunctionType::CosineHarmonic, AngleTypes::mapped_type());
-      _dhds.emplace(DihedralFunctionType::Proper, DihedralTypes::mapped_type());
-      _dhds.emplace(DihedralFunctionType::Improper, DihedralTypes::mapped_type());
+    if (family == FFFamily::GROMOS) {
+      _bnds.emplace(BondType::Harmonic, BondTypes::mapped_type());
+      _bnds.emplace(BondType::Quartic, BondTypes::mapped_type());
+      _angs.emplace(AngleType::Harmonic, AngleTypes::mapped_type());
+      _angs.emplace(AngleType::CosineHarmonic, AngleTypes::mapped_type());
+      _dhds.emplace(DihedralType::Proper, DihedralTypes::mapped_type());
+      _dhds.emplace(DihedralType::Improper, DihedralTypes::mapped_type());
     }
-    if (family == ForcefieldFamily::Other) {
-      _bnds.emplace(BondFunctionType::Harmonic, BondTypes::mapped_type());
-      _bnds.emplace(BondFunctionType::Quartic, BondTypes::mapped_type());
-      _bnds.emplace(BondFunctionType::Morse, BondTypes::mapped_type());
-      _bnds.emplace(BondFunctionType::Cubic, BondTypes::mapped_type());
-      _bnds.emplace(BondFunctionType::FENE, BondTypes::mapped_type());
-      _angs.emplace(AngleFunctionType::Harmonic, AngleTypes::mapped_type());
-      _angs.emplace(AngleFunctionType::CosineHarmonic, AngleTypes::mapped_type());
-      _angs.emplace(AngleFunctionType::UreyBradley, AngleTypes::mapped_type());
-      _angs.emplace(AngleFunctionType::Quartic, AngleTypes::mapped_type());
-      _dhds.emplace(DihedralFunctionType::Proper, DihedralTypes::mapped_type());
-      _dhds.emplace(DihedralFunctionType::Improper, DihedralTypes::mapped_type());
-      _dhds.emplace(DihedralFunctionType::RyckaertBellemans, DihedralTypes::mapped_type());
-      _dhds.emplace(DihedralFunctionType::PeriodicImproper, DihedralTypes::mapped_type());
-      _dhds.emplace(DihedralFunctionType::Fourier, DihedralTypes::mapped_type());
-      _dhds.emplace(DihedralFunctionType::Restricted, DihedralTypes::mapped_type());
+    if (family == FFFamily::Other) {
+      _bnds.emplace(BondType::Harmonic, BondTypes::mapped_type());
+      _bnds.emplace(BondType::Quartic, BondTypes::mapped_type());
+      _bnds.emplace(BondType::Morse, BondTypes::mapped_type());
+      _bnds.emplace(BondType::Cubic, BondTypes::mapped_type());
+      _bnds.emplace(BondType::FENE, BondTypes::mapped_type());
+      _angs.emplace(AngleType::Harmonic, AngleTypes::mapped_type());
+      _angs.emplace(AngleType::CosineHarmonic, AngleTypes::mapped_type());
+      _angs.emplace(AngleType::UreyBradley, AngleTypes::mapped_type());
+      _angs.emplace(AngleType::Quartic, AngleTypes::mapped_type());
+      _dhds.emplace(DihedralType::Proper, DihedralTypes::mapped_type());
+      _dhds.emplace(DihedralType::Improper, DihedralTypes::mapped_type());
+      _dhds.emplace(DihedralType::RyckaertBellemans, DihedralTypes::mapped_type());
+      _dhds.emplace(DihedralType::PeriodicImproper, DihedralTypes::mapped_type());
+      _dhds.emplace(DihedralType::Fourier, DihedralTypes::mapped_type());
+      _dhds.emplace(DihedralType::Restricted, DihedralTypes::mapped_type());
     }
   }
   
@@ -580,33 +580,33 @@ namespace indigox {
 // == IXForcefield Adding types ===============================================
 // ============================================================================
   
-  FFAtomType IXForcefield::NewAtomType(int_ id, string_ name) {
-    if (GetAtomType(id) || GetAtomType(name)) return FFAtomType();
-    _atms.emplace_back(new IXFFAtomType(id, name));
+  FFAtom IXForcefield::NewAtomType(int_ id, string_ name) {
+    if (GetAtomType(id) || GetAtomType(name)) return FFAtom();
+    _atms.emplace_back(new IXFFAtom(id, name));
     return _atms.back();
   }
   
-  FFBondType IXForcefield::NewBondType(BondFunctionType type, int_ id,
+  FFBond IXForcefield::NewBondType(BondType type, int_ id,
                                        std::initializer_list<float_> parameters) {
-    if (_bnds.find(type) == _bnds.end()) return FFBondType();
-    if (GetBondType(type, id)) return FFBondType();
-    _bnds[type].emplace_back(new IXFFBondType(type, id, parameters));
+    if (_bnds.find(type) == _bnds.end()) return FFBond();
+    if (GetBondType(type, id)) return FFBond();
+    _bnds[type].emplace_back(new IXFFBond(type, id, parameters));
     return _bnds[type].back();
   }
   
-  FFAngleType IXForcefield::NewAngleType(AngleFunctionType type, int_ id,
+  FFAngle IXForcefield::NewAngleType(AngleType type, int_ id,
                                        std::initializer_list<float_> parameters) {
-    if (_angs.find(type) == _angs.end()) return FFAngleType();
-    if (GetAngleType(type, id)) return FFAngleType();
-    _angs[type].emplace_back(new IXFFAngleType(type, id, parameters));
+    if (_angs.find(type) == _angs.end()) return FFAngle();
+    if (GetAngleType(type, id)) return FFAngle();
+    _angs[type].emplace_back(new IXFFAngle(type, id, parameters));
     return _angs[type].back();
   }
   
-  FFDihedralType IXForcefield::NewDihedralType(DihedralFunctionType type, int_ id,
+  FFDihedral IXForcefield::NewDihedralType(DihedralType type, int_ id,
                                        std::initializer_list<float_> parameters) {
-    if (_dhds.find(type) == _dhds.end()) return FFDihedralType();
-    if (GetDihedralType(type, id)) return FFDihedralType();
-    _dhds[type].emplace_back(new IXFFDihedralType(type, id, parameters));
+    if (_dhds.find(type) == _dhds.end()) return FFDihedral();
+    if (GetDihedralType(type, id)) return FFDihedral();
+    _dhds[type].emplace_back(new IXFFDihedral(type, id, parameters));
     return _dhds[type].back();
   }
   
@@ -614,51 +614,50 @@ namespace indigox {
 // == IXForcefield Getting types ==============================================
 // ============================================================================
   
-  FFAtomType IXForcefield::GetAtomType(string_ name) const {
-    auto pred = [&name](const FFAtomType& t) { return t->GetName() == name; };
+  FFAtom IXForcefield::GetAtomType(string_ name) const {
+    auto pred = [&name](const FFAtom& t) { return t->GetName() == name; };
     auto pos = std::find_if(_atms.begin(), _atms.end(), pred);
-    return (pos == _atms.end()) ? FFAtomType() : *pos;
+    return (pos == _atms.end()) ? FFAtom() : *pos;
   }
   
-  FFAtomType IXForcefield::GetAtomType(int_ id) const {
-    auto pred = [&id](const FFAtomType& t) { return t->GetID() == id; };
+  FFAtom IXForcefield::GetAtomType(int_ id) const {
+    auto pred = [&id](const FFAtom& t) { return t->GetID() == id; };
     auto pos = std::find_if(_atms.begin(), _atms.end(), pred);
-    return (pos == _atms.end()) ? FFAtomType() : *pos;
+    return (pos == _atms.end()) ? FFAtom() : *pos;
   }
   
-  FFBondType IXForcefield::GetBondType(BondFunctionType type, int_ id) const {
-    if (_bnds.find(type) == _bnds.end()) return FFBondType();
-    auto pred = [&id](const FFBondType& t) { return t->GetID() == id; };
+  FFBond IXForcefield::GetBondType(BondType type, int_ id) const {
+    if (_bnds.find(type) == _bnds.end()) return FFBond();
+    auto pred = [&id](const FFBond& t) { return t->GetID() == id; };
     auto pos = std::find_if(_bnds.at(type).begin(), _bnds.at(type).end(), pred);
-    return (pos == _bnds.at(type).end()) ? FFBondType() : *pos;
+    return (pos == _bnds.at(type).end()) ? FFBond() : *pos;
   }
   
-  FFAngleType IXForcefield::GetAngleType(AngleFunctionType type, int_ id) const {
-    if (_angs.find(type) == _angs.end()) return FFAngleType();
-    auto pred = [&id](const FFAngleType& t) { return t->GetID() == id; };
+  FFAngle IXForcefield::GetAngleType(AngleType type, int_ id) const {
+    if (_angs.find(type) == _angs.end()) return FFAngle();
+    auto pred = [&id](const FFAngle& t) { return t->GetID() == id; };
     auto pos = std::find_if(_angs.at(type).begin(), _angs.at(type).end(), pred);
-    return (pos == _angs.at(type).end()) ? FFAngleType() : *pos;
+    return (pos == _angs.at(type).end()) ? FFAngle() : *pos;
   }
   
-  FFDihedralType IXForcefield::GetDihedralType(DihedralFunctionType type, int_ id) const {
-    if (_dhds.find(type) == _dhds.end()) return FFDihedralType();
-    auto pred = [&id](const FFDihedralType& t) { return t->GetID() == id; };
+  FFDihedral IXForcefield::GetDihedralType(DihedralType type, int_ id) const {
+    if (_dhds.find(type) == _dhds.end()) return FFDihedral();
+    auto pred = [&id](const FFDihedral& t) { return t->GetID() == id; };
     auto pos = std::find_if(_dhds.at(type).begin(), _dhds.at(type).end(), pred);
-    return (pos == _dhds.at(type).end()) ? FFDihedralType() : *pos;
+    return (pos == _dhds.at(type).end()) ? FFDihedral() : *pos;
   }
   
   test_case("IXForcefield") {
-    test::TestForcefield ff(ForcefieldFamily::GROMOS, "Test");
+    test::TestForcefield ff(FFFamily::GROMOS, "Test");
     ff.imp = GenerateGROMOS54A7();
-    check_eq(0, ff.NumAtomTypes());
-    check_eq(0, ff.NumBondTypes());
-    check_eq(0, ff.NumAngleTypes());
-    check_eq(0, ff.NumDihedralTypes());
+    check_eq(2, ff.NumAtomTypes());
+    check_eq(4, ff.NumBondTypes());
+    check_eq(4, ff.NumAngleTypes());
+    check_eq(4, ff.NumDihedralTypes());
   }
   
   Forcefield GenerateGROMOS54A7() {
-    Forcefield ff = std::make_shared<IXForcefield>(ForcefieldFamily::GROMOS,
-                                                   "GROMOS 54A7");
+    Forcefield ff = std::make_shared<IXForcefield>(FFFamily::GROMOS, "54A7");
     // Add bond types
     ff->NewQuarticBondType(1, 15.7e6, 0.1);
     ff->NewHarmonicBondType(1, 0.314e6, 0.1);
@@ -669,7 +668,7 @@ namespace indigox {
     ff->NewCosineHarmonicAngleType(2, 420, 90.0);
     ff->NewHarmonicAngleType(2, 0.128, 90.0);
     ff->NewCosineHarmonicAngleType(31, 700, 122.0);
-    ff->NewCosineHarmonicAngleType(31, 0.153, 122.0);
+    ff->NewHarmonicAngleType(31, 0.153, 122.0);
     
     // Add Improper types
     ff->NewImproperDihedralType(2, 0.102, 35.36439);

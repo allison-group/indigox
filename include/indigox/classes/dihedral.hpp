@@ -13,12 +13,14 @@ namespace indigox {
   class IXAtom;
   class IXDihedral;
   class IXMolecule;
+  class IXFFDihedral;
   namespace test { struct TestDihedral; }
   
   using Atom = std::shared_ptr<IXAtom>;
   //! \brief shared_ptr for normal use of the IXDihedral class.
   using Dihedral = std::shared_ptr<IXDihedral>;
   using Molecule = std::shared_ptr<IXMolecule>;
+  using FFDihedral = std::shared_ptr<IXFFDihedral>;
   
   using _Atom = std::weak_ptr<IXAtom>;
   /*! \brief weak_ptr for non-ownership reference to the IXDihedral class.
@@ -110,7 +112,20 @@ namespace indigox {
      *  \param tag the tag to set. */
     inline void SetTag(uid_ tag) { _tag = tag; }
     
+    /*! \brief Get the index from the molecule.
+     *  \details Calculates the index of the dihedral in the container of
+     *  dihedrals of the molecule it is a part of. If the molecule is dead, the
+     *  index returned is the tag of the dihedral.
+     *  \return the index of the dihedral. */
     size_ GetIndex() const;
+    
+    /*! \brief Get the type of the dihedral.
+     *  \return the type of the dihedral. */
+    FFDihedral GetType() const { return _type; }
+    
+    /*! \brief Set the type of the dihedral.
+     *  \param type the type of dihedral to set. */
+    void SetType(FFDihedral type) { _type = type; }
     
   private:
     /*! \brief Clear all informations.
@@ -125,6 +140,8 @@ namespace indigox {
     uid_ _tag;
     //! \brief Atoms which make up the dihedral.
     DihedAtoms _atms;
+    //! \brief Type of dihedral
+    FFDihedral _type;
   };
   
   std::ostream& operator<<(std::ostream& os, const IXDihedral& dhd);

@@ -27,11 +27,14 @@ namespace indigox::test {
     string_ ToString() const { return imp->ToString(); }
     void SetTag(uid_ t) { imp->SetTag(t); }
     size_ GetIndex() const { return imp->GetIndex(); }
+    FFDihedral GetType() const { return imp->GetType(); }
+    void SetType(FFDihedral t) { imp->SetType(t); }
     
     // Internals access
     _Molecule get_mol() const { return imp->_mol; }
     uid_ get_tag() const { return imp->_tag; }
     const IAtoms& get_atms() const { return imp->_atms; }
+    FFDihedral get_type() const { return imp->_type; }
   };
   
   inline TestDihedral CreateGenericTestDihedral() {
@@ -49,12 +52,8 @@ namespace indigox::test {
     Atom c = CreateGenericTestAtom().imp;
     Atom d = CreateGenericTestAtom().imp;
     TestDihedral dhd = TestDihedral(a,b,c,d,mol);
-    DihedralTestFixture() {
-      a->SetTag(0); b->SetTag(1); c->SetTag(2); d->SetTag(3);
-      a->SetElement("C"); b->SetElement("O");
-      c->SetElement("F"); d->SetElement("N");
-    }
-    
+    FFDihedral fftype;
+    DihedralTestFixture();
   };
 }
 

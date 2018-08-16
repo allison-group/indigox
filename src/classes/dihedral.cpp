@@ -3,13 +3,23 @@
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/dihedral.hpp>
 #include <indigox/classes/molecule.hpp>
+#include <indigox/classes/forcefield.hpp>
 #include <indigox/utils/numerics.hpp>
 #include <indigox/utils/serialise.hpp>
 
 #include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/test/dihedral_test.hpp>
+#include <indigox/test/forcefield_test.hpp>
 
 namespace indigox {
+  
+  test::DihedralTestFixture::DihedralTestFixture()
+  : fftype(test::CreateGenericTestFFDihedral().imp)  {
+    a->SetTag(0); b->SetTag(1); c->SetTag(2); d->SetTag(3);
+    a->SetElement("C"); b->SetElement("O");
+    c->SetElement("F"); d->SetElement("N");
+  }
+  
   test_suite_open("IXDihedral");
   
   template <typename Archive>
@@ -18,7 +28,8 @@ namespace indigox {
     for (_Atom at : _atms) atoms.emplace_back(at.lock());
     archive(INDIGOX_SERIAL_NVP("molecule", _mol),
             INDIGOX_SERIAL_NVP("atoms", atoms),
-            INDIGOX_SERIAL_NVP("tag", _tag)
+            INDIGOX_SERIAL_NVP("tag", _tag),
+            INDIGOX_SERIAL_NVP("type", _type)
             );
   }
   
@@ -34,7 +45,8 @@ namespace indigox {
     
     construct(atoms[0], atoms[1], atoms[2], atoms[3], m);
     
-    archive(INDIGOX_SERIAL_NVP("tag", construct->_tag));
+    archive(INDIGOX_SERIAL_NVP("tag", construct->_tag),
+            INDIGOX_SERIAL_NVP("type", construct->_type));
   }
   INDIGOX_SERIALISE_SPLIT(IXDihedral);
   
@@ -45,20 +57,22 @@ namespace indigox {
     Dihedral saved = fixture.dhd.imp;
     
     saved->SetTag(45);
-    
+    saved->SetType(fixture.fftype);
     std::ostringstream os;
     {
       Out oar(os);
-      check_nothrow(oar(saved, saved->GetAtoms(), saved->GetMolecule()));
+      check_nothrow(oar(saved, saved->GetAtoms(), saved->GetMolecule(),
+                        fixture.fftype));
     }
     
     Dihedral loaded;
     test::TestDihedral::Atoms atoms;
     Molecule mol;
+    FFDihedral ff_loaded;
     std::istringstream is(os.str());
     {
       In iar(is);
-      check_nothrow(iar(loaded, atoms, mol));
+      check_nothrow(iar(loaded, atoms, mol, ff_loaded));
     }
     fixture.dhd.imp = loaded;
     check(!fixture.dhd.get_atms()[0].expired());
@@ -72,9 +86,9 @@ namespace indigox {
     check_eq(atoms.third->GetTag(), saved->GetAtoms().third->GetTag());
     check_eq(atoms.fourth->GetTag(), saved->GetAtoms().fourth->GetTag());
     check_eq(atoms, loaded->GetAtoms());
+    check_eq(ff_loaded, loaded->GetType());
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixdihed_serial, ixserial<IXDihedral>);
-  
   
   IXDihedral::IXDihedral(Atom a, Atom b, Atom c, Atom d, Molecule m)
   : _mol(m), _tag(0), _atms({{a,b,c,d}}) { }
@@ -88,6 +102,7 @@ namespace indigox {
     check_eq(b, tdhd.get_atms()[1].lock());
     check_eq(c, tdhd.get_atms()[2].lock());
     check_eq(d, tdhd.get_atms()[3].lock());
+    check_eq(FFDihedral(), tdhd.get_type());
     
     // Check unique IDs correctly update
     test::TestDihedral dhd1(a,b,c,d,mol);
@@ -113,6 +128,7 @@ namespace indigox {
     check_nothrow(dhd.GetAtoms());
     check_nothrow(dhd.SwapOrder());
     check_nothrow(dhd.NumAtoms());
+    check_nothrow(dhd.SetType(fftype));
     
     // Check correctness of gets
     check_eq(72, dhd.GetTag());
@@ -121,6 +137,7 @@ namespace indigox {
     check_eq(mol, dhd.get_mol().lock());
     check_eq(stdx::make_quad(d, c, b, a), dhd.GetAtoms());
     check_eq(dhd.GetTag(), dhd.GetIndex());
+    check_eq(fftype, dhd.GetType());
     
     // Check correct no owning of molecule
     mol.reset();
@@ -197,10 +214,12 @@ namespace indigox {
     _atms[1].reset();
     _atms[2].reset();
     _atms[3].reset();
+    _type.reset();
   }
   
   test_case_fixture(test::DihedralTestFixture, "IXDihedral clearing methods") {
     dhd.SetTag(72);
+    dhd.SetType(fftype);
     // Pre checks
     check_eq(dhd.get_tag(), 72);
     check_eq(dhd.get_mol().lock(), mol);
@@ -208,6 +227,7 @@ namespace indigox {
     check_eq(dhd.get_atms()[1].lock(), b);
     check_eq(dhd.get_atms()[2].lock(), c);
     check_eq(dhd.get_atms()[3].lock(), d);
+    check_eq(dhd.get_type(), fftype);
     
     dhd.Clear();
     // Post checks
@@ -217,12 +237,14 @@ namespace indigox {
     check_ne(dhd.get_atms()[1].lock(), b);
     check_ne(dhd.get_atms()[2].lock(), c);
     check_ne(dhd.get_atms()[3].lock(), d);
+    check_ne(dhd.get_type(), fftype);
     check_eq(dhd.get_tag(), 0);
     check_eq(dhd.get_mol().lock(), Molecule());
     check_eq(dhd.get_atms()[0].lock(), Atom());
     check_eq(dhd.get_atms()[1].lock(), Atom());
     check_eq(dhd.get_atms()[2].lock(), Atom());
     check_eq(dhd.get_atms()[3].lock(), Atom());
+    check_eq(dhd.get_type(), FFDihedral());
   }
   
   test_suite_close();

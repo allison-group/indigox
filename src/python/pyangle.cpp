@@ -7,6 +7,7 @@
 
 #include <indigox/classes/angle.hpp>
 #include <indigox/classes/molecule.hpp>
+#include <indigox/classes/forcefield.hpp>
 
 namespace py = pybind11;
 
@@ -30,8 +31,10 @@ void GeneratePyAngle(pybind11::module& m) {
   .def("GetTag", &IXAngle::GetTag)
   .def("NumAtoms", &IXAngle::NumAtoms)
   .def("GetUniqueID", &IXAngle::GetUniqueID)
+  .def("GetType", &IXAngle::GetType)
   // Setters
   .def("SetTag", &IXAngle::SetTag)
+  .def("SetType", &IXAngle::SetType)
   // Other
   .def("SwapOrder", &IXAngle::SwapOrder)
   .def("ToString", &IXAngle::ToString)

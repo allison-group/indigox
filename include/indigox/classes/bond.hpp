@@ -16,12 +16,14 @@ namespace indigox {
   class IXAtom;
   class IXBond;
   class IXMolecule;
+  class IXFFBond;
   namespace test { struct TestBond; }
   
   using Atom = std::shared_ptr<IXAtom>;
   //! \brief shared_ptr for normal use of the IXBond class.
   using Bond = std::shared_ptr<IXBond>;
   using Molecule = std::shared_ptr<IXMolecule>;
+  using FFBond = std::shared_ptr<IXFFBond>;
   
   using _Atom = std::weak_ptr<IXAtom>;
   /*! \brief weak_ptr for non-ownership reference to the IXBond class.
@@ -175,7 +177,20 @@ namespace indigox {
      *  \returns 2. */
     size_ NumAtoms() const { return _atms.size(); }
     
+    /*! \brief Get the index from the molecule.
+     *  \details Calculates the index of the bond in the container of bonds
+     *  of the molecule it is a part of. If the molecule is dead, the index
+     *  returned is the tag of the bond.
+     *  \return the index of the bond. */
     size_ GetIndex() const;
+    
+    /*! \brief Get the type of the bond.
+     *  \return the type of the bond. */
+    FFBond GetType() const { return _type; }
+    
+    /*! \brief Set the type of the bond.
+     *  \param type the type of bond to set. */
+    void SetType(FFBond type) { _type = type; }
     
   private:
     //! The molecule this bond is assigned to.
@@ -188,7 +203,8 @@ namespace indigox {
     bool _aromatic;
     //! Stereochemistry.
     Stereo _stereo;
-    
+    //! Type of bond.
+    FFBond _type;
     //! \brief Atoms which make up the bond.
     BondAtoms _atms;
   };

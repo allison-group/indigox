@@ -20,6 +20,7 @@ namespace indigox {
   class IXDihedral;
   class IXMolecule;
   class IXElement;
+  class IXFFAtom;
   namespace test { struct TestAtom; }
   
   //! \brief shared_ptr for normal use of the IXAtom class.
@@ -29,6 +30,7 @@ namespace indigox {
   using Dihedral = std::shared_ptr<IXDihedral>;
   using Molecule = std::shared_ptr<IXMolecule>;
   using Element = std::shared_ptr<IXElement>;
+  using FFAtom = std::shared_ptr<IXFFAtom>;
   
   /*! \brief weak_ptr for non-ownership reference to the IXAtom class.
    *  \details Intended for internal use only. */
@@ -331,7 +333,20 @@ namespace indigox {
      *  \returns the number of valid assigned dihedrals. */
     size_ NumDihedrals() const { return _dhds.size(); }
     
+    /*! \brief Get the index from the molecule.
+     *  \details Calculates the index of the atom in the container of atoms
+     *  of the molecule it is a part of. If the molecule is dead, the index
+     *  returned is the tag of the atom.
+     *  \return the index of the atom. */
     size_ GetIndex() const;
+    
+    /*! \brief Get the FF type of the atom.
+     *  \return the force field type of the atom. */
+    FFAtom GetType() const { return _type; }
+    
+    /*! \brief Set the FF type of the atom.
+     *  \param type the type to set. */
+    void SetType(FFAtom type) { _type = type; }
     
   private:
     //! The molecule this atom is assigned to.
@@ -356,7 +371,7 @@ namespace indigox {
     bool _aromatic;
     
     //! MM type for atom
-    // FFAtom _mmtype;
+    FFAtom _type;
     
     //! Bonds the atom is part of
     AtomBonds _bnds;

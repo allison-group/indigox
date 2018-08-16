@@ -34,6 +34,8 @@ namespace indigox::test {
     size_ NumAtoms() const { return imp->NumAtoms(); }
     uid_ GetUniqueID() const { return imp->GetUniqueID(); }
     size_ GetIndex() const { return imp->GetIndex(); }
+    FFBond GetType() const { return imp->GetType(); }
+    void SetType(FFBond t) { imp->SetType(t); }
     
     // Internals access
     _Molecule get_mol() const { return imp->_mol; }
@@ -42,6 +44,7 @@ namespace indigox::test {
     bool get_aromatic() const { return imp->_aromatic; }
     BondStereo get_stereo() const { return imp->_stereo; }
     const IAtoms& get_atms() const { return imp->_atms; }
+    FFBond get_type() const { return imp->_type; }
   };
   
   inline TestBond CreateGenericTestBond() {
@@ -59,10 +62,8 @@ namespace indigox::test {
     Atom a = CreateGenericTestAtom().imp;
     Atom b = CreateGenericTestAtom().imp;
     TestBond bnd = TestBond(a,b,mol);
-    BondTestFixture() {
-      a->SetTag(0); b->SetTag(1);
-      a->SetElement("C"); b->SetElement("O");
-    }
+    FFBond fftype;
+    BondTestFixture();
   };
 }
 

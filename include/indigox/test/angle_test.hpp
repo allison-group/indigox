@@ -26,11 +26,14 @@ namespace indigox::test {
     void SwapOrder() { imp->SwapOrder(); }
     string_ ToString() const { return imp->ToString(); }
     size_ GetIndex() const { return imp->GetIndex(); }
+    FFAngle GetType() const { return imp->GetType(); }
+    void SetType(FFAngle t) { imp->SetType(t); }
     
     // Internals access
     _Molecule get_mol() const { return imp->_mol; }
     uid_ get_tag() const { return imp->_tag; }
     const IAtoms& get_atms() const { return imp->_atms; }
+    FFAngle get_type() const { return imp->_type; }
   };
   
   inline TestAngle CreateGenericTestAngle() {
