@@ -62,6 +62,7 @@ void GeneratePyForcefield(py::module& m) {
   .def("GetIdealLength", &IXFFBond::GetIdealLength)
   .def("GetType", &IXFFBond::GetType)
   .def("GetID", &IXFFBond::GetID)
+  .def("GetLinkedType", &IXFFBond::GetLinkedType)
   ;
   
   py::class_<IXFFAngle, FFAngle>(m, "FFAngle")
@@ -70,6 +71,7 @@ void GeneratePyForcefield(py::module& m) {
   .def("GetIdealAngle", &IXFFAngle::GetIdealAngle)
   .def("GetType", &IXFFAngle::GetType)
   .def("GetID", &IXFFAngle::GetID)
+  .def("GetLinkedType", &IXFFAngle::GetLinkedType)
   ;
   
   py::class_<IXFFDihedral, FFDihedral>(m, "FFDihedral")
@@ -112,6 +114,8 @@ void GeneratePyForcefield(py::module& m) {
   .def("NumBondTypes", &IXForcefield::NumBondTypes)
   .def("NumAngleTypes", &IXForcefield::NumAngleTypes)
   .def("NumDihedralTypes", &IXForcefield::NumDihedralTypes)
+  .def("LinkBondTypes", &IXForcefield::LinkBondTypes)
+  .def("LinkAngleTypes", &IXForcefield::LinkAngleTypes)
   ;
 }
 
