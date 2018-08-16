@@ -42,6 +42,24 @@ def LoadGromosInteractionFunctionParameterFile(path):
       for line in data[start + 1:end]:
         idx, k, phase, m = map(float, line.split())
         ff.NewProperDihedralType(int(idx), k, phase, int(m))
+    elif b == 'SINGLEATOMLJPAIR':
+      num_lines = int((end - start - 1) / int(data[start]))
+      atm_count = int(data[start])
+      ff.ReserveAtomTypes(atm_count)
+      for i in range(atm_count):
+        lines = []
+        for j in range(num_lines):
+          lines.append(data[start+1+j+i*num_lines])
+        dat = "   ".join(x for x in lines).split()
+        atm_dat = {'int_code':int(dat[0]),
+                   'name':dat[1],
+                   'c6':float(dat[2])**2,
+                   'c12':[float(dat[3])**2,float(dat[4])**2,float(dat[5])**2,],
+                   'c6_1_4':float(dat[6])**2,
+                   'c12_1_4':float(dat[7])**2,
+                   'interactions':dict(),
+                  }
+        ff.NewAtomType(int(dat[0]), dat[1])
         
   return ff
 
@@ -53,3 +71,4 @@ if __name__ == "__main__":
   print("Bond types:    ", ff.NumBondTypes())
   print("Angle types:   ", ff.NumAngleTypes())
   print("Dihedral types:", ff.NumDihedralTypes())
+

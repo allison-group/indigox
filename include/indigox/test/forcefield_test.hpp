@@ -56,12 +56,14 @@ namespace indigox::test {
     float_ GetIdealAngle() const { return imp->GetIdealAngle(); }
     AngleType GetType() const { return imp->GetType(); }
     int_ GetID() const { return imp->GetID(); }
+    FFAngle GetLinkedType() const { return imp->GetLinkedType(); }
     
     // Internals access
     AngleType get_type() const { return imp->_type; }
     int_ get_id() const { return imp->_id; }
     const DataStore& get_dat() const { return imp->_dat; }
     AllowMask& get_mask() const { return imp->_mask; }
+    FFAngle get_link() const { return imp->_link; }
     
   };
   
@@ -88,12 +90,14 @@ namespace indigox::test {
     float_ GetIdealLength() const { return imp->GetIdealLength(); }
     BondType GetType() const { return imp->GetType(); }
     int_ GetID() const { return imp->GetID(); }
+    FFBond GetLinkedType() const { return imp->GetLinkedType(); }
     
     // Internals access
     BondType get_type() const { return imp->_type; }
     int_ get_id() const { return imp->_id; }
     const DataStore& get_dat() const { return imp->_dat; }
     AllowMask& get_mask() const { return imp->_mask; }
+    FFBond get_link() const { return imp->_link; }
   };
   
   inline TestFFBond CreateGenericTestFFBond() {
@@ -171,6 +175,7 @@ namespace indigox::test {
     FFBond GetQuarticBondType(int_ i) const {
       return imp->GetQuarticBondType(i);
     }
+    void LinkBondTypes(FFBond a, FFBond b) { imp->LinkBondTypes(a, b); }
     FFAngle NewHarmonicAngleType(int_ i, float_ k, float_ t) {
       return imp->NewHarmonicAngleType(i, k, t);
     }
@@ -184,6 +189,7 @@ namespace indigox::test {
     FFAngle GetCosineHarmonicAngleType(int_ i) const {
       return imp->GetCosineHarmonicAngleType(i);
     }
+    void LinkAngleTypes(FFAngle a, FFAngle b) { imp->LinkAngleTypes(a, b); }
     FFDihedral NewProperDihedralType(int_ i, float_ k, float_ p, uint_ m) {
       return imp->NewProperDihedralType(i, k, p, m);
     }

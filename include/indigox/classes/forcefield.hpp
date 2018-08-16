@@ -262,6 +262,12 @@ namespace indigox {
      *  \return the ID of this dihedral type. */
     inline int_ GetID() const { return _id; }
     
+    /*! \brief Get the linked type for this type.
+     *  \details A linked type is an equivalent type with a different functional
+     *  type.
+     *  \return the linked type. */
+    inline FFAngle GetLinkedType() const { return _link; }
+    
   private:
     //! The type of the potential energy function.
     AngleType _type;
@@ -271,6 +277,8 @@ namespace indigox {
     DataStore _dat;
     //! Mask for the allowed parameters.
     AllowedMask _mask;
+    //! Linked angle type
+    FFAngle _link;
   };
   
   class IXFFBond {
@@ -345,6 +353,12 @@ namespace indigox {
      *  \return the ID of this dihedral type. */
     inline int_ GetID() const { return _id; }
     
+    /*! \brief Get the linked type for this type.
+     *  \details A linked type is an equivalent type with a different functional
+     *  type.
+     *  \return the linked type. */
+    inline FFBond GetLinkedType() const { return _link; }
+    
   private:
     //! The type of the potential energy function.
     BondType _type;
@@ -354,6 +368,8 @@ namespace indigox {
     DataStore _dat;
     //! Mask for the allowed parameters.
     AllowedMask _mask;
+    //! Linked type
+    FFBond _link;
   };
   
   class IXFFAtom {
@@ -555,6 +571,18 @@ namespace indigox {
      *  \return the newly created angle type, or an empty shared_ptr. */
     FFAngle NewHarmonicAngleType(int_ id, float_ k, float_ theta) {
       return NewAngleType(AngleType::Harmonic, id, {k, theta});
+    }
+    
+    /*! \brief Link together two equivalent bond types.
+     *  \param a,b the two types to link. */
+    void LinkBondTypes(FFBond a, FFBond b) {
+      a->_link = b; b->_link = a;
+    }
+    
+    /*! \brief Link together two equivalent angle types.
+     *  \param a,b the two types to link. */
+    void LinkAngleTypes(FFAngle a, FFAngle b) {
+      a->_link = b; b->_link = a;
     }
     
     /*! \brief Add a new cosine-harmonic angle type.
