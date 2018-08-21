@@ -22,7 +22,8 @@ namespace indigox::graph {
   
   template <typename Archive>
   void IXMGVertex::save(Archive &archive, const uint32_t) const {
-    archive(INDIGOX_SERIAL_NVP("source_atom", _atom));
+    archive(INDIGOX_SERIAL_NVP("source_atom", _atom),
+            INDIGOX_SERIAL_NVP("graph", _graph));
   }
   
   template <typename Archive>
@@ -30,8 +31,10 @@ namespace indigox::graph {
                                       cereal::construct<IXMGVertex> &construct,
                                       const uint32_t) {
     Atom atom;
-    archive(INDIGOX_SERIAL_NVP("source_atom", atom));
-    construct(atom);
+    MolecularGraph g;
+    archive(INDIGOX_SERIAL_NVP("source_atom", atom),
+            INDIGOX_SERIAL_NVP("graph", g));
+    construct(atom, g);
   }
   INDIGOX_SERIALISE_SPLIT(IXMGVertex);
   
@@ -39,31 +42,33 @@ namespace indigox::graph {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     
-    test::TestMolecularVertex saved(test::CreateGenericTestAtom().imp);
-  
+    test::TestMolecularVertex saved(test::CreateGenericTestAtom().imp,
+                                    test::CreateGenericTestMolecularGraph().imp);
+    
     std::ostringstream os;
     {
       Out oar(os);
-      check_nothrow(oar(saved.imp, saved.GetAtom()));
+      check_nothrow(oar(saved.imp, saved.GetAtom(), saved.GetGraph()));
     }
     
     Atom atom_loaded;
     graph::MGVertex loaded;
+    graph::MolecularGraph graph_loaded;
     std::istringstream is(os.str());
     {
       In iar(is);
-      check_nothrow(iar(loaded, atom_loaded));
+      check_nothrow(iar(loaded, atom_loaded, graph_loaded));
     }
-    saved.imp = loaded;
     
     check_eq(loaded->GetAtom(), atom_loaded);
-    check_eq(saved.get_atom().lock(), atom_loaded);
+    check_eq(loaded->GetGraph(), graph_loaded);
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixmolv_serial, ixserial<IXMGVertex>);
   
   template <typename Archive>
   void IXMGEdge::save(Archive &archive, const uint32_t) const {
-    archive(INDIGOX_SERIAL_NVP("source_bond", _bond));
+    archive(INDIGOX_SERIAL_NVP("source_bond", _bond),
+            INDIGOX_SERIAL_NVP("graph", _graph));
   }
   
   template <typename Archive>
@@ -71,8 +76,10 @@ namespace indigox::graph {
                                     cereal::construct<IXMGEdge> &construct,
                                     const uint32_t) {
     Bond bond;
-    archive(INDIGOX_SERIAL_NVP("source_bond", bond));
-    construct(bond);
+    MolecularGraph g;
+    archive(INDIGOX_SERIAL_NVP("source_bond", bond),
+            INDIGOX_SERIAL_NVP("graph", g));
+    construct(bond, g);
   }
   INDIGOX_SERIALISE_SPLIT(IXMGEdge);
   
@@ -80,25 +87,26 @@ namespace indigox::graph {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     
-    test::TestMolecularEdge saved(test::CreateGenericTestBond().imp);
+    test::TestMolecularEdge saved(test::CreateGenericTestBond().imp,
+                                  test::CreateGenericTestMolecularGraph().imp);
     
     std::ostringstream os;
     {
       Out oar(os);
-      check_nothrow(oar(saved.imp, saved.GetBond()));
+      check_nothrow(oar(saved.imp, saved.GetBond(), saved.GetGraph()));
     }
     
     Bond bond_loaded;
-    graph::MGEdge loaded;
+    MGEdge loaded;
+    MolecularGraph loaded_graph;
     std::istringstream is(os.str());
     {
       In iar(is);
-      check_nothrow(iar(loaded, bond_loaded));
+      check_nothrow(iar(loaded, bond_loaded, loaded_graph));
     }
-    saved.imp = loaded;
     
     check_eq(loaded->GetBond(), bond_loaded);
-    check_eq(saved.get_bond().lock(), bond_loaded);
+    check_eq(loaded->GetGraph(), loaded_graph);
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixmole_serial, ixserial<IXMGEdge>);
   
@@ -180,11 +188,18 @@ namespace indigox::graph {
 // == CONSTRUCTION ============================================================
 // ============================================================================
   
-  test_case_fixture(test::MolecularGraphTestFixture, "IXMolecularGraph construction") {
-    check_nothrow(test::TestMolecularGraph test1(CreateMolecule()));
-    check_nothrow(test::TestMolecularVertex(test::CreateGenericTestAtom().imp));
-    check_nothrow(test::TestMolecularEdge(test::CreateGenericTestBond().imp));
-    
+  test_case("IXMolecularGraph construction") {
+    using G = test::TestMolecularGraph;
+    using V = test::TestMolecularVertex;
+    using E = test::TestMolecularEdge;
+    check_nothrow(G t(CreateMolecule()));
+    check_nothrow(V t(test::CreateGenericTestAtom().imp,
+                      test::CreateGenericTestMolecularGraph().imp));
+    check_nothrow(E t(test::CreateGenericTestBond().imp,
+                      test::CreateGenericTestMolecularGraph().imp));
+  }
+  
+  test_case_fixture(test::MolecularGraphTestFixture, "IXMolecularGraph internals") {
     check(blank.get_at2v().empty());
     check(blank.get_bn2e().empty());
     check(blank.get_v().empty());
@@ -342,7 +357,7 @@ namespace indigox::graph {
 // ============================================================================
   
   MGVertex IXMolecularGraph::AddVertex(const Atom atm) {
-    MGVertex v = MGVertex(new IXMGVertex(atm));
+    MGVertex v = MGVertex(new IXMGVertex(atm, shared_from_this()));
     _at2v.emplace(atm, v);
     _v.emplace_back(v);
     _n.emplace(v, VertContain());
@@ -403,7 +418,7 @@ namespace indigox::graph {
     // Edges will only be added when a bond is added to the molecule
     MGVertex u = GetVertex(source);
     MGVertex v = GetVertex(target);
-    MGEdge e = MGEdge(new IXMGEdge(bnd));
+    MGEdge e = MGEdge(new IXMGEdge(bnd, shared_from_this()));
     _bn2e.emplace(bnd, e);
     _e.emplace_back(e);
     _n[u].emplace_back(v);

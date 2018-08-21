@@ -9,13 +9,16 @@ namespace indigox::test {
     
     // Private wrapping functions
     TestMolecularVertex() = delete;
-    TestMolecularVertex(Atom a) : imp(new graph::IXMGVertex(a)) { }
+    TestMolecularVertex(Atom a, graph::MolecularGraph g)
+    : imp(new graph::IXMGVertex(a, g)) { }
     
     // Public wrapping functions
     Atom GetAtom() const { return imp->GetAtom(); }
+    graph::MolecularGraph GetGraph() const { return imp->GetGraph(); }
     
     // Internals access
     _Atom get_atom() const { return imp->_atom; }
+    graph::_MolecularGraph get_graph() const { return imp->_graph; }
   };
   
   struct TestMolecularEdge {
@@ -23,13 +26,16 @@ namespace indigox::test {
     
     // Private wrapping functions
     TestMolecularEdge() = delete;
-    TestMolecularEdge(Bond b) : imp(new graph::IXMGEdge(b)) { }
+    TestMolecularEdge(Bond b, graph::MolecularGraph g)
+    : imp(new graph::IXMGEdge(b, g)) { }
     
     // Public wrapping functions
     Bond GetBond() const { return imp->GetBond(); }
+    graph::MolecularGraph GetGraph() const { return imp->GetGraph(); }
     
     // Internals access
     _Bond get_bond() const { return imp->_bond; }
+    graph::_MolecularGraph get_graph() const { return imp->_graph; }
   };
   
   struct TestMolecularGraph {
@@ -87,6 +93,10 @@ namespace indigox::test {
     const AllNeighbours& get_n() const { return imp->_n; }
   };
 
+  inline TestMolecularGraph CreateGenericTestMolecularGraph() {
+    return TestMolecularGraph(CreateMolecule());
+  }
+  
   struct MolecularGraphTestFixture {
     TestMolecularGraph benzene, random, blank;
     MoleculeTestFixture mol_fixture;

@@ -17,7 +17,7 @@
 #include "../utils/numerics.hpp"
 
 // Forward declares
-namespace indigox{
+namespace indigox {
   class IXAtom;
   class IXBond;
   class IXMolecule;
@@ -75,6 +75,10 @@ namespace indigox::graph {
      *  \return the atom associated with this vertex, if it is still alive. */
     inline Atom GetAtom() const { return _atom.lock(); }
     
+    /*! \brief Get the graph this vertex is part of.
+     *  \return the owning graph. */
+    inline MolecularGraph GetGraph() const { return _graph.lock(); }
+    
     IXMGVertex() = delete;  // no default constructor
     
   private:
@@ -82,7 +86,7 @@ namespace indigox::graph {
      *  \details Private constructor ensures that only IXMolecularGraph can
      *  create IXMGVertex instances.
      *  \param a the atom to associate with this vertex. */
-    IXMGVertex(Atom a) : _atom(a) { }
+    IXMGVertex(Atom a, MolecularGraph graph) : _atom(a), _graph(graph) { }
     
     template <typename Archive>
     void save(Archive& archive, const uint32_t version) const;
@@ -94,6 +98,8 @@ namespace indigox::graph {
     
     //! \brief Reference to the atom this edge is associated with.
     _Atom _atom;
+    //! \brief Reference to the molecular graph
+    _MolecularGraph _graph;
   };
   
   /*! \brief Class for the edges of a IXMolecularGraph. */
@@ -110,6 +116,10 @@ namespace indigox::graph {
      *  \return the bond associated with this edge, if it is still alive. */
     Bond GetBond() const { return _bond.lock(); }
     
+    /*! \brief Get the graph this edge is part of.
+     *  \return the owning graph. */
+    inline MolecularGraph GetGraph() const { return _graph.lock(); }
+    
     IXMGEdge() = delete;  // no default constructor
     
   private:
@@ -117,7 +127,7 @@ namespace indigox::graph {
      *  \details Private constructor ensures that only IXMolecularGraph can
      *  create IXMGEdge instances.
      *  \param b the bond to associate with this edge. */
-    IXMGEdge(Bond b) : _bond(b) { }
+    IXMGEdge(Bond b, MolecularGraph graph) : _bond(b), _graph(graph) { }
     
     template <typename Archive>
     void save(Archive& archive, const uint32_t version) const;
@@ -129,6 +139,8 @@ namespace indigox::graph {
     
     //! \brief Reference to the bond this edge is associated with.
     _Bond _bond;
+    //! \brief Reference to the molecular graph
+    _MolecularGraph _graph;
   };
   
   /*! \brief Class containing a graph representation of a molecule.
@@ -137,7 +149,8 @@ namespace indigox::graph {
    *  assume that the parameters feed to them are valid. However, all the
    *  accessing methods do not make this assumption and so perform sanity
    *  checks. */
-  class IXMolecularGraph {
+  class IXMolecularGraph
+  : public std::enable_shared_from_this<IXMolecularGraph> {
     //! \brief Friendship allows an IXMolecule to own a graph.
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXMolecularGraph to be tested.
@@ -358,7 +371,6 @@ namespace indigox::graph {
     EdgeContain _e;
     //! \brief Container for neighbours of a vertex
     NbrsContain _n;
-    
   };
 }  // namespace indigox::graph
 
