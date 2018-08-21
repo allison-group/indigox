@@ -54,6 +54,7 @@ void GeneratePyForcefield(py::module& m) {
   // No constructor
   .def("GetID", &IXFFAtom::GetID)
   .def("GetName", &IXFFAtom::GetName)
+  .def("GetForcefield", &IXFFAtom::GetForcefield)
   ;
   
   py::class_<IXFFBond, FFBond>(m, "FFBond")
@@ -63,6 +64,7 @@ void GeneratePyForcefield(py::module& m) {
   .def("GetType", &IXFFBond::GetType)
   .def("GetID", &IXFFBond::GetID)
   .def("GetLinkedType", &IXFFBond::GetLinkedType)
+  .def("GetForcefield", &IXFFBond::GetForcefield)
   ;
   
   py::class_<IXFFAngle, FFAngle>(m, "FFAngle")
@@ -72,6 +74,7 @@ void GeneratePyForcefield(py::module& m) {
   .def("GetType", &IXFFAngle::GetType)
   .def("GetID", &IXFFAngle::GetID)
   .def("GetLinkedType", &IXFFAngle::GetLinkedType)
+  .def("GetForcefield", &IXFFAngle::GetForcefield)
   ;
   
   py::class_<IXFFDihedral, FFDihedral>(m, "FFDihedral")
@@ -82,40 +85,43 @@ void GeneratePyForcefield(py::module& m) {
   .def("GetIdealAngle", &IXFFDihedral::GetIdealAngle)
   .def("GetType", &IXFFDihedral::GetType)
   .def("GetID", &IXFFDihedral::GetID)
+  .def("GetForcefield", &IXFFDihedral::GetForcefield)
   ;
   
   py::class_<IXForcefield, Forcefield>(m, "Forcefield")
   .def(py::init<FFFamily, string_>())
-  .def("ReserveAtomTypes", &IXForcefield::ReserveAtomTypes)
-  .def("ReserveBondTypes", &IXForcefield::ReserveBondTypes)
-  .def("ReserveAngleTypes", &IXForcefield::ReserveAngleTypes)
-  .def("ReserveDihedralTypes", &IXForcefield::ReserveDihedralTypes)
   .def("GetFamily", &IXForcefield::GetFamily)
   .def("GetName", &IXForcefield::GetName)
+  // Atoms
   .def("NewAtomType", &IXForcefield::NewAtomType)
   .def("GetAtomType", py::overload_cast<string_>(&IXForcefield::GetAtomType, py::const_))
   .def("GetAtomType", py::overload_cast<int_>(&IXForcefield::GetAtomType, py::const_))
-  .def("NewHarmonicBondType", &IXForcefield::NewHarmonicBondType)
-  .def("NewQuarticBondType", &IXForcefield::NewQuarticBondType)
-  .def("GetBondType", &IXForcefield::GetBondType)
-  .def("GetHarmonicBondType", &IXForcefield::GetHarmonicBondType)
-  .def("GetQuarticBondType", &IXForcefield::GetQuarticBondType)
-  .def("NewHarmonicAngleType", &IXForcefield::NewHarmonicAngleType)
-  .def("NewCosineHarmonicAngleType", &IXForcefield::NewCosineHarmonicAngleType)
-  .def("GetAngleType", &IXForcefield::GetAngleType)
-  .def("GetHarmonicAngletype", &IXForcefield::GetHarmonicAngleType)
-  .def("GetCosineHarmonicAngleType", &IXForcefield::GetCosineHarmonicAngleType)
-  .def("NewProperDihedralType", &IXForcefield::NewProperDihedralType)
-  .def("NewImproperDihedralType", &IXForcefield::NewImproperDihedralType)
-  .def("GetDihedralType", &IXForcefield::GetDihedralType)
-  .def("GetImproperDihedralType", &IXForcefield::GetImproperDihedralType)
-  .def("GetProperDihedralType", &IXForcefield::GetProperDihedralType)
+  .def("ReserveAtomTypes", &IXForcefield::ReserveAtomTypes)
   .def("NumAtomTypes", &IXForcefield::NumAtomTypes)
-  .def("NumBondTypes", &IXForcefield::NumBondTypes)
-  .def("NumAngleTypes", &IXForcefield::NumAngleTypes)
-  .def("NumDihedralTypes", &IXForcefield::NumDihedralTypes)
+  // Bonds
+  .def("NewBondType", py::overload_cast<BondType, int_, float_, float_>(&IXForcefield::NewBondType))
+  .def("GetBondType", py::overload_cast<BondType, int_>(&IXForcefield::GetBondType, py::const_))
+  .def("GetBondType", py::overload_cast<int_>(&IXForcefield::GetBondType, py::const_))
   .def("LinkBondTypes", &IXForcefield::LinkBondTypes)
+  .def("ReserveBondTypes", &IXForcefield::ReserveBondTypes)
+  .def("NumBondTypes", py::overload_cast<>(&IXForcefield::NumBondTypes, py::const_))
+  .def("NumBondTypes", py::overload_cast<BondType>(&IXForcefield::NumBondTypes, py::const_))
+  // Angles
+  .def("NewAngleType", py::overload_cast<AngleType, int_, float_, float_>(&IXForcefield::NewAngleType))
+  .def("GetAngleType", py::overload_cast<AngleType, int_>(&IXForcefield::GetAngleType, py::const_))
+  .def("GetAngleType", py::overload_cast<int_>(&IXForcefield::GetAngleType, py::const_))
   .def("LinkAngleTypes", &IXForcefield::LinkAngleTypes)
+  .def("ReserveAngleTypes", &IXForcefield::ReserveAngleTypes)
+  .def("NumAngleTypes", py::overload_cast<>(&IXForcefield::NumAngleTypes, py::const_))
+  .def("NumAngleTypes", py::overload_cast<AngleType>(&IXForcefield::NumAngleTypes, py::const_))
+  // Dihedrals
+  .def("NewDihedralType", py::overload_cast<DihedralType, int_, float_, float_, float_>(&IXForcefield::NewDihedralType))
+  .def("NewDihedralType", py::overload_cast<DihedralType, int_, float_, float_>(&IXForcefield::NewDihedralType))
+  .def("GetDihedralType", py::overload_cast<DihedralType, int_>(&IXForcefield::GetDihedralType, py::const_))
+  .def("GetDihedralType", py::overload_cast<int_>(&IXForcefield::GetDihedralType, py::const_))
+  .def("ReserveDihedralTypes", &IXForcefield::ReserveDihedralTypes)
+  .def("NumDihedralTypes", py::overload_cast<>(&IXForcefield::NumDihedralTypes, py::const_))
+  .def("NumDihedralTypes", py::overload_cast<DihedralType>(&IXForcefield::NumDihedralTypes, py::const_))
   ;
 }
 
