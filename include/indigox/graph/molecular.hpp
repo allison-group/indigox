@@ -179,7 +179,7 @@ namespace indigox::graph {
     //! \brief Type of the iterator returned by GetVertices() method.
     using VertIter = VertContain::const_iterator;
     //! \brief Type of the iterator returned by GetNeighbours() method.
-    using NbrsIter = std::vector<MGVertex>::const_iterator;
+    using NbrsIter = NbrsContain::mapped_type::const_iterator;
     
   private:
     /*! \brief Construct with a molecule.
@@ -233,6 +233,10 @@ namespace indigox::graph {
     
   public:
     IXMolecularGraph() = delete;  // no default constructor
+    
+    /*! \brief Copy constructor.
+     *  \param g the IXMolecularGraph to deep copy. */
+    IXMolecularGraph(const IXMolecularGraph& g);
     
     /*! \brief The degree of a vertex.
      *  \details If the vertex is not part of the graph, the returned value is
@@ -362,9 +366,9 @@ namespace indigox::graph {
     //! \brief Underlying graph
     graph_type _g;
     //! \brief Map Atoms to their corresponding MGVertex
-    eastl::vector_map<Atom, MGVertex> _at2v;
+    AtomMap _at2v;
     //! \brief Map Bonds to their corresponding MGEdge
-    eastl::vector_map<Bond, MGEdge> _bn2e;
+    BondMap _bn2e;
     //! \brief Container for giving iterator access to all vertices in graph.
     VertContain _v;
     //! \brief Container for giving iterator access to all edges in graph.

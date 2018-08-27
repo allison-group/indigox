@@ -188,6 +188,12 @@ namespace indigox::graph {
 // == CONSTRUCTION ============================================================
 // ============================================================================
   
+  IXMolecularGraph::IXMolecularGraph(const IXMolecularGraph& g) {
+    _source = g._source;
+    for (auto& av : _at2v) AddVertex(av.first);
+    for (auto& be : _bn2e) AddEdge(be.first);
+  }
+  
   test_case("IXMolecularGraph construction") {
     using G = test::TestMolecularGraph;
     using V = test::TestMolecularVertex;
