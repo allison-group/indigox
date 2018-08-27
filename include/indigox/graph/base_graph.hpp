@@ -40,6 +40,8 @@ namespace indigox::graph {
     union {
       //! \brief Label used by the connected components algorithm.
       int_ component;
+      //! \brief Label used for (sub-)graph isomorphism.
+      ulong_ isomorphism;
       //! \brief An integer label.
       int_ ilabel;
       //! \brief A floating point label
