@@ -47,12 +47,6 @@ namespace indigox {
     using DihedAtomIter = DihedAtoms::const_iterator;
     
   private:
-    /*! \brief Normal constructor.
-     *  \details Creates a dihedral between four atoms, linking it to the given
-     *  Molecule.
-     *  \param a,b,c,d the four atoms to construct a dihedral between.
-     *  \param m the molecule to assign the angle to. */
-    IXDihedral(Atom a, Atom b, Atom c, Atom d, Molecule m);
     
     template <typename Archive>
     void save(Archive& archive, const uint32_t version) const;
@@ -64,6 +58,13 @@ namespace indigox {
     
   public:
     IXDihedral() = delete;  // no default constructor
+    
+    /*! \brief Normal constructor.
+     *  \details Creates a dihedral between four atoms, linking it to the given
+     *  Molecule.
+     *  \param a,b,c,d the four atoms to construct a dihedral between.
+     *  \param m the molecule to assign the angle to. */
+    IXDihedral(Atom a, Atom b, Atom c, Atom d, Molecule m);
     
     //! \brief Destructor
     ~IXDihedral() { }

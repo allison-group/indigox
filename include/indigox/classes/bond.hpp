@@ -71,13 +71,6 @@ namespace indigox {
     };
     
   private:
-    /*! \brief Normal constructor.
-     *  \details Creates a bond between the two atoms, linking it to the given
-     *  Molecule.
-     *  \param a, b the atoms to construct a bonds between.
-     *  \param m the molecule to assign the bond to. */
-    IXBond(Atom a, Atom b, Molecule m);
-    
     template <typename Archive>
     void save(Archive& archive, const uint32_t version) const;
     
@@ -88,6 +81,13 @@ namespace indigox {
     
   public:
     IXBond() = delete;  // no default constructor
+    
+    /*! \brief Normal constructor.
+     *  \details Creates a bond between the two atoms, linking it to the given
+     *  Molecule.
+     *  \param a, b the atoms to construct a bonds between.
+     *  \param m the molecule to assign the bond to. */
+    IXBond(Atom a, Atom b, Molecule m);
     
     //! \brief Destructor
     ~IXBond() { }

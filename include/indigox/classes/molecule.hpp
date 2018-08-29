@@ -89,11 +89,6 @@ namespace indigox {
     using MolDihedralIter = MolDihedrals::const_iterator;
     
   private:
-    /*! \brief Default constructor
-     *  \details Is private to enforce that IXMolecules should only be used
-     *  via the Molecule shared_ptr. */
-    IXMolecule();
-    
     /*! \brief Initalisation method to always be called after construction.
      *  \details Primary reason is to work around IXMolecularGraph requiring
      *  a Molecule for construction, which can not be done until the IXMolecule
@@ -104,6 +99,11 @@ namespace indigox {
     void Serialise(Archive& archive, const uint32_t version);
     
   public:
+    /*! \brief Default constructor
+     *  \details Is private to enforce that IXMolecules should only be used
+     *  via the Molecule shared_ptr. */
+    IXMolecule();
+    
     //! \brief Destructor
     ~IXMolecule() { }
     
@@ -509,7 +509,7 @@ namespace indigox {
    *  the Molecule shared_ptr.
    *  \return a new, blank Molecule. */
   inline Molecule CreateMolecule() {
-    Molecule m(new indigox::IXMolecule()); m->Init(); return m; }
+    Molecule m(std::make_shared<IXMolecule>()); m->Init(); return m; }
   
   //! \brief Type for the modifiable properties of an IXMolecule
   using MolProperty = indigox::IXMolecule::Property;

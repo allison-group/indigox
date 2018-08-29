@@ -92,6 +92,17 @@ namespace indigox {
     using AllowedMask = eastl::bitset<num_allow_positions>;
     
   private:
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t version) const;
+    
+    template <typename Archive>
+    static void load_and_construct(Archive& archive,
+                                   cereal::construct<IXFFDihedral>& construct,
+                                   const uint32_t version);
+    
+  public:
+    IXFFDihedral() = delete; // no default constructor
+    
     /*! \brief Normal construtor
      *  \details Creates a new dihedral term of the specified type.
      *  \param type the type of the potential energy function to use.
@@ -106,17 +117,6 @@ namespace indigox {
      *  \param type the type of the potential energy function to use.
      *  \param ff the forcefield to assign to. */
     IXFFDihedral(Type type, const Forcefield& ff);
-    
-    template <typename Archive>
-    void save(Archive& archive, const uint32_t version) const;
-    
-    template <typename Archive>
-    static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXFFDihedral>& construct,
-                                   const uint32_t version);
-    
-  public:
-    IXFFDihedral() = delete; // no default constructor
     
     /*! \brief Get the phase shift (in degrees).
      *  \return the phase shift.
@@ -218,6 +218,17 @@ namespace indigox {
     using AllowedMask = eastl::bitset<num_allow_positions>;
     
   private:
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t version) const;
+    
+    template <typename Archive>
+    static void load_and_construct(Archive& archive,
+                                   cereal::construct<IXFFAngle>& construct,
+                                   const uint32_t version);
+    
+  public:
+    IXFFAngle() = delete;   // no default constructor
+    
     /*! \brief Normal constructor
      *  \details Creates a new angle of the specified type.
      *  \param type the type of the potential energy function to use.
@@ -232,17 +243,6 @@ namespace indigox {
      *  \param type the type of the potential energy function to use.
      *  \param ff the forcefield to assign to. */
     IXFFAngle(Type type, const Forcefield& ff);
-    
-    template <typename Archive>
-    void save(Archive& archive, const uint32_t version) const;
-    
-    template <typename Archive>
-    static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXFFAngle>& construct,
-                                   const uint32_t version);
-    
-  public:
-    IXFFAngle() = delete;   // no default constructor
     
     /*! \brief Get the force constant.
      *  \return the force constant.
@@ -337,6 +337,17 @@ namespace indigox {
     using AllowedMask = eastl::bitset<num_allow_positions>;
     
   private:
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t version) const;
+    
+    template <typename Archive>
+    static void load_and_construct(Archive& archive,
+                                   cereal::construct<IXFFBond>& construct,
+                                   const uint32_t version);
+    
+  public:
+    IXFFBond() = delete;   // no default constructor
+    
     /*! \brief Normal constructor
      *  \details Creates a new bond of the specified type.
      *  \param type the type of the potential energy function to use.
@@ -351,17 +362,6 @@ namespace indigox {
      *  \param type the ytpe of the potential energy function to use.
      *  \param ff the forcefield to assign to. */
     IXFFBond(Type type, const Forcefield& ff);
-    
-    template <typename Archive>
-    void save(Archive& archive, const uint32_t version) const;
-    
-    template <typename Archive>
-    static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXFFBond>& construct,
-                                   const uint32_t version);
-    
-  public:
-    IXFFBond() = delete;   // no default constructor
     
     /*! \brief Get the force constant.
      *  \return the force constant.
@@ -423,13 +423,6 @@ namespace indigox {
     friend class IXForcefield;
     
   private:
-    /*! \brief Normal constructor
-     *  \details Creates a new atom term.
-     *  \param id the ID of the type.
-     *  \param name the name of the atom type.
-     *  \param the forcefield this type will be a part of. */
-    IXFFAtom(int_ id, string_ name, const Forcefield& ff);
-    
     template <typename Archive>
     void save(Archive& archive, const uint32_t version) const;
     
@@ -440,6 +433,13 @@ namespace indigox {
     
   public:
     IXFFAtom() = delete;  // no default constructor
+    
+    /*! \brief Normal constructor
+     *  \details Creates a new atom term.
+     *  \param id the ID of the type.
+     *  \param name the name of the atom type.
+     *  \param the forcefield this type will be a part of. */
+    IXFFAtom(int_ id, string_ name, const Forcefield& ff);
     
     /*! \brief Get the ID for this type.
      *  \return the ID of this atom type. */

@@ -91,11 +91,6 @@ namespace indigox {
     };
 
   private:
-    /*! \brief Normal constructor.
-     *  \details Links the constructed atom to the given Molecule.
-     *  \param m the molecule to assign this atom to. */
-    IXAtom(Molecule m);
-    
     template <typename Archive>
     void save(Archive& archive, const uint32_t version) const;
     
@@ -106,6 +101,11 @@ namespace indigox {
     
   public:
     IXAtom() = delete;  // default constructor for serialise access
+    
+    /*! \brief Normal constructor.
+     *  \details Links the constructed atom to the given Molecule.
+     *  \param m the molecule to assign this atom to. */
+    IXAtom(Molecule m);
     
     //! \brief Destructor
     ~IXAtom() { };

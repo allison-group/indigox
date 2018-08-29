@@ -637,28 +637,31 @@ namespace indigox {
   
   FFAtom IXForcefield::NewAtomType(int_ id, string_ name) {
     if (GetAtomType(id) || GetAtomType(name)) return FFAtom();
-    _atms.emplace_back(new IXFFAtom(id, name, shared_from_this()));
+    _atms.emplace_back(std::make_shared<IXFFAtom>(id, name, shared_from_this()));
     return _atms.back();
   }
   
   FFBond IXForcefield::NewBondType(BondType type, int_ id, FFParam param) {
     if (_bnds.find(type) == _bnds.end()) return FFBond();
     if (GetBondType(type, id)) return FFBond();
-    _bnds[type].emplace_back(new IXFFBond(type, id, param, shared_from_this()));
+    _bnds[type].emplace_back(std::make_shared<IXFFBond>(type, id, param,
+                                                        shared_from_this()));
     return _bnds[type].back();
   }
   
   FFAngle IXForcefield::NewAngleType(AngleType type, int_ id, FFParam param) {
     if (_angs.find(type) == _angs.end()) return FFAngle();
     if (GetAngleType(type, id)) return FFAngle();
-    _angs[type].emplace_back(new IXFFAngle(type, id, param, shared_from_this()));
+    _angs[type].emplace_back(std::make_shared<IXFFAngle>(type, id, param,
+                                                         shared_from_this()));
     return _angs[type].back();
   }
   
   FFDihedral IXForcefield::NewDihedralType(DihedralType type, int_ id, FFParam param) {
     if (_dhds.find(type) == _dhds.end()) return FFDihedral();
     if (GetDihedralType(type, id)) return FFDihedral();
-    _dhds[type].emplace_back(new IXFFDihedral(type, id, param, shared_from_this()));
+    _dhds[type].emplace_back(std::make_shared<IXFFDihedral>(type, id, param,
+                                                            shared_from_this()));
     return _dhds[type].back();
   }
   

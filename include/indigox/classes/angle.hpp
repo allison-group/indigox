@@ -48,14 +48,6 @@ namespace indigox {
     using AngleAtomIter = AngleAtoms::const_iterator;
     
   private:
-    /*! \brief Normal constructor.
-     *  \details Creates an angle between three atoms, linking it to the given
-     *  Molecule. Atom \p b is always the central atom of the angle.
-     *  \param a,b,c the three atoms to construct an angle between.
-     *  \param m the molecule to assign the angle to. */
-    IXAngle(Atom a, Atom b, Atom c, Molecule m);
-    
-    
     template <typename Archive>
     void save(Archive& archive, const uint32_t version) const;
     
@@ -66,6 +58,13 @@ namespace indigox {
     
   public:
     IXAngle() = delete;  // no default constructor
+    
+    /*! \brief Normal constructor.
+     *  \details Creates an angle between three atoms, linking it to the given
+     *  Molecule. Atom \p b is always the central atom of the angle.
+     *  \param a,b,c the three atoms to construct an angle between.
+     *  \param m the molecule to assign the angle to. */
+    IXAngle(Atom a, Atom b, Atom c, Molecule m);
     
     //! \brief Destructor
     ~IXAngle() { }

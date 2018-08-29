@@ -973,7 +973,7 @@ namespace indigox {
 // ============================================================================
   
   Atom IXMolecule::NewAtom() {
-    Atom atom = Atom(new IXAtom(shared_from_this()));
+    Atom atom = std::make_shared<IXAtom>(shared_from_this());
     _atms.emplace_back(atom);
     _g->AddVertex(atom);
     SetPropertyModified(Property::ATOM_ELEMENTS);
@@ -1143,7 +1143,7 @@ namespace indigox {
     if (!a || !b || !HasAtom(a) || !HasAtom(b)) return Bond();
     Bond bond = GetBond(a, b);
     if (bond) return Bond();
-    bond = Bond(new indigox::IXBond(a, b, shared_from_this()));
+    bond = std::make_shared<IXBond>(a, b, shared_from_this());
     _bnds.push_back(bond);
     a->AddBond(bond);
     b->AddBond(bond);
@@ -1271,7 +1271,7 @@ namespace indigox {
   
   Angle IXMolecule::NewAngle(const Atom &a, const Atom &b, const Atom &c) {
     // No need for logic checks as no ability for user to add angles
-    _angs.emplace_back(new indigox::IXAngle(a, b, c, shared_from_this()));
+    _angs.emplace_back(std::make_shared<IXAngle>(a, b, c, shared_from_this()));
     a->AddAngle(_angs.back());
     b->AddAngle(_angs.back());
     c->AddAngle(_angs.back());
@@ -1281,7 +1281,7 @@ namespace indigox {
   Dihedral IXMolecule::NewDihedral(const Atom &a, const Atom &b,
                                    const Atom &c, const Atom &d) {
     // No need for logic checks as no ability for user to add dihedrals
-    _dhds.emplace_back(new indigox::IXDihedral(a, b, c, d, shared_from_this()));
+    _dhds.emplace_back(std::make_shared<IXDihedral>(a, b, c, d, shared_from_this()));
     a->AddDihedral(_dhds.back());
     b->AddDihedral(_dhds.back());
     c->AddDihedral(_dhds.back());
