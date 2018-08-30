@@ -180,6 +180,10 @@ namespace indigox::graph {
     using VertIter = VertContain::const_iterator;
     //! \brief Type of the iterator returned by GetNeighbours() method.
     using NbrsIter = NbrsContain::mapped_type::const_iterator;
+    //! \brief Type used for vertices
+    using VertType = MGVertex;
+    //! \brief Type used for edges
+    using EdgeType = MGEdge;
     
   private:
     /*! \brief Construct with a molecule.
@@ -232,11 +236,46 @@ namespace indigox::graph {
     void RemoveVertex(const MGVertex v);
     
   public:
-    IXMolecularGraph() = delete;  // no default constructor
+    IXMolecularGraph() = default;  // no default constructor
     
-    /*! \brief Copy constructor.
-     *  \param g the IXMolecularGraph to deep copy. */
-    IXMolecularGraph(const IXMolecularGraph& g);
+    /*! \brief Create a snapshot of the graph in its current state.
+     *  \details No link to a molecule is maintained.
+     *  \return snapshot of the graph. */
+    MolecularGraph CreateSnapshot() const;
+    
+    /*! \brief Induce a subgraph from the range of vertices.
+     *  \details Induced subgraph has the same vertices and edges as its parent
+     *  graph. Additionally, its source Molecule is the same. This is a
+     *  vertex induced subgraph, meaning that all edges where both vertices are
+     *  in the provided range will be in the induced graph.
+     *  \tparam InputIt type of the iterator range provided.
+     *  \param begin,end marking the range of vertices to induce subgraph on.
+     *  \return a new MolecularGraph. */
+    template <class InputIt>
+    MolecularGraph InduceSubgraph(InputIt begin, InputIt end) const {
+      MolecularGraph G = std::make_shared<IXMolecularGraph>();
+      G->_source = _source;
+      for (auto& vs : _at2v) {
+        if (std::find(begin, end, vs.second) == end) continue;
+        G->_g.AddVertex(vs.second.get());
+        G->_at2v.emplace(vs.first, vs.second);
+        G->_v.emplace_back(vs.second);
+        G->_n.emplace(vs.second, NbrsContain::mapped_type());
+      }
+      
+      for (auto& es : _bn2e) {
+        MGVertex u = GetSource(es.second);
+        MGVertex v = GetTarget(es.second);
+        if (!G->HasVertex(u) || !G->HasVertex(v)) continue;
+        G->_g.AddEdge(u.get(), v.get(), es.second.get());
+        G->_bn2e.emplace(es.first, es.second);
+        G->_e.emplace_back(es.second);
+        G->_n[u].emplace_back(v);
+        G->_n[v].emplace_back(u);
+      }
+      
+      return G;
+    }
     
     /*! \brief The degree of a vertex.
      *  \details If the vertex is not part of the graph, the returned value is

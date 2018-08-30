@@ -60,12 +60,7 @@ namespace indigox::graph {
   using EdgeIsoMask = eastl::bitset<16, uint32_t>;
 }
 
-
 namespace indigox::graph {
-  
-  inline bool operator<(_CMGVertex lhs, _CMGVertex rhs) {
-    return lhs.lock() < rhs.lock();
-  }
   
   /*! \brief Class for the vertices of an IXCondensedMolecularGraph. */
   class IXCMGVertex : public std::enable_shared_from_this<IXCMGVertex> {
@@ -86,16 +81,20 @@ namespace indigox::graph {
     friend class cereal::access;
     //! \brief Friendship allows for testing
     friend struct indigox::test::TestCondensedVertex;
-    
     //! \brief Type used to store condensed vertices
     using CondensedVertex = std::pair<ContractedSymmetry, MGVertex>;
     
   public:
     IXCMGVertex() = delete; // no default constructor
     
+    /*! \brief Construct a vertex from an MGVertex.
+     *  \param v the MGVertex to associate with this vertex.
+     *  \param g the condensed graph this vertex will be a part of. */
+    IXCMGVertex(const MGVertex& v, const CondensedMolecularGraph& g);
+    
     /*! \brief Get the MGVertex associated with this vertex.
      *  \return the associated MGVertex, if it is still alive. */
-    inline MGVertex GetSource() const { return _source; }
+    inline MGVertex GetSource() const { return _source.lock(); }
     
     /*! \brief Get the graph this vertex is part of.
      *  \return the owning graph. */
@@ -103,7 +102,7 @@ namespace indigox::graph {
     
     /*! \brief Get the number of contracted vertices.
      *  \return the number of contracted vertices. */
-    inline size_ NumContracted() const { return _contracted.size(); }
+    inline size_ NumContracted() const { return _con.size(); }
     
     /*! \brief Get the number of contracted vertices in the symmetry group.
      *  \return the number of vertices of the given symmetry group contracted. */
@@ -119,20 +118,13 @@ namespace indigox::graph {
     bool IsContractedHere(const MGVertex& v) const;
     
     // Not worrying about getting the contracted vertices just yet
-    
-  private:
-    /*! \brief Construct a vertex from an MGVertex.
-     *  \param v the MGVertex to associate with this vertex.
-     *  \param g the condensed graph this vertex will be a part of. */
-    IXCMGVertex(const MGVertex& v, const CondensedMolecularGraph& g);
-    
   private:
     //! \brief Source vertex
-    MGVertex _source;
+    _MGVertex _source;
     //! \brief Parent graph
     _CondensedMolecularGraph _graph;
     //! \brief Contracted vertices
-    eastl::vector_set<CondensedVertex> _contracted;
+    eastl::vector_set<CondensedVertex> _con;
     //! \brief Isomorphism testing mask
     VertexIsoMask _iso_mask;
   };
@@ -149,6 +141,11 @@ namespace indigox::graph {
   public:
     IXCMGEdge() = delete; // no default constructor
     
+    /*! \brief Construct an edge from an MGEdge.
+     *  \param e the MGEdge to associate with this edge.
+     *  \param g the condensed graph this edge will be a part of. */
+    IXCMGEdge(const MGEdge& e, const CondensedMolecularGraph& g);
+    
     /*! \brief Get the MGEdge associated with this vertex.
      *  \return the associated MGEdge, if it is atill alive. */
     inline MGEdge GetSource() const { return _source.lock(); }
@@ -160,12 +157,6 @@ namespace indigox::graph {
     /*! \brief Get the isomorphism testing mask.
      *  \return the isomorphism testing mask. */
     inline EdgeIsoMask GetIsomorphismMask() const { return _iso_mask; }
-    
-  private:
-    /*! \brief Construct an edge from an MGEdge.
-     *  \param e the MGEdge to associate with this edge.
-     *  \param g the condensed graph this edge will be a part of. */
-    IXCMGEdge(const MGEdge& e, const CondensedMolecularGraph& g);
     
   private:
     //! \brief Source edge
@@ -184,6 +175,8 @@ namespace indigox::graph {
     friend class cereal::access;
     //! \brief Friendship allows graph algorithm access to underlying graph
     friend struct indigox::graph::access;
+    //! \brief Friendship allows for generating from a source
+    friend CondensedMolecularGraph CondenseMolecularGraph(const MolecularGraph&);
     
     //! \brief Type of the underlying IXGraphBase
     using graph_type = IXGraphBase<IXCMGVertex, IXCMGEdge>;
@@ -205,6 +198,10 @@ namespace indigox::graph {
     using VertIter = VertContain::const_iterator;
     //! \brief Type of the iterator returned by GetNeighbours() method.
     using NbrsIter = NbrsContain::mapped_type::const_iterator;
+    //! \brief Type used for vertices
+    using VertType = CMGVertex;
+    //! \brief Type used for edges
+    using EdgeType = CMGEdge;
     
   private:
     template <typename Archive>
@@ -241,6 +238,40 @@ namespace indigox::graph {
      *  \param g the molecular graph to construct from. */
     IXCondensedMolecularGraph(const MolecularGraph& g);
     
+    /*! \brief Induce a subgraph from the range of vertices.
+     *  \details Induced subgraph has the same vertices and edges as its parent
+     *  graph. Additionally, its source MolecularGraph is the same. This is a
+     *  vertex induced subgraph, meaning that all edges where both vertices are
+     *  in the provided range will be in the induced graph.
+     *  \tparam InputIt type of the iterator range provided.
+     *  \param begin,end marking the range of vertices to induce subgraph on.
+     *  \return a new CondensedMolecularGraph. */
+    template <class InputIt>
+    CondensedMolecularGraph InduceSubgraph(InputIt begin, InputIt end) const {
+      CondensedMolecularGraph G = std::make_shared<IXCondensedMolecularGraph>();
+      G->_source = _source;
+      for (auto& vs : _vmap) {
+        if (std::find(begin, end, vs.second) == end) continue;
+        G->_g.AddVertex(vs.second.get());
+        G->_vmap.emplace(vs.first, vs.second);
+        G->_v.emplace_back(vs.second);
+        G->_n.emplace(vs.second, NbrsContain::mapped_type());
+      }
+      
+      for (auto& es : _emap) {
+        CMGVertex u = GetSource(es.second);
+        CMGVertex v = GetTarget(es.second);
+        if (!G->HasVertex(u) || !G->HasVertex(v)) continue;
+        G->_g.AddEdge(u.get(), v.get(), es.second.get());
+        G->_emap.emplace(es.first, es.second);
+        G->_e.emplace_back(es.second);
+        G->_n[u].emplace_back(v);
+        G->_n[v].emplace_back(u);
+      }
+      
+      return G;
+    }
+    
     /*! \brief Get the source MolecularGraph.
      *  \return the molecular graph used to construt this. */
     inline MolecularGraph GetSource() const { return _source; }
@@ -250,28 +281,38 @@ namespace indigox::graph {
      *  std::numeric_limits<size_>::max().
      *  \param v the vertex to obtain the degree of.
      *  \return the degree of the vertex. */
-    size_ Degree(const CMGVertex v) const;
+    size_ Degree(const CMGVertex v) const {
+      return HasVertex(v)
+             ? _g.Degree(v.get()) : std::numeric_limits<size_>::max();
+    }
     
     /*! \brief Get the edge between two vertices.
      *  \details If there is no edge between the vertices, or at least one of
      *  the vertices is not part of the graph, the returned edge is null.
      *  \param u, v the vertices to get the edge between.
      *  \return the edge between the two vertices. */
-    CMGEdge GetEdge(const CMGVertex u, const CMGVertex v) const;
+    CMGEdge GetEdge(const CMGVertex u, const CMGVertex v) const {
+      return (!HasVertex(u) || !HasVertex(v))
+             ? CMGEdge() : _g.GetEdge(u.get(), v.get())->shared_from_this();
+    }
     
     /*! \brief Get the edge associated with an MGEdge.
      *  \details If the edge is not associated with an edge on this graph, the
      *  returned edge is null.
      *  \param e the edge to get the associated edge of.
      *  \return the associated edge. */
-    CMGEdge GetEdge(const MGEdge e) const;
+    CMGEdge GetEdge(const MGEdge e) const {
+      return _emap.find(e) == _emap.end() ? CMGEdge() : _emap.at(e);
+    }
     
     /*! \brief Get the vertex associated with an MGVertex.
      *  \details If the vertex is not associated with a vertex of this graph,
      *  the returned vertex is null.
      *  \param v the MGVertex to get the assocaited vertex of.
      *  \return the associated vertex. */
-    CMGVertex GetVertex(const MGVertex v) const;
+    CMGVertex GetVertex(const MGVertex v) const {
+      return _vmap.find(v) == _vmap.end() ? CMGVertex() : _vmap.at(v);
+    }
     
     /*! \brief Get iterators across the edges of the graph.
      *  \return a pair of iterators marking the begining and end of the
@@ -296,14 +337,18 @@ namespace indigox::graph {
      *  is null.
      *  \param e the edge to get the source of.
      *  \return the source vertex of the edge. */
-    CMGVertex GetSource(const CMGEdge e) const;
+    CMGVertex GetSource(const CMGEdge e) const {
+      return HasEdge(e) ? _g.GetSource(e.get())->shared_from_this() : CMGVertex();
+    }
     
     /*! \brief Get the target vertex of an edge.
      *  \details If the edge is not a part of the graph, the returned vertex
      *  is null.
      *  \param e the edge to get the target of.
      *  \return the target vertex of the edge. */
-    CMGVertex GetTarget(const CMGEdge e) const;
+    CMGVertex GetTarget(const CMGEdge e) const  {
+      return HasEdge(e) ? _g.GetTarget(e.get())->shared_from_this() : CMGVertex();
+    }
     
     /*! \brief Get the two vertices of an edge.
      *  \details If the edge is not part of the graph, the returned vertex
@@ -378,7 +423,7 @@ namespace indigox::graph {
     inline size_ NumVertices() const { return _g.NumVertices(); }
     
   private:
-    //! \brief Source molecule of the molecular graph.
+    //! \brief Snapshot of the molecular graph source.
     MolecularGraph _source;
     //! \brief Underlying graph
     graph_type _g;
@@ -393,6 +438,8 @@ namespace indigox::graph {
     //! \brief Container for neighbours of a vertex
     NbrsContain _n;
   };
+  
+  CondensedMolecularGraph CondenseMolecularGraph(const MolecularGraph& G);
   
 }
 
