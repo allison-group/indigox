@@ -26,6 +26,7 @@
 
 #include <EASTL/internal/config.h>
 #include <EASTL/algorithm.h>
+#include <string>
 
 #ifdef _MSC_VER
 	#pragma warning(push, 0)
@@ -407,6 +408,11 @@ namespace eastl
 	  //unsigned long to_ulong()  const;    // We inherit this from the base class.
 	  //uint32_t      to_uint32() const;
 	  //uint64_t      to_uint64() const;
+    template <class CharT = char,
+              class Traits = std::char_traits<CharT>,
+              class Allocator = std::allocator<CharT>>
+    std::basic_string<CharT, Traits, Allocator>
+    to_string(CharT zero = CharT('0'), CharT one = CharT('1')) const;
 
 	  //size_type count() const;            // We inherit this from the base class.
 		size_type size() const;
@@ -2041,7 +2047,18 @@ EA_RESTORE_GCC_WARNING()
 			mWord[kWordCount - 1] &= ~(static_cast<word_type>(~static_cast<word_type>(0)) << (N & kBitsPerWordMask)); // This clears any high unused bits. We need to do this so that shift operations proceed correctly.
 	}
 
-
+  template <size_t N, typename WordType>
+  template <class CharT, class Traits, class Allocator>
+  std::basic_string<CharT, Traits, Allocator>
+  bitset<N, WordType>::to_string(CharT zero, CharT one) const
+  {
+    std::basic_string<CharT, Traits, Allocator> r(N, zero);
+    for (size_t i = 0; i < N; ++i) {
+      if ((*this)[i]) r[N - 1 - i] = one;
+    }
+    return r;
+  }
+  
 	// template <size_t N, typename WordType>
 	// inline unsigned long bitset<N, WordType>::to_ulong() const
 	// {
