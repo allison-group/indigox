@@ -169,6 +169,7 @@ namespace indigox::graph {
   
   class IXCondensedMolecularGraph:
   public std::enable_shared_from_this<IXCondensedMolecularGraph> {
+  public:
     //! \brief Friendship allows IXCondensedMolecularGraph to be tested.
     friend struct indigox::test::TestCondensedMolecularGraph;
     //! \brief Friendship allows serialisation
@@ -199,7 +200,7 @@ namespace indigox::graph {
     //! \brief Type of the iterator returned by GetNeighbours() method.
     using NbrsIter = NbrsContain::mapped_type::const_iterator;
     //! \brief Type used for vertices
-    using VertType = CMGVertex;
+    using VertexType = CMGVertex;
     //! \brief Type used for edges
     using EdgeType = CMGEdge;
     

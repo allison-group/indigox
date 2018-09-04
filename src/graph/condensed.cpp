@@ -180,5 +180,18 @@ namespace indigox::graph {
     return V;
   }
   
+  std::pair<CMGVertex, CMGVertex>
+  IXCondensedMolecularGraph::GetVertices(const CMGEdge e) const {
+    if (!HasEdge(e)) return std::make_pair(CMGVertex(), CMGVertex());
+    auto tmp = _g.GetVertices(e.get());
+    return std::make_pair(tmp.first->shared_from_this(),
+                          tmp.second->shared_from_this());
+  }
+  
+  bool IXCondensedMolecularGraph::HasCondensedVertex(const MGVertex& v) const {
+    auto checker = [&v](CMGVertex u){ return u->IsContractedHere(v); };
+    return std::find_if(_v.begin(), _v.end(), checker) != _v.end();
+  }
+  
   test_suite_close();
 }
