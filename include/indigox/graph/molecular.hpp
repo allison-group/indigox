@@ -151,6 +151,7 @@ namespace indigox::graph {
    *  checks. */
   class IXMolecularGraph
   : public std::enable_shared_from_this<IXMolecularGraph> {
+  public:
     //! \brief Friendship allows an IXMolecule to own a graph.
     friend class indigox::IXMolecule;
     //! \brief Friendship allows IXMolecularGraph to be tested.
@@ -181,7 +182,7 @@ namespace indigox::graph {
     //! \brief Type of the iterator returned by GetNeighbours() method.
     using NbrsIter = NbrsContain::mapped_type::const_iterator;
     //! \brief Type used for vertices
-    using VertType = MGVertex;
+    using VertexType = MGVertex;
     //! \brief Type used for edges
     using EdgeType = MGEdge;
     

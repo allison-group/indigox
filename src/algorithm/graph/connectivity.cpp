@@ -11,7 +11,7 @@
 namespace indigox::algorithm {
   
   template <class BitSet>
-  void __connected_subgraphs_runner(BitSet bag, BitSet initial_subg,
+  void __bitset_connected_subgraphs(BitSet bag, BitSet initial_subg,
                                     eastl::vector_map<size_, BitSet>& all_nbrs,
                                     std::vector<BitSet>& subGs,
                                     size_ minsize, size_ maxsize) {
@@ -58,9 +58,9 @@ namespace indigox::algorithm {
     }
   }
   
-  template <class BitSet>
-  void __build_neighbours_bitsets(const graph::CondensedMolecularGraph& G,
-                                  const std::vector<graph::CMGVertex>& vertices,
+  template <class BitSet, class GraphType, class VertexType>
+  void __build_neighbours_bitsets(const GraphType& G,
+                                  const std::vector<VertexType>& vertices,
                                   eastl::vector_map<size_, BitSet>& nbrs) {
     for (size_ i = 0; i < vertices.size(); ++i) {
       auto v_nbrs = G->GetNeighbours(vertices[i]);
@@ -73,13 +73,13 @@ namespace indigox::algorithm {
     }
   }
   
-  template <class BitSet>
-  void __populate_subgraphs(const graph::CondensedMolecularGraph& G,
-                            const std::vector<graph::CMGVertex>& vertices,
+  template <class BitSet, class GraphType, class VertexType>
+  void __populate_subgraphs(const GraphType& G,
+                            const std::vector<VertexType>& vertices,
                             std::vector<BitSet>& subg,
-                            std::vector<graph::CondensedMolecularGraph>& subGs) {
+                            std::vector<GraphType>& subGs) {
     for (BitSet& sub : subg) {
-      std::vector<graph::CMGVertex> verts;
+      std::vector<VertexType> verts;
       verts.reserve(vertices.size());
       size_ pos = sub.find_first();
       while (pos < vertices.size()) {
@@ -90,54 +90,64 @@ namespace indigox::algorithm {
     }
   }
   
+  template <class BitSet, class GraphType, class VertexType>
+  void __connected_subgraphs_runner(const GraphType& G,
+                                    std::vector<GraphType>& subGs,
+                                    size_ minsize, size_ maxsize) {
+    subGs.clear();
+    std::vector<VertexType> vertices(G->GetVertices().first,
+                                     G->GetVertices().second);
+    // Build up the neighbours
+    eastl::vector_map<size_, BitSet> nbrs;
+    __build_neighbours_bitsets(G, vertices, nbrs);
+    // Calculate the subgs
+    std::vector<BitSet> subg;
+    BitSet bag(vertices.size()); bag.reset();
+    for (size_ i = 0; i < vertices.size(); ++i) bag.set(i);
+    BitSet initial(vertices.size()); initial.reset();
+    __bitset_connected_subgraphs(bag, initial, nbrs, subg, minsize, maxsize);
+    // Populate the subGs
+    __populate_subgraphs(G, vertices, subg, subGs);
+  }
+  
   size_ ConnectedSubgraphs(const graph::CondensedMolecularGraph& G,
                            std::vector<graph::CondensedMolecularGraph>& subGs,
                            size_ minsize, size_ maxsize) {
-    subGs.clear();
-    std::vector<graph::CMGVertex> vertices(G->GetVertices().first,
-                                           G->GetVertices().second);
-    if (vertices.size() <= 32) {
-      using BitSet = eastl::bitset<32, uint32_t>;
-      std::vector<BitSet> subg;
-      eastl::vector_map<size_, BitSet> nbrs;
-      BitSet bag; for (size_ i = 0; i < vertices.size(); ++i) bag.set(i);
-      __build_neighbours_bitsets(G, vertices, nbrs);
-      __connected_subgraphs_runner(bag, BitSet(), nbrs, subg, minsize, maxsize);
-      __populate_subgraphs(G, vertices, subg, subGs);
-    } else if (vertices.size() <= 64) {
-      using BitSet = eastl::bitset<64, uint64_t>;
-      // Build up the neighbours
-      eastl::vector_map<size_, BitSet> nbrs;
-      __build_neighbours_bitsets(G, vertices, nbrs);
-      // Calculate the subgs
-      std::vector<BitSet> subg;
-      BitSet bag; for (size_ i = 0; i < vertices.size(); ++i) bag.set(i);
-      __connected_subgraphs_runner(bag, BitSet(), nbrs, subg, minsize, maxsize);
-      // Populate the subGs
-      __populate_subgraphs(G, vertices, subg, subGs);
-//    } else if (vertices.size() <= 128) {
-//      using BitSet = eastl::bitset<128, uint64_t>;
-//      // Build up the neighbours
-//      eastl::vector_map<size_, BitSet> nbrs;
-//      __build_neighbours_bitsets(G, vertices, nbrs);
-//      // Calculate the subgs
-//      std::vector<BitSet> subg;
-//      BitSet bag; for (size_ i = 0; i < vertices.size(); ++i) bag.set(i);
-//      __connected_subgraphs_runner(bag, BitSet(), nbrs, subg, minsize, maxsize);
-//      // Populate the subGs
-//      __populate_subgraphs(G, vertices, subg, subGs);
-    } else {
-      using BitSet = boost::dynamic_bitset<>;
-      // Build up the neighbours
-      eastl::vector_map<size_, BitSet> nbrs;
-      __build_neighbours_bitsets(G, vertices, nbrs);
-      // Calculate the subgs
-      std::vector<BitSet> subg;
-      BitSet bag(vertices.size()); bag.set();
-      __connected_subgraphs_runner(bag, BitSet(vertices.size()), nbrs, subg, minsize, maxsize);
-      // Populate the subGs
-      __populate_subgraphs(G, vertices, subg, subGs);
-    }
+    if (G->NumVertices() <= 32)
+      __connected_subgraphs_runner<eastl::bitset<32, uint32_t>,
+      graph::CondensedMolecularGraph,
+      graph::CMGVertex>(G, subGs, minsize, maxsize);
+    else if (G->NumVertices() <= 64)
+      __connected_subgraphs_runner<eastl::bitset<64, uint64_t>,
+      graph::CondensedMolecularGraph,
+      graph::CMGVertex>(G, subGs, minsize, maxsize);
+    else
+      __connected_subgraphs_runner<boost::dynamic_bitset<>,
+      graph::CondensedMolecularGraph,
+      graph::CMGVertex>(G, subGs, minsize, maxsize);
+    
+    return subGs.size();
+  }
+  
+  size_ ConnectedSubgraphs(const graph::MolecularGraph& G,
+                           std::vector<graph::MolecularGraph>& subGs,
+                           size_ minsize, size_ maxsize) {
+    if (G->NumVertices() <= 32)
+      __connected_subgraphs_runner<eastl::bitset<32, uint32_t>,
+                                   graph::MolecularGraph,
+                                   graph::MGVertex>(G, subGs, minsize, maxsize);
+    else if (G->NumVertices() <= 64)
+      __connected_subgraphs_runner<eastl::bitset<64, uint64_t>,
+                                   graph::MolecularGraph,
+                                   graph::MGVertex>(G, subGs, minsize, maxsize);
+    else if (G->NumVertices() <= 128)
+      __connected_subgraphs_runner<eastl::bitset<128, uint64_t>,
+                                   graph::MolecularGraph,
+                                   graph::MGVertex>(G, subGs, minsize, maxsize);
+    else
+      __connected_subgraphs_runner<boost::dynamic_bitset<>,
+                                   graph::MolecularGraph,
+                                   graph::MGVertex>(G, subGs, minsize, maxsize);
     
     return subGs.size();
   }
