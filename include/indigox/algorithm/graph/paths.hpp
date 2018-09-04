@@ -1,4 +1,5 @@
 #include <map>
+#include <numeric>
 #include <queue>
 #include <vector>
 
@@ -163,12 +164,14 @@ namespace indigox::algorithm {
    *  \param source the source vertex.
    *  \param target the target vertex.
    *  \param[out] paths vector to store all the found paths in.
+   *  \param limit the maximum length path to return.
    *  \throws std::runtime_error if you try something stupid. */
   template <class GraphType>
   void AllSimplePaths(const std::shared_ptr<GraphType>& G,
                       const typename GraphType::VertexType& source,
                       const typename GraphType::VertexType& target,
-                      std::vector<Path<typename GraphType::VertexType>>& paths) {
+                      std::vector<Path<typename GraphType::VertexType>>& paths,
+                      size_ limit = std::numeric_limits<size_>::max()) {
     using Vertex = typename GraphType::VertexType;
     using NbrsIters = typename GraphType::NbrsIter;
     using NbrsPair = std::pair<NbrsIters, NbrsIters>;
@@ -180,30 +183,38 @@ namespace indigox::algorithm {
     
     paths.clear();
     
-    std::vector<Vertex> visited;
-    visited.reserve(G->NumVertices());
-    visited.push_back(source);
+    std::vector<Vertex> vis;
+    vis.reserve(G->NumVertices());
+    vis.push_back(source);
     
     std::vector<NbrsPair> stack;
     stack.reserve(G->NumVertices());
     stack.emplace_back(G->GetNeighbours(source));
     
     while (!stack.empty()) {
-      NbrsPair& children = stack.back();
-      if (children.first == children.second) {
+      NbrsPair& cs = stack.back();
+      if (cs.first == cs.second) { // if child is None
         stack.pop_back();
-        visited.pop_back();
+        vis.pop_back();
         continue;
       }
-      Vertex child = *children.first;
-      ++children.first;
-      
-      if (child == target) {
-        paths.emplace_back(visited.begin(), visited.end());
-        paths.back().emplace_back(target);
-      } else if (std::find(visited.begin(), visited.end(), child) == visited.end()) {
-        visited.push_back(child);
-        stack.emplace_back(G->GetNeighbours(child));
+      Vertex c = *cs.first;
+      ++cs.first;
+      if (vis.size() < limit) { // elif len(visited < cutoff
+        if (c == target) {
+          paths.emplace_back(vis.begin(), vis.end());
+          paths.back().emplace_back(target);
+        } else if (std::find(vis.begin(), vis.end(), c) == vis.end()) {
+          vis.push_back(c);
+          stack.emplace_back(G->GetNeighbours(c));
+        }
+      } else {
+        if (c == target || std::find(cs.first, cs.second, target) != cs.second) {
+          paths.emplace_back(vis.begin(), vis.end());
+          paths.back().emplace_back(target);
+        }
+        stack.pop_back();
+        vis.pop_back();
       }
     }
   }
@@ -216,19 +227,21 @@ namespace indigox::algorithm {
    *  \param source the source vertex.
    *  \param target the target vertex.
    *  \param[out] paths vector to store all the found paths in.
+   *  \param limit the maximum length path to return.
    *  \throws std::runtime_error if you try something stupid. */
   template <class GraphType>
   void AllSimpleEdgePaths(const std::shared_ptr<GraphType>& G,
                           const typename GraphType::VertexType& source,
                           const typename GraphType::VertexType& target,
-                          std::vector<EdgePath<typename GraphType::EdgeType>>& paths) {
+                          std::vector<EdgePath<typename GraphType::EdgeType>>& paths,
+                          size_ limit = std::numeric_limits<size_>::max()) {
     using Vertex = typename GraphType::VertexType;
     using Edge = typename GraphType::EdgeType;
     using PathType = Path<Vertex>;
     using EdgePathType = EdgePath<Edge>;
     
     std::vector<PathType> p;
-    AllSimplePaths(G, source, target, p);
+    AllSimplePaths(G, source, target, p, limit);
     for (PathType& path : p) {
       paths.emplace_back(EdgePathType());
       for (size_ i = 0; i < path.size() - 1; ++i)
