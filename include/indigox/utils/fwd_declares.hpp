@@ -16,9 +16,45 @@ namespace cereal {
 
 namespace indigox {
   
+  // Molecule related
   class IXMolecule;
   using Molecule = std::shared_ptr<IXMolecule>;
   using _Molecule = std::weak_ptr<IXMolecule>;
+  
+  // CherryPicker Related
+  class IXParameterisedMolecule;
+  using ParameterisedMolecule = std::shared_ptr<IXParameterisedMolecule>;
+  using _ParameterisedMolecule = std::weak_ptr<IXParameterisedMolecule>;
+  
+  // Forcefield related
+  class IXForcefield;
+  using Forcefield = std::shared_ptr<IXForcefield>;
+  using _Forcefield = std::weak_ptr<IXForcefield>;
+  
+  class IXFFAtom;
+  using FFAtom = std::shared_ptr<IXFFAtom>;
+  using _FFAtom = std::weak_ptr<IXFFAtom>;
+  
+  class IXFFBond;
+  using FFBond = std::shared_ptr<IXFFBond>;
+  using _FFBond = std::weak_ptr<IXFFBond>;
+  
+  class IXFFAngle;
+  using FFAngle = std::shared_ptr<IXFFAngle>;
+  using _FFAngle = std::weak_ptr<IXFFAngle>;
+  
+  class IXFFDihedral;
+  using FFDihedral = std::shared_ptr<IXFFDihedral>;
+  using _FFDihedral = std::weak_ptr<IXFFDihedral>;
+  
+  // Athenaeum related
+  class IXFragment;
+  using Fragment = std::shared_ptr<IXFragment>;
+  using _Fragment = std::weak_ptr<IXFragment>;
+  
+  class IXAthenaeum;
+  using Athenaeum = std::shared_ptr<IXAthenaeum>;
+  using _Athenaeum = std::weak_ptr<IXAthenaeum>;
   
   namespace algorithm {
     template <class VertType>
@@ -30,6 +66,10 @@ namespace indigox {
     struct Cycle;
     template <class EdgeType>
     struct EdgeCycle;
+    
+    class IXCherryPicker;
+    using CherryPicker = std::shared_ptr<IXCherryPicker>;
+    using _CherryPicker = std::weak_ptr<IXCherryPicker>;
   }
   
   namespace graph {
@@ -70,6 +110,10 @@ namespace indigox {
   }
   
   namespace test {
-    
+    struct TestForcefield;
+    struct TestFFAtom;
+    struct TestFFBond;
+    struct TestFFAngle;
+    struct TestFFDihedral;    
   }
 }
