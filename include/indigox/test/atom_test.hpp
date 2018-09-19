@@ -2,6 +2,7 @@
 #define INDIGOX_TEST_ATOM_TEST_HPP
 
 #include <random>
+#include <Eigen/Dense>
 
 namespace indigox::test {
   struct TestAtom {
@@ -40,7 +41,7 @@ namespace indigox::test {
     float_ GetX() const { return imp->GetX(); }
     float_ GetY() const { return imp->GetY(); }
     float_ GetZ() const { return imp->GetZ(); }
-    const Vec3& GetVector() const { return imp->GetVector(); }
+    const Eigen::Vector3d& GetVector() const { return imp->GetVector(); }
     string_ ToString() const { return imp->ToString(); }
     void SetElement(Element e) { imp->SetElement(e); }
     void SetElement(string_ e) { imp->SetElement(e); }
@@ -75,7 +76,7 @@ namespace indigox::test {
     uint_ get_tag() const { return imp->_tag; }
     uint_ get_implicitH() const { return imp->_implicitH; }
     string_ get_name() const { return imp->_name; }
-    const Vec3& get_pos() const { return imp->_pos; }
+    const Eigen::Vector3d& get_pos() const { return imp->_pos; }
     float_ get_partial() const { return imp->_partial; }
     AtomStereo get_stereo() const { return imp->_stereo; }
     bool get_aromatic() const { return imp->_aromatic; }

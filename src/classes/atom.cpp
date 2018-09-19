@@ -40,9 +40,9 @@ namespace indigox {
             INDIGOX_SERIAL_NVP("tag", _tag),
             INDIGOX_SERIAL_NVP("implicit_h_count", _implicitH),
             INDIGOX_SERIAL_NVP("name", _name),
-            INDIGOX_SERIAL_NVP("position_x", _pos.x),
-            INDIGOX_SERIAL_NVP("position_y", _pos.y),
-            INDIGOX_SERIAL_NVP("position_z", _pos.z),
+            INDIGOX_SERIAL_NVP("position_x", _pos[0]),
+            INDIGOX_SERIAL_NVP("position_y", _pos[1]),
+            INDIGOX_SERIAL_NVP("position_z", _pos[2]),
             INDIGOX_SERIAL_NVP("partial_charge", _partial),
             INDIGOX_SERIAL_NVP("stereochemistry", _stereo),
             INDIGOX_SERIAL_NVP("is_aromatic", _aromatic),
@@ -66,9 +66,9 @@ namespace indigox {
             INDIGOX_SERIAL_NVP("tag", construct->_tag),
             INDIGOX_SERIAL_NVP("implicit_h_count", construct->_implicitH),
             INDIGOX_SERIAL_NVP("name", construct->_name),
-            INDIGOX_SERIAL_NVP("position_x", construct->_pos.x),
-            INDIGOX_SERIAL_NVP("position_y", construct->_pos.y),
-            INDIGOX_SERIAL_NVP("position_z", construct->_pos.z),
+            INDIGOX_SERIAL_NVP("position_x", construct->_pos(0)),
+            INDIGOX_SERIAL_NVP("position_y", construct->_pos(1)),
+            INDIGOX_SERIAL_NVP("position_z", construct->_pos(2)),
             INDIGOX_SERIAL_NVP("partial_charge", construct->_partial),
             INDIGOX_SERIAL_NVP("stereochemistry", construct->_stereo),
             INDIGOX_SERIAL_NVP("is_aromatic", construct->_aromatic),
@@ -403,7 +403,7 @@ namespace indigox {
     _tag = 0;
     _implicitH = 0;
     _name = "";
-    _pos = Vec3();
+    _pos << 0.0, 0.0, 0.0;
     _partial = 0.0;
     _stereo = Stereo::UNDEFINED;
     _aromatic = false;

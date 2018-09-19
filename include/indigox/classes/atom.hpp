@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include <Eigen/Dense>
+
 #include "../classes/periodictable.hpp"
 #include "../utils/common.hpp"
 #include "../utils/counter.hpp"
@@ -40,21 +42,6 @@ namespace indigox {
   using _Dihedral = std::weak_ptr<IXDihedral>;
   using _Molecule = std::weak_ptr<IXMolecule>;
   using _Element = std::weak_ptr<IXElement>;
-  
-  //! \cond
-  // Temporary defintion of Vec3 struct. Will make proper math stuff sometime.
-  struct Vec3 {
-    float_ x, y, z;
-    Vec3() : x(0.0), y(0.0), z(0.0) { }
-    Vec3(float_ x_, float_ y_, float_ z_) : x(x_), y(y_), z(z_) { }
-    friend inline bool operator==(const Vec3& v, const Vec3& u) {
-      return v.x == u.x && v.y == u.y && v.z == u.z;
-    }
-    friend inline bool operator!=(const Vec3& v, const Vec3& u) {
-      return !(v == u);
-    }
-  };
-  //! \endcond
   
   class IXAtom
   : public utils::IXCountableObject<IXAtom>,
@@ -157,19 +144,19 @@ namespace indigox {
     
     /*! \brief Atom x position.
      *  \return the x coordinate of this atom. */
-    inline float_ GetX() const { return _pos.x; }
+    inline float_ GetX() const { return _pos[0]; }
     
     /*! \brief Atom y position.
      *  \return the y coordinate of this atom. */
-    inline float_ GetY() const { return _pos.y; }
+    inline float_ GetY() const { return _pos[1]; }
     
     /*! \brief Atom z position.
      *  \return the z coordinate of this atom. */
-    inline float_ GetZ() const { return _pos.z; }
+    inline float_ GetZ() const { return _pos[2]; }
     
     /*! \brief Vector of the atom's position.
      *  \return the atoms position. */
-    inline const Vec3& GetVector() const { return _pos; }
+    inline const Eigen::Vector3d& GetVector() const { return _pos; }
     
     /*! \brief String representation of the atom.
      *  \details The returned string is of the form: Atom(NAME, SYMBOL).
@@ -216,21 +203,19 @@ namespace indigox {
     
     /*! \brief Set the x position.
      *  \param x position to set. */
-    inline void SetX(float_ x) { _pos.x = x; }
+    inline void SetX(float_ x) { _pos(0) = x; }
     
     /*! \brief Set the y position.
      *  \param y position to set. */
-    inline void SetY(float_ y) { _pos.y = y; }
+    inline void SetY(float_ y) { _pos(1) = y; }
     
     /*! \brief Set the z position.
      *  \param z position to set. */
-    inline void SetZ(float_ z) { _pos.z = z; }
+    inline void SetZ(float_ z) { _pos(2) = z; }
     
     /*! \brief Set the x, y and z positions.
      *  \param x,y,z position to set. */
-    inline void SetPosition(float_ x, float_ y, float_ z) {
-      _pos.x = x; _pos.y = y; _pos.z = z;
-    }
+    inline void SetPosition(float_ x, float_ y, float_ z) { _pos << x, y, z; }
     
     /*! \brief Set the stereochemistry of an atomic center.
      *  \param s the stereochemistry to set. */
@@ -362,7 +347,7 @@ namespace indigox {
     //! Atoms name.
     string_ _name;
     //! Position vector.
-    Vec3 _pos;
+    Eigen::Vector3d _pos;
     //! Partial atomic charge.
     float_ _partial;
     //! Stereochemistry
