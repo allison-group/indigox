@@ -21,10 +21,42 @@ namespace indigox {
   using Molecule = std::shared_ptr<IXMolecule>;
   using _Molecule = std::weak_ptr<IXMolecule>;
   
+  class IXAtom;
+  using Atom = std::shared_ptr<IXAtom>;
+  using _Atom = std::weak_ptr<IXAtom>;
+  
+  class IXBond;
+  using Bond = std::shared_ptr<IXBond>;
+  using _Bond = std::weak_ptr<IXBond>;
+  
+  class IXAngle;
+  using Angle = std::shared_ptr<IXAngle>;
+  using _Angle = std::weak_ptr<IXAngle>;
+  
+  class IXDihedral;
+  using Dihedral = std::shared_ptr<IXDihedral>;
+  using _Dihedral = std::weak_ptr<IXDihedral>;
+  
   // CherryPicker Related
-  class IXParameterisedMolecule;
-  using ParameterisedMolecule = std::shared_ptr<IXParameterisedMolecule>;
-  using _ParameterisedMolecule = std::weak_ptr<IXParameterisedMolecule>;
+  class IXParamMolecule;
+  using ParamMolecule = std::shared_ptr<IXParamMolecule>;
+  using _ParamMolecule = std::weak_ptr<IXParamMolecule>;
+  
+  class IXParamAtom;
+  using ParamAtom = std::shared_ptr<IXParamAtom>;
+  using _ParamAtom = std::weak_ptr<IXParamAtom>;
+  
+  class IXParamBond;
+  using ParamBond = std::shared_ptr<IXParamBond>;
+  using _ParamBond = std::weak_ptr<IXParamBond>;
+  
+  class IXParamAngle;
+  using ParamAngle = std::shared_ptr<IXParamAngle>;
+  using _ParamAngle = std::weak_ptr<IXParamAngle>;
+  
+  class IXParamDihedral;
+  using ParamDihedral = std::shared_ptr<IXParamDihedral>;
+  using _ParamDihedral = std::weak_ptr<IXParamDihedral>;
   
   // Forcefield related
   class IXForcefield;

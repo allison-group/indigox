@@ -117,7 +117,9 @@ namespace indigox::graph {
      *   return if the provided vertex is contracted into this one. */
     bool IsContractedHere(const MGVertex& v) const;
     
-    // Not worrying about getting the contracted vertices just yet
+    const eastl::vector_set<CondensedVertex>& GetContractedVertices() const {
+      return _con; }
+    
   private:
     //! \brief Source vertex
     _MGVertex _source;
@@ -269,7 +271,43 @@ namespace indigox::graph {
         G->_n[u].emplace_back(v);
         G->_n[v].emplace_back(u);
       }
+      return G;
+    }
+    
+    /*! \brief Create a subgraph from the range of vertices and edges.
+     *  \details Subgraph has the same vertices and edges as its parent graph.
+     *  Additionally, its source MolecularGraph is the same. This subgraph is
+     *  such that only edges within the provided range are added to it, as long
+     *  as both vertices are in the provided vertex range.
+     *  \tparam VertIt type of the vertex iterator range provided.
+     *  \tparam EdgeIt type of the edge iterator range provided.
+     *  \param v_begin,v_end marking the range of vertices to create subgraph.
+     *  \param e_begin,e_end marking the range of edges to include in subgraph.
+     *  \return a new CondensedMolecularGraph. */
+    template <class VertIt, class EdgeIt>
+    CondensedMolecularGraph Subgraph(VertIt v_begin, VertIt v_end,
+                                     EdgeIt e_begin, EdgeIt e_end) const {
+      CondensedMolecularGraph G = std::make_shared<IXCondensedMolecularGraph>();
+      G->_source = _source;
+      for (auto& vs : _vmap) {
+        if (std::find(v_begin, v_end, vs.second) == v_end) continue;
+        G->_g.AddVertex(vs.second.get());
+        G->_vmap.emplace(vs.first, vs.second);
+        G->_v.emplace_back(vs.second);
+        G->_n.emplace(vs.second, NbrsContain::mapped_type());
+      }
       
+      for (auto& es : _emap) {
+        if (std::find(e_begin, e_end, es.second) == e_end) continue;
+        CMGVertex u = GetSource(es.second);
+        CMGVertex v = GetTarget(es.second);
+        if (!G->HasVertex(u) || !G->HasVertex(v)) continue;
+        G->_g.AddEdge(u.get(), v.get(), es.second.get());
+        G->_emap.emplace(es.first, es.second);
+        G->_e.emplace_back(es.second);
+        G->_n[u].emplace_back(v);
+        G->_n[v].emplace_back(u);
+      }
       return G;
     }
     

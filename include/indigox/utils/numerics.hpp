@@ -3,6 +3,11 @@
 
 #include <cstdint>
 #include <string>
+#include <algorithm>
+#include <numeric>
+#include <vector>
+#include <iterator>
+#include <cmath>
 
 namespace indigox {
   using char_ = int8_t;
@@ -18,6 +23,52 @@ namespace indigox {
   using uid_ = uint64_t;
   
   using string_ = std::string;
+  
+  /*! \brief Calculate the mean of a range of numbers.
+   *  \tparam Iter type of the iterator defining the range.
+   *  \param begin,end iterators defining the range.
+   *  \return the mean of the range. */
+  template <class Iter>
+  float_ CalculateMean(Iter begin, Iter end) {
+    float_ sum = std::accumulate(begin, end, 0.0);
+    return sum / std::distance(begin, end);
+  }
+  
+  /*! \brief Calculate the median of a range of numbers.
+   *  \details If the range has an odd length, the median is the middle item in
+   *  the sorted range. If it has an even length, the median is the mean of the
+   *  two central items. If the range is empty, the median is undefined.
+   *  \tparam RandomIter random access itertor defining the range.
+   *  \param begin,end iterators defining the range.
+   *  \return the median of the range.
+   *  \throws std::runtime_error if the range is empty. */
+  template <class RandomIter>
+  float_ CalculateMedian(RandomIter begin, RandomIter end) {
+    if (begin == end) throw std::runtime_error("Median of empty range is undefined");
+    size_t sz = end - begin;
+    size_t mid = sz / 2;
+    RandomIter target = begin + mid;
+    std::nth_element(begin, target, end);
+    
+    if (sz % 2) return static_cast<float_>(*target);
+    else {
+      float_ x = static_cast<float_>(*target);
+      RandomIter next = std::max_element(begin, target);
+      return (x + static_cast<float_>(*next)) / 2.0;
+    }
+  }
+  
+  template <class Iter>
+  float_ CalculateStandardDeviation(Iter begin, Iter end) {
+    using Type = typename std::iterator_traits<Iter>::value_type;
+    float_ mean = CalculateMean(begin, end);
+    std::vector<float_> d(std::distance(begin, end));
+    std::transform(begin, end, d.begin(), [mean](float_ x){return x - mean;});
+    float_ sum_sq = std::inner_product(d.begin(), d.end(), d.begin(), 0.0);
+    return std::sqrt(sum_sq / d.size());
+  }
+  
+  
 } // namespace indigox
 
 #endif /* INDIGOX_UTILS_NUMERICS_HPP */

@@ -10,37 +10,13 @@
 
 #include "../utils/common.hpp"
 #include "../utils/numerics.hpp"
+#include "../utils/fwd_declares.hpp"
 
 #ifndef INDIGOX_CLASSES_FORCEFIELD_HPP
 #define INDIGOX_CLASSES_FORCEFIELD_HPP
 
 namespace indigox {
   
-  class IXForcefield;
-  class IXFFAtom;
-  class IXFFBond;
-  class IXFFAngle;
-  class IXFFDihedral;
-  namespace test {
-    struct TestForcefield;
-    struct TestFFAtom;
-    struct TestFFBond;
-    struct TestFFAngle;
-    struct TestFFDihedral;
-  }
-  
-  //! \brief shared_ptr for normal use of the IXForcefield class.
-  using Forcefield = std::shared_ptr<IXForcefield>;
-  //! \brief weak_ptr for non-owning reference to the IXForcefield class.
-  using _Forcefield = std::weak_ptr<IXForcefield>;
-  //! \brief shared_ptr for normal use of the IXFFAtomType class.
-  using FFAtom = std::shared_ptr<IXFFAtom>;
-  //! \brief shared_ptr for normal use of the IXFFBond class.
-  using FFBond = std::shared_ptr<IXFFBond>;
-  //! \brief shared_ptr for normal use of the IXFFAngle class.
-  using FFAngle = std::shared_ptr<IXFFAngle>;
-  //! \brief shared_ptr for normal use of the IXFFDihedral class.
-  using FFDihedral = std::shared_ptr<IXFFDihedral>;
   //! \brief type for collection of parameter inputs
   using FFParam = std::initializer_list<float_>;
   

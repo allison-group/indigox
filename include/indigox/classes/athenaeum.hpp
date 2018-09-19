@@ -1,7 +1,10 @@
+#include <algorithm>
 #include <map>
 #include <vector>
 
-
+#include "../utils/fwd_declares.hpp"
+#include "../utils/triple.hpp"
+#include "../utils/quad.hpp"
 #include "molecule.hpp"
 #include "../graph/condensed.hpp"
 
@@ -9,13 +12,6 @@
 #define INDIGOX_CLASSES_ATHENAEUM_HPP
 
 namespace indigox {
-  
-  // Forward declares
-  class IXFragment;
-  using Fragment = std::shared_ptr<IXFragment>;
-  
-  class IXAthenaeum;
-  using Athenaeum = std::shared_ptr<IXAthenaeum>;
   
   class IXFragment {
   public:
@@ -45,6 +41,7 @@ namespace indigox {
     
     //! \brief Type used to match an overlap vertex to its type of overlap.
     using OverlapVertex = graph::CMGVertex; //std::pair<OverlapType, graph::CMGVertex>;
+    using Vert = graph::MGVertex;
     friend bool operator==(const IXFragment& a, const IXFragment& b);
     
   public:
@@ -56,18 +53,50 @@ namespace indigox {
      *  \param G the graph to generate fragment from.
      *  \param frag the vertices of G that are part of the fragment.
      *  \param overlap the vertices of G that are part of the overlap region. */
-    template <class Input>
     IXFragment(const graph::CondensedMolecularGraph& G,
-               const Input& frag, const Input& overlap)
-    : _frag(frag.begin(), frag.end()), _overlap(overlap.begin(), overlap.end()) {
-      std::vector<graph::CMGVertex> tmp(frag.begin(), frag.end());
-      tmp.insert(tmp.end(), overlap.begin(), overlap.end());
-      _g = G->InduceSubgraph(tmp.begin(), tmp.end());
+               const Molecule& mol,
+               const std::vector<graph::CMGVertex>& frag,
+               const std::vector<graph::CMGVertex>& overlap);
+    
+    graph::CondensedMolecularGraph GetGraph() const { return _g; }
+    
+    const std::vector<graph::CMGVertex>& GetFragmentVertices() const {
+      return _frag; }
+    
+    const std::vector<OverlapVertex>& GetOverlapVertices() const {
+      return _overlap; }
+    
+    bool IsFragmentVertex(graph::CMGVertex& v) const {
+      return std::find(_frag.begin(), _frag.end(), v) != _frag.end();
     }
+    
+    bool IsOverlapVertex(graph::CMGVertex& v) const {
+      return std::find(_overlap.begin(), _overlap.end(), v) != _overlap.end();
+    }
+    
+    const std::vector<Vert>& GetAtomVertices() const { return _atms; }
+    const std::vector<std::pair<Vert,Vert>>& GetBondVertices() const {
+      return _bnds; }
+    const std::vector<stdx::triple<Vert,Vert,Vert>>& GetAngleVertices() const {
+      return _angs; }
+    const std::vector<stdx::quad<Vert,Vert,Vert,Vert>>&
+    GetDihedralVertices() const { return _dhds; }
+    
+    Molecule GetMolecule() const { return _mol.lock(); }
     
   private:
     //! \brief Fragment graph, including overlap
     graph::CondensedMolecularGraph _g;
+    //! \brief Molecule fragment is from
+    _Molecule _mol;
+    //! \brief Atom vertices
+    std::vector<Vert> _atms;
+    //! \brief Bond vertices
+    std::vector<std::pair<Vert, Vert>> _bnds;
+    //! \brief Angle vertices
+    std::vector<stdx::triple<Vert, Vert, Vert>> _angs;
+    //! \brief Dihedral vertices
+    std::vector<stdx::quad<Vert, Vert, Vert, Vert>> _dhds;
     //! \brief Vertices of the fragment
     std::vector<graph::CMGVertex> _frag;
     //! \brief Vertices of the overlap
@@ -98,8 +127,9 @@ namespace indigox {
     using CondensedGraphs = std::map<Molecule, graph::CondensedMolecularGraph>;
     using FragStore = std::map<graph::CondensedMolecularGraph, MolFrags>;
     
-    IXAthenaeum();
-    IXAthenaeum(uint_ overlap, uint_ ring_overlap);
+    IXAthenaeum() = delete;
+    IXAthenaeum(Forcefield ff);
+    IXAthenaeum(Forcefield ff, uint_ overlap, uint_ ring_overlap);
     
     /*! \brief Determines all the fragments of a molecule and adds them.
      *  \returns the number of fragments added. */
@@ -118,11 +148,21 @@ namespace indigox {
       return _graphs.find(mol) != _graphs.end();
     }
     
+    Forcefield GetForcefield() const { return _ff; }
+    
+    bool IsManualSelfConsistent() const { return _man; }
+    
+    void SetManual() { _man = true; }
+    
   private:
+    //! \brief Forcefield used
+    Forcefield _ff;
     //! \brief Overlap length
     uint_ _overlap;
     //! \brief Ring overlap length
     uint_ _roverlap;
+    //! \brief Manual
+    bool _man;
     //! \brief Condensed graphs
     CondensedGraphs _graphs;
     //! \brief Per molecule fragments

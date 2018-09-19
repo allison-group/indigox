@@ -400,6 +400,7 @@ namespace indigox::graph {
      *  \return the number of vertices. */
     inline size_ NumVertices() const { return _g.NumVertices(); }
     
+    
   private:
     //! \brief Source molecule of the molecular graph.
     _Molecule _source;

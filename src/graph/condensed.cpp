@@ -175,6 +175,7 @@ namespace indigox::graph {
     CMGVertex V = std::make_shared<IXCMGVertex>(v, shared_from_this());
     _g.AddVertex(V.get());
     _vmap.emplace(v, V);
+    for (auto& cv : V->GetContractedVertices()) _vmap.emplace(cv.second, V);
     _v.emplace_back(V);
     _n.emplace(V, NbrsContain::mapped_type());
     return V;

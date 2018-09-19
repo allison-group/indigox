@@ -46,14 +46,22 @@ namespace indigox::graph {
       int_ ilabel;
       //! \brief A floating point label
       float_ flabel;
+      //! \brief A colour for graph algorithms
+      boost::default_color_type colour;
     };
   };
   
   struct access {
-    template <class graph_type, class T>
-    inline static graph_type& member_graph(const std::shared_ptr<T>& t) {
+    template <class T>
+    inline static typename T::graph_type& member_graph(const std::shared_ptr<T>& t) {
+      return t->_g;
+    }
+    
+    template <class T>
+    inline static typename T::graph_type& member_graph(T& t) {
       return t._g;
     }
+    
   };
   
   /*! \brief Template base class for all graphs used in the indigoX library.
@@ -73,28 +81,28 @@ namespace indigox::graph {
             class VertProp=GraphLabel,
             class EdgeProp=GraphLabel>
   class IXGraphBase final {
-  private:
+  public:
     //! \brief Type of the underlying boost graph.
-    using graph_t = boost::adjacency_list<boost::setS,      // Edge container
-                                          boost::listS,     // Vertex container
-                              typename D::is_directed_t,    // Directed nature
-                                          VertProp,         // Vertex Properties
-                                          EdgeProp>;        // Edge Properties
+    using graph_type = boost::adjacency_list<boost::setS,      // Edge container
+                                             boost::listS,     // Vertex container
+                                 typename D::is_directed_t,    // Directed nature
+                                             VertProp,         // Vertex Properties
+                                             EdgeProp>;        // Edge Properties
     
     
     // May need to replace graph_t:: with boost::graph_traits<graph_t>::
     //! \brief Type of the graph vertex descriptor.
-    using VertType = typename graph_t::vertex_descriptor;
+    using VertType = typename graph_type::vertex_descriptor;
     //! \brief Type for iterator over graph vertex descriptors.
-    using VertIter = typename graph_t::vertex_iterator;
+    using VertIter = typename graph_type::vertex_iterator;
     //! \brief Type for iterator over neighbours of vertex descriptor.
-    using NbrsIter = typename graph_t::adjacency_iterator;
+    using NbrsIter = typename graph_type::adjacency_iterator;
     //! \brief Type for iterator over predecessors of a vertex descriptor.
-    using PredIter = typename graph_t::inv_adjacency_iterator;
+    using PredIter = typename graph_type::inv_adjacency_iterator;
     //! \brief Type of the graph edge descriptor.
-    using EdgeType = typename graph_t::edge_descriptor;
+    using EdgeType = typename graph_type::edge_descriptor;
     //! \brief Type for iterator over edges.
-    using EdgeIter = typename graph_t::edge_iterator;
+    using EdgeIter = typename graph_type::edge_iterator;
     
     //! \brief Type for bidirectional mapping of V to vertex descriptor type.
     using VertMap = indigox::utils::SimpleBiMap<V*, VertType>;
@@ -103,9 +111,9 @@ namespace indigox::graph {
     //! \brief Friendship allows algorithms access to the underlying boost graph.
     friend struct access;
     
-  private:
+  public:
     //! \brief Underlying boost graph.
-    graph_t _g;
+    graph_type _g;
     //! \brief Map vertices to their descriptors.
     VertMap _verts;
     //! \brief Map edges to their descriptors.
@@ -372,7 +380,7 @@ namespace indigox::graph {
 //      return __connected_components_worker();
 //    }
     
-  private:
+  public:
     /*! \brief Get vertex descriptor of a vertex.
      *  \param v vertex to search for.
      *  \return vertex descriptor of the vertex. */

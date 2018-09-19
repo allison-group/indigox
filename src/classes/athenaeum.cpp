@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <deque>
 #include <numeric>
 
 #include <EASTL/iterator.h>
@@ -7,6 +8,14 @@
 #include <indigox/algorithm/graph/connectivity.hpp>
 #include <indigox/algorithm/graph/paths.hpp>
 #include <indigox/classes/athenaeum.hpp>
+#include <indigox/classes/atom.hpp>
+#include <indigox/classes/bond.hpp>
+#include <indigox/classes/angle.hpp>
+#include <indigox/classes/dihedral.hpp>
+#include <indigox/classes/molecule.hpp>
+#include <indigox/graph/condensed.hpp>
+#include <indigox/graph/molecular.hpp>
+
 
 namespace indigox {
   using MolFrags = IXAthenaeum::MolFrags;
@@ -15,10 +24,112 @@ namespace indigox {
   bool IXAthenaeum::Settings::AutomaticFragmentCycles = false;
   uint_ IXAthenaeum::Settings::AutomaticMaximumCycleSize = 8;
   
-  IXAthenaeum::IXAthenaeum() : _overlap(0), _roverlap(0) { }
+  IXFragment::IXFragment(const graph::CondensedMolecularGraph &G,
+                         const Molecule &mol,
+                         const std::vector<graph::CMGVertex> &frag,
+                         const std::vector<graph::CMGVertex> &overlap)
+  : _mol(mol), _frag(frag.begin(), frag.end()),
+  _overlap(overlap.begin(), overlap.end()) {
+    std::vector<graph::CMGVertex> tmp(frag.begin(), frag.end());
+    tmp.insert(tmp.end(), overlap.begin(), overlap.end());
+    _g = G->InduceSubgraph(tmp.begin(), tmp.end());
+    graph::MolecularGraph molG = _g->GetSource();
+    
+    std::vector<Vert> atms_check;
+    // Get the MGVertices that are part of the fragment/overlap
+    for (graph::CMGVertex v : frag) {
+      _atms.emplace_back(v->GetSource());
+      for (auto& cv : v->GetContractedVertices()) _atms.emplace_back(cv.second);
+    }
+    int d_max = std::distance(_atms.begin(), _atms.end());
+    atms_check.assign(_atms.begin(), _atms.end());
+    
+    for (graph::CMGVertex v : overlap) {
+      atms_check.emplace_back(v->GetSource());
+      for (auto& cv : v->GetContractedVertices())
+        atms_check.emplace_back(cv.second);
+    }
+    
+    std::deque<std::pair<Vert, Vert>> tmp_bnd;
+    // Get the bonds which are allowed, including dangling bonds
+    for (auto it = mol->GetBonds(); it.first != it.second; ++it.first) {
+      auto atms = (*it.first)->GetAtoms();
+      graph::MGVertex v1 = molG->GetVertex(atms.first);
+      graph::MGVertex v2 = molG->GetVertex(atms.second);
+      auto v1_pos = std::find(atms_check.begin(), atms_check.end(), v1);
+      if (v1_pos == atms_check.end()) continue;
+      auto v2_pos = std::find(atms_check.begin(), atms_check.end(), v2);
+      if (v2_pos == atms_check.end()) continue;
+      // Only one atom of the bond can be dangling
+      size_t dangle_count = 0;
+      if (std::distance(atms_check.begin(), v1_pos) >= d_max) ++dangle_count;
+      if (std::distance(atms_check.begin(), v2_pos) >= d_max) ++dangle_count;
+      if (dangle_count > 1) continue;
+      if (dangle_count) tmp_bnd.emplace_back(v1,v2);
+      else tmp_bnd.emplace_front(v1,v2);
+    }
+    _bnds.assign(tmp_bnd.begin(), tmp_bnd.end());
+    
+    std::deque<stdx::triple<Vert, Vert, Vert>> tmp_ang;
+    for (auto it = mol->GetAngles(); it.first != it.second; ++it.first) {
+      auto atms = (*it.first)->GetAtoms();
+      graph::MGVertex v1 = molG->GetVertex(atms.first);
+      graph::MGVertex v2 = molG->GetVertex(atms.second);
+      graph::MGVertex v3 = molG->GetVertex(atms.third);
+      auto v1_pos = std::find(atms_check.begin(), atms_check.end(), v1);
+      if (v1_pos == atms_check.end()) continue;
+      auto v2_pos = std::find(atms_check.begin(), atms_check.end(), v2);
+      if (v2_pos == atms_check.end()) continue;
+      auto v3_pos = std::find(atms_check.begin(), atms_check.end(), v3);
+      if (v3_pos == atms_check.end()) continue;
+      // Only one atom of the angle can be dangling
+      size_t dangle_count = 0;
+      if (std::distance(atms_check.begin(), v1_pos) >= d_max) ++dangle_count;
+      if (std::distance(atms_check.begin(), v2_pos) >= d_max) ++dangle_count;
+      if (std::distance(atms_check.begin(), v3_pos) >= d_max) ++dangle_count;
+      if (dangle_count > 1) continue;
+      if (dangle_count) tmp_ang.emplace_back(v1,v2,v3);
+      else tmp_ang.emplace_front(v1,v2,v3);
+    }
+    _angs.assign(tmp_ang.begin(), tmp_ang.end());
+    
+    std::deque<stdx::quad<Vert, Vert, Vert, Vert>> tmp_dhd;
+    for (auto it = mol->GetDihedrals(); it.first != it.second; ++it.first) {
+      auto atms = (*it.first)->GetAtoms();
+      graph::MGVertex v1 = molG->GetVertex(atms.first);
+      graph::MGVertex v2 = molG->GetVertex(atms.second);
+      graph::MGVertex v3 = molG->GetVertex(atms.third);
+      graph::MGVertex v4 = molG->GetVertex(atms.fourth);
+      auto v1_pos = std::find(atms_check.begin(), atms_check.end(), v1);
+      if (v1_pos == atms_check.end()) continue;
+      auto v2_pos = std::find(atms_check.begin(), atms_check.end(), v2);
+      if (v2_pos == atms_check.end()) continue;
+      auto v3_pos = std::find(atms_check.begin(), atms_check.end(), v3);
+      if (v3_pos == atms_check.end()) continue;
+      auto v4_pos = std::find(atms_check.begin(), atms_check.end(), v4);
+      if (v4_pos == atms_check.end()) continue;
+      
+      bool dangling = false;
+      int d1 = std::distance(atms_check.begin(), v1_pos);
+      int d2 = std::distance(atms_check.begin(), v2_pos);
+      int d3 = std::distance(atms_check.begin(), v3_pos);
+      int d4 = std::distance(atms_check.begin(), v4_pos);
+      if (d1 >= d_max || d2 >= d_max || d3 >= d_max || d4 >= d_max)
+        dangling = true;
+      // Need two adjacent atoms to not be dangling
+      if (!((d1 < d_max && d2 < d_max) || (d2 < d_max && d3 < d_max)
+            || (d3 < d_max && d4 < d_max))) continue;
+      if (dangling) tmp_dhd.emplace_back(v1,v2,v3,v4);
+      else tmp_dhd.emplace_front(v1,v2,v3,v4);
+    }
+    _dhds.assign(tmp_dhd.begin(), tmp_dhd.end());
+    
+  }
   
-  IXAthenaeum::IXAthenaeum(uint_ overlap, uint_ ring_overlap)
-  : _overlap(overlap), _roverlap(ring_overlap) { }
+  IXAthenaeum::IXAthenaeum(Forcefield ff) : indigox::IXAthenaeum(ff, 0, 0) { }
+  
+  IXAthenaeum::IXAthenaeum(Forcefield ff, uint_ overlap, uint_ ring_overlap)
+  : _ff(ff), _overlap(overlap), _roverlap(ring_overlap), _man(false) { }
   
   bool __allow_bond_break(const Bond&) {
     return true;
@@ -104,7 +215,7 @@ namespace indigox {
       // Create the fragment
       std::vector<CMGVertex> f(frag_v.begin(), frag_v.end());
       std::vector<CMGVertex> o(overlaps.begin(), overlaps.end());
-      Fragment fragment = std::make_shared<IXFragment>(G, f, o);
+      Fragment fragment = std::make_shared<IXFragment>(G, mol, f, o);
       
       // Add the fragment if it isn't added already
       MolFrags& fs = _frags.at(G);
@@ -150,3 +261,4 @@ namespace indigox {
   }
   
 }
+
