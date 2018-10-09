@@ -1,7 +1,7 @@
+#include <cstdint>
 #include <list>
 
 #include "../utils/fwd_declares.hpp"
-#include "../utils/numerics.hpp"
 
 #ifndef INDIGOX_ALGORITHM_CHERRYPICKER_HPP
 #define INDIGOX_ALGORITHM_CHERRYPICKER_HPP
@@ -43,7 +43,7 @@ namespace indigox::algorithm {
     
     bool RemoveAthenaeum(Athenaeum library);
     
-    size_ NumAthenaeums() const { return _libs.size(); }
+    size_t NumAthenaeums() const { return _libs.size(); }
     
     ParamMolecule ParameteriseMolecule(Molecule mol) const;
     

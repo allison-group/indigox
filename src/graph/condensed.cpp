@@ -7,7 +7,6 @@
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/graph/condensed.hpp>
 #include <indigox/graph/molecular.hpp>
-#include <indigox/utils/numerics.hpp>
 #include <indigox/utils/serialise.hpp>
 
 #include <indigox/utils/doctest_proxy.hpp>
@@ -43,7 +42,7 @@ namespace indigox::graph {
           Element el = u->GetAtom()->GetElement();
           CondensedVertex u_con;
           if (el == "H") u_con = std::make_pair(CS::Hydrogen, u);
-          if (el == "F") u_con = std::make_pair(CS::Flourine, u);
+          if (el == "F") u_con = std::make_pair(CS::Fluorine, u);
           if (el == "Cl") u_con = std::make_pair(CS::Chlorine, u);
           if (el == "Br") u_con = std::make_pair(CS::Bromine, u);
           if (el == "I") u_con = std::make_pair(CS::Iodine, u);
@@ -70,7 +69,7 @@ namespace indigox::graph {
     atm_num.from_uint64(v->GetAtom()->GetElement()->GetAtomicNumber());
     fc_mag.from_uint64(abs(v->GetAtom()->GetFormalCharge())); fc_mag <<= 7;
     h.from_uint32(NumContracted(CS::Hydrogen)); h <<= 11;
-    f.from_uint32(NumContracted(CS::Flourine)); f <<= 14;
+    f.from_uint32(NumContracted(CS::Fluorine)); f <<= 14;
     cl.from_uint32(NumContracted(CS::Chlorine)); cl <<= 17;
     br.from_uint32(NumContracted(CS::Bromine)); br <<= 20;
     i.from_uint32(NumContracted(CS::Iodine)); i <<= 23;
@@ -83,7 +82,7 @@ namespace indigox::graph {
     if (v->GetAtom()->GetAromaticity()) _iso_mask.set(30);
   }
   
-  size_ IXCMGVertex::NumContracted(ContractedSymmetry sym) const {
+  size_t IXCMGVertex::NumContracted(ContractedSymmetry sym) const {
     auto counter = [&sym](const CondensedVertex& v) { return v.first == sym; };
     return std::count_if(_con.begin(), _con.end(), counter);
   }
@@ -153,7 +152,9 @@ namespace indigox::graph {
       MGEdge e = *edges.first;
       MGVertex u, v;
       std::tie(u,v) = Gsource->GetVertices(e);
-      if (G2->HasVertex(u) && G2->HasVertex(v)) G2->AddEdge(e);
+      //! \todo Adding too many edges, ie also adding edges been condensed
+      if (!G2->HasCondensedVertex(u) && !G2->HasCondensedVertex(v))
+        G2->AddEdge(e);
     }
     
     return G2;

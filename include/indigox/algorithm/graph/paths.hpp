@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <map>
 #include <numeric>
 #include <queue>
@@ -7,7 +8,6 @@
 #include <EASTL/vector_set.h>
 
 #include "../../utils/fwd_declares.hpp"
-#include "../../utils/numerics.hpp"
 
 #ifndef INDIGOX_ALGORITHM_GRAPH_PATHS_HPP
 #define INDIGOX_ALGORITHM_GRAPH_PATHS_HPP
@@ -151,7 +151,7 @@ namespace indigox::algorithm {
     PathType p = ShortestPath(G, source, target);
     if (p.size() < 2) return EdgePathType();
     EdgePathType path; path.reserve(p.size());
-    for (size_ i = 0; i < p.size() - 1; ++i)
+    for (size_t i = 0; i < p.size() - 1; ++i)
       path.push_back(G->GetEdge(p[i], p[i+1]));
     return path;
   }
@@ -171,7 +171,7 @@ namespace indigox::algorithm {
                       const typename GraphType::VertexType& source,
                       const typename GraphType::VertexType& target,
                       std::vector<Path<typename GraphType::VertexType>>& paths,
-                      size_ limit = std::numeric_limits<size_>::max()) {
+                      size_t limit = std::numeric_limits<size_t>::max()) {
     using Vertex = typename GraphType::VertexType;
     using NbrsIters = typename GraphType::NbrsIter;
     using NbrsPair = std::pair<NbrsIters, NbrsIters>;
@@ -234,7 +234,7 @@ namespace indigox::algorithm {
                           const typename GraphType::VertexType& source,
                           const typename GraphType::VertexType& target,
                           std::vector<EdgePath<typename GraphType::EdgeType>>& paths,
-                          size_ limit = std::numeric_limits<size_>::max()) {
+                          size_t limit = std::numeric_limits<size_t>::max()) {
     using Vertex = typename GraphType::VertexType;
     using Edge = typename GraphType::EdgeType;
     using PathType = Path<Vertex>;
@@ -244,7 +244,7 @@ namespace indigox::algorithm {
     AllSimplePaths(G, source, target, p, limit);
     for (PathType& path : p) {
       paths.emplace_back(EdgePathType());
-      for (size_ i = 0; i < path.size() - 1; ++i)
+      for (size_t i = 0; i < path.size() - 1; ++i)
         paths.back().push_back(G->GetEdge(path[i], path[i+1]));
     }
   }

@@ -14,7 +14,6 @@
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/utils/common.hpp>
 #include <indigox/utils/counter.hpp>
-#include <indigox/utils/numerics.hpp>
 #include <indigox/utils/serialise.hpp>
 
 #include <indigox/utils/doctest_proxy.hpp>
@@ -33,7 +32,7 @@ namespace indigox {
   
   template<typename Archive>
   void IXAtom::save(Archive &archive, const uint32_t) const {
-    string_ element = GetElement()->GetName();
+    std::string element = GetElement()->GetName();
     archive(INDIGOX_SERIAL_NVP("molecule", _mol),
             INDIGOX_SERIAL_NVP("element", element),
             INDIGOX_SERIAL_NVP("formal_charge", _fc),
@@ -58,7 +57,7 @@ namespace indigox {
                                   cereal::construct<IXAtom> &construct,
                                   const uint32_t) {
     Molecule mol;
-    string_ element;
+    std::string element;
     archive(INDIGOX_SERIAL_NVP("molecule", mol));
     construct(mol);
     archive(INDIGOX_SERIAL_NVP("element", element),
@@ -184,10 +183,10 @@ namespace indigox {
     }
   }
   
-  size_ IXAtom::GetIndex() const {
+  size_t IXAtom::GetIndex() const {
     Molecule mol = _mol.lock();
     if (!mol) return GetTag();
-    auto be = mol->GetAtoms();
+    auto be = mol->GetAtomIters();
     auto pos = std::find(be.first, be.second, shared_from_this());
     if (pos == be.second) return GetTag();
     return std::distance(be.first, pos);
@@ -266,11 +265,11 @@ namespace indigox {
      *  and will never attempt to remove an item which has not been added. */
     std::random_device rd;
     std::mt19937 generator(rd());
-    std::uniform_int_distribution<size_> distribution(7,17);
-    size_ num = distribution(generator);
+    std::uniform_int_distribution<size_t> distribution(7,17);
+    size_t num = distribution(generator);
     
     subcase("implicit hydrogen") {
-      size_ count = 0;
+      size_t count = 0;
       while (atm.GetImplicitCount() < num)
         check_eq(++count, atm.AddImplicitHydrogen());
       while (atm.GetImplicitCount())
@@ -282,7 +281,7 @@ namespace indigox {
     subcase("bonds") {
       std::vector<Bond> bonds; bonds.reserve(num);
       // adding bonds
-      for (size_ i = 1; i <= num; ++i) {
+      for (size_t i = 1; i <= num; ++i) {
         bonds.push_back(test::CreateGenericTestBond().imp);
         check_nothrow(atm.AddBond(bonds.back()));
         check_eq(i, atm.NumBonds());
@@ -312,7 +311,7 @@ namespace indigox {
     
     subcase("angles") {
       std::vector<Angle> angles; angles.reserve(num);
-      for (size_ i = 1; i <= num; ++i) {
+      for (size_t i = 1; i <= num; ++i) {
         angles.push_back(test::CreateGenericTestAngle().imp);
         check_nothrow(atm.AddAngle(angles.back()));
         check_eq(i, atm.NumAngles());
@@ -342,7 +341,7 @@ namespace indigox {
     
     subcase("dihedrals") {
       std::vector<Dihedral> dihedrals; dihedrals.reserve(num);
-      for (size_ i = 1; i <= num; ++i) {
+      for (size_t i = 1; i <= num; ++i) {
         dihedrals.push_back(test::CreateGenericTestDihedral().imp);
         check_nothrow(atm.AddDihedral(dihedrals.back()));
         check_eq(i, atm.NumDihedrals());
@@ -372,7 +371,7 @@ namespace indigox {
     
   }
   
-  string_ IXAtom::ToString() {
+  std::string IXAtom::ToString() {
     std::stringstream ss;
     ss << "Atom(" << GetIndex() << ", " << GetElement()->GetSymbol() << ")";
     return ss.str();

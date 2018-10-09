@@ -4,7 +4,6 @@
 #include <indigox/classes/dihedral.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/forcefield.hpp>
-#include <indigox/utils/numerics.hpp>
 #include <indigox/utils/serialise.hpp>
 
 #include <indigox/utils/doctest_proxy.hpp>
@@ -111,10 +110,10 @@ namespace indigox {
     check_eq(dhd1.GetUniqueID() + 1, dhd2.GetUniqueID());
   }
   
-  size_ IXDihedral::GetIndex() const {
+  size_t IXDihedral::GetIndex() const {
     Molecule mol = _mol.lock();
     if (!mol) return GetTag();
-    auto be = mol->GetDihedrals();
+    auto be = mol->GetDihedralIters();
     auto pos = std::find(be.first, be.second, shared_from_this());
     if (pos == be.second) return GetTag();
     return std::distance(be.first, pos);
@@ -153,7 +152,7 @@ namespace indigox {
     check_eq(4, dhd.NumAtoms());
   }
   
-  string_ IXDihedral::ToString() const {
+  std::string IXDihedral::ToString() const {
     std::stringstream ss;
     Atom a = _atms[0].lock();
     Atom b = _atms[1].lock();

@@ -65,7 +65,7 @@ namespace indigox::test {
     void RemoveVertex(const MGVertex& v) { imp->RemoveVertex(v); }
 
     // Public wrapping functions
-    size_ Degree(const MGVertex& v) const { return imp->Degree(v); }
+    size_t Degree(const MGVertex& v) const { return imp->Degree(v); }
     MGEdge GetEdge(const MGVertex& u, const MGVertex& v) const { return imp->GetEdge(u,v); }
     MGEdge GetEdge(const Bond& b) const { return imp->GetEdge(b); }
     MGVertex GetVertex(const Atom& a) const { return imp->GetVertex(a); }
@@ -80,8 +80,8 @@ namespace indigox::test {
     bool HasEdge(const Bond& e) const { return imp->HasEdge(e); }
     bool HasEdge(const MGEdge& e) const { return imp->HasEdge(e); }
     bool HasEdge(const MGVertex& u, const MGVertex& v) const { return imp->HasEdge(u,v); }
-    size_ NumEdges() const { return imp->NumEdges(); }
-    size_ NumVertices() const { return imp->NumVertices(); }
+    size_t NumEdges() const { return imp->NumEdges(); }
+    size_t NumVertices() const { return imp->NumVertices(); }
     
     // Internals access
     _Molecule get_source() const { return imp->_source; }

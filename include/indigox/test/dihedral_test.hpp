@@ -18,21 +18,21 @@ namespace indigox::test {
     void Clear() { imp->Clear(); }
     
     // Public wrapping functions
-    uid_ GetUniqueID() const { return imp->GetUniqueID(); }
-    uid_ GetTag() const { return imp->GetTag(); }
+    uint32_t GetUniqueID() const { return imp->GetUniqueID(); }
+    uint32_t GetTag() const { return imp->GetTag(); }
     Molecule GetMolecule() const { return imp->GetMolecule(); }
     Atoms GetAtoms() const { return imp->GetAtoms(); }
-    size_ NumAtoms() const { return imp->NumAtoms(); }
+    size_t NumAtoms() const { return imp->NumAtoms(); }
     void SwapOrder() { imp->SwapOrder(); }
-    string_ ToString() const { return imp->ToString(); }
-    void SetTag(uid_ t) { imp->SetTag(t); }
-    size_ GetIndex() const { return imp->GetIndex(); }
+    std::string ToString() const { return imp->ToString(); }
+    void SetTag(uint32_t t) { imp->SetTag(t); }
+    size_t GetIndex() const { return imp->GetIndex(); }
     FFDihedral GetType() const { return imp->GetType(); }
     void SetType(FFDihedral t) { imp->SetType(t); }
     
     // Internals access
     _Molecule get_mol() const { return imp->_mol; }
-    uid_ get_tag() const { return imp->_tag; }
+    uint32_t get_tag() const { return imp->_tag; }
     const IAtoms& get_atms() const { return imp->_atms; }
     FFDihedral get_type() const { return imp->_type; }
   };

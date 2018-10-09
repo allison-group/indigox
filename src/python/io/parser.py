@@ -2,6 +2,8 @@
 from pathlib import Path
 import indigox as ix
 
+__all__ = ["LoadGromosInteractionFunctionParameterFile"]
+
 ## \brief Loads a GROMOS IFP file as a forcefield
 #  \details See the GROMOS Manual for definition of the IFP file format.
 #  \param path the path to the IFP file

@@ -2,13 +2,13 @@
 #define INDIGOX_ALGORITHM_ELECTRON_ASSIGNMENT_ASTAR_OPTIMISATION_HPP
 
 #include <algorithm>
+#include <cstdint>
 #include <queue>
 
 #include <boost/dynamic_bitset/dynamic_bitset.hpp>
 
 #include "assigner.hpp"
 #include "../../graph/assignment.hpp"
-#include "../../utils/numerics.hpp"
 
 namespace indigox::algorithm {
   
@@ -18,23 +18,23 @@ namespace indigox::algorithm {
     score_t path, heuristic;
     AssignMask assignment;
     LocMask unchange_mask, calc_mask, new_calc_mask;
-    size_ nbr_begin_idx;
+    size_t nbr_begin_idx;
     
     inline bool IsInfinite() const {
       static const score_t inf = IXElectronAssigner::Settings::Infinity;
       return path == inf || heuristic == inf;
     }
     inline score_t Total() const { return path + heuristic; }
-    inline size_ CalcCount() const { return calc_mask.count(); }
+    inline size_t CalcCount() const { return calc_mask.count(); }
     bool operator>(const QueueItem& r) const;
     QueueItem() = default;
-    QueueItem(const size_ loc_size, const size_ pos_size)
+    QueueItem(const size_t loc_size, const size_t pos_size)
     : path(0), heuristic(0), assignment(loc_size), unchange_mask(pos_size),
     calc_mask(pos_size), new_calc_mask(pos_size), nbr_begin_idx(0) { }
     
     QueueItem(const score_t p, const score_t h, const AssignMask& ass,
               const LocMask& unchange, const LocMask& calc,
-              const LocMask& new_calc, const size_ ni)
+              const LocMask& new_calc, const size_t ni)
     : path(p), heuristic(h), assignment(ass), unchange_mask(unchange),
     calc_mask(calc), new_calc_mask(new_calc), nbr_begin_idx(ni) {}
   };
@@ -44,8 +44,8 @@ namespace indigox::algorithm {
                                       std::greater<QueueItem>>;
   class PriorityQueue : public queue_t {
   public:
-    void reserve(size_ sz) { this->c.reserve(sz); }
-    size_ max_size() const { return this->c.max_size(); }
+    void reserve(size_t sz) { this->c.reserve(sz); }
+    size_t max_size() const { return this->c.max_size(); }
     void clear() { this->c.clear(); }
   };
   
@@ -59,7 +59,7 @@ namespace indigox::algorithm {
     };
     
     struct Settings {
-      static ulong_ MEMORY_LIMIT;
+      static uint64_t MEMORY_LIMIT;
       static Heuristic HEURISTIC;
     };
     
@@ -92,9 +92,9 @@ namespace indigox::algorithm {
     score_t CalculateHeuristicScore(const QueueItem& q) const;
     score_t Promiscuous(const QueueItem& q) const;
     score_t Abstemious(const QueueItem& q) const;
-    size_ GenerateNextAssignments(const QueueItem& q, NbrAssigns& out) const;
+    size_t GenerateNextAssignments(const QueueItem& q, NbrAssigns& out) const;
     
-    inline size_ GetLocationPosition(const graph::AGVertex& v) const {
+    inline size_t GetLocationPosition(const graph::AGVertex& v) const {
       return std::distance(_unique_locs.begin(), std::find(_unique_locs.begin(),
                                                         _unique_locs.end(), v));
     }
@@ -102,9 +102,9 @@ namespace indigox::algorithm {
     
   private:
     PriorityQueue _q;
-    ulong_ _len_limit;
+    uint64_t _len_limit;
     std::vector<graph::AGVertex> _unique_locs;
-    std::vector<uint_> _loc_counts;
+    std::vector<uint32_t> _loc_counts;
     std::vector<LocMask> _req_unchange;
     
     

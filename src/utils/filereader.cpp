@@ -23,7 +23,7 @@ namespace indigox::utils {
   /** @details Sets the path of a file to read.
    *  @param file path to the file to read.
    */
-  FileReader::FileReader(const string_& file)
+  FileReader::FileReader(const std::string& file)
   : path_(file) {}
   
   /** @details Loads the given file and reads it itemwise (white space
@@ -32,10 +32,10 @@ namespace indigox::utils {
    *  of the line is ignored.
    *  @param[out] out_items a vector to store the items from the file.
    */
-  void FileReader::GetAllLines(std::vector<string_> &out_items)
+  void FileReader::GetAllLines(std::vector<std::string> &out_items)
   {
     out_items.clear();
-    string_ next_item, line;
+    std::string next_item, line;
     std::ifstream infile;
     infile.open(path_);
     if (!infile) throw std::invalid_argument("File can't be opened.");

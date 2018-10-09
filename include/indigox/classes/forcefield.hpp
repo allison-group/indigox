@@ -4,12 +4,12 @@
 #include <map>
 #include <memory>
 #include <numeric>
+#include <string>
 #include <vector>
 
 #include <EASTL/bitset.h>
 
 #include "../utils/common.hpp"
-#include "../utils/numerics.hpp"
 #include "../utils/fwd_declares.hpp"
 
 #ifndef INDIGOX_CLASSES_FORCEFIELD_HPP
@@ -18,7 +18,7 @@
 namespace indigox {
   
   //! \brief type for collection of parameter inputs
-  using FFParam = std::initializer_list<float_>;
+  using FFParam = std::initializer_list<double>;
   
   
   class IXFFDihedral {
@@ -63,7 +63,7 @@ namespace indigox {
     };
     
     //! \brief Type used to store all the internal data
-    using DataStore = std::array<float_, STORE_SIZE>;
+    using DataStore = std::array<double, STORE_SIZE>;
     //! \brief Type used for storing allowed parameters
     using AllowedMask = eastl::bitset<num_allow_positions>;
     
@@ -85,7 +85,7 @@ namespace indigox {
      *  \param id the ID of the type.
      *  \param parameters the list of parameters for the function.
      *  \param ff the forcefield this type will beloing to. */
-    IXFFDihedral(Type type, int_ id, FFParam parameters, const Forcefield& ff);
+    IXFFDihedral(Type type, int id, FFParam parameters, const Forcefield& ff);
     
     /*! \brief Empty constructor
      *  \details Creates a new dihedral term of the specified type but without
@@ -97,7 +97,7 @@ namespace indigox {
     /*! \brief Get the phase shift (in degrees).
      *  \return the phase shift.
      *  \throws std::runtime_error if the type does not allow a phase shift. */
-    inline float_ GetPhaseShift() const {
+    inline double GetPhaseShift() const {
       return _mask[Allow_PhaseShift] ? _dat[Store_PhaseShift]
       : throw std::runtime_error("Disallowed parameter type requested");
     }
@@ -106,7 +106,7 @@ namespace indigox {
      *  \return the force constant.
      *  \throws std::runtime_error if the type does not allow a force constant.
      */
-    inline float_ GetForceConstant() const {
+    inline double GetForceConstant() const {
       return _mask[Allow_ForceConstant] ? _dat[Store_ForceConstant]
       : throw std::runtime_error("Disallowed parameter type requested");
     }
@@ -114,15 +114,15 @@ namespace indigox {
     /*! \brief Get the multiplicity.
      *  \return the multiplicity.
      *  \throws std::runtime_error if the type does not allow a multiplicity. */
-    inline uint_ GetMultiplicity() const {
-      return _mask[Allow_Multiplicity] ? static_cast<uint_>(_dat[Store_Multiplicity])
+    inline uint32_t GetMultiplicity() const {
+      return _mask[Allow_Multiplicity] ? static_cast<uint32_t>(_dat[Store_Multiplicity])
       : throw std::runtime_error("Disallowed parameter type requested");
     }
     
     /*! \brief Get the ideal angle (in degrees).
      *  \return the ideal angle.
      *  \throws std::runtime_error if the type does not allow an ideal angle. */
-    inline float_ GetIdealAngle() const {
+    inline double GetIdealAngle() const {
       return _mask[Allow_IdealAngle] ? _dat[Store_IdealAngle]
       : throw std::runtime_error("Disallowed parameter type requested");
     }
@@ -133,7 +133,7 @@ namespace indigox {
     
     /*! \brief Get the ID for this type.
      *  \return the ID of this dihedral type. */
-    inline int_ GetID() const { return _id; }
+    inline int GetID() const { return _id; }
     
     /*! \brief Get the forcefield this type belongs to.
      *  \return the forcefield. */
@@ -143,7 +143,7 @@ namespace indigox {
     //! The type of the potential energy function.
     Type _type;
     //! An id for this dihedral type.
-    int_ _id;
+    int _id;
     //! Terms for the potential energy function.
     DataStore _dat;
     //! Mask for the allowed parameters.
@@ -189,7 +189,7 @@ namespace indigox {
     };
     
     //! \brief Type used to store all the internal data
-    using DataStore = std::array<float_, STORE_SIZE>;
+    using DataStore = std::array<double, STORE_SIZE>;
     //! \brief Type used for storing allowed parameters
     using AllowedMask = eastl::bitset<num_allow_positions>;
     
@@ -211,7 +211,7 @@ namespace indigox {
      *  \param id the ID of the type.
      *  \param parameters the list of parameters for the function.
      *  \param ff the forcefield this type will belong to. */
-    IXFFAngle(Type type, int_ id, FFParam parameters, const Forcefield& ff);
+    IXFFAngle(Type type, int id, FFParam parameters, const Forcefield& ff);
     
     /*! \brief Empty constructor
      *  \details Creates a new dihedral term of the specified type but without
@@ -224,7 +224,7 @@ namespace indigox {
      *  \return the force constant.
      *  \throws std::runtime_error if the type does not allow a force constant.
      */
-    inline float_ GetForceConstant() const {
+    inline double GetForceConstant() const {
       return _mask[Allow_ForceConstant] ? _dat[Store_ForceConstant]
       : throw std::runtime_error("Disallowed parameter type requested");
     }
@@ -232,7 +232,7 @@ namespace indigox {
     /*! \brief Get the ideal angle (in degrees).
      *  \return the ideal angle.
      *  \throws std::runtime_error if the type does not allow an ideal angle. */
-    inline float_ GetIdealAngle() const {
+    inline double GetIdealAngle() const {
       return _mask[Allow_IdealAngle] ? _dat[Store_IdealAngle]
       : throw std::runtime_error("Disallowed parameter type requested");
     }
@@ -243,7 +243,7 @@ namespace indigox {
     
     /*! \brief Get the ID for this type.
      *  \return the ID of this dihedral type. */
-    inline int_ GetID() const { return _id; }
+    inline int GetID() const { return _id; }
     
     /*! \brief Get the linked type for this type.
      *  \details A linked type is an equivalent type with a different functional
@@ -259,7 +259,7 @@ namespace indigox {
     //! The type of the potential energy function.
     Type _type;
     //! An id for this angle type.
-    int_ _id;
+    int _id;
     //! Terms for the potential energy function.
     DataStore _dat;
     //! Mask for the allowed parameters.
@@ -308,7 +308,7 @@ namespace indigox {
     };
     
     //! \brief Type used to store all the internal data
-    using DataStore = std::array<float_, STORE_SIZE>;
+    using DataStore = std::array<double, STORE_SIZE>;
     //! \brief Type used for storing allowed parameters
     using AllowedMask = eastl::bitset<num_allow_positions>;
     
@@ -330,7 +330,7 @@ namespace indigox {
      *  \param id the ID of the type.
      *  \param parameters the list of parameters for the function.
      *  \param ff the forcefield this type will belong to. */
-    IXFFBond(Type type, int_ id, FFParam parameters, const Forcefield& ff);
+    IXFFBond(Type type, int id, FFParam parameters, const Forcefield& ff);
     
     /*! \brief Empty constructor
      *  \details Creates a new bond term of the specified type but without any
@@ -343,7 +343,7 @@ namespace indigox {
      *  \return the force constant.
      *  \throws std::runtime_error if the type does not allow a force constant.
      */
-    inline float_ GetForceConstant() const {
+    inline double GetForceConstant() const {
       return _mask[Allow_ForceConstant] ? _dat[Store_ForceConstant]
       : throw std::runtime_error("Disallowed parameter type requested");
     }
@@ -351,7 +351,7 @@ namespace indigox {
     /*! \brief Get the ideal angle (in degrees).
      *  \return the ideal angle.
      *  \throws std::runtime_error if the type does not allow an ideal angle. */
-    inline float_ GetIdealLength() const {
+    inline double GetIdealLength() const {
       return _mask[Allow_IdealLength] ? _dat[Store_IdealLength]
       : throw std::runtime_error("Disallowed parameter type requested");
     }
@@ -362,7 +362,7 @@ namespace indigox {
     
     /*! \brief Get the ID for this type.
      *  \return the ID of this dihedral type. */
-    inline int_ GetID() const { return _id; }
+    inline int GetID() const { return _id; }
     
     /*! \brief Get the linked type for this type.
      *  \details A linked type is an equivalent type with a different functional
@@ -378,7 +378,7 @@ namespace indigox {
     //! The type of the potential energy function.
     Type _type;
     //! An id for this angle type.
-    int_ _id;
+    int _id;
     //! Terms for the potential energy function.
     DataStore _dat;
     //! Mask for the allowed parameters.
@@ -415,15 +415,15 @@ namespace indigox {
      *  \param id the ID of the type.
      *  \param name the name of the atom type.
      *  \param the forcefield this type will be a part of. */
-    IXFFAtom(int_ id, string_ name, const Forcefield& ff);
+    IXFFAtom(int id, std::string name, const Forcefield& ff);
     
     /*! \brief Get the ID for this type.
      *  \return the ID of this atom type. */
-    inline int_ GetID() const { return _id; }
+    inline int GetID() const { return _id; }
     
     /*! \brief Get the name for this type
      *  \return the name of this atom type. */
-    inline string_ GetName() const { return _name; }
+    inline std::string GetName() const { return _name; }
     
     /*! \brief Get the forcefield this type belongs to.
      *  \return the forcefield. */
@@ -431,9 +431,9 @@ namespace indigox {
     
   private:
     //! ID of this atom type
-    int_ _id;
+    int _id;
     //! Name of this atom type
-    string_ _name;
+    std::string _name;
     //! Forcefield
     _Forcefield _ff;
   };
@@ -477,7 +477,7 @@ namespace indigox {
      *  proper and improper dihedral types.
      *  \param family the family of forcefields to use.
      *  \param name the name of the forcefield. */
-    IXForcefield(Family family, string_ name);
+    IXForcefield(Family family, std::string name);
     
   private:
     template <typename Archive>
@@ -494,21 +494,21 @@ namespace indigox {
      *  \param id the id of the bond.
      *  \param parameters the parameters of the bond.
      *  \return the newly created bond type. */
-    FFBond NewBondType(BondType type, int_ id, FFParam parameters);
+    FFBond NewBondType(BondType type, int id, FFParam parameters);
     
     /*! \brief Adds a new angle type to the forcefield.
      *  \param type the type of the angle.
      *  \param id the id of the angle.
      *  \param parameters the parameters of the angle.
      *  \return the newly created angle type. */
-    FFAngle NewAngleType(AngleType type, int_ id, FFParam parameters);
+    FFAngle NewAngleType(AngleType type, int id, FFParam parameters);
     
     /*! \brief Adds a new dihedral type to the forcefield.
      *  \param type the type of the dihedral.
      *  \param id the id of the dihedral.
      *  \param parameters the parameters of the dihedral.
      *  \return the newly created dihedral type. */
-    FFDihedral NewDihedralType(DihedralType type, int_ id, FFParam parameters);
+    FFDihedral NewDihedralType(DihedralType type, int id, FFParam parameters);
     
   public:
     //  Atom type handlings
@@ -518,25 +518,25 @@ namespace indigox {
      *  \return the newly created atom type.
      *  \throws std::runtime_error if an atomtype with the given name or id
      *  already exists within the forcefield. */
-    FFAtom NewAtomType(int_ id, string_ name);
+    FFAtom NewAtomType(int id, std::string name);
     
     /*! \brief Get the AtomType with the given name.
      *  \param name the name of the atom type.
      *  \return the atomtype with the name, or an empty shared_ptr. */
-    FFAtom GetAtomType(string_ name) const;
+    FFAtom GetAtomType(std::string name) const;
     
     /*! \brief Get the AtomType with the given id.
      *  \param id the id of the atom type.
      *  \return the atomtype with the id, or an empty shared_ptr. */
-    FFAtom GetAtomType(int_ id) const;
+    FFAtom GetAtomType(int id) const;
     
     /*! \brief Reserve space for atom types.
      *  \param size the amount of space to reserve. */
-    void ReserveAtomTypes(size_ size) { _atms.reserve(size); }
+    void ReserveAtomTypes(size_t size) { _atms.reserve(size); }
     
     /*! \brief Get the number of atom types in the forcefield.
      *  \return the number of atom types in the forcefield. */
-    size_ NumAtomTypes() const { return _atms.size(); }
+    size_t NumAtomTypes() const { return _atms.size(); }
     
     // Bond type handlings
     /*! \brief Adds a new bond type to the forcefield with two parameters.
@@ -547,7 +547,7 @@ namespace indigox {
      *  \param id the id of the bond.
      *  \param a,b the two parameter values.
      *  \return the newly created bond type. */
-    inline FFBond NewBondType(BondType type, int_ id, float_ a, float_ b) {
+    inline FFBond NewBondType(BondType type, int id, double a, double b) {
       return NewBondType(type, id, {a, b});
     }
     
@@ -555,14 +555,14 @@ namespace indigox {
      *  \param type the type of bond to get.
      *  \param the id of the bond type.
      *  \return the requested bond type, or an empty shared_ptr. */
-    FFBond GetBondType(BondType type, int_ id) const;
+    FFBond GetBondType(BondType type, int id) const;
     
     /*! \brief Get the first bond type with the given id.
      *  \details Searches through all allowed bond types in order and returns
      *  the first type with the id.
      *  \param id the id of the bond type.
      *  \return the bond type, or an empty shared_ptr. */
-    FFBond GetBondType(int_ id) const;
+    FFBond GetBondType(int id) const;
     
     /*! \brief Link together two equivalent bond types.
      *  \details Two bond types can be linked together when they are regarded as
@@ -575,7 +575,7 @@ namespace indigox {
     /*! \brief Reserve space for bond types.
      *  \param type the type of bond to reserve space for.
      *  \param size the amount of space to reserve. */
-    void ReserveBondTypes(BondType type, size_ size) {
+    void ReserveBondTypes(BondType type, size_t size) {
       if (_bnds.find(type) != _bnds.end()) _bnds.at(type).reserve(size);
     }
     
@@ -583,9 +583,9 @@ namespace indigox {
      *  \details For forcefields with multiple allowed types, the count of each
      *  type are summed.
      *  \return the number of bond types in the forcefield. */
-    size_ NumBondTypes() const {
+    size_t NumBondTypes() const {
       return std::accumulate(_bnds.begin(), _bnds.end(), 0,
-                             [](size_ a, auto& b){return a + b.second.size();});
+                             [](size_t a, auto& b){return a + b.second.size();});
     }
     
     /*! \brief Get the number of bond types of the given functional form.
@@ -594,7 +594,7 @@ namespace indigox {
      *  supported by the forcefield, 0 is returned.
      *  \param type the type of bond to count.
      *  \return the number of bond types in the forcefield. */
-    size_ NumBondTypes(BondType type) const {
+    size_t NumBondTypes(BondType type) const {
       return (_bnds.find(type) != _bnds.end()) ? _bnds.at(type).size() : 0;
     }
     
@@ -607,7 +607,7 @@ namespace indigox {
      *  \param id the id of the angle.
      *  \param a,b the two parameter values.
      *  \return the newly created angle type. */
-    inline FFAngle NewAngleType(AngleType type, int_ id, float_ a, float_ b) {
+    inline FFAngle NewAngleType(AngleType type, int id, double a, double b) {
       return NewAngleType(type, id, {a, b});
     }
     
@@ -615,14 +615,14 @@ namespace indigox {
      *  \param type the type of angle to get.
      *  \param the id of the angle type.
      *  \return the requested angle type, or an empty shared_ptr. */
-    FFAngle GetAngleType(AngleType type, int_ id) const;
+    FFAngle GetAngleType(AngleType type, int id) const;
     
     /*! \brief Get the first angle type with the given id.
      *  \details Searches through all allowed angle types in order and returns
      *  the first type with the given id.
      *  \param id the id of the angle type.
      *  \return the angle type, or an empty shared_ptr. */
-    FFAngle GetAngleType(int_ id) const;
+    FFAngle GetAngleType(int id) const;
     
     /*! \brief Link together two equivalent angle types.
      *  \details Two angle types can be linked together when they are regarded
@@ -636,7 +636,7 @@ namespace indigox {
     /*! \brief Reserve space for angle types.
      *  \param type the type of angle to reserve space for.
      *  \param size the amount of space to reserve. */
-    void ReserveAngleTypes(AngleType type, size_ size) {
+    void ReserveAngleTypes(AngleType type, size_t size) {
       if (_angs.find(type) != _angs.end()) _angs.at(type).reserve(size);
     }
     
@@ -644,9 +644,9 @@ namespace indigox {
      *  \details For forcefields with multiple allowed types, the count of each
      *  type are summed.
      *  \return the number of angle types in the forcefield. */
-    size_ NumAngleTypes() const {
+    size_t NumAngleTypes() const {
       return std::accumulate(_angs.begin(), _angs.end(), 0,
-                             [](size_ a, auto& b){return a + b.second.size();});
+                             [](size_t a, auto& b){return a + b.second.size();});
     }
     
     /*! \brief Get the number of angle types of the given functional form.
@@ -655,7 +655,7 @@ namespace indigox {
      *  forcefield, 0 is returned.
      *  \param type the type of angle to count.
      *  \return the number of angle types in the forcefield. */
-    size_ NumAngleTypes(AngleType type) const {
+    size_t NumAngleTypes(AngleType type) const {
       return (_angs.find(type) != _angs.end()) ? _angs.at(type).size() : 0;
     }
     
@@ -668,8 +668,8 @@ namespace indigox {
      *  \param id the id of the dihedral.
      *  \param a,b,c the three parameter values.
      *  \return the newly created dihedral type. */
-    inline FFDihedral NewDihedralType(DihedralType type, int_ id, float_ a,
-                                      float_ b, float_ c) {
+    inline FFDihedral NewDihedralType(DihedralType type, int id, double a,
+                                      double b, double c) {
       return NewDihedralType(type, id, {b,a,c});
     }
     
@@ -681,8 +681,8 @@ namespace indigox {
      *  \param id the id of the dihedral.
      *  \param a,b the three parameter values.
      *  \return the newly created dihedral type. */
-    inline FFDihedral NewDihedralType(DihedralType type, int_ id, float_ a,
-                                      float_ b) {
+    inline FFDihedral NewDihedralType(DihedralType type, int id, double a,
+                                      double b) {
       return NewDihedralType(type, id, {b,a});
     }
     
@@ -690,19 +690,19 @@ namespace indigox {
      *  \param type the type of dihedral to get.
      *  \param the id of the dihedral type.
      *  \return the requested dihedral type, or an empty shared_ptr. */
-    FFDihedral GetDihedralType(DihedralType type, int_ id) const;
+    FFDihedral GetDihedralType(DihedralType type, int id) const;
     
     /*! \brief Get the first dihedral type with the given id.
      *  \details Searches through all allowed dihedral types in order and
      *  returns the first type with the given id.
      *  \param id the id of the dihedral type.
      *  \return the dihedral type, or an empty shared_ptr. */
-    FFDihedral GetDihedralType(int_ id) const;
+    FFDihedral GetDihedralType(int id) const;
     
     /*! \brief Reserve space for dihedral types.
      *  \param type the type of dihedral to reserve space for.
      *  \param size the amount of space to reserve. */
-    void ReserveDihedralTypes(DihedralType type, size_ size) {
+    void ReserveDihedralTypes(DihedralType type, size_t size) {
       if (_dhds.find(type) != _dhds.end()) _dhds.at(type).reserve(size);
     }
     
@@ -710,7 +710,7 @@ namespace indigox {
      *  \details For forcefields with multiple allowed types, the count of each
      *  type are summed.
      *  \return the number of bond types in the forcefield. */
-    size_ NumDihedralTypes() const {
+    size_t NumDihedralTypes() const {
       return std::accumulate(_dhds.begin(), _dhds.end(), 0,
                              [](auto a, auto& b){return a + b.second.size();});
     }
@@ -721,7 +721,7 @@ namespace indigox {
      *  the forcefield, 0 is returned.
      *  \param type the type of dihedral to count.
      *  \return the number of dihedral types in the forcefield. */
-    size_ NumDihedralTypes(DihedralType type) const {
+    size_t NumDihedralTypes(DihedralType type) const {
       return (_dhds.find(type) != _dhds.end()) ? _dhds.at(type).size() : 0;
     }
     
@@ -732,13 +732,13 @@ namespace indigox {
     
     /*! \brief Get the name of the forcefield
      *  \return the name of the forcefield. */
-    inline string_ GetName() const { return _name; }
+    inline std::string GetName() const { return _name; }
     
   private:
     //! The family of the forcefield
     Family _family;
     //! The name of the forcefield
-    string_ _name;
+    std::string _name;
     //! Atom types
     AtomTypes _atms;
     //! Bond types

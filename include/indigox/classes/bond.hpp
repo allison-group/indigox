@@ -7,7 +7,6 @@
 
 #include "../utils/common.hpp"
 #include "../utils/counter.hpp"
-#include "../utils/numerics.hpp"
 
 #ifndef INDIGOX_CLASSES_BOND_HPP
 #define INDIGOX_CLASSES_BOND_HPP
@@ -96,7 +95,7 @@ namespace indigox {
      *  \details This value may be modified without warning. Use with caution.
      *  For a constant identifier to the bond, use IXBond::GetUniqeID().
      *  \return the tag assigned to the bond. */
-    inline uid_ GetTag() const { return _tag; }
+    inline uint32_t GetTag() const { return _tag; }
     
     /*! \brief Molecule this bond is associated with.
      *  \details The returned shared_ptr is empty if the bond is not assigned
@@ -136,13 +135,13 @@ namespace indigox {
      *  returned string is Bond(MALFORMED), otherwise it is of the form:
      *  Bond(NAME_SOURCE, NAME_TARGET).
      *  \return a string representation of the bond. */
-    string_ ToString() const;
+    std::string ToString() const;
     
     /*! \brief Set the tag of this bond.
      *  \details The tag of a bond should not be considered stable. Use with
      *  caution.
      *  \param tag the tag to set. */
-    inline void SetTag(uid_ tag) { _tag = tag; }
+    inline void SetTag(uint32_t tag) { _tag = tag; }
     
     /*! \brief Set the bond order.
      *  \param order the bond order to set. */
@@ -175,14 +174,14 @@ namespace indigox {
   public:
     /*! \brief Number of atoms this bond is between.
      *  \returns 2. */
-    size_ NumAtoms() const { return _atms.size(); }
+    size_t NumAtoms() const { return _atms.size(); }
     
     /*! \brief Get the index from the molecule.
      *  \details Calculates the index of the bond in the container of bonds
      *  of the molecule it is a part of. If the molecule is dead, the index
      *  returned is the tag of the bond.
      *  \return the index of the bond. */
-    size_ GetIndex() const;
+    size_t GetIndex() const;
     
     /*! \brief Get the type of the bond.
      *  \return the type of the bond. */
@@ -196,7 +195,7 @@ namespace indigox {
     //! The molecule this bond is assigned to.
     _Molecule _mol;
     //! Tag (unstable).
-    uid_ _tag;
+    uint32_t _tag;
     //! Bond order.
     Order _order;
     //! Aromaticity.

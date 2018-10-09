@@ -3,7 +3,7 @@
 #ifndef INDIGOX_UTILS_COUNTER_HPP
 #define INDIGOX_UTILS_COUNTER_HPP
 
-#include "numerics.hpp"
+#include <cstdint>
 
 namespace indigox::utils {
   
@@ -24,17 +24,17 @@ namespace indigox::utils {
     
     /*! \brief Obtain the class instance unique id.
      *  \returns the unique id. */
-    inline uid_ GetUniqueID() const { return _id; }
+    inline uint64_t GetUniqueID() const { return _id; }
     
   private:
     //! \brief Unique ID.
-    const uid_ _id;
+    const uint64_t _id;
     //! \brief Count.
-    static uid_ _count;
+    static uint32_t _count;
   };
   
   template <class T>
-  uid_ IXCountableObject<T>::_count = 0;
+  uint32_t IXCountableObject<T>::_count = 0;
   
 }
 

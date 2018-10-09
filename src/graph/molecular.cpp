@@ -5,7 +5,6 @@
 #include <indigox/classes/bond.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/graph/molecular.hpp>
-#include <indigox/utils/numerics.hpp>
 #include <indigox/utils/serialise.hpp>
 
 #include <indigox/utils/doctest_proxy.hpp>
@@ -260,8 +259,8 @@ namespace indigox::graph {
 // == GETTING =================================================================
 // ============================================================================
   
-  size_ IXMolecularGraph::Degree(const MGVertex v) const {
-    if (!HasVertex(v)) return std::numeric_limits<size_>::max();
+  size_t IXMolecularGraph::Degree(const MGVertex v) const {
+    if (!HasVertex(v)) return std::numeric_limits<size_t>::max();
     return _g.Degree(v.get());
   }
   
@@ -304,7 +303,7 @@ namespace indigox::graph {
     
     // Degree of vertices
     auto vertices = random.get_v();
-    for (size_ i = 0; i < random.NumVertices(); ++i) {
+    for (size_t i = 0; i < random.NumVertices(); ++i) {
       check_eq(mol_fixture.a_randmol[i]->NumBonds(), random.Degree(vertices[i]));
       check_eq(std::numeric_limits<size_>::max(), benzene.Degree(vertices[i]));
     }
@@ -328,8 +327,8 @@ namespace indigox::graph {
                                               random.GetEdges().second);
     check_eq(edges, got_Edges);
     
-    for (size_ i = 0; i < mol_fixture.e_randmol.size(); ++i) {
-      size_ u, v;
+    for (size_t i = 0; i < mol_fixture.e_randmol.size(); ++i) {
+      size_t u, v;
       std::tie(u, v) = mol_fixture.e_randmol[i];
       check_eq(edges[i], random.GetEdge(vertices[u], vertices[v]));
       check_eq(MGEdge(), benzene.GetEdge(vertices[u], vertices[v]));
@@ -344,8 +343,8 @@ namespace indigox::graph {
     }
     
     // checking neighbours
-    std::set<size_> expected, obtained;
-    for (size_ i = 0; i < 12; ++i) {
+    std::set<size_t> expected, obtained;
+    for (size_t i = 0; i < 12; ++i) {
       obtained.clear(); expected.clear();
       MGVertex v = benzene.GetVertex(mol_fixture.a_benzene[i]);
       auto nbrs = benzene.GetNeighbours(v);

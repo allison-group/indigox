@@ -2,36 +2,29 @@
 #define INDIGOX_ALGORITHM_ELECTRON_OPTIMISER_HPP
 
 #include <bitset>
+#include <cstdint>
 #include <map>
 #include <set>
+#include <string>
 #include <vector>
+
+#include <EASTL/vector_set.h>
 
 #include <boost/dynamic_bitset/dynamic_bitset.hpp>
 
 #include "../../classes/periodictable.hpp"
 #include "../../graph/assignment.hpp"
 #include "../../utils/common.hpp"
-#include "../../utils/numerics.hpp"
-
-// Forward declarations
-namespace indigox {
-  class IXMolecule;
-  using Molecule = std::shared_ptr<IXMolecule>;
-  using _Molecule = std::weak_ptr<IXMolecule>;
-  namespace algorithm {
-    class IXElectronAssigner;
-    using ElectronAssigner = std::shared_ptr<IXElectronAssigner>;
-  }
-}
+#include "../../utils/fwd_declares.hpp"
 
 namespace indigox::algorithm {
   
   //! Type of the score of an electron assignment.
-  using score_t = ulong_;
+  using score_t = uint64_t;
   //! Type of the mask used for assignments.
   using AssignMask = boost::dynamic_bitset<>;
   //! Type of the key for a score table
-  using key_t = uint_;
+  using key_t = uint32_t;
   //! Type of a score table
   using ScoreTable = std::map<key_t, score_t>;
   
@@ -101,7 +94,7 @@ namespace indigox::algorithm {
       
       /*! \brief Get the number of optimal assignments found.
        *  \return the number of optimal assignments found. */
-      inline size_ GetOptimalCount() const { return _results.size(); }
+      inline size_t GetOptimalCount() const { return _results.size(); }
       
       /*! \brief Apply an optimised assignment.
        *  \details Applies the optimised assignment at position \p idx to the
@@ -110,7 +103,7 @@ namespace indigox::algorithm {
        *  algorithm the have been initalised.
        *  \param idx the index of the assignment to apply.
        *  \return if the application process was successful or not. */
-      bool ApplyAssignment(size_ idx);
+      bool ApplyAssignment(size_t idx);
       
       /*! \brief If the algorithm has been initalised or not.
        *  \return if the initalise method has been called. */
@@ -186,7 +179,7 @@ namespace indigox::algorithm {
       //! \brief Locations to possibly place electrons.
       std::vector<graph::AGVertex> _locs;
       //! \brief Number of electrons to assign.
-      size_ _num_e;
+      size_t _num_e;
       //! \brief State of boolean options
       std::bitset<__num_opts> _opts;
       //! \brief Infinity value
@@ -200,9 +193,9 @@ namespace indigox::algorithm {
       //! \brief Reference to the score table
       const ScoreTable& _table;
       //! \brief Maximum charge magnitude
-      int_ _max_charge;
+      int16_t _max_charge;
       //! \brief Maximum number of results
-      uint_ _max_results;
+      uint16_t _max_results;
       //! \brief Previous assignment mask
       AssignMask _previous_mask;
     };
@@ -248,7 +241,7 @@ namespace indigox::algorithm {
        *  to the various formal charge and bond order states obtained through
        *  an electron assignment. The path should be either relative to the data
        *  directory, or an absolute path. */
-      static string_ ScoreFile;
+      static std::string ScoreFile;
       
       /*! \brief Value of an infinite score.
        *  \details Default value (which probably should not need to be changed)
@@ -260,13 +253,13 @@ namespace indigox::algorithm {
        *  \details This limits the number of electrons which can be assigned
        *  to a bond to twice this value. Default value is 3.
        *  \todo Convert to using the BondOrder enum. */
-      static uint_ MaxBondOrder;
+      static uint8_t MaxBondOrder;
       
       /*! \brief The maximum allowed charge magnitude on an atom.
        *  \details Any assignment which results in the formal charge of an atom
        *  being larger than this value will be given an infinte score. If this
        *  value is negative, there is no limit applied. Default value is -1. */
-      static int_ MaxChargeMagnitude;
+      static int16_t MaxChargeMagnitude;
       
       /*! \brief Maximum number of degenerate score results to calculate.
        *  \details Optimisation algorithms are capable to returning multiple
@@ -276,7 +269,7 @@ namespace indigox::algorithm {
        *  a correct minimum. Large values may result in large amounts of memory
        *  and computational time being required. If set to 0, all results will
        *  be returned. Default value is 64. */
-      static uint_ MaxNumResults;
+      static uint16_t MaxNumResults;
       
       /*! \brief Set of elements for which scores are available.
        *  \details If a molecule contains elements not in this list, the
@@ -285,7 +278,7 @@ namespace indigox::algorithm {
        *  set if they have scores available. The default set of elements, given
        *  the default assignment score file, is: H, C, N, O, S, P, F, Cl, and
        *  Br. */
-      static std::set<Element> AllowedElements;
+      static eastl::vector_set<Element> AllowedElements;
     };
     
   public:
@@ -302,7 +295,7 @@ namespace indigox::algorithm {
      *  Before running, performs a sanity check to ensure that the molecule
      *  meets the allowed elements rules.
      *  \return the number of electron assignments found. */
-    size_ Run();
+    size_t Run();
     
     /*! \brief Get the AssignmentGraph used by the assignment algorithm.
      *  \return the AssignmentGraph used by the algorithm. */
@@ -324,11 +317,11 @@ namespace indigox::algorithm {
      *  later cases, the assignment may be partially applied.
      *  \param idx the index number of the assignment to apply.
      *  \return if the assignment application was successful or not. */
-    inline bool ApplyAssignment(size_ idx) {
+    inline bool ApplyAssignment(size_t idx) {
       return _algo->ApplyAssignment(idx);
     }
     
-    inline size_ GetOptimalCount() const { return _algo->GetOptimalCount(); }
+    inline size_t GetOptimalCount() const { return _algo->GetOptimalCount(); }
     inline score_t GetOptimisedScore() const { return _algo->GetOptimisedScore(); }
     
   private:
@@ -339,8 +332,7 @@ namespace indigox::algorithm {
     //! \brief Scores
     ScoreTable _table;
     //! \brief Currently loaded score file
-    string_ _current_file;
-    
+    std::string _current_file;
   };
   
   //! \brief Type for the enum of available assignment algorithms

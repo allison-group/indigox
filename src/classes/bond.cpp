@@ -128,10 +128,10 @@ namespace indigox {
     check_eq(bnd1.GetUniqueID() + 1, bnd2.GetUniqueID());
   }
   
-  size_ IXBond::GetIndex() const {
+  size_t IXBond::GetIndex() const {
     Molecule mol = _mol.lock();
     if (!mol) return GetTag();
-    auto be = mol->GetBonds();
+    auto be = mol->GetBondIters();
     auto pos = std::find(be.first, be.second, shared_from_this());
     if (pos == be.second) return GetTag();
     return std::distance(be.first, pos);

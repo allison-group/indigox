@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <set>
 
+#include <EASTL/vector_set.h>
+
 #include <boost/algorithm/string.hpp>
 
 #include <indigox/algorithm/electron_assignment/astar_optimisation.hpp>
@@ -17,7 +19,6 @@
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/utils/common.hpp>
 #include <indigox/utils/filereader.hpp>
-#include <indigox/utils/numerics.hpp>
 
 namespace indigox::algorithm {
   using Option = utils::Option;
@@ -30,12 +31,12 @@ namespace indigox::algorithm {
   Option settings::ElectronPairs = Option::Default;
   Option settings::ChargedCarbon = Option::Default;
   Option settings::Preassign = Option::Default;
-  string_ settings::ScoreFile = "assignment_scores.dat";
+  std::string settings::ScoreFile = "assignment_scores.dat";
   score_t settings::Infinity = std::numeric_limits<score_t>::max();
-  uint_ settings::MaxBondOrder = 3;
-  int_ settings::MaxChargeMagnitude = -1;
-  uint_ settings::MaxNumResults = 64;
-  std::set<Element> settings::AllowedElements = {
+  uint8_t settings::MaxBondOrder = 3;
+  int16_t settings::MaxChargeMagnitude = -1;
+  uint16_t settings::MaxNumResults = 64;
+  eastl::vector_set<Element> settings::AllowedElements = {
     GetPeriodicTable()->GetElement("H"),
     GetPeriodicTable()->GetElement("C"),
     GetPeriodicTable()->GetElement("N"),
@@ -73,8 +74,8 @@ namespace indigox::algorithm {
     if (_opts[__preplace]) _g->PreassignElectrons();
     
     // Calculate number of electrons to assign
-    int_ count = -mol->GetMolecularCharge();
-    for (auto its = mol->GetAtoms(); its.first != its.second; ++its.first)
+    int count = -mol->GetMolecularCharge();
+    for (auto its = mol->GetAtomIters(); its.first != its.second; ++its.first)
       count += (*its.first)->GetElement()->GetValenceElectronCount();
     for (auto its = _g->GetVertices(); its.first != its.second; ++its.first)
       count -= (*its.first)->GetPreAssignedCount();
@@ -90,26 +91,26 @@ namespace indigox::algorithm {
       throw std::runtime_error("Odd number of electrons when using pairs");
     else if (_opts[__pairs]) count /= 2;
     
-    uint_ delta = 2;
+    uint32_t delta = 2;
     if (!_opts[__pairs]) delta = 1;
     
     // Range sanity checks
     if (count < 0)
       throw std::runtime_error("Negative electrons to assign");
-    _num_e = static_cast<size_>(count);
+    _num_e = static_cast<size_t>(count);
     
     // Figure out where to place them Vertices
     indigox::graph::IXMolecularGraph& G = *mol->GetGraph();
     for (auto its = G.GetVertices(); its.first != its.second; ++its.first) {
       indigox::graph::MGVertex v = *its.first;
-      int_ octet;
+      int octet;
       if (G.Degree(v) > 2)
         octet = (v)->GetAtom()->GetElement()->GetHypervalentOctet();
       else
         octet = (v)->GetAtom()->GetElement()->GetOctet();
       
-      int_ bonded = 2 * G.Degree(v);
-      int_ missing = octet - bonded;
+      int bonded = 2 * G.Degree(v);
+      int missing = octet - bonded;
       
       indigox::graph::AGVertex av = _g->GetVertex(v);
       missing -= av->GetPreAssignedCount();
@@ -130,24 +131,24 @@ namespace indigox::algorithm {
     for (auto its = G.GetEdges(); its.first != its.second; ++its.first) {
       indigox::graph::MGEdge e = *its.first;
       indigox::graph::MGVertex u = G.GetSource(e), v = G.GetTarget(e);
-      int_ u_oct;
+      int u_oct;
       if (G.Degree(u) > 2)
         u_oct = u->GetAtom()->GetElement()->GetHypervalentOctet();
       else
         u_oct = u->GetAtom()->GetElement()->GetOctet();
-      int_ u_bonded = 2 * G.Degree(u);
-      int_ u_missing = u_oct - u_bonded;
+      int u_bonded = 2 * G.Degree(u);
+      int u_missing = u_oct - u_bonded;
       
-      int_ v_oct;
+      int v_oct;
       if (G.Degree(v) > 2)
         v_oct = v->GetAtom()->GetElement()->GetHypervalentOctet();
       else
         v_oct = v->GetAtom()->GetElement()->GetOctet();
-      int_ v_bonded = 2 * G.Degree(v);
-      int_ v_missing = v_oct - v_bonded;
+      int v_bonded = 2 * G.Degree(v);
+      int v_missing = v_oct - v_bonded;
       
       indigox::graph::AGVertex av = _g->GetVertex(e);
-      uint_ missing = 2 * settings::MaxBondOrder;
+      uint32_t missing = 2 * settings::MaxBondOrder;
       if (missing < av->GetPreAssignedCount())
         throw std::runtime_error("Too many pre-assigned electrons");
       missing -= av->GetPreAssignedCount();
@@ -181,13 +182,13 @@ namespace indigox::algorithm {
     AssignMask initial = _previous_mask;
     initial.reset();
     
-    std::vector<size_> all_location(_locs.size());
+    std::vector<size_t> all_location(_locs.size());
     std::iota(all_location.begin(), all_location.end(), 0);
     
     while (initial.count() < _num_e) {
       score_t min_nbr_score = _inf;
-      size_ min_nbr_pos = all_location.front();
-      for (size_ i : all_location) {
+      size_t min_nbr_pos = all_location.front();
+      for (size_t i : all_location) {
         initial.set(i);
         score_t current_score = CalculateAssignmentScore(initial);
         if (current_score < min_nbr_score)
@@ -206,13 +207,13 @@ namespace indigox::algorithm {
   score_t AAlgo::CalculateVertexScore(const graph::AGVertex &v) const {
     if (!IsInitalised())
       throw std::runtime_error("Requires initalised algorithm");
-    size_ occurances = std::count(_locs.begin(), _locs.end(), v);
+    size_t occurances = std::count(_locs.begin(), _locs.end(), v);
     key_t k = 0;
     if (v->IsVertexMapped()) {
       Element e = v->GetSourceVertex()->GetAtom()->GetElement();
-      char_ fc = e->GetValenceElectronCount() - v->GetTotalAssigned();
-      uchar_ valence = v->GetTotalAssigned();
-      size_ nbr_count = 0;
+      char fc = e->GetValenceElectronCount() - v->GetTotalAssigned();
+      uint8_t valence = v->GetTotalAssigned();
+      size_t nbr_count = 0;
       auto nbrs_it = _g->GetNeighbours(v);
       for (; nbrs_it.first != nbrs_it.second; ++nbrs_it.first) {
         fc -= (*nbrs_it.first)->GetTotalAssigned() / 2;
@@ -242,8 +243,8 @@ namespace indigox::algorithm {
       graph::AGVertex u1 = *nbrs_it.first++;
       graph::AGVertex u2 = *nbrs_it.first;
       
-      uchar_ valence_u1 = u1->GetTotalAssigned();
-      uchar_ valence_u2 = u2->GetTotalAssigned();
+      uint8_t valence_u1 = u1->GetTotalAssigned();
+      uint8_t valence_u2 = u2->GetTotalAssigned();
       for (auto it = _g->GetNeighbours(u1); it.first != it.second; ++it.first)
         valence_u1 += (*it.first)->GetTotalAssigned();
       for (auto it = _g->GetNeighbours(u2); it.first != it.second; ++it.first)
@@ -280,9 +281,9 @@ namespace indigox::algorithm {
   void AAlgo::SetAssignment(const AssignMask &a) { 
     AssignMask changed = _previous_mask ^ a;
     AssignMask lost = _previous_mask & a;
-    uint_ delta = 2;
+    uint32_t delta = 2;
     if (!_opts[__pairs]) delta = 1;
-    size_ i = changed.find_first();
+    size_t i = changed.find_first();
     while (i < changed.size()) {
       graph::AGVertex v= _locs[i];
       if (lost[i]) v->SetAssignedCount(v->GetAssignedCount() - delta);
@@ -292,7 +293,7 @@ namespace indigox::algorithm {
     _previous_mask = a;
   }
   
-  bool AAlgo::ApplyAssignment(size_ idx) {
+  bool AAlgo::ApplyAssignment(size_t idx) {
     if (!IsInitalised())
       throw std::runtime_error("Requires initalistion to be called.");
     if (idx >= _locs.size()) return false;
@@ -320,7 +321,7 @@ namespace indigox::algorithm {
       } else {
         Atom a = v->GetSourceVertex()->GetAtom();
         if (!a) return false;
-        char_ fc = a->GetElement()->GetValenceElectronCount();
+        char fc = a->GetElement()->GetValenceElectronCount();
         fc -= v->GetTotalAssigned();
         for (auto ns = _g->GetNeighbours(v); ns.first != ns.second; ++ns.first)
           fc -= (*ns.first)->GetTotalAssigned() / 2;
@@ -332,11 +333,11 @@ namespace indigox::algorithm {
   
   
   void IXElectronAssigner::LoadScoreTable() {
-    string_ ddir_path = string_(IX_DATA_DIRECTORY);
+    std::string ddir_path = std::string(IX_DATA_DIRECTORY);
     if (ddir_path.back() != '/') ddir_path.append("/");
     ddir_path.append(settings::ScoreFile);
     utils::FileReader file(ddir_path);
-    std::vector<string_> lines;
+    std::vector<std::string> lines;
     try {
       file.GetAllLines(lines);
     } catch (const std::invalid_argument& e) {
@@ -348,20 +349,20 @@ namespace indigox::algorithm {
     
     double multiplier = 100000;
     
-    long_ global_min = std::numeric_limits<long_>::max();
-    std::map<Element, long_> local_atom_min;
-    std::map<std::pair<Element, Element>, long_> local_bond_min;
-    std::set<stdx::quad<Element, Element, char_, long_>> tmp_dat;
-    for (string_ line : lines) {
-      std::vector<string_> items;
+    long global_min = std::numeric_limits<long>::max();
+    std::map<Element, long> local_atom_min;
+    std::map<std::pair<Element, Element>, long> local_bond_min;
+    std::set<stdx::quad<Element, Element, char, long>> tmp_dat;
+    for (std::string line : lines) {
+      std::vector<std::string> items;
       boost::split(items, line, boost::is_any_of(" \t"), boost::token_compress_on);
       
       if (items.size() == 3) {    // Atom score
         // Expect Element, formal charge, score
         Element e = PT[items[0]];
         if (!e) continue;
-        char_ fc = std::stoi(items[1]);
-        long_ s = std::llround(std::stod(items[2]) * multiplier);
+        char fc = std::stoi(items[1]);
+        long s = std::llround(std::stod(items[2]) * multiplier);
         // Populate tmp table
         auto tt = stdx::make_quad(e, PT.GetUndefined(), fc, s);
         if (tmp_dat.find(tt) == tmp_dat.end()) tmp_dat.emplace(tt);
@@ -376,9 +377,9 @@ namespace indigox::algorithm {
         // Expect Element A, Element B, Order, score
         Element a = PT[items[0]];
         Element b = PT[items[1]];
-        char_ o = std::stoi(items[2]);
+        char o = std::stoi(items[2]);
         if (!a || !b || o <= 0) continue;
-        long_ s = std::llround(std::stod(items[3]) * multiplier);
+        long s = std::llround(std::stod(items[3]) * multiplier);
         // Populate tmp table
         auto t1 = stdx::make_quad(a, b, o, s);
         auto t2 = stdx::make_quad(b, a, o, s);
@@ -399,7 +400,7 @@ namespace indigox::algorithm {
       }
     }
     for (auto eets_quad : tmp_dat) {
-      if (!(*eets_quad.second)) {
+      if (!(eets_quad.second->GetAtomicNumber())) {
         key_t k = eets_quad.first->GetAtomicNumber();
         k += std::abs(eets_quad.third) << 8;
         if (eets_quad.third < 0) k += 1 << 15;
@@ -415,14 +416,14 @@ namespace indigox::algorithm {
     _current_file = settings::ScoreFile;
   }
   
-  size_ IXElectronAssigner::Run() {
+  size_t IXElectronAssigner::Run() {
     using op = Option;
     // Check molecule is valid
     Molecule mol = _mol.lock();
     if (!mol) throw std::runtime_error("Molecule is invalid");
     
     auto allow_end = settings::AllowedElements.cend();
-    for (auto its = mol->GetAtoms(); its.first != its.second; ++its.first) {
+    for (auto its = mol->GetAtomIters(); its.first != its.second; ++its.first) {
       Element e = (*its.first)->GetElement();
       if (settings::AllowedElements.find(e) == allow_end)
         throw std::runtime_error("Invalid element in molecule");

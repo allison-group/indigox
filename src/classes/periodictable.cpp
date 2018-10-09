@@ -5,7 +5,6 @@
 
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/utils/common.hpp>
-#include <indigox/utils/numerics.hpp>
 
 #include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/test/periodictable_test.hpp>
@@ -14,10 +13,10 @@ namespace indigox {
   
   test_suite_open("IXElement");
   
-  IXElement::IXElement(uchar_ Z, string_ name, string_ sym, float_ mass,
-                       uchar_ grp, uchar_ prd, uchar_ val, uchar_ oct,
-                       uchar_ hyp, float_ rad, float_ cov, float_ vdw,
-                       float_ chi)
+  IXElement::IXElement(uint8_t Z, std::string name, std::string sym, double mass,
+                       uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct,
+                       uint8_t hyp, double rad, double cov, double vdw,
+                       double chi)
   : _nme(name), _sym(sym), _grp(grp), _prd(prd), _Z(Z), _val(val), _oct(oct),
   _hyp(hyp), _mass(mass), _rad(rad), _cov(cov), _vdw(vdw), _chi(chi) { }
   
@@ -38,7 +37,7 @@ namespace indigox {
     check_eq(e.get_chi(), approximately(15.8763));
   }
   
-  string_ IXElement::ToString() const {
+  std::string IXElement::ToString() const {
     std::stringstream ss;
     ss << _nme << "(" << +_Z << ", " << _sym << ")";
     return ss.str();
@@ -152,10 +151,10 @@ namespace indigox {
   
   test_suite_open("IXPeriodicTable");
   
-  string_ IXPeriodicTable::ToString() const {
+  std::string IXPeriodicTable::ToString() const {
     std::stringstream ss;
-    size_ row_count = 0, restart = 0;
-    std::vector<int_> elems = {
+    size_t row_count = 0, restart = 0;
+    std::vector<int> elems = {
        1, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,-1,
        3, 4, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  5,  6,  7,  8,  9, 10,-1,
       11,12, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 13, 14, 15, 16, 17, 18,-1,
@@ -168,7 +167,7 @@ namespace indigox {
     };
     if (!NumElements()) return "Empty PeriodicTable";
     ss << ' ';
-    for (size_ i = 0; i < elems.size(); ) {
+    for (size_t i = 0; i < elems.size(); ) {
       if (elems[i] == -1) {
         ss << "\n";
         if ((row_count == 0 || row_count == 1) && elems[i-18] != 0) ss << '|';
@@ -192,7 +191,7 @@ namespace indigox {
       }
     }
     // Final line at bottom of table
-    for (size_ i = 0; i < 17; ++i) {
+    for (size_t i = 0; i < 17; ++i) {
       if (i < 3) ss << erow(_null, 3);
       else ss << erow(_null, 0);
     }
@@ -229,7 +228,7 @@ namespace indigox {
     os << "            | 90| 91| 92| 93| 94| 95| 96| 97| 98| 99|100|101|102|103|    \n";
     os << "            | Th| Pa|  U| Np| Pu| Am| Cm| Bk| Cf| Es| Fm| Md| No| Lr|    \n";
     os << "             --- --- --- --- --- --- --- --- --- --- --- --- --- --- ";
-    string_ expected_to_string = os.str();
+    std::string expected_to_string = os.str();
     
     test::TestPeriodicTable pt;
     os.str(""); os << PeriodicTable();
@@ -248,13 +247,13 @@ namespace indigox {
     check_eq(expected_to_string, pt.ToString());
   }
   
-  Element IXPeriodicTable::GetElement(const uchar_ z) const noexcept {
+  Element IXPeriodicTable::GetElement(const uint8_t z) const noexcept {
     if (_z_to.find(z) != _z_to.end())
       return _z_to.at(z);
     return _null;
   }
   
-  Element IXPeriodicTable::GetElement(const string_ name) const noexcept {
+  Element IXPeriodicTable::GetElement(const std::string name) const noexcept {
     std::string u;
     if (name.size() > 2) u = utils::ToUpperFirst(name);
     else u = name;
@@ -431,8 +430,8 @@ namespace indigox {
     test::TestPeriodicTable::ZType& z_to_element = PT.get_z_to();
     test::TestPeriodicTable::XType& name_to_element = PT.get_name_to();
     
-    string_ name;
-    uchar_ z;
+    std::string name;
+    uint8_t z;
     Element e;
     subcase("Checking atomic number table") {
       check_eq(z_to_element.size(), INDIGOX_NUM_ELEMENTS);

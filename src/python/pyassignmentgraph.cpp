@@ -49,6 +49,6 @@ void GeneratePyElectronAssignmentGraph(py::module& m) {
   .def("HasVertex", py::overload_cast<const AGVertex&>(&IXAssignmentGraph::HasVertex, py::const_))
   .def("HasVertex", py::overload_cast<const MGVertex&>(&IXAssignmentGraph::HasVertex, py::const_))
   .def("HasVertex", py::overload_cast<const MGEdge&>(&IXAssignmentGraph::HasVertex, py::const_))
-  .def("IsConnected", &IXAssignmentGraph::IsConnected)
+//  .def("IsConnected", &IXAssignmentGraph::IsConnected)
   ;
 }

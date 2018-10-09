@@ -2,13 +2,13 @@
 #ifndef INDIGOX_GRAPH_BASE_HPP
 #define INDIGOX_GRAPH_BASE_HPP
 
+#include <cstdint>
 #include <vector>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 
-#include <indigox/utils/numerics.hpp>
-#include <indigox/utils/simple_bimap.hpp>
+#include "../utils/simple_bimap.hpp"
 
 //! Namespace for all graph related functionality.
 namespace indigox::graph {
@@ -39,13 +39,13 @@ namespace indigox::graph {
     //! \brief Union to allow different label types in the same memory space.
     union {
       //! \brief Label used by the connected components algorithm.
-      int_ component;
+      int32_t component;
       //! \brief Label used for (sub-)graph isomorphism.
-      ulong_ isomorphism;
+      uint64_t isomorphism;
       //! \brief An integer label.
-      int_ ilabel;
+      int32_t ilabel;
       //! \brief A floating point label
-      float_ flabel;
+      double flabel;
       //! \brief A colour for graph algorithms
       boost::default_color_type colour;
     };
@@ -225,11 +225,11 @@ namespace indigox::graph {
     
     /*! \brief Number of vertices in the graph.
      *  \return the number of vertices in the graph. */
-    size_ NumVertices() const { return boost::num_vertices(_g); }
+    size_t NumVertices() const { return boost::num_vertices(_g); }
     
     /*! \brief Number of edges in the graph.
      *  \return the number of edges in the graph. */
-    size_ NumEdges() const { return boost::num_edges(_g); }
+    size_t NumEdges() const { return boost::num_edges(_g); }
     
     //! \brief Removes all edges and vertices from the graph.
     void Clear() {
@@ -244,7 +244,7 @@ namespace indigox::graph {
      *  ensure that the vertex is a prt of the graph.
      *  \param v the vertex to get the degree of.
      *  \return pair of the degree of the vertex and if it is valid. */
-    size_ Degree(V* v) const { return OutDegree(GetDescriptor(v)); }
+    size_t Degree(V* v) const { return OutDegree(GetDescriptor(v)); }
     
     /*! \brief Indegree of a vertex.
      *  \details The indegree of a vertex is the number of edges entering the
@@ -253,7 +253,7 @@ namespace indigox::graph {
      *  the graph.
      *  \param v the vertex to get indegree of.
      *  \return pair of the indegree of the vertex and if it is valid. */
-    size_ InDegree(V* v) const {
+    size_t InDegree(V* v) const {
       if (D::is_directed) return InDegree(GetDescriptor(v));
       return OutDegree(GetDescriptor(v));
     }
@@ -312,7 +312,7 @@ namespace indigox::graph {
      *  \param[out] verts the vector where the list of vertices will be set.
      *  The vector is cleared before any vertices are added to it.
      *  \return the number of vertices added to the vector. */
-    size_ GetVertices(std::vector<V*>& verts) const {
+    size_t GetVertices(std::vector<V*>& verts) const {
       verts.clear(); verts.reserve(NumVertices());
       auto begin = _verts.left.begin();
       auto end = _verts.left.end();
@@ -324,7 +324,7 @@ namespace indigox::graph {
      *  \param[out] edges the vector where the list of edges will be set.
      *  The vector is cleared before any edges are added to it.
      *  \return the number of edges added to the vector. */
-    size_ GetEdges(std::vector<E*>& edges) const {
+    size_t GetEdges(std::vector<E*>& edges) const {
       edges.clear(); edges.reserve(NumEdges());
       EdgeIter begin, end;
       std::tie(begin, end) = boost::edges(_g);
@@ -404,12 +404,12 @@ namespace indigox::graph {
     /*! \brief Outdegree of a vertex.
      *  \param v vertex descriptor to get outdegree of.
      *  \return the degree of the given vertex descriptor. */
-    size_ OutDegree(VertType v) const { return boost::out_degree(v, _g); }
+    size_t OutDegree(VertType v) const { return boost::out_degree(v, _g); }
     
     /*! \brief Indegree of a vertex.
      *  \param v vertex descriptor to get indegree of.
      *  \return the indegree of the given vertex descriptor. */
-    size_ InDegree(VertType v) const { return boost::in_degree(v, _g); }
+    size_t InDegree(VertType v) const { return boost::in_degree(v, _g); }
     
     //! \cond
     /*! \brief Worker method for calculating connected components.

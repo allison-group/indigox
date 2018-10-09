@@ -3,7 +3,6 @@
 #include <initializer_list>
 
 #include <indigox/classes/forcefield.hpp>
-#include <indigox/utils/numerics.hpp>
 #include <indigox/utils/quad.hpp>
 #include <indigox/utils/triple.hpp>
 
@@ -73,7 +72,7 @@ namespace indigox {
 // == IXFFDihedral Construction ===============================================
 // ============================================================================
   
-  IXFFDihedral::IXFFDihedral(DihedralType type, int_ id, FFParam parameters,
+  IXFFDihedral::IXFFDihedral(DihedralType type, int id, FFParam parameters,
                              const Forcefield& ff)
   : IXFFDihedral(type, ff) {
     _id = id;
@@ -240,7 +239,7 @@ namespace indigox {
 // == IXFFAngle Construction ==============================================
 // ============================================================================
   
-  IXFFAngle::IXFFAngle(AngleType type, int_ id, FFParam parameters,
+  IXFFAngle::IXFFAngle(AngleType type, int id, FFParam parameters,
                        const Forcefield& ff)
   : IXFFAngle(type, ff) {
     _id = id;
@@ -397,7 +396,7 @@ namespace indigox {
 // == IXFFBond Construction ===============================================
 // ============================================================================
   
-  IXFFBond::IXFFBond(BondType type, int_ id, FFParam parameters,
+  IXFFBond::IXFFBond(BondType type, int id, FFParam parameters,
                      const Forcefield& ff)
   : IXFFBond(type, ff) {
     _id = id;
@@ -510,8 +509,8 @@ namespace indigox {
   void IXFFAtom::load_and_construct(Archive &archive,
                                     cereal::construct<IXFFAtom> &construct,
                                     const uint32_t) {
-    int_ id;
-    string_ name;
+    int id;
+    std::string name;
     Forcefield ff;
     archive(INDIGOX_SERIAL_NVP("id", id),
             INDIGOX_SERIAL_NVP("name", name),
@@ -549,7 +548,7 @@ namespace indigox {
 // == IXFFAtom Construction ===============================================
 // ============================================================================
   
-  IXFFAtom::IXFFAtom(int_ id, string_ name, const Forcefield& ff)
+  IXFFAtom::IXFFAtom(int id, std::string name, const Forcefield& ff)
   : _id(id), _name(name), _ff(ff) { }
   
   test_case("IXFFAtom construction") {
@@ -601,7 +600,7 @@ namespace indigox {
 // == IXForcefield Construction ===============================================
 // ============================================================================
   
-  IXForcefield::IXForcefield(FFFamily family, string_ name)
+  IXForcefield::IXForcefield(FFFamily family, std::string name)
   : _family(family), _name(name) {
     
     if (family == FFFamily::GROMOS) {
@@ -635,13 +634,13 @@ namespace indigox {
 // == IXForcefield Adding types ===============================================
 // ============================================================================
   
-  FFAtom IXForcefield::NewAtomType(int_ id, string_ name) {
+  FFAtom IXForcefield::NewAtomType(int id, std::string name) {
     if (GetAtomType(id) || GetAtomType(name)) return FFAtom();
     _atms.emplace_back(std::make_shared<IXFFAtom>(id, name, shared_from_this()));
     return _atms.back();
   }
   
-  FFBond IXForcefield::NewBondType(BondType type, int_ id, FFParam param) {
+  FFBond IXForcefield::NewBondType(BondType type, int id, FFParam param) {
     if (_bnds.find(type) == _bnds.end()) return FFBond();
     if (GetBondType(type, id)) return FFBond();
     _bnds[type].emplace_back(std::make_shared<IXFFBond>(type, id, param,
@@ -649,7 +648,7 @@ namespace indigox {
     return _bnds[type].back();
   }
   
-  FFAngle IXForcefield::NewAngleType(AngleType type, int_ id, FFParam param) {
+  FFAngle IXForcefield::NewAngleType(AngleType type, int id, FFParam param) {
     if (_angs.find(type) == _angs.end()) return FFAngle();
     if (GetAngleType(type, id)) return FFAngle();
     _angs[type].emplace_back(std::make_shared<IXFFAngle>(type, id, param,
@@ -657,7 +656,7 @@ namespace indigox {
     return _angs[type].back();
   }
   
-  FFDihedral IXForcefield::NewDihedralType(DihedralType type, int_ id, FFParam param) {
+  FFDihedral IXForcefield::NewDihedralType(DihedralType type, int id, FFParam param) {
     if (_dhds.find(type) == _dhds.end()) return FFDihedral();
     if (GetDihedralType(type, id)) return FFDihedral();
     _dhds[type].emplace_back(std::make_shared<IXFFDihedral>(type, id, param,
@@ -669,13 +668,13 @@ namespace indigox {
 // == IXForcefield Atom type handlings ========================================
 // ============================================================================
   
-  FFAtom IXForcefield::GetAtomType(string_ name) const {
+  FFAtom IXForcefield::GetAtomType(std::string name) const {
     auto pred = [&name](const FFAtom& t) { return t->GetName() == name; };
     auto pos = std::find_if(_atms.begin(), _atms.end(), pred);
     return (pos == _atms.end()) ? FFAtom() : *pos;
   }
   
-  FFAtom IXForcefield::GetAtomType(int_ id) const {
+  FFAtom IXForcefield::GetAtomType(int id) const {
     auto pred = [&id](const FFAtom& t) { return t->GetID() == id; };
     auto pos = std::find_if(_atms.begin(), _atms.end(), pred);
     return (pos == _atms.end()) ? FFAtom() : *pos;
@@ -685,14 +684,14 @@ namespace indigox {
 // == IXForcefield Bond type handlings ========================================
 // ============================================================================
   
-  FFBond IXForcefield::GetBondType(BondType type, int_ id) const {
+  FFBond IXForcefield::GetBondType(BondType type, int id) const {
     if (_bnds.find(type) == _bnds.end()) return FFBond();
     auto pred = [&id](const FFBond& t) { return t->GetID() == id; };
     auto pos = std::find_if(_bnds.at(type).begin(), _bnds.at(type).end(), pred);
     return (pos == _bnds.at(type).end()) ? FFBond() : *pos;
   }
   
-  FFBond IXForcefield::GetBondType(int_ id) const {
+  FFBond IXForcefield::GetBondType(int id) const {
     for (auto& types: _bnds) {
       FFBond found = GetBondType(types.first, id);
       if (found) return found;
@@ -711,14 +710,14 @@ namespace indigox {
 // == IXForcefield Angle type handlings =======================================
 // ============================================================================
   
-  FFAngle IXForcefield::GetAngleType(AngleType type, int_ id) const {
+  FFAngle IXForcefield::GetAngleType(AngleType type, int id) const {
     if (_angs.find(type) == _angs.end()) return FFAngle();
     auto pred = [&id](const FFAngle& t) { return t->GetID() == id; };
     auto pos = std::find_if(_angs.at(type).begin(), _angs.at(type).end(), pred);
     return (pos == _angs.at(type).end()) ? FFAngle() : *pos;
   }
   
-  FFAngle IXForcefield::GetAngleType(int_ id) const {
+  FFAngle IXForcefield::GetAngleType(int id) const {
     for (auto& types: _angs) {
       FFAngle found = GetAngleType(types.first, id);
       if (found) return found;
@@ -737,14 +736,14 @@ namespace indigox {
 // == IXForcefield Dihedral type handlings ====================================
 // ============================================================================
   
-  FFDihedral IXForcefield::GetDihedralType(DihedralType type, int_ id) const {
+  FFDihedral IXForcefield::GetDihedralType(DihedralType type, int id) const {
     if (_dhds.find(type) == _dhds.end()) return FFDihedral();
     auto pred = [&id](const FFDihedral& t) { return t->GetID() == id; };
     auto pos = std::find_if(_dhds.at(type).begin(), _dhds.at(type).end(), pred);
     return (pos == _dhds.at(type).end()) ? FFDihedral() : *pos;
   }
   
-  FFDihedral IXForcefield::GetDihedralType(int_ id) const {
+  FFDihedral IXForcefield::GetDihedralType(int id) const {
     for (auto& types: _dhds) {
       FFDihedral found = GetDihedralType(types.first, id);
       if (found) return found;
@@ -759,7 +758,7 @@ namespace indigox {
   Forcefield GenerateGROMOS54A7() {
     Forcefield ff = std::make_shared<IXForcefield>(FFFamily::GROMOS, "54A7");
     // Add atom types
-    std::vector<std::pair<int_, string_>> atom_dat = {
+    std::vector<std::pair<int, std::string>> atom_dat = {
       {2, "OM"}, {1, "O"},
       {4, "OE"}, {39, "CChl"}, {32, "F"}, {52, "OUrea"}, {15, "CH2"}, {20, "HC"},
       {37, "NA+"}, {33, "CL"}, {44, "ODmso"}, {40, "CLChl"}, {45, "CCl4"},
@@ -773,7 +772,7 @@ namespace indigox {
     for (auto& id_name : atom_dat) ff->NewAtomType(id_name.first, id_name.second);
     
     // Add bond types
-    std::vector<stdx::quad<int_, float_, float_, float_>> bnd_dat = {
+    std::vector<stdx::quad<int, double, double, double>> bnd_dat = {
       {34, 0.198, 50181.12, 640000.0}, {48, 0.290283, 502214.75, 2980000.0},
       {22, 0.148, 251019.84, 5730000.0}, {49, 0.279388, 373115.59, 2390000.0},
       {50, 0.291189, 371384.73, 2190000.0}, {10, 0.133, 417460.4, 11800000.0},
@@ -805,7 +804,7 @@ namespace indigox {
                         ff->NewBondType(BondType::Quartic, dat.first, dat.fourth, dat.second));
     
     // Add angle types
-    std::vector<stdx::quad<int_, float_, float_, float_>> ang_dat = {
+    std::vector<stdx::quad<int, double, double, double>> ang_dat = {
       {1, 90.0, 0.11550101, 380.0}, {3, 96.0, 0.12177061, 405.0},
       {14, 109.6, 0.12142334, 450.0}, {9, 109.5, 0.08638614, 320.0},
       {40, 155.0, 0.12112698, 2215.0}, {15, 111.0, 0.14048747, 530.0},
@@ -840,14 +839,14 @@ namespace indigox {
                                           dat.fourth, dat.second));
     
     // Add improper types
-    std::vector<stdx::triple<int_, float_, float_>> imp_dat = {
+    std::vector<stdx::triple<int, double, double>> imp_dat = {
       {4, 0.051, 180.0}, {2, 0.102, 35.26439}, {5, 0.102, -35.26439},
       {3, 0.204, 0.0}, {1, 0.051, 0.0}};
     for (auto& dat : imp_dat)
       ff->NewDihedralType(DihedralType::Improper, dat.first, dat.second, dat.third);
     
     // Add proper types
-    std::vector<stdx::quad<int_, float_, float_, int_>> prp_dat = {
+    std::vector<stdx::quad<int, double, double, int>> prp_dat = {
       {19, 3.14, 0.0, 2}, {42, 3.5, 180.0, 2}, {17, 0.418, 0.0, 2},
       {2, 3.41, 180.0, 1}, {7, 2.79, 0.0, 1}, {24, 1.3, 0.0, 3},
       {37, 9.5, 0.0, 3}, {45, 0.4, 0.0, 6}, {15, 41.8, 180.0, 2},

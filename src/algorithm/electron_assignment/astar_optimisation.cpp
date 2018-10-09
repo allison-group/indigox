@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <queue>
+#include <string>
 #include <vector>
 
 #include <boost/algorithm/string/join.hpp>
@@ -14,10 +16,10 @@
 
 namespace indigox::algorithm {
   
-  string_ __PrintVertexName(const graph::AGVertex& v) {
+  std::string __PrintVertexName(const graph::AGVertex& v) {
     if (v->IsVertexMapped())
       return v->GetSourceVertex()->GetAtom()->GetName();
-    std::vector<string_> names; names.reserve(2);
+    std::vector<std::string> names; names.reserve(2);
     names.emplace_back(v->GetSourceEdge()->GetBond()->GetSourceAtom()->GetName());
     names.emplace_back(v->GetSourceEdge()->GetBond()->GetTargetAtom()->GetName());
     return boost::join(names, ", ");
@@ -27,7 +29,7 @@ namespace indigox::algorithm {
   using AS_settings = IXAStarOptimisation::Settings;
   using Heuristic = IXAStarOptimisation::Heuristic;
   
-  ulong_ AS_settings::MEMORY_LIMIT = 1024;
+  uint64_t AS_settings::MEMORY_LIMIT = 1024;
   Heuristic AS_settings::HEURISTIC = Heuristic::Abstemious;
   
   enum class SortOrder {
@@ -227,10 +229,10 @@ namespace indigox::algorithm {
       
       // Generate the next queue items
       std::cout << __PrintVertexName(_locs[source.nbr_begin_idx]) << std::endl;
-      size_ num_nbrs = GenerateNextAssignments(source, nbrs);
-      for (size_ i = 0; i < num_nbrs; ++i) {
+      size_t num_nbrs = GenerateNextAssignments(source, nbrs);
+      for (size_t i = 0; i < num_nbrs; ++i) {
         graph::AGVertex nbr_vertex = _locs[source.nbr_begin_idx];
-        size_ nbr_index = source.nbr_begin_idx + _loc_counts[GetLocationPosition(nbr_vertex)];
+        size_t nbr_index = source.nbr_begin_idx + _loc_counts[GetLocationPosition(nbr_vertex)];
         QueueItem item(source.path, source.heuristic, nbrs[i],
                        source.unchange_mask, source.calc_mask,
                        LocMask(source.calc_mask.size()), nbr_index);
@@ -279,10 +281,10 @@ namespace indigox::algorithm {
   }
   
   void IXAStarOptimisation::DetermineRequiredUnchangeables() {
-    size_ num_v = _g->NumVertices();
+    size_t num_v = _g->NumVertices();
     _req_unchange.reserve(num_v);
     
-    for (size_ pos = 0; pos < num_v; ++pos) {
+    for (size_t pos = 0; pos < num_v; ++pos) {
       graph::AGVertex v = _unique_locs[pos];
       _req_unchange.emplace_back(num_v);
       auto nbrs = _g->GetNeighbours(v);
@@ -294,7 +296,7 @@ namespace indigox::algorithm {
   void IXAStarOptimisation::DetermineInitialAssignment() {
     QueueItem item(_locs.size(), _unique_locs.size());
     item.unchange_mask.set();
-    for (size_ i = 0; i < _loc_counts.size(); ++i) {
+    for (size_t i = 0; i < _loc_counts.size(); ++i) {
       if (_loc_counts[i]) item.unchange_mask.reset(i);
     }
     
@@ -313,7 +315,7 @@ namespace indigox::algorithm {
       return calculable;
     }
     
-    size_ pos = q.unchange_mask.find_first();
+    size_t pos = q.unchange_mask.find_first();
     while (pos < q.unchange_mask.size()) {
       if (!calculable.test(pos)) {
         if ((q.unchange_mask & _req_unchange[pos]) == _req_unchange[pos])
@@ -331,7 +333,7 @@ namespace indigox::algorithm {
       
     SetAssignment(q.assignment);
     score_t tot_score = 0;
-    size_ pos = q.new_calc_mask.find_first();
+    size_t pos = q.new_calc_mask.find_first();
     while (pos < q.new_calc_mask.size()) {
       score_t score = CalculateVertexScore(_unique_locs[pos]);
       if (score == _inf) return _inf;
@@ -355,7 +357,7 @@ namespace indigox::algorithm {
     score_t h = 0;
     LocMask uncalcuable(q.calc_mask);
     uncalcuable.flip();
-    size_ pos = uncalcuable.find_first();
+    size_t pos = uncalcuable.find_first();
     while (pos < uncalcuable.size()) {
       graph::AGVertex v = _unique_locs[pos];
       score_t min_s = _inf;
@@ -397,10 +399,10 @@ namespace indigox::algorithm {
   
   score_t IXAStarOptimisation::Abstemious(const QueueItem &q) const {
     // Note where electrons can be placed
-    size_ extras = _num_e - q.assignment.count();
-    std::vector<uchar_> extra_positions;
+    size_t extras = _num_e - q.assignment.count();
+    std::vector<uint8_t> extra_positions;
     extra_positions.reserve(_unique_locs.size());
-    for (size_ i = 0; i < _unique_locs.size(); ++i) {
+    for (size_t i = 0; i < _unique_locs.size(); ++i) {
       if (q.unchange_mask[i]) extra_positions.emplace_back(0);
       else if (extras <= _loc_counts[i]) extra_positions.emplace_back(extras);
       else extra_positions.emplace_back(_loc_counts[i]);
@@ -411,25 +413,25 @@ namespace indigox::algorithm {
     LocMask uncalcuable(q.calc_mask);
     uncalcuable.flip();
     
-    size_ pos = uncalcuable.find_first();
+    size_t pos = uncalcuable.find_first();
     while (pos < uncalcuable.size()) {
       graph::AGVertex v = _unique_locs[pos];
       score_t min_s = _inf;
       if (v->IsVertexMapped()) {
-        size_ nbr_e = 0;
-        size_ me_e = extra_positions[pos];
+        size_t nbr_e = 0;
+        size_t me_e = extra_positions[pos];
         for (auto n = _g->GetNeighbours(v); n.first != n.second; ++n.first)
           nbr_e += extra_positions[GetLocationPosition(*n.first)];
         if (_opts[__pairs]) me_e += me_e;
         else nbr_e /= 2;
-        size_ step = 1;
+        size_t step = 1;
         if (!(me_e % 2) && ! nbr_e) step = 2;
-        size_ toplace = nbr_e + me_e;
+        size_t toplace = nbr_e + me_e;
         if (extras < toplace) toplace = extras;
         Element e = v->GetSourceVertex()->GetAtom()->GetElement();
-        int_ fc = e->GetValenceElectronCount() - v->GetPreAssignedCount();
+        int fc = e->GetValenceElectronCount() - v->GetPreAssignedCount();
         key_t k1 = e->GetAtomicNumber();
-        for (int i = 0; i <= toplace; i += step) {
+        for (int i = 0; i <= static_cast<int>(toplace); i += step) {
           key_t mask = k1 + (abs(fc + i) << 8);
           if ((fc + i) < 0) mask += (1 << 15);
           if (_table.find(mask) == _table.end()) continue;
@@ -443,10 +445,10 @@ namespace indigox::algorithm {
         graph::AGVertex u2 = *nbrs.first;
         key_t k1 = u1->GetSourceVertex()->GetAtom()->GetElement()->GetAtomicNumber();
         k1 += (u2->GetSourceVertex()->GetAtom()->GetElement()->GetAtomicNumber() << 8);
-        size_ toplace = extra_positions[pos];
+        size_t toplace = extra_positions[pos];
         if (_opts[__pairs]) toplace += toplace;
         
-        for (size_ e = 0; e <= toplace; ++e) {
+        for (size_t e = 0; e <= toplace; ++e) {
           key_t mask = k1 + ((v->GetPreAssignedCount() + e) << 20);
           if (_table.find(mask) == _table.end()) continue;
           score_t s = _table.at(mask);
@@ -460,13 +462,13 @@ namespace indigox::algorithm {
     return h;
   }
   
-  size_ IXAStarOptimisation::GenerateNextAssignments(const QueueItem &q,
+  size_t IXAStarOptimisation::GenerateNextAssignments(const QueueItem &q,
                                                      NbrAssigns &out) const {
     graph::AGVertex nbr_v = _locs[q.nbr_begin_idx];
-    size_ nbr_count = _loc_counts[GetLocationPosition(nbr_v)] + 1;
-    for (size_ i = 0; i < nbr_count; ++i) {
+    size_t nbr_count = _loc_counts[GetLocationPosition(nbr_v)] + 1;
+    for (size_t i = 0; i < nbr_count; ++i) {
       AssignMask nbr(q.assignment);
-      for (size_ j = 0; j < i; ++j) nbr.set(j + q.nbr_begin_idx);
+      for (size_t j = 0; j < i; ++j) nbr.set(j + q.nbr_begin_idx);
       out[i] = nbr;
     }
     return nbr_count;
@@ -488,7 +490,7 @@ namespace indigox::algorithm {
     DetermineLocationCounts();
     DetermineRequiredUnchangeables();
     std::cout << "Required Unchangables: " << std::endl;
-    for (size_ i = 0; i < _unique_locs.size(); ++i) {
+    for (size_t i = 0; i < _unique_locs.size(); ++i) {
       std::cout << __PrintVertexName(_unique_locs[i]) << ": " << _req_unchange[i] << std::endl;
     }
     
@@ -500,12 +502,12 @@ namespace indigox::algorithm {
       t.calc_mask = LocMask(_g->NumVertices());
       t.unchange_mask = LocMask(_g->NumVertices());
       
-      size_ per_item = sizeof(QueueItem);
+      size_t per_item = sizeof(QueueItem);
       per_item += sizeof(AssignMask::block_type) * t.assignment.num_blocks();
       per_item += sizeof(LocMask::block_type) * t.calc_mask.num_blocks();
       per_item += sizeof(LocMask::block_type) * t.unchange_mask.num_blocks();
       
-      size_ count = 1024 * 1024 / per_item;
+      size_t count = 1024 * 1024 / per_item;
       _len_limit = Settings::MEMORY_LIMIT * count;
       _q.reserve(_len_limit);
     }

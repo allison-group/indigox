@@ -1,7 +1,6 @@
 #include <indigox/classes/atom.hpp>
 #include <indigox/graph/assignment.hpp>
 #include <indigox/graph/molecular.hpp>
-#include <indigox/utils/numerics.hpp>
 
 namespace indigox::graph {
   IXAssignmentGraph::IXAssignmentGraph(MolecularGraph g)
@@ -68,7 +67,7 @@ namespace indigox::graph {
     }
   }
   
-  uint_ __VertexPrePlace(size_ degree, const Element& element) {
+  uint32_t __VertexPrePlace(size_t degree, const Element& element) {
     switch (degree) {
       case 1:
         switch (element->GetAtomicNumber()) {
@@ -100,7 +99,7 @@ namespace indigox::graph {
   
   void IXAssignmentGraph::PreassignElectrons() {
     for (AGVertex v : _v) {
-      uint_ preassign = 0;
+      uint32_t preassign = 0;
       if (v->IsEdgeMapped()) {
         preassign = 2; // no preassigning is performed on bonds
       } else {

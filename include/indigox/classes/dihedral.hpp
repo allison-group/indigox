@@ -1,9 +1,10 @@
 /*! \file dihedral.hpp */
 #include <array>
+#include <cstdint>
 #include <memory>
+#include <string>
 
 #include "../utils/counter.hpp"
-#include "../utils/numerics.hpp"
 #include "../utils/quad.hpp"
 
 #ifndef INDIGOX_CLASSES_DIHEDRAL_HPP
@@ -73,7 +74,7 @@ namespace indigox {
      *  \details This value may be modified without warning. Use with caution.
      *  For a constant identifier to the dihedral, use IXDihedral::GetUniqueID().
      *  \return the tag assigned to the dihedral. */
-    inline uid_ GetTag() const { return _tag; }
+    inline uint32_t GetTag() const { return _tag; }
     
     /*! \brief Molecule this dihedral is associated with.
      *  \details The returned shared_ptr is empty if the dihedral is not
@@ -90,7 +91,7 @@ namespace indigox {
     
     /*! \brief Number of atoms this dihedral contains.
      *  \return 4. */
-    size_ NumAtoms() const { return _atms.size(); }
+    size_t NumAtoms() const { return _atms.size(); }
     
     /*! \brief Switch the order of atoms in the dihedral.
      *  \details The two outer atoms of the dihedral are swapped, as are the two
@@ -105,20 +106,20 @@ namespace indigox {
      *  string is Dihedral(MALFORMED), otherwise it is of the form:
      *  Dihedral(NAME_A, NAME_B, NAME_C, NAME_D).
      *  \return a string representation of the dihedral. */
-    string_ ToString() const;
+    std::string ToString() const;
     
     /*! \brief Set the tag of this dihedral.
      *  \details The tag of a dihedral should not be considered stable. Use with
      *  caution.
      *  \param tag the tag to set. */
-    inline void SetTag(uid_ tag) { _tag = tag; }
+    inline void SetTag(uint32_t tag) { _tag = tag; }
     
     /*! \brief Get the index from the molecule.
      *  \details Calculates the index of the dihedral in the container of
      *  dihedrals of the molecule it is a part of. If the molecule is dead, the
      *  index returned is the tag of the dihedral.
      *  \return the index of the dihedral. */
-    size_ GetIndex() const;
+    size_t GetIndex() const;
     
     /*! \brief Get the type of the dihedral.
      *  \return the type of the dihedral. */
@@ -138,7 +139,7 @@ namespace indigox {
     //! The molecule this dihedral is assigned to.
     _Molecule _mol;
     //! Tag (unstable)
-    uid_ _tag;
+    uint32_t _tag;
     //! \brief Atoms which make up the dihedral.
     DihedAtoms _atms;
     //! \brief Type of dihedral

@@ -1,5 +1,6 @@
 /*! \file molecule.hpp */
 #include <bitset>
+#include <cstdint>
 #include <map>
 #include <unordered_map>
 #include <vector>
@@ -11,23 +12,13 @@
 #include "periodictable.hpp"
 #include "../graph/molecular.hpp"
 #include "../utils/counter.hpp"
-#include "../utils/numerics.hpp"
+#include "../utils/fwd_declares.hpp"
 
 #ifndef INDIGOX_MOLECULE_HPP
 #define INDIGOX_MOLECULE_HPP
 
 namespace indigox {
-
-  class IXMolecule;
-  namespace test { struct TestMolecule; }
-
-  //! \brief shared_ptr for normal use of the IXMolecule class.
-  using Molecule = std::shared_ptr<IXMolecule>;
-
-  /*! \brief weak_ptr for non-ownership reference to the IXMolecule class.
-   *  \details Intended for internal use only. */
-  using _Molecule = std::weak_ptr<IXMolecule>;
-  
+ 
   class IXMolecule : public utils::IXCountableObject<IXMolecule>,
   public std::enable_shared_from_this<IXMolecule> {
     //! \brief Friendship allows generation of molecules.
@@ -62,7 +53,7 @@ namespace indigox {
       NUM_EMERGENTS         //!< Number of emergent properties.
     };
     
-  private:
+  public:
     /*! \brief Container for storing IXAtom instances.
      *  \details A molecule takes ownership of all atoms it contains. */
     using MolAtoms = std::vector<Atom>;
@@ -76,7 +67,7 @@ namespace indigox {
      *  \details A molecule takes ownership of all dihedrals it contains. */
     using MolDihedrals = std::vector<Dihedral>;
     //! \brief Bitset for emergent property states.
-    using EmergeSet = std::bitset<static_cast<size_>(Emergent::NUM_EMERGENTS)>;
+    using EmergeSet = std::bitset<static_cast<size_t>(Emergent::NUM_EMERGENTS)>;
     
   public:   // Public iterator aliases for easier external usage
     //! \brief Iterator over owned IXAtom instances.
@@ -114,7 +105,7 @@ namespace indigox {
      *  retrieving the angle.
      *  \param pos the position of the angle to get.
      *  \return the angle at pos or an empty shared_ptr. */
-    inline Angle GetAngle(size_ pos) const {
+    inline Angle GetAngle(size_t pos) const {
       return (pos < _angs.size()) ? _angs[pos] : Angle();
     }
     
@@ -125,7 +116,7 @@ namespace indigox {
      *  re-perceived prior to retrieving the dihedral.
      *  \param pos the position of the dihedral to get.
      *  \return the dihedral at pos or an empty shared_ptr. */
-    inline Dihedral GetDihedral(size_ pos) const {
+    inline Dihedral GetDihedral(size_t pos) const {
       return (pos < _dhds.size()) ? _dhds[pos] : Dihedral();
     }
     
@@ -153,7 +144,7 @@ namespace indigox {
      *  creation of angles, angles are not re-percieved prior to searching.
      *  \param tag the angle tag to search for.
      *  \return the first angle with the tag or an empty shared_ptr. */
-    Angle GetAngleTag(uid_ tag) const;
+    Angle GetAngleTag(uint32_t tag) const;
     
     /*! \brief Get the first dihedral with the given tag.
      *  \details Returns the first dihedral with a tag matching that given. If
@@ -162,7 +153,7 @@ namespace indigox {
      *  searching.
      *  \param tag the dihedral tag to search for.
      *  \return the first dihedral with the tag or an empty shraed_ptr. */
-    Dihedral GetDihedralTag(uid_ tag) const;
+    Dihedral GetDihedralTag(uint32_t tag) const;
     
     /*! \brief Get the angle with the given id.
      *  \details Returns the angle with the given unique id. If no such angle is
@@ -170,7 +161,7 @@ namespace indigox {
      *  will be unknown, angles are not re-percieved prior to searching.
      *  \param id the unique id of the angle to retrieve.
      *  \return the angle with the given id or an empty shared_ptr. */
-    Angle GetAngleID(uid_ id) const;
+    Angle GetAngleID(uint32_t id) const;
     
     /*! \brief Get the dihedral with the given id.
      *  \details Returns the dihedral with the given unique id. If no such
@@ -179,7 +170,7 @@ namespace indigox {
      *  to searching.
      *  \param id the unique id of the dihedral to retrieve.
      *  \return the dihedral with the given id or an empty shared_ptr. */
-    Dihedral GetDihedralID(uid_ id) const;
+    Dihedral GetDihedralID(uint32_t id) const;
     
     /*! \brief Get the atom at position \p pos.
      *  \details Returns that atom at \p pos after a range check. If \p pos is
@@ -187,7 +178,7 @@ namespace indigox {
      *  change during normal operations.
      *  \param pos the position of the atom to get.
      *  \return the atom at pos or an empty shared_ptr. */
-    inline Atom GetAtom(size_ pos) const {
+    inline Atom GetAtom(size_t pos) const {
       return (pos < _atms.size()) ? _atms[pos] : Atom();
     }
     
@@ -196,14 +187,14 @@ namespace indigox {
      *  such atom is found, returns an empty shared_ptr.
      *  \param tag the atom tag to search for.
      *  \return the first atom with the tag or an empty shared_ptr. */
-    Atom GetAtomTag(uid_ tag) const;
+    Atom GetAtomTag(uint32_t tag) const;
     
     /*! \brief Get the atom with the given id.
      *  \details Returns the atom with the given unique id. If no such atom is
      *  found returns an empty shared_ptr.
      *  \param id the unique id of the atom to retrieve.
      *  \return the atom with the given id or an empty shared_ptr. */
-    Atom GetAtomID(uid_ id) const;
+    Atom GetAtomID(uint32_t id) const;
     
     /*! \brief Get the bond at position \p pos.
      *  \details Returns that bond at \p pos after a range check. If \p pos is
@@ -211,7 +202,7 @@ namespace indigox {
      *  change during normal operations.
      *  \param pos the position of the bond to get.
      *  \return the bond at pos or an empty shared_ptr. */
-    inline Bond GetBond(size_ pos) const {
+    inline Bond GetBond(size_t pos) const {
       return (pos < _bnds.size()) ? _bnds[pos] : Bond();
     }
     
@@ -227,14 +218,14 @@ namespace indigox {
      *  such bond is found, returns an empty shared_ptr.
      *  \param tag the bond tag to search for.
      *  \return the first bond with the tag or an empty shared_ptr. */
-    Bond GetBondTag(uid_ tag) const;
+    Bond GetBondTag(uint32_t tag) const;
     
     /*! \brief Get the bond with the given id.
      *  \details Returns the bond with the given unique id. If no such bond is
      *  found returns an empty shared_ptr.
      *  \param id the unique id of the bond to retrieve.
      *  \return the bond with the given id or an empty shared_ptr. */
-    Bond GetBondID(uid_ id) const;
+    Bond GetBondID(uint32_t id) const;
     
     /*! \brief Get the molecular formula of the molecule.
      *  \details Determines the molecular formula of the molecule. The elements
@@ -243,7 +234,7 @@ namespace indigox {
      *  recalculated only when the IXMolecule::ATOM_ELEMENTS property has been
      *  modified.
      *  \return the molecular formula of the molecule. */
-    string_ GetFormula();
+    std::string GetFormula();
     
     /*! \brief Get the molecular graph for this molecule.
      *  \return the molecular graph of this molecule. */
@@ -251,40 +242,40 @@ namespace indigox {
     
     /*! \brief Get the name of the molecule.
      *  \return the name of the molecule. */
-    inline string_ GetName() const { return _name; }
+    inline std::string GetName() const { return _name; }
     
     /*! \brief Get the molecular charge of the molecule.
      *  \return the molecular charge of the molecule. */
-    inline int_ GetMolecularCharge() const { return _q; }
+    inline int GetMolecularCharge() const { return _q; }
     
     /*! \brief Get the number of atoms in the molecule.
      *  \return the number of atoms in the molecule. */
-    inline size_ NumAtoms() const { return _atms.size(); }
+    inline size_t NumAtoms() const { return _atms.size(); }
     
     /*! \brief Get the number of bonds in the molecule.
      *  \return the number of bonds in the molecule. */
-    inline size_ NumBonds() const { return _bnds.size(); }
+    inline size_t NumBonds() const { return _bnds.size(); }
     
     /*! \brief Get the number of angles in the molecule.
      *  \details If the Emergent::ANGLE_PERCEPTION property is set, angles are
      *  re-calculated prior to determining how many there are in the molecule.
      *  \return the number of angles in the molecule. */
-    inline size_ NumAngles() { PerceiveAngles(); return _angs.size(); }
+    inline size_t NumAngles() { PerceiveAngles(); return _angs.size(); }
     
     /*! \brief Get the number of dihedrals in the molecule.
      *  \details If the CONNECTIVITY property has been modified, dihedrals are
      *  re-calculated prior to determining how many there are in the molecule.
      *  \return the number of dihedrals in the molecule. */
-    inline size_ NumDihedrals() { PerceiveDihedrals(); return _dhds.size(); }
+    inline size_t NumDihedrals() { PerceiveDihedrals(); return _dhds.size(); }
     
     /*! \brief Set the name of the molecule.
      *  \param name the new to set. */
-    inline void SetName(string_ name) { _name = name; }
+    inline void SetName(std::string name) { _name = name; }
     
     /*! \brief Set the molecular charge of the molecule.
      *  \details Sets the IXMolecule::ELECTRON_COUNT property as modified.
      *  \param q the new charge to set. */
-    inline void SetMolecularCharge(int_ q) {
+    inline void SetMolecularCharge(int q) {
       if (q != _q) SetPropertyModified(Property::ELECTRON_COUNT);
       _q = q;
     }
@@ -350,13 +341,13 @@ namespace indigox {
     /*! \brief Create a new named atom owned by the molecule.
      *  \param name the name of the new atom.
      *  \return the new atom. */
-    Atom NewAtom(string_ name);
+    Atom NewAtom(std::string name);
     
     /*! \brief Create a new named atom of the given element for the molecule.
      *  \param name the name of the new atom.
      *  \param element the element of the new atom.
      *  \return the new atom. */
-    Atom NewAtom(string_ name, Element element);
+    Atom NewAtom(std::string name, Element element);
 //    Atom NewAtom(string_ name, Element element, Vec3 position);
     
     /*! \brief Create a bond between two atoms.
@@ -414,7 +405,7 @@ namespace indigox {
      *  angles which have not been previously generated. Additionally, angles
      *  can only be removed by removing an atom or a bond.
      *  \return the number of angles added. */
-    size_ PerceiveAngles();
+    size_t PerceiveAngles();
     
     /*! \brief Determine dihedrals in the molecule.
      *  \details A dihedral is defined for each group of four connected atoms
@@ -422,7 +413,7 @@ namespace indigox {
      *  dihedrals which have not been previously generated. Additionally,
      *  dihedrals can only be removed by removing an atom or bond.
      *  \return the number of dihedrals added. */
-    size_ PerceiveDihedrals();
+    size_t PerceiveDihedrals();
 //    size_t AssignElectrons();
 //    bool ApplyElectronAssignment(size_t);
 //    FCSCORE GetMinimumElectronAssignmentScore();
@@ -432,7 +423,7 @@ namespace indigox {
      *  instances. This is more efficient when building large molecules as the
      *  vector will not need to grow as more atoms are added.
      *  \param num the number of IXAtoms to reserve space for. */
-    inline void ReserveAtoms(size_ num) {
+    inline void ReserveAtoms(size_t num) {
       if (_atms.size() < num) _atms.reserve(num);
     }
     
@@ -441,7 +432,7 @@ namespace indigox {
      *  instances. This is more efficient when building large molecules as the
      *  vector will not need to grow as more bonds are added.
      *  \param num the number of IXBonds to reserve space for. */
-    inline void ReserveBonds(size_ num) {
+    inline void ReserveBonds(size_t num) {
       if (_bnds.size() < num ) _bnds.reserve(num);
     }
     
@@ -455,39 +446,47 @@ namespace indigox {
     /*! \brief Get iterator access to the owned atoms.
      *  \return a pair of iterators indicating the begining and end of the
      *  owned atoms. */
-    inline std::pair<MolAtomIter, MolAtomIter> GetAtoms() const {
+    inline std::pair<MolAtomIter, MolAtomIter> GetAtomIters() const {
       return std::make_pair(_atms.begin(), _atms.end());
     }
+    
+    inline const MolAtoms& GetAtoms() const { return _atms; }
     
     /*! \brief Get iterator access to the owned bonds.
      *  \return a pair of iterators indication the beginning and end of the
      *  owned bonds. */
-    inline std::pair<MolBondIter, MolBondIter> GetBonds() const {
+    inline std::pair<MolBondIter, MolBondIter> GetBondIters() const {
       return std::make_pair(_bnds.begin(), _bnds.end());
     }
+    
+    inline const MolBonds& GetBonds() const { return _bnds; }
     
     /*! \brief Get iterator access to the owned angles.
      *  \details Angles are re-percieved prior to returning the iterators.
      *  \return a pair of iterators for the beginning and end of the angles. */
-    inline std::pair<MolAngleIter, MolAngleIter> GetAngles() {
+    inline std::pair<MolAngleIter, MolAngleIter> GetAngleIters() {
       PerceiveAngles();
       return std::make_pair(_angs.begin(), _angs.end());
     }
+    
+    inline const MolAngles& GetAngles() const { return _angs; }
     
     /*! \brief Get iterator access to the owned dihedrals.
      *  \details Dihedrals are re-perceived prior to returning the iterators.
      *  \return a pair of iterators indication the beginning and end of the
      *  owned dihedrals. */
-    inline std::pair<MolDihedralIter, MolDihedralIter> GetDihedrals() {
+    inline std::pair<MolDihedralIter, MolDihedralIter> GetDihedralIters() {
       PerceiveDihedrals();
       return std::make_pair(_dhds.begin(), _dhds.end());
     }
     
+    inline const MolDihedrals& GetDihedrals() const { return _dhds; }
+    
   private:
     //! Name of the molecule
-    string_ _name;
+    std::string _name;
     //! Molecular charge of the molecule
-    int_ _q;
+    int _q;
     //! Atoms owned by molecule
     MolAtoms _atms;
     //! Bonds owned by molecule
@@ -501,7 +500,7 @@ namespace indigox {
     //! Molecular graph of molecule
     graph::MolecularGraph _g;
     //! Cached molecular formula string
-    string_ _formula_cache;
+    std::string _formula_cache;
   };
   
   /*! \brief Creates a new molecule.

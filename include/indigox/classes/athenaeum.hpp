@@ -115,11 +115,11 @@ namespace indigox {
   public:
     struct Settings {
       // Maximum vertex count for automatic fragment generation
-      static uint_ AutomaticVertexLimit;
+      static uint32_t AutomaticVertexLimit;
       // Fully fragment cycles
       static bool AutomaticFragmentCycles;
       // Maximum cycle size to be regarded as a cycle
-      static uint_ AutomaticMaximumCycleSize;
+      static uint32_t AutomaticMaximumCycleSize;
       
     };
     
@@ -129,17 +129,17 @@ namespace indigox {
     
     IXAthenaeum() = delete;
     IXAthenaeum(Forcefield ff);
-    IXAthenaeum(Forcefield ff, uint_ overlap, uint_ ring_overlap);
+    IXAthenaeum(Forcefield ff, uint32_t overlap, uint32_t ring_overlap);
     
     /*! \brief Determines all the fragments of a molecule and adds them.
      *  \returns the number of fragments added. */
-    size_ AddAllFragments(const Molecule& mol);
+    size_t AddAllFragments(const Molecule& mol);
     /*! \brief Adds the given fragment.
      *  \returns if the fragment was added or not. */
     bool AddFragment(const Molecule& mol, Fragment frag);
     
-    size_ NumFragments() const;
-    size_ NumFragments(const Molecule& mol) const;
+    size_t NumFragments() const;
+    size_t NumFragments(const Molecule& mol) const;
     
     const MolFrags& GetFragments(const Molecule& mol) const;
     const FragStore& GetFragments() const { return _frags; }
@@ -158,9 +158,9 @@ namespace indigox {
     //! \brief Forcefield used
     Forcefield _ff;
     //! \brief Overlap length
-    uint_ _overlap;
+    uint32_t _overlap;
     //! \brief Ring overlap length
-    uint_ _roverlap;
+    uint32_t _roverlap;
     //! \brief Manual
     bool _man;
     //! \brief Condensed graphs

@@ -13,7 +13,6 @@
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/utils/counter.hpp>
-#include <indigox/utils/numerics.hpp>
 #include <indigox/utils/quad.hpp>
 #include <indigox/utils/serialise.hpp>
 #include <indigox/utils/triple.hpp>
@@ -133,16 +132,16 @@ namespace indigox {
     EmergeSet mask(0);
     switch (prop) {
       case Property::ATOM_ELEMENTS:
-        mask.set(static_cast<size_>(Emergent::MOLECULAR_FORMULA));
-        mask.set(static_cast<size_>(Emergent::TOPOLOGICAL_BOFC));
+        mask.set(static_cast<size_t>(Emergent::MOLECULAR_FORMULA));
+        mask.set(static_cast<size_t>(Emergent::TOPOLOGICAL_BOFC));
         break;
       case Property::CONNECTIVITY:
-        mask.set(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
-        mask.set(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
-        mask.set(static_cast<size_>(Emergent::TOPOLOGICAL_BOFC));
+        mask.set(static_cast<size_t>(Emergent::ANGLE_PERCEPTION));
+        mask.set(static_cast<size_t>(Emergent::DIHEDRAL_PERCEPTION));
+        mask.set(static_cast<size_t>(Emergent::TOPOLOGICAL_BOFC));
         break;
       case Property::ELECTRON_COUNT:
-        mask.set(static_cast<size_>(Emergent::TOPOLOGICAL_BOFC));
+        mask.set(static_cast<size_t>(Emergent::TOPOLOGICAL_BOFC));
         break;
       case Property::NUM_PROPERTIES:
       default:
@@ -153,10 +152,10 @@ namespace indigox {
   
   test_case_fixture(test::MoleculeTestFixture, "IXMolecule modify properties") {
     BuildRandomMolecule();
-    size_ mol_form = static_cast<size_>(EmergeProp::MOLECULAR_FORMULA);
-    size_ top_bofc = static_cast<size_>(EmergeProp::TOPOLOGICAL_BOFC);
-    size_ ang_perc = static_cast<size_>(EmergeProp::ANGLE_PERCEPTION);
-    size_ dhd_perc = static_cast<size_>(EmergeProp::DIHEDRAL_PERCEPTION);
+    size_t mol_form = static_cast<size_t>(EmergeProp::MOLECULAR_FORMULA);
+    size_t top_bofc = static_cast<size_t>(EmergeProp::TOPOLOGICAL_BOFC);
+    size_t ang_perc = static_cast<size_t>(EmergeProp::ANGLE_PERCEPTION);
+    size_t dhd_perc = static_cast<size_t>(EmergeProp::DIHEDRAL_PERCEPTION);
     randmol.get_emerge().reset();
     
     subcase("property modifying") {
@@ -366,7 +365,7 @@ namespace indigox {
     subcase("finding bonds") {
       std::shuffle(randmol.get_bnds().begin(), randmol.get_bnds().end(),
                    generator);  // mix up the bonds order
-      for (size_ i = 0; i < b_randmol.size(); ++i) {
+      for (size_t i = 0; i < b_randmol.size(); ++i) {
         Atom a = a_randmol[e_randmol[i].first];
         Atom b = a_randmol[e_randmol[i].second];
         check_eq(b_randmol[i], randmol.FindBond(a, b));
@@ -384,7 +383,7 @@ namespace indigox {
       std::set<Angle> got_angles;
       std::shuffle(benzene.get_angs().begin(), benzene.get_angs().end(),
                    generator);
-      for (size_ i = 0; i < g_benzene.size(); ++i) {
+      for (size_t i = 0; i < g_benzene.size(); ++i) {
         Atom a = a_benzene[g_benzene[i].first];
         Atom b = a_benzene[g_benzene[i].second];
         Atom c = a_benzene[g_benzene[i].third];
@@ -410,7 +409,7 @@ namespace indigox {
       std::set<Dihedral> got_dihedrals;
       std::shuffle(benzene.get_dhds().begin(), benzene.get_dhds().end(),
                    generator);
-      for (size_ i = 0; i < d_benzene.size(); ++i) {
+      for (size_t i = 0; i < d_benzene.size(); ++i) {
         Atom a = a_benzene[d_benzene[i].first];
         Atom b = a_benzene[d_benzene[i].second];
         Atom c = a_benzene[d_benzene[i].third];
@@ -472,8 +471,8 @@ namespace indigox {
         check(randmol.HasBond(bnd));
       }
       
-      size_ i, j;
-      for (std::pair<size_,size_> bnd : e_randmol) {
+      size_t i, j;
+      for (std::pair<size_t,size_t> bnd : e_randmol) {
         std::tie(i, j) = bnd;
         check(randmol.HasBond(a_randmol[i], a_randmol[j]));
         check_false(benzene.HasBond(a_randmol[i], a_randmol[j]));
@@ -540,13 +539,13 @@ namespace indigox {
 // == GETTING AND SETTING =====================================================
 // ============================================================================
   
-  Atom IXMolecule::GetAtomTag(uid_ tag) const {
+  Atom IXMolecule::GetAtomTag(uint32_t tag) const {
     auto pred = [tag](Atom a) { return a->GetTag() == tag; };
     auto pos = std::find_if(_atms.begin(), _atms.end(), pred);
     return (pos == _atms.end()) ? Atom() : *pos;
   }
   
-  Atom IXMolecule::GetAtomID(uid_ id) const {
+  Atom IXMolecule::GetAtomID(uint32_t id) const {
     auto pred = [id](Atom a) { return a->GetUniqueID() == id; };
     auto pos = std::find_if(_atms.begin(), _atms.end(), pred);
     return (pos == _atms.end()) ? Atom() : *pos;
@@ -556,13 +555,13 @@ namespace indigox {
     return _FindBond(a, b);
   }
   
-  Bond IXMolecule::GetBondTag(uid_ tag) const {
+  Bond IXMolecule::GetBondTag(uint32_t tag) const {
     auto pred = [tag](Bond b) { return b->GetTag() == tag; };
     auto pos = std::find_if(_bnds.begin(), _bnds.end(), pred);
     return (pos == _bnds.end()) ? Bond() : *pos;
   }
   
-  Bond IXMolecule::GetBondID(uid_ id) const {
+  Bond IXMolecule::GetBondID(uint32_t id) const {
     auto pred = [id](Bond b) { return b->GetUniqueID() == id; };
     auto pos = std::find_if(_bnds.begin(), _bnds.end(), pred);
     return (pos == _bnds.end()) ? Bond() : *pos;
@@ -573,7 +572,7 @@ namespace indigox {
     return _FindAngle(a, b, c);
   }
   
-  Angle IXMolecule::GetAngleTag(uid_ tag) const {
+  Angle IXMolecule::GetAngleTag(uint32_t tag) const {
     auto pred = [tag](Angle ang) { return ang->GetTag() == tag; };
     auto pos = std::find_if(_angs.begin(), _angs.end(), pred);
     return (pos == _angs.end()) ? Angle() : *pos;
@@ -585,19 +584,19 @@ namespace indigox {
     return _FindDihedral(a, b, c, d);
   }
   
-  Dihedral IXMolecule::GetDihedralTag(uid_ tag) const {
+  Dihedral IXMolecule::GetDihedralTag(uint32_t tag) const {
     auto pred = [tag](Dihedral dhd) { return dhd->GetTag() == tag; };
     auto pos = std::find_if(_dhds.begin(), _dhds.end(), pred);
     return (pos == _dhds.end()) ? Dihedral() : *pos;
   }
   
-  Angle IXMolecule::GetAngleID(uid_ id) const {
+  Angle IXMolecule::GetAngleID(uint32_t id) const {
     auto pred = [id](Angle ang) { return ang->GetUniqueID() == id; };
     auto pos = std::find_if(_angs.begin(), _angs.end(), pred);
     return (pos == _angs.end()) ? Angle() : *pos;
   }
   
-  Dihedral IXMolecule::GetDihedralID(uid_ id) const {
+  Dihedral IXMolecule::GetDihedralID(uint32_t id) const {
     auto pred = [id](Dihedral dhd) { return dhd->GetUniqueID() == id; };
     auto pos = std::find_if(_dhds.begin(), _dhds.end(), pred);
     return (pos == _dhds.end()) ? Dihedral() : *pos;
@@ -633,7 +632,7 @@ namespace indigox {
     
     // -- ATOMS --
     // Getting atom by position
-    for (size_ i = 0; i < a_benzene.size(); ++i)
+    for (size_t i = 0; i < a_benzene.size(); ++i)
       check_eq(a_benzene[i], benzene.GetAtom(i));
     // Over position should return null atom
     check_eq(Atom(), benzene.GetAtom(a_benzene.size()));
@@ -644,8 +643,8 @@ namespace indigox {
       check_eq(atm, benzene.GetAtomTag(atm->GetTag()));
     }
     // Bad ID/tag should return null
-    check_eq(Atom(), benzene.GetAtomID(std::numeric_limits<uid_>::max()));
-    check_eq(Atom(), benzene.GetAtomTag(std::numeric_limits<uid_>::max()));
+    check_eq(Atom(), benzene.GetAtomID(std::numeric_limits<uint32_t>::max()));
+    check_eq(Atom(), benzene.GetAtomTag(std::numeric_limits<uint32_t>::max()));
     // Should return first atom with given tag
     a_benzene.front()->SetTag(a_benzene.back()->GetTag());
     check_eq(a_benzene.front(), benzene.GetAtomTag(a_benzene.back()->GetTag()));
@@ -657,7 +656,7 @@ namespace indigox {
     
     // -- BONDS --
     // Getting bond by position/ atom pairs
-    for (size_ i = 0; i < b_benzene.size(); ++i) {
+    for (size_t i = 0; i < b_benzene.size(); ++i) {
       check_eq(b_benzene[i], benzene.GetBond(i));
       auto pos = e_benzene[i];
       check_eq(b_benzene[i], benzene.GetBond(a_benzene[pos.first],
@@ -672,8 +671,8 @@ namespace indigox {
       check_eq(bnd, benzene.GetBondTag(bnd->GetTag()));
     }
     // Bad ID/Tag should return null
-    check_eq(Bond(), benzene.GetBondID(std::numeric_limits<uid_>::max()));
-    check_eq(Bond(), benzene.GetBondTag(std::numeric_limits<uid_>::max()));
+    check_eq(Bond(), benzene.GetBondID(std::numeric_limits<uint32_t>::max()));
+    check_eq(Bond(), benzene.GetBondTag(std::numeric_limits<uint32_t>::max()));
     // Should return first bond with given tag
     b_benzene.front()->SetTag(b_benzene.back()->GetTag());
     check_eq(b_benzene.front(), benzene.GetBondTag(b_benzene.back()->GetTag()));
@@ -687,7 +686,7 @@ namespace indigox {
     // Getting angle by position/atom triple
     std::vector<Angle> p_angles(benzene.get_angs().begin(),
                                 benzene.get_angs().end());
-    for (size_ i = 0; i < g_benzene.size(); ++i) {
+    for (size_t i = 0; i < g_benzene.size(); ++i) {
       check_eq(p_angles[i], benzene.GetAngle(i));
       auto pos = g_benzene[i];
       check_eq(p_angles[i], benzene.GetAngle(a_benzene[pos.third],
@@ -698,15 +697,15 @@ namespace indigox {
     check_eq(Angle(), benzene.GetAngle(g_benzene.size()));
     
     // Getting angle by ID/tag
-    size_ new_tag = p_angles.size() + 3;
+    size_t new_tag = p_angles.size() + 3;
     for (Angle ang : p_angles) {
       ang->SetTag(++new_tag);
       check_eq(ang, benzene.GetAngleID(ang->GetUniqueID()));
       check_eq(ang, benzene.GetAngleTag(ang->GetTag()));
     }
     // Bad ID/tag should return null
-    check_eq(Angle(), benzene.GetAngleID(std::numeric_limits<uid_>::max()));
-    check_eq(Angle(), benzene.GetAngleTag(std::numeric_limits<uid_>::max()));
+    check_eq(Angle(), benzene.GetAngleID(std::numeric_limits<uint32_t>::max()));
+    check_eq(Angle(), benzene.GetAngleTag(std::numeric_limits<uint32_t>::max()));
     // Should return first angle with given tag
     p_angles.front()->SetTag(p_angles.back()->GetTag());
     check_eq(p_angles.front(), benzene.GetAngleTag(p_angles.back()->GetTag()));
@@ -720,7 +719,7 @@ namespace indigox {
     // Getting dihedral by position/atom quad
     std::vector<Dihedral> p_dihedrals(benzene.get_dhds().begin(),
                                       benzene.get_dhds().end());
-    for (size_ i = 0; i < d_benzene.size(); ++i) {
+    for (size_t i = 0; i < d_benzene.size(); ++i) {
       check_eq(p_dihedrals[i], benzene.GetDihedral(i));
       auto pos = d_benzene[i];
       check_eq(p_dihedrals[i], benzene.GetDihedral(a_benzene[pos.fourth],
@@ -738,8 +737,8 @@ namespace indigox {
       check_eq(dhd, benzene.GetDihedralTag(dhd->GetTag()));
     }
     // Bad ID/tag should return null
-    check_eq(Dihedral(), benzene.GetDihedralID(std::numeric_limits<uid_>::max()));
-    check_eq(Dihedral(), benzene.GetDihedralTag(std::numeric_limits<uid_>::max()));
+    check_eq(Dihedral(), benzene.GetDihedralID(std::numeric_limits<uint32_t>::max()));
+    check_eq(Dihedral(), benzene.GetDihedralTag(std::numeric_limits<uint32_t>::max()));
     // SHould return first dihedral with given tag
     p_dihedrals.front()->SetTag(new_tag);
     check_eq(p_dihedrals.front(), benzene.GetDihedralTag(new_tag));
@@ -756,8 +755,8 @@ namespace indigox {
     check_eq(24, benzene.NumDihedrals());
   }
   
-  string_ IXMolecule::GetFormula() {
-    if (_emerge[static_cast<size_>(Emergent::MOLECULAR_FORMULA)]) {
+  std::string IXMolecule::GetFormula() {
+    if (_emerge[static_cast<size_t>(Emergent::MOLECULAR_FORMULA)]) {
       std::map<std::string, size_t> e_count;
       for (Atom atm : _atms) e_count[atm->GetElement()->GetSymbol()]++;
       std::stringstream ss;
@@ -772,14 +771,14 @@ namespace indigox {
         }
       }
       _formula_cache = ss.str();
-      _emerge.reset(static_cast<size_>(Emergent::MOLECULAR_FORMULA));
+      _emerge.reset(static_cast<size_t>(Emergent::MOLECULAR_FORMULA));
     }
     return _formula_cache;
   }
   
   test_case_fixture(test::MoleculeTestFixture, "IXMolecule getting formula") {
     BuildBenzene();
-    size_ e_pos = static_cast<size_>(EmergeProp::MOLECULAR_FORMULA);
+    size_t e_pos = static_cast<size_t>(EmergeProp::MOLECULAR_FORMULA);
     
     // Check correct calculation and setting of emergent property state
     check(benzene.get_emerge()[e_pos]);
@@ -801,27 +800,27 @@ namespace indigox {
   test_case_fixture(test::MoleculeTestFixture, "IXMolecule get part index") {
     BuildRandomMolecule();
     std::shuffle(randmol.get_atms().begin(), randmol.get_atms().end(), generator);
-    for (size_ i = 0; i < a_randmol.size(); ++i) {
-      size_ pos = randmol.get_atms()[i]->GetIndex();
+    for (size_t i = 0; i < a_randmol.size(); ++i) {
+      size_t pos = randmol.get_atms()[i]->GetIndex();
       check_ne(pos, randmol.get_atms()[i]->GetTag());
       check_eq(i, pos);
     }
     
     std::shuffle(randmol.get_bnds().begin(), randmol.get_bnds().end(), generator);
-    for (size_ i = 0; i < b_randmol.size(); ++i) {
-      size_ pos = randmol.get_bnds()[i]->GetIndex();
+    for (size_t i = 0; i < b_randmol.size(); ++i) {
+      size_t pos = randmol.get_bnds()[i]->GetIndex();
       check_ne(pos, randmol.get_bnds()[i]->GetTag());
       check_eq(i, pos);
     }
     
     randmol.PerceiveAngles();
     std::shuffle(randmol.get_angs().begin(), randmol.get_angs().end(), generator);
-    for (size_ i = 0; i < randmol.NumAngles(); ++i)
+    for (size_t i = 0; i < randmol.NumAngles(); ++i)
       check_eq(i, randmol.get_angs()[i]->GetIndex());
     
     randmol.PerceiveDihedrals();
     std::shuffle(randmol.get_dhds().begin(), randmol.get_dhds().end(), generator);
-    for (size_ i = 0; i < randmol.NumDihedrals(); ++i)
+    for (size_t i = 0; i < randmol.NumDihedrals(); ++i)
       check_eq(i, randmol.get_dhds()[i]->GetIndex());
   }
   
@@ -829,17 +828,17 @@ namespace indigox {
 // == PERCEPTION ==============================================================
 // ============================================================================
   
-  size_ IXMolecule::PerceiveAngles() {
+  size_t IXMolecule::PerceiveAngles() {
     using namespace indigox::graph;
-    if (!_emerge[static_cast<size_>(Emergent::ANGLE_PERCEPTION)]) return 0;
+    if (!_emerge[static_cast<size_t>(Emergent::ANGLE_PERCEPTION)]) return 0;
     
     // Expected number of angles
-    auto sum = [&](size_ current, Atom v) -> size_ {
-      size_ degree = v->NumBonds();
+    auto sum = [&](size_t current, Atom v) -> size_t {
+      size_t degree = v->NumBonds();
       if (degree < 2) return current;
       return current + degree * (degree - 1) / 2;
     };
-    size_ count = std::accumulate(_atms.begin(), _atms.end(), 0, sum);
+    size_t count = std::accumulate(_atms.begin(), _atms.end(), 0, sum);
     _angs.reserve(count);
     count = 0;
     
@@ -848,9 +847,9 @@ namespace indigox {
       if ((*b)->NumBonds() < 2) continue;
       auto nbrs_it = _g->GetNeighbours(_g->GetVertex(*b));
       std::vector<MGVertex> nbrs(nbrs_it.first, nbrs_it.second);
-      for (size_ i = 0; i < nbrs.size() - 1; ++i) {
+      for (size_t i = 0; i < nbrs.size() - 1; ++i) {
         Atom a = nbrs[i]->GetAtom();
-        for (size_ j = i + 1; j < nbrs.size(); ++j) {
+        for (size_t j = i + 1; j < nbrs.size(); ++j) {
           Atom c = nbrs[j]->GetAtom();
           if (_FindAngle(a, *b, c)) continue;
           NewAngle(a, *b, c);
@@ -858,23 +857,23 @@ namespace indigox {
         }
       }
     }
-    _emerge.reset(static_cast<size_>(Emergent::ANGLE_PERCEPTION));
+    _emerge.reset(static_cast<size_t>(Emergent::ANGLE_PERCEPTION));
     return count;
   }
   
-  size_ IXMolecule::PerceiveDihedrals() {
+  size_t IXMolecule::PerceiveDihedrals() {
     using namespace indigox::graph;
-    if (!_emerge[static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION)]) return 0;
+    if (!_emerge[static_cast<size_t>(Emergent::DIHEDRAL_PERCEPTION)]) return 0;
     
     // Expected number of dihedrals
-    auto sum = [&](size_ current, Bond b) -> size_ {
-      size_ b_degree = b->GetSourceAtom()->NumBonds();
+    auto sum = [&](size_t current, Bond b) -> size_t {
+      size_t b_degree = b->GetSourceAtom()->NumBonds();
       if (b_degree < 2) return current;
-      size_ c_degree = b->GetTargetAtom()->NumBonds();
+      size_t c_degree = b->GetTargetAtom()->NumBonds();
       if (c_degree < 2) return current;
       return current + (b_degree - 1) * (c_degree - 1);
     };
-    size_ count = std::accumulate(_bnds.begin(), _bnds.end(), 0, sum);
+    size_t count = std::accumulate(_bnds.begin(), _bnds.end(), 0, sum);
     _dhds.reserve(count);
     count = 0;
     
@@ -887,10 +886,10 @@ namespace indigox {
       std::vector<MGVertex> As(nbrs_it.first, nbrs_it.second);
       nbrs_it = _g->GetNeighbours(_g->GetVertex(C));
       std::vector<MGVertex> Ds(nbrs_it.first, nbrs_it.second);
-      for (size_ i = 0; i < As.size(); ++i) {
+      for (size_t i = 0; i < As.size(); ++i) {
         Atom A = As[i]->GetAtom();
         if (A == C) continue;
-        for (size_ j = 0; j < Ds.size(); ++j) {
+        for (size_t j = 0; j < Ds.size(); ++j) {
           Atom D = Ds[j]->GetAtom();
           if (D == B) continue;
           if (_FindDihedral(A, B, C, D)) continue;
@@ -899,7 +898,7 @@ namespace indigox {
         }
       }
     }
-    _emerge.reset(static_cast<size_>(Emergent::DIHEDRAL_PERCEPTION));
+    _emerge.reset(static_cast<size_t>(Emergent::DIHEDRAL_PERCEPTION));
     return count;
   }
   
@@ -986,13 +985,13 @@ namespace indigox {
     return atom;
   }
   
-  Atom IXMolecule::NewAtom(string_ name) {
+  Atom IXMolecule::NewAtom(std::string name) {
     Atom atom = NewAtom();
     atom->SetName(name);
     return atom;
   }
   
-  Atom IXMolecule::NewAtom(string_ name, Element element) {
+  Atom IXMolecule::NewAtom(std::string name, Element element) {
     Atom atom = NewAtom();
     atom->SetName(name);
     atom->SetElement(element);

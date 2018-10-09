@@ -10,27 +10,24 @@
 #include <cmath>
 
 namespace indigox {
-  using char_ = int8_t;
-  using uchar_ = uint8_t;
-  using short_ = int16_t;
-  using ushort_ = uint16_t;
-  using int_ = int32_t;
-  using uint_ = uint32_t;
-  using long_ = int64_t;
-  using ulong_ = uint64_t;
-  using float_ = double;
-  using size_ = size_t;
-  using uid_ = uint64_t;
-  
-  using string_ = std::string;
+//  using char_ = int8_t;
+//  using uchar_ = uint8_t;
+//  using short_ = int16_t;
+//  using ushort_ = uint16_t;
+//  using int_ = int32_t;
+//  using uint_ = uint32_t;
+//  using long_ = int64_t;
+//  using ulong_ = uint64_t;
+//  using size_ = size_t;
+//  using uid_ = uint64_t;
   
   /*! \brief Calculate the mean of a range of numbers.
    *  \tparam Iter type of the iterator defining the range.
    *  \param begin,end iterators defining the range.
    *  \return the mean of the range. */
   template <class Iter>
-  float_ CalculateMean(Iter begin, Iter end) {
-    float_ sum = std::accumulate(begin, end, 0.0);
+  double CalculateMean(Iter begin, Iter end) {
+    double sum = std::accumulate(begin, end, 0.0);
     return sum / std::distance(begin, end);
   }
   
@@ -43,28 +40,27 @@ namespace indigox {
    *  \return the median of the range.
    *  \throws std::runtime_error if the range is empty. */
   template <class RandomIter>
-  float_ CalculateMedian(RandomIter begin, RandomIter end) {
+  double CalculateMedian(RandomIter begin, RandomIter end) {
     if (begin == end) throw std::runtime_error("Median of empty range is undefined");
     size_t sz = end - begin;
     size_t mid = sz / 2;
     RandomIter target = begin + mid;
     std::nth_element(begin, target, end);
     
-    if (sz % 2) return static_cast<float_>(*target);
+    if (sz % 2) return static_cast<double>(*target);
     else {
-      float_ x = static_cast<float_>(*target);
+      double x = static_cast<double>(*target);
       RandomIter next = std::max_element(begin, target);
-      return (x + static_cast<float_>(*next)) / 2.0;
+      return (x + static_cast<double>(*next)) / 2.0;
     }
   }
   
   template <class Iter>
-  float_ CalculateStandardDeviation(Iter begin, Iter end) {
-    using Type = typename std::iterator_traits<Iter>::value_type;
-    float_ mean = CalculateMean(begin, end);
-    std::vector<float_> d(std::distance(begin, end));
-    std::transform(begin, end, d.begin(), [mean](float_ x){return x - mean;});
-    float_ sum_sq = std::inner_product(d.begin(), d.end(), d.begin(), 0.0);
+  double CalculateStandardDeviation(Iter begin, Iter end) {
+    double mean = CalculateMean(begin, end);
+    std::vector<double> d(std::distance(begin, end));
+    std::transform(begin, end, d.begin(), [mean](double x){return x - mean;});
+    double sum_sq = std::inner_product(d.begin(), d.end(), d.begin(), 0.0);
     return std::sqrt(sum_sq / d.size());
   }
   

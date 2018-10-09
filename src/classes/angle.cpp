@@ -5,7 +5,6 @@
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/utils/counter.hpp>
-#include <indigox/utils/numerics.hpp>
 #include <indigox/utils/serialise.hpp>
 
 #include <indigox/utils/doctest_proxy.hpp>
@@ -103,10 +102,10 @@ namespace indigox {
     check_eq(ang1.GetUniqueID() + 1, ang2.GetUniqueID());
   }
   
-  size_ IXAngle::GetIndex() const {
+  size_t IXAngle::GetIndex() const {
     Molecule mol = _mol.lock();
     if (!mol) return GetTag();
-    auto be = mol->GetAngles();
+    auto be = mol->GetAngleIters();
     auto pos = std::find(be.first, be.second, shared_from_this());
     if (pos == be.second) return GetTag();
     return std::distance(be.first, pos);
@@ -148,7 +147,7 @@ namespace indigox {
     check_eq(3, ang.NumAtoms());
   }
   
-  string_ IXAngle::ToString() const {
+  std::string IXAngle::ToString() const {
     std::stringstream ss;
     Atom a = _atms[0].lock();
     Atom b = _atms[1].lock();

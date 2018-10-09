@@ -876,13 +876,7 @@ RECURSIVE              = YES
 # run.
 
 EXCLUDE                = @PROJECT_SOURCE_DIR@/external \
-                         @PROJECT_SOURCE_DIR@/test \
-                         @PROJECT_SOURCE_DIR@/include/indigox/classes/forcefield \
-                         @PROJECT_SOURCE_DIR@/src/classes/forcefield \
-                         @PROJECT_SOURCE_DIR@/include/indigox/algorithm \
-                         @PROJECT_SOURCE_DIR@/src/algorithm \
-                         @PROJECT_SOURCE_DIR@/include/indigox/utils/triple.hpp \
-                         @PROJECT_SOURCE_DIR@/include/indigox/utils/quad.hpp
+                         @PROJECT_SOURCE_DIR@/include/indigox/test \
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

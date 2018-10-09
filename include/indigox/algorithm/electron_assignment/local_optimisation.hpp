@@ -1,11 +1,11 @@
 #include <bitset>
+#include <cstdint>
 #include <map>
 #include <vector>
 
 #include "assigner.hpp"
 #include "../../graph/assignment.hpp"
 #include "../../utils/common.hpp"
-#include "../../utils/numerics.hpp"
 
 #ifndef INDIGOX_ALGORITHM_ELECTRON_ASSIGNMENT_LOCAL_OPTIMISATION_HPP
 #define INDIGOX_ALGORITHM_ELECTRON_ASSIGNMENT_LOCAL_OPTIMISATION_HPP
@@ -38,7 +38,7 @@ namespace indigox::algorithm {
        *  is halted and whatever the current minimum score is is set as the
        *  optimised score. If set to 0, no timeout is applied. Default value is
        *  5000. */
-      static uint_ TIMEOUT;
+      static uint32_t TIMEOUT;
       
       /*! \brief Amount of cache to use.
        *  \details Cache the scores of seen assignments so that they do not need
@@ -92,7 +92,7 @@ namespace indigox::algorithm {
     //! \brief Location mask storage.
     LocMasks_t _loc_masks;
     //! \brief Timeout limit
-    uint_ _timeout;
+    uint32_t _timeout;
     //! \brief LocalOptimsation options
     std::bitset<__num_opts> _lo_opts;
   };

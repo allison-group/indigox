@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "../../graph/base_graph.hpp"
-#include "../../utils/numerics.hpp"
 
 #ifndef INDIGOX_ALGORITHM_GRAPH_CYCLES_HPP
 #define INDIGOX_ALGORITHM_GRAPH_CYCLES_HPP
@@ -58,7 +57,7 @@ namespace indigox::algorithm {
    *  \param[out] paths vector of paths defining each member of cycle basis.
    */
   template <class V, class E, class VP, class EP>
-  size_ CycleBasis(const graph::IXGraphBase<V, E, U, VP, EP>& G,
+  size_t CycleBasis(const graph::IXGraphBase<V, E, U, VP, EP>& G,
                    std::vector<std::vector<V*>>& paths) {
     paths.clear();
     std::vector<V*> verts;
@@ -103,7 +102,7 @@ namespace indigox::algorithm {
   }
   
   template <class V, class E, class VP, class EP>
-  size_ AllCycles(const graph::IXGraphBase<V, E, U, VP, EP>& G,
+  size_t AllCycles(const graph::IXGraphBase<V, E, U, VP, EP>& G,
                  std::vector<std::vector<E*>>& cycles) {
     static_assert(!std::is_null_pointer<E>::value, "Edge type required");
     std::vector<std::vector<V*>> basis;
@@ -113,7 +112,7 @@ namespace indigox::algorithm {
     for (auto& path : basis) {
       path.push_back(path.front());
       std::set<E*> edges;
-      for (size_ i = 1; i < path.size(); ++i)
+      for (size_t i = 1; i < path.size(); ++i)
         edges.insert(G.GetEdge(path[i-1], path[i]));
       std::vector<E*> tmp;
       std::set_union(edges.begin(), edges.end(),
@@ -122,15 +121,15 @@ namespace indigox::algorithm {
       cyclic_edges.swap(tmp);
       basis_edges.emplace_back(edges.begin(), edges.end());
     }
-    std::vector<size_> indices(basis_edges.size());
+    std::vector<size_t> indices(basis_edges.size());
     std::iota(indices.begin(), indices.end(), 0);
-    for (size_ r = 1; r < basis_edges.size() + 1; ++r) {
-      std::vector<std::vector<size_>> combos;
+    for (size_t r = 1; r < basis_edges.size() + 1; ++r) {
+      std::vector<std::vector<size_t>> combos;
       combinations(indices.begin(), indices.end(), r, combos);
       for (auto& combo : combos) {
         std::vector<E*> xor_set;
         while (!combo.empty()) {
-          size_ i = combo.back();
+          size_t i = combo.back();
           combo.pop_back();
           std::vector<E*> tmp;
           std::set_symmetric_difference(xor_set.begin(), xor_set.end(),
@@ -146,7 +145,7 @@ namespace indigox::algorithm {
   }
   
   template <class V, class E, class VP, class EP>
-  size_ MinimalCycles(const graph::IXGraphBase<V, E, U, VP, EP>& G,
+  size_t MinimalCycles(const graph::IXGraphBase<V, E, U, VP, EP>& G,
                       std::vector<std::vector<E*>>& min_cycles,
                       bool strict = false) {
     // Gets all the cycles then removes those it doesn't need.
@@ -167,8 +166,8 @@ namespace indigox::algorithm {
     };
     std::stable_sort(all_cycles.begin(), all_cycles.end(), sorter);
     
-    size_ current_size = all_cycles.front().size();
-    std::map<E*, size_> edge_counts;
+    size_t current_size = all_cycles.front().size();
+    std::map<E*, size_t> edge_counts;
     for (auto& cycle : all_cycles) {
       /*  Only check for all edges being accounted for when the cycles is larger
        *  than the previous one, unless the strict flag is set. */

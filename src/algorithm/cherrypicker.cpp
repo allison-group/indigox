@@ -75,7 +75,7 @@ namespace indigox::algorithm {
       while (permutation()) {
         // Parameterise the atoms
         auto patms = frag->GetAtomVertices();
-        for (size_ i = 0; i < frag_v.size(); ++i) {
+        for (size_t i = 0; i < frag_v.size(); ++i) {
           if (std::find(patms.begin(), patms.end(), frag_v[i]) == patms.end())
             continue;
           ParamAtom patm = pmol->GetAtom(target_v[i]->GetAtom());

@@ -9,10 +9,8 @@
 
 #ifndef INDIGOX_UTILS_FILEREADER_HPP
 #define INDIGOX_UTILS_FILEREADER_HPP
-
+#include <string>
 #include <vector>
-
-#include "numerics.hpp"
 
 namespace indigox {
   namespace utils {
@@ -27,14 +25,14 @@ namespace indigox {
     public:
       FileReader() = delete;  // No default constructor
       /// @brief Normal constructor.
-      FileReader(const string_&);
+      FileReader(const std::string&);
       
       /// @brief Reads the file from disk.
-      void GetAllLines(std::vector<string_>&);
-      inline void SetFilePath(const string_& p) { path_ = p; }
+      void GetAllLines(std::vector<std::string>&);
+      inline void SetFilePath(const std::string& p) { path_ = p; }
       
     private:
-      string_ path_;
+      std::string path_;
       
     };
     

@@ -37,6 +37,10 @@ namespace indigox {
   using Dihedral = std::shared_ptr<IXDihedral>;
   using _Dihedral = std::weak_ptr<IXDihedral>;
   
+  class IXElement;
+  using Element = std::shared_ptr<IXElement>;
+  using _Element = std::weak_ptr<IXElement>;
+  
   // CherryPicker Related
   class IXParamMolecule;
   using ParamMolecule = std::shared_ptr<IXParamMolecule>;
@@ -102,6 +106,10 @@ namespace indigox {
     class IXCherryPicker;
     using CherryPicker = std::shared_ptr<IXCherryPicker>;
     using _CherryPicker = std::weak_ptr<IXCherryPicker>;
+    
+    class IXElectronAssigner;
+    using ElectronAssigner = std::shared_ptr<IXElectronAssigner>;
+    using _ElectronAssigner = std::weak_ptr<IXElectronAssigner>;
   }
   
   namespace graph {
@@ -146,6 +154,12 @@ namespace indigox {
     struct TestFFAtom;
     struct TestFFBond;
     struct TestFFAngle;
-    struct TestFFDihedral;    
+    struct TestFFDihedral;
+    struct TestMolecule;
+    struct TestAtom;
+    struct TestAssignmentGraph;
+    struct TestCondensedMolecularGraph;
+    struct TestCondensedVertex;
+    struct TestCondensedEdge;
   }
 }

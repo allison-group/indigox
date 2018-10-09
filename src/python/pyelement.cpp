@@ -11,7 +11,7 @@
 
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/python/interface.hpp>
-#include <indigox/utils/numerics.hpp>
+#include <indigox/python/pyopaquecontainers.hpp>
 
 namespace py = pybind11;
 
@@ -19,15 +19,15 @@ void GeneratePyElement(py::module& m) {
   using namespace indigox;
   py::class_<IXElement, Element>(m, "Element")
   // No constructor
-  .def("__eq__", py::overload_cast<const Element&, uchar_>(&operator==))
-  .def("__eq__", py::overload_cast<uchar_, const Element&>(&operator==))
-  .def("__eq__", py::overload_cast<const Element&, string_>(&operator==))
-  .def("__eq__", py::overload_cast<string_, const Element&>(&operator==))
+  .def("__eq__", py::overload_cast<const Element&, uint8_t>(&operator==))
+  .def("__eq__", py::overload_cast<uint8_t, const Element&>(&operator==))
+  .def("__eq__", py::overload_cast<const Element&, std::string>(&operator==))
+  .def("__eq__", py::overload_cast<std::string, const Element&>(&operator==))
   .def("__eq__", py::overload_cast<const Element&, const Element&>(&operator==))
-  .def("__ne__", py::overload_cast<const Element&, uchar_>(&operator!=))
-  .def("__ne__", py::overload_cast<uchar_, const Element&>(&operator!=))
-  .def("__ne__", py::overload_cast<const Element&, string_>(&operator!=))
-  .def("__ne__", py::overload_cast<string_, const Element&>(&operator!=))
+  .def("__ne__", py::overload_cast<const Element&, uint8_t>(&operator!=))
+  .def("__ne__", py::overload_cast<uint8_t, const Element&>(&operator!=))
+  .def("__ne__", py::overload_cast<const Element&, std::string>(&operator!=))
+  .def("__ne__", py::overload_cast<std::string, const Element&>(&operator!=))
   .def("__ne__", py::overload_cast<const Element&, const Element&>(&operator!=))
   .def("__repr__", [](const Element& e) {
     std::stringstream ss; ss << e; return ss.str();
@@ -48,31 +48,5 @@ void GeneratePyElement(py::module& m) {
   .def("ToString", &IXElement::ToString)
   // No pickling support
   ;
-  
-  using ElementSet = std::set<Element>;
-  py::class_<ElementSet>(m, "ElementSet")
-  .def(py::init<>())
-  .def("__len__", [](const ElementSet& s) { return s.size(); })
-  .def("__iter__", [](ElementSet& s) {
-    return py::make_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
-  .def("__contains__", [](const ElementSet& s, const Element& e) {
-    return bool(s.count(e)); })
-  .def("__repr__", [](const ElementSet& s) {
-    std::vector<string_> strs;
-    strs.reserve(s.size());
-    std::stringstream ss;
-    for (Element e : s) {
-      ss << e;
-      strs.push_back(ss.str());
-      ss.str("");
-    }
-    ss << "{" << boost::join(strs, ", ") << "}";
-    return ss.str();
-  })
-  .def("clear", &ElementSet::clear)
-  .def("insert", (std::pair<ElementSet::iterator, bool> (ElementSet::*)(const Element&)) &ElementSet::insert)
-  .def("erase", (size_t (ElementSet::*)(const Element&)) &ElementSet::erase)
-  ;
-  
 }
 

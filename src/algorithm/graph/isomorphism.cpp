@@ -19,7 +19,7 @@ namespace indigox::algorithm {
     using BoostGraph = typename BaseGraph::graph_type;
     using BoostVertex = typename BoostGraph::vertex_descriptor;
     using BoostEdge = typename BoostGraph::edge_descriptor;
-    using BoostVertexIdxMap = eastl::vector_map<BoostVertex, size_>;
+    using BoostVertexIdxMap = eastl::vector_map<BoostVertex, size_t>;
   public:
     Graph G_small, G_large;
     BaseGraph &base_small, &base_large;
@@ -176,7 +176,7 @@ namespace indigox::algorithm {
     
     // Make the vertex map
     BoostVertexMap vmap;
-    size_ i = 0;
+    size_t i = 0;
     for (auto vs = vertices(boost_small); vs.first != vs.second; ++vs.first)
       vmap.emplace(*vs.first, i++);
     i = 0;

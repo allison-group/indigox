@@ -1,6 +1,7 @@
 #ifndef INDIGOX_TEST_MOLECULE_TEST_HPP
 #define INDIGOX_TEST_MOLECULE_TEST_HPP
 
+#include <cstdint>
 #include <random>
 
 namespace indigox::test {
@@ -42,8 +43,8 @@ namespace indigox::test {
     }
     
     // Public wrapping functions
-    Angle GetAngle(size_ p) const { return imp->GetAngle(p); }
-    Dihedral GetDihedral(size_ p) const { return imp->GetDihedral(p); }
+    Angle GetAngle(size_t p) const { return imp->GetAngle(p); }
+    Dihedral GetDihedral(size_t p) const { return imp->GetDihedral(p); }
     Angle GetAngle(const Atom& a, const Atom& b, const Atom& c) {
       return imp->GetAngle(a,b,c);
     }
@@ -51,27 +52,27 @@ namespace indigox::test {
                          const Atom& c, const Atom& d) {
       return imp->GetDihedral(a,b,c,d);
     }
-    Angle GetAngleTag(uid_ t) const { return imp->GetAngleTag(t); }
-    Dihedral GetDihedralTag(uid_ t) const { return imp->GetDihedralTag(t); }
-    Angle GetAngleID(uid_ i) const { return imp->GetAngleID(i); }
-    Dihedral GetDihedralID(uid_ i) const { return imp->GetDihedralID(i); }
-    Atom GetAtom(size_ p) const { return imp->GetAtom(p); }
-    Atom GetAtomTag(uid_ t) const { return imp->GetAtomTag(t); }
-    Atom GetAtomID(uid_ i) const { return imp->GetAtomID(i); }
-    Bond GetBond(size_ p) const { return imp->GetBond(p); }
+    Angle GetAngleTag(uint32_t t) const { return imp->GetAngleTag(t); }
+    Dihedral GetDihedralTag(uint32_t t) const { return imp->GetDihedralTag(t); }
+    Angle GetAngleID(uint32_t i) const { return imp->GetAngleID(i); }
+    Dihedral GetDihedralID(uint32_t i) const { return imp->GetDihedralID(i); }
+    Atom GetAtom(size_t p) const { return imp->GetAtom(p); }
+    Atom GetAtomTag(uint32_t t) const { return imp->GetAtomTag(t); }
+    Atom GetAtomID(uint32_t i) const { return imp->GetAtomID(i); }
+    Bond GetBond(size_t p) const { return imp->GetBond(p); }
     Bond GetBond(const Atom& a, const Atom& b) const { return imp->GetBond(a,b); }
-    Bond GetBondTag(uid_ t) const { return imp->GetBondTag(t); }
-    Bond GetBondID(uid_ i) const { return imp->GetBondID(i); }
-    string_ GetFormula() { return imp->GetFormula(); }
+    Bond GetBondTag(uint32_t t) const { return imp->GetBondTag(t); }
+    Bond GetBondID(uint32_t i) const { return imp->GetBondID(i); }
+    std::string GetFormula() { return imp->GetFormula(); }
     const graph::MolecularGraph& GetGraph() const { return imp->GetGraph(); }
-    string_ GetName() const { return imp->GetName(); }
-    int_ GetMolecularCharge() const { return imp->GetMolecularCharge(); }
-    size_ NumAtoms() const { return imp->NumAtoms(); }
-    size_ NumBonds() const { return imp->NumBonds(); }
-    size_ NumAngles() { return imp->NumAngles(); }
-    size_ NumDihedrals() { return imp->NumDihedrals(); }
-    void SetName(string_ n) { imp->SetName(n); }
-    void SetMolecularCharge(int_ q) { imp->SetMolecularCharge(q); }
+    std::string GetName() const { return imp->GetName(); }
+    int GetMolecularCharge() const { return imp->GetMolecularCharge(); }
+    size_t NumAtoms() const { return imp->NumAtoms(); }
+    size_t NumBonds() const { return imp->NumBonds(); }
+    size_t NumAngles() { return imp->NumAngles(); }
+    size_t NumDihedrals() { return imp->NumDihedrals(); }
+    void SetName(std::string n) { imp->SetName(n); }
+    void SetMolecularCharge(int q) { imp->SetMolecularCharge(q); }
     bool HasAtom(const Atom& a) const { return imp->HasAtom(a); }
     bool HasBond(const Bond& b) const { return imp->HasBond(b); }
     bool HasBond(const Atom& a, const Atom& b) const { return imp->HasBond(a,b); }
@@ -86,42 +87,42 @@ namespace indigox::test {
     }
     Atom NewAtom() { return imp->NewAtom(); }
     Atom NewAtom(Element e) { return imp->NewAtom(e); }
-    Atom NewAtom(string_ n) { return imp->NewAtom(n); }
-    Atom NewAtom(string_ n, Element e) { return imp->NewAtom(n,e); }
+    Atom NewAtom(std::string n) { return imp->NewAtom(n); }
+    Atom NewAtom(std::string n, Element e) { return imp->NewAtom(n,e); }
     Bond NewBond(Atom a, Atom b) { return imp->NewBond(a,b); }
     bool RemoveAtom(Atom a) { return imp->RemoveAtom(a); }
     bool RemoveBond(Bond b) { return imp->RemoveBond(b); }
     bool RemoveBond(Atom a, Atom b) { return imp->RemoveBond(a,b); }
-    size_ PerceiveAngles() { return imp->PerceiveAngles(); }
-    size_ PerceiveDihedrals() { return imp->PerceiveDihedrals(); }
-    void ReserveAtoms(size_ n) { return imp->ReserveAtoms(n); }
-    void ReserveBonds(size_ n) { return imp->ReserveBonds(n); }
+    size_t PerceiveAngles() { return imp->PerceiveAngles(); }
+    size_t PerceiveDihedrals() { return imp->PerceiveDihedrals(); }
+    void ReserveAtoms(size_t n) { return imp->ReserveAtoms(n); }
+    void ReserveBonds(size_t n) { return imp->ReserveBonds(n); }
     void SetPropertyModified(MolProperty p ) { imp->SetPropertyModified(p); }
-    Atoms GetAtoms() const { return imp->GetAtoms(); }
-    Bonds GetBonds() const { return imp->GetBonds(); }
-    Angles GetAngles() const { return imp->GetAngles(); }
-    Dihedrals GetDihedrals() const { return imp->GetDihedrals(); }
-    uid_ GetUniqueID() const { return imp->GetUniqueID(); }
+    Atoms GetAtoms() const { return imp->GetAtomIters(); }
+    Bonds GetBonds() const { return imp->GetBondIters(); }
+    Angles GetAngles() const { return imp->GetAngleIters(); }
+    Dihedrals GetDihedrals() const { return imp->GetDihedralIters(); }
+    uint32_t GetUniqueID() const { return imp->GetUniqueID(); }
     
     // Internals access
-    string_ get_name() const { return imp->_name; }
-    int_ get_q() const { return imp->_q; }
+    std::string get_name() const { return imp->_name; }
+    int get_q() const { return imp->_q; }
     IAtoms& get_atms() const { return imp->_atms; }
     IBonds& get_bnds() const { return imp->_bnds; }
     IAngles& get_angs() const { return imp->_angs; }
     IDihedrals& get_dhds() const { return imp->_dhds; }
     EmergeSet& get_emerge() const { return imp->_emerge; }
     graph::MolecularGraph get_g() const { return imp->_g; }
-    string_ get_formula_cache() const { return imp->_formula_cache; }
+    std::string get_formula_cache() const { return imp->_formula_cache; }
   };
   
   struct MoleculeTestFixture {
     TestMolecule benzene, randmol, blankmol;
     std::vector<Atom> a_benzene, a_randmol;
     std::vector<Bond> b_benzene, b_randmol;
-    std::vector<std::pair<size_, size_>> e_benzene, e_randmol;
-    std::vector<stdx::triple<size_, size_, size_>> g_benzene;
-    std::vector<stdx::quad<size_, size_, size_, size_>> d_benzene;
+    std::vector<std::pair<size_t, size_t>> e_benzene, e_randmol;
+    std::vector<stdx::triple<size_t, size_t, size_t>> g_benzene;
+    std::vector<stdx::quad<size_t, size_t, size_t, size_t>> d_benzene;
     std::random_device rd;
     std::mt19937 generator;
     
@@ -146,7 +147,7 @@ namespace indigox::test {
                         {3,4,5,0},{3,4,5,11},{10,4,5,0},{10,4,5,11}});
       a_benzene.reserve(12);
       b_benzene.reserve(12);
-      for (size_ i = 0; i < 12; ++i) {
+      for (size_t i = 0; i < 12; ++i) {
         a_benzene.emplace_back(benzene.NewAtom());
         a_benzene.back()->SetTag(10 + i);
         if (i < 6) a_benzene.back()->SetElement("C");
@@ -166,25 +167,25 @@ namespace indigox::test {
     }
     
     void BuildRandomMolecule() {
-      std::uniform_int_distribution<size_> atom_count(15,35);
-      std::uniform_int_distribution<size_> bond_count(25,55);
-      std::uniform_int_distribution<size_> element(1, 50);
-      size_ num_atoms = atom_count(generator);
-      size_ num_bonds = bond_count(generator);
+      std::uniform_int_distribution<size_t> atom_count(15,35);
+      std::uniform_int_distribution<size_t> bond_count(25,55);
+      std::uniform_int_distribution<size_t> element(1, 50);
+      size_t num_atoms = atom_count(generator);
+      size_t num_bonds = bond_count(generator);
       a_randmol.reserve(num_atoms);
       b_randmol.reserve(num_bonds);
       randmol.ReserveAtoms(num_atoms);
       randmol.ReserveBonds(num_bonds);
-      for (size_ i = 0; i < num_atoms; ++i) {
+      for (size_t i = 0; i < num_atoms; ++i) {
         a_randmol.emplace_back(randmol.NewAtom());
         a_randmol.back()->SetTag(i + num_atoms + 11);
         a_randmol.back()->SetElement(element(generator));
       }
       
-      std::vector<std::pair<size_, size_>> possible_bonds;
+      std::vector<std::pair<size_t, size_t>> possible_bonds;
       possible_bonds.reserve(num_atoms * (num_atoms + 1) / 2);
-      for (size_ i = 0; i < num_atoms; ++i) {
-        for (size_ j = i + 1; j < num_atoms; ++j )
+      for (size_t i = 0; i < num_atoms; ++i) {
+        for (size_t j = i + 1; j < num_atoms; ++j )
           possible_bonds.emplace_back(i,j);
       }
       std::sample(possible_bonds.begin(), possible_bonds.end(),

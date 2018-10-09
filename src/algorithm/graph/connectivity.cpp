@@ -12,14 +12,14 @@ namespace indigox::algorithm {
   
   template <class BitSet>
   void __bitset_connected_subgraphs(BitSet bag, BitSet initial_subg,
-                                    eastl::vector_map<size_, BitSet>& all_nbrs,
+                                    eastl::vector_map<size_t, BitSet>& all_nbrs,
                                     std::vector<BitSet>& subGs,
-                                    size_ minsize, size_ maxsize) {
+                                    size_t minsize, size_t maxsize) {
     subGs.clear();
     
     // Determine the current neighbours of a bag
     BitSet nbrs(bag); nbrs.reset();
-    size_ pos = initial_subg.find_first();
+    size_t pos = initial_subg.find_first();
     while (pos < all_nbrs.size()) {
       if (all_nbrs.find(pos) == all_nbrs.end()) break;
       nbrs |= all_nbrs.at(pos);
@@ -61,8 +61,8 @@ namespace indigox::algorithm {
   template <class BitSet, class GraphType, class VertexType>
   void __build_neighbours_bitsets(const GraphType& G,
                                   const std::vector<VertexType>& vertices,
-                                  eastl::vector_map<size_, BitSet>& nbrs) {
-    for (size_ i = 0; i < vertices.size(); ++i) {
+                                  eastl::vector_map<size_t, BitSet>& nbrs) {
+    for (size_t i = 0; i < vertices.size(); ++i) {
       auto v_nbrs = G->GetNeighbours(vertices[i]);
       BitSet n(vertices.size()); n.reset();
       for (; v_nbrs.first != v_nbrs.second; ++v_nbrs.first) {
@@ -81,7 +81,7 @@ namespace indigox::algorithm {
     for (BitSet& sub : subg) {
       std::vector<VertexType> verts;
       verts.reserve(vertices.size());
-      size_ pos = sub.find_first();
+      size_t pos = sub.find_first();
       while (pos < vertices.size()) {
         verts.emplace_back(vertices[pos]);
         pos = sub.find_next(pos);
@@ -93,26 +93,26 @@ namespace indigox::algorithm {
   template <class BitSet, class GraphType, class VertexType>
   void __connected_subgraphs_runner(const GraphType& G,
                                     std::vector<GraphType>& subGs,
-                                    size_ minsize, size_ maxsize) {
+                                    size_t minsize, size_t maxsize) {
     subGs.clear();
     std::vector<VertexType> vertices(G->GetVertices().first,
                                      G->GetVertices().second);
     // Build up the neighbours
-    eastl::vector_map<size_, BitSet> nbrs;
+    eastl::vector_map<size_t, BitSet> nbrs;
     __build_neighbours_bitsets(G, vertices, nbrs);
     // Calculate the subgs
     std::vector<BitSet> subg;
     BitSet bag(vertices.size()); bag.reset();
-    for (size_ i = 0; i < vertices.size(); ++i) bag.set(i);
+    for (size_t i = 0; i < vertices.size(); ++i) bag.set(i);
     BitSet initial(vertices.size()); initial.reset();
     __bitset_connected_subgraphs(bag, initial, nbrs, subg, minsize, maxsize);
     // Populate the subGs
     __populate_subgraphs(G, vertices, subg, subGs);
   }
   
-  size_ ConnectedSubgraphs(const graph::CondensedMolecularGraph& G,
+  size_t ConnectedSubgraphs(const graph::CondensedMolecularGraph& G,
                            std::vector<graph::CondensedMolecularGraph>& subGs,
-                           size_ minsize, size_ maxsize) {
+                           size_t minsize, size_t maxsize) {
     if (G->NumVertices() <= 32)
       __connected_subgraphs_runner<eastl::bitset<32, uint32_t>,
       graph::CondensedMolecularGraph,
@@ -129,9 +129,9 @@ namespace indigox::algorithm {
     return subGs.size();
   }
   
-  size_ ConnectedSubgraphs(const graph::MolecularGraph& G,
+  size_t ConnectedSubgraphs(const graph::MolecularGraph& G,
                            std::vector<graph::MolecularGraph>& subGs,
-                           size_ minsize, size_ maxsize) {
+                           size_t minsize, size_t maxsize) {
     if (G->NumVertices() <= 32)
       __connected_subgraphs_runner<eastl::bitset<32, uint32_t>,
                                    graph::MolecularGraph,

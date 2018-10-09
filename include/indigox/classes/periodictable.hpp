@@ -4,11 +4,11 @@
 #ifndef INDIGOX_CLASSES_PERIODIC_TABLE_HPP
 #define INDIGOX_CLASSES_PERIODIC_TABLE_HPP
 
+#include <cstdint>
 #include <iostream>
 #include <map>
 
 #include "../utils/common.hpp"
-#include "../utils/numerics.hpp"
 
 namespace indigox {
   
@@ -39,8 +39,8 @@ namespace indigox {
    *  library, usage is primarily intended through the use of smart pointers. */
   class IXPeriodicTable {
     using element_type = Element;
-    using atomic_number_map_type = std::map<uchar_, element_type>;
-    using atomic_symbol_map_type = std::map<string_, element_type>;
+    using atomic_number_map_type = std::map<uint8_t, element_type>;
+    using atomic_symbol_map_type = std::map<std::string, element_type>;
     
   public:
     /*! \brief Get the element with the given atomic number.
@@ -48,7 +48,7 @@ namespace indigox {
      *  \returns the requested element.
      *  \throw std::invalid_argument If the requested atomic number does not exist
      *  within the PeriodicTable. */
-    Element GetElement(const uchar_ z) const noexcept;
+    Element GetElement(const uint8_t z) const noexcept;
     
     /*! \brief Get the element with the given name or symbol.
      *  \details Name based matches are made ignoring case. Symbol matches are
@@ -57,19 +57,19 @@ namespace indigox {
      *  \returns the requested element.
      *  \throw std::invalid_argument If the requested name or symbol does not
      *  exist within the PeriodicTable. */
-    Element GetElement(const string_ name) const noexcept;
+    Element GetElement(const std::string name) const noexcept;
     
     /*! \brief Get the element with the given atomic number.
      *  \param z the atomic number of the element to get.
      *  \return the requested element.
      *  \see IXPeriodicTable::GetElement(const uint8_t) const */
-    Element operator[](const uchar_ z) const noexcept { return GetElement(z); }
+    Element operator[](const uint8_t z) const noexcept { return GetElement(z); }
     
     /*! \brief Get the element with the given name or symbol.
      *  \param name the name or symbol of the element to get.
      *  \return the requested element.
      *  \see IXPeriodicTable::GetElement(const std::string) const */
-    Element operator[](const string_ name) const noexcept {
+    Element operator[](const std::string name) const noexcept {
       return GetElement(name);
     }
     
@@ -81,7 +81,7 @@ namespace indigox {
     
     /*! \brief Number of elements in the PeriodicTable.
      *  \return the number of elements in the PeriodicTable. */
-    size_ NumElements() const { return _z_to.size(); }
+    size_t NumElements() const { return _z_to.size(); }
     
     /*! \brief Get a textual representation of the PeriodicTable.
      *  \details The textual representation lays out the elements of the
@@ -89,7 +89,7 @@ namespace indigox {
      *  element has its atomic number and symbol printed.
      *  \return a string containing a tabular layout of the PeriodicTable
      *  elements. */
-    string_ ToString() const;
+    std::string ToString() const;
   
   private:
     //! Default constructor.
@@ -141,72 +141,72 @@ namespace indigox {
     
     /*! \brief Get atomic mass.
      *  \return the atomic mass of the element. */
-    float_ GetAtomicMass() const { return _mass; }
+    double GetAtomicMass() const { return _mass; }
     
     /*! \brief Get atomic number.
      *  \return the atomic number of the element. */
-    size_ GetAtomicNumber() const { return static_cast<size_>(_Z); }
+    size_t GetAtomicNumber() const { return static_cast<size_t>(_Z); }
     
     /*! \brief Get atomic radius.
      *  \details Radius is in angstroms.
      *  \return the atomic radius of the element. */
-    float_ GetAtomicRadius() const { return _rad; }
+    double GetAtomicRadius() const { return _rad; }
     
     /*! \brief Get covalent radius.
      *  \details Radius is in angstroms.
      *  \return the covalent radius of the element. */
-    float_ GetCovalentRadius() const { return _cov; }
+    double GetCovalentRadius() const { return _cov; }
     
     /*! \brief Get van der Waals radius.
      *  \details Radius is in angstroms.
      *  \return the van der Waals radius of the element. */
-    float_ GetVanDerWaalsRadius() const { return _vdw; }
+    double GetVanDerWaalsRadius() const { return _vdw; }
     
     /*! \brief Get element name.
      *  \return the name of the element. */
-    string_ GetName() const { return _nme; }
+    std::string GetName() const { return _nme; }
     
     /*! \brief Get element symbol.
      *  \return the symbol of the element. */
-    string_ GetSymbol() const { return _sym; }
+    std::string GetSymbol() const { return _sym; }
     
     /*! \brief Get element group number.
      *  \return the IUPAC group number of the element. */
-    uchar_ GetGroup() const { return _grp; }
+    uint8_t GetGroup() const { return _grp; }
     
     /*! \brief Get element period.
      *  \return the period of the periodic table the element is in. */
-    uchar_ GetPeriod() const { return _prd; }
+    uint8_t GetPeriod() const { return _prd; }
     
     /*! \brief Get number of valence electrons
      *  \return the number of valence electrons the element contains. */
-    uchar_ GetValenceElectronCount() const { return _val; }
+    uint8_t GetValenceElectronCount() const { return _val; }
     
     /*! \brief Get full outer shell octet.
      *  \return the number of electrons required for a full outer shell. */
-    uchar_ GetOctet() const { return _oct; }
+    uint8_t GetOctet() const { return _oct; }
     
     /*! \brief Get full outer shell octet whne allowing for hypervalency.
      *  \return the number of electrons required for a full outer shell in a
      *  hypervalent state. */
-    uchar_ GetHypervalentOctet() const { return _hyp; }
+    uint8_t GetHypervalentOctet() const { return _hyp; }
     
     /*! \brief Get electronegativity.
      *  \return the electronegativity of the element on the Pauling scale. */
-    float_ GetElectronegativity() const { return _chi; }
+    double GetElectronegativity() const { return _chi; }
 
     /*! \brief Get a textual representation of the element.
      *  \details Representation contains the element's name, symbol and atomic
      *  number.
      *  \return textutal representation of the element. */
-    string_ ToString() const;
+    std::string ToString() const;
     
   private:
     /*! \property _nme
      *  \brief Element name.
      *  \property _sym
      *  \brief Atomic symbol. */
-    const string_ _nme, _sym;
+    const std::string _nme, _sym;
     /*! \property _grp
      *  \brief IUPAC group.
      *  \property _prd
@@ -219,7 +219,7 @@ namespace indigox {
      *  \brief Octet.
      *  \property _hyp
      *  \brief Hypervalent octet. */
-    const uchar_ _grp, _prd, _Z, _val, _oct, _hyp;
+    const uint8_t _grp, _prd, _Z, _val, _oct, _hyp;
     /*! \property _mass
      *  \brief Relative atomic mass.
      *  \property _rad
@@ -230,7 +230,7 @@ namespace indigox {
      *  \brief Van der Waals radius.
      *  \property _chi
      *  \brief Electronegativity. */
-    const float_ _mass, _rad, _cov, _vdw, _chi;
+    const double _mass, _rad, _cov, _vdw, _chi;
     
   private:
     /*! \brief Construct new IXElement instance given data.
@@ -247,9 +247,9 @@ namespace indigox {
      *  \param cov covalent radius in angstroms.
      *  \param vdw van der Waals radius i angstroms.
      *  \param chi electronegativity. */
-    IXElement(uchar_ Z, string_ name, string_ sym, float_ mass,
-              uchar_ grp, uchar_ prd, uchar_ val, uchar_ oct, uchar_ hyp,
-              float_ rad, float_ cov, float_ vdw, float_ chi);
+    IXElement(uint8_t Z, std::string name, std::string sym, double mass,
+              uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct, uint8_t hyp,
+              double rad, double cov, double vdw, double chi);
   };
 
   // Operators have to be explicitly inlined or python bindings linkage fails
@@ -285,10 +285,10 @@ namespace indigox {
    *  always be false.
    *  \param l, r element and integer to compare.
    *  \return if the element has the given atomic number. */
-  inline bool operator==(const IXElement& l, uchar_ r) {
+  inline bool operator==(const IXElement& l, uint8_t r) {
     return l.GetAtomicNumber() == r;
   }
-  inline bool operator==(const Element& l, uchar_ r) { return l && *l == r; }
+  inline bool operator==(const Element& l, uint8_t r) { return l && *l == r; }
   
   /*! \brief Equality test of Element and string.
    *  \details If the size of r is less than or equal to two, compares if the
@@ -298,11 +298,11 @@ namespace indigox {
    *  the undefined element, result will always be false.
    *  \param l, r element and string to compare.
    *  \return if the element has the given atomic symbol or name. */
-  inline bool operator==(const IXElement& l, string_ r) {
+  inline bool operator==(const IXElement& l, std::string r) {
     return r.size() <= 2 ? (l.GetSymbol() == r)
           : (l.GetName() == utils::ToUpperFirst(r));
   }
-  inline bool operator==(const Element& l, string_ r) { return l && *l == r; }
+  inline bool operator==(const Element& l, std::string r) { return l && *l == r; }
   
   /*! \brief Equality test of two Elements.
    *  \details Checks if the stored pointers are equivalent. If either of the
@@ -330,41 +330,41 @@ namespace indigox {
    *  \param l, r integer and Element to compare.
    *  \return if the element has the given atomic number.
    *  \see operator==(Element, uint8_t) */
-  inline bool operator==(uchar_ l, const IXElement& r) { return r == l; }
-  inline bool operator==(uchar_ l, const Element& r) { return r == l; }
+  inline bool operator==(uint8_t l, const IXElement& r) { return r == l; }
+  inline bool operator==(uint8_t l, const Element& r) { return r == l; }
   
   /*! \brief Equality test of string and Element.
    *  \param l, r string and Element to compare.
    *  \return if the element has the given atomic symbol or name.
    *  \see operator==(Element, std::string) */
-  inline bool operator==(string_ l, const IXElement& r) { return r == l; }
-  inline bool operator==(string_ l, const Element& r) { return r == l; }
+  inline bool operator==(std::string l, const IXElement& r) { return r == l; }
+  inline bool operator==(std::string l, const Element& r) { return r == l; }
   
   // Neq operators
   /*! \brief Inequality test of Element and integer.
    *  \param l, r Element and integer to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, uint8_t) */
-  inline bool operator!=(const IXElement& l, uchar_ r) { return !(l == r); }
-  inline bool operator!=(const Element& l, uchar_ r) { return !(l == r); }
+  inline bool operator!=(const IXElement& l, uint8_t r) { return !(l == r); }
+  inline bool operator!=(const Element& l, uint8_t r) { return !(l == r); }
   /*! \brief Inequality test of integer and Element.
    *  \param l, r integer and Element to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, uint8_t) */
-  inline bool operator!=(uchar_ l, const IXElement& r) { return !(r == l); }
-  inline bool operator!=(uchar_ l, const Element& r) { return !(r == l); }
+  inline bool operator!=(uint8_t l, const IXElement& r) { return !(r == l); }
+  inline bool operator!=(uint8_t l, const Element& r) { return !(r == l); }
   /*! \brief Inequality test of Element and string.
    *  \param l, r Element and string to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, std::string) */
-  inline bool operator!=(const IXElement& l, string_ r) { return !(l == r); }
-  inline bool operator!=(const Element& l, string_ r) { return !(l == r); }
+  inline bool operator!=(const IXElement& l, std::string r) { return !(l == r); }
+  inline bool operator!=(const Element& l, std::string r) { return !(l == r); }
   /*! \brief Inequality test of string and Element.
    *  \param l, r string and Element to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, std::string) */
-  inline bool operator!=(string_ l, const IXElement& r) { return !(r == l); }
-  inline bool operator!=(string_ l, const Element& r) { return !(r == l); }
+  inline bool operator!=(std::string l, const IXElement& r) { return !(r == l); }
+  inline bool operator!=(std::string l, const Element& r) { return !(r == l); }
   /*! \brief Inequality test of two Elements.
    *  \param l, r Elements to compare.
    *  \return negation of equality test of the parameters.

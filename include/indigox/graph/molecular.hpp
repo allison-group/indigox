@@ -14,7 +14,6 @@
 #include "base_graph.hpp"
 #include "../algorithm/graph/cycles.hpp"
 #include "../utils/common.hpp"
-#include "../utils/numerics.hpp"
 
 // Forward declares
 namespace indigox {
@@ -283,7 +282,7 @@ namespace indigox::graph {
      *  std::numeric_limits<size_>::max().
      *  \param v the vertex to obtain the degree of.
      *  \return the degree of the vertex. */
-    size_ Degree(const MGVertex v) const;
+    size_t Degree(const MGVertex v) const;
     
     /*! \brief Get the edge between two atoms.
      *  \details If there is no edge between the vertices, or at least one of
@@ -394,11 +393,11 @@ namespace indigox::graph {
     
     /*! \brief The number of edges in the graph.
      *  \return the number of edges. */
-    inline size_ NumEdges() const { return _g.NumEdges(); }
+    inline size_t NumEdges() const { return _g.NumEdges(); }
     
     /*! \brief The number of vertices in the graph.
      *  \return the number of vertices. */
-    inline size_ NumVertices() const { return _g.NumVertices(); }
+    inline size_t NumVertices() const { return _g.NumVertices(); }
     
     
   private:

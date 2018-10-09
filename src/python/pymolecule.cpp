@@ -6,7 +6,6 @@
 #include <indigox/python/interface.hpp>
 
 #include <indigox/classes/molecule.hpp>
-#include <indigox/utils/numerics.hpp>
 
 namespace py = pybind11;
 
@@ -16,22 +15,22 @@ void GeneratePyMolecule(py::module& m) {
   m.def("CreateMolecule", &CreateMolecule);
   
   auto angle_get = [](const Molecule& mol) {
-    auto iters = mol->GetAngles();
+    auto iters = mol->GetAngleIters();
     return py::make_iterator(iters.first, iters.second);
   };
   
   auto atom_get = [](const Molecule& mol) {
-    auto iters = mol->GetAtoms();
+    auto iters = mol->GetAtomIters();
     return py::make_iterator(iters.first, iters.second);
   };
   
   auto bond_get = [](const Molecule& mol) {
-    auto iters = mol->GetBonds();
+    auto iters = mol->GetBondIters();
     return py::make_iterator(iters.first, iters.second);
   };
   
   auto dihedral_get = [](const Molecule& mol) {
-    auto iters = mol->GetDihedrals();
+    auto iters = mol->GetDihedralIters();
     return py::make_iterator(iters.first, iters.second);
   };
   
@@ -44,7 +43,7 @@ void GeneratePyMolecule(py::module& m) {
     std::stringstream ss; ss << mol; return ss.str();
   })
   // Getters
-  .def("GetAngle", py::overload_cast<indigox::size_>(&IXMolecule::GetAngle, py::const_))
+  .def("GetAngle", py::overload_cast<size_t>(&IXMolecule::GetAngle, py::const_))
   .def("GetAngle", py::overload_cast<crAtom, crAtom, crAtom>(&IXMolecule::GetAngle))
   .def("GetAngleID", &IXMolecule::GetAngleID)
   .def("GetAngles", angle_get, py::keep_alive<0, 1>())
@@ -53,12 +52,12 @@ void GeneratePyMolecule(py::module& m) {
   .def("GetAtomID", &IXMolecule::GetAtomID)
   .def("GetAtoms", atom_get, py::keep_alive<0, 1>())
   .def("GetAtomTag", &IXMolecule::GetAtomTag)
-  .def("GetBond", py::overload_cast<indigox::size_>(&IXMolecule::GetBond, py::const_))
+  .def("GetBond", py::overload_cast<size_t>(&IXMolecule::GetBond, py::const_))
   .def("GetBond", py::overload_cast<crAtom, crAtom>(&IXMolecule::GetBond, py::const_))
   .def("GetBondID", &IXMolecule::GetBondID)
   .def("GetBonds", bond_get, py::keep_alive<0, 1>())
   .def("GetBondTag", &IXMolecule::GetBondTag)
-  .def("GetDihedral", py::overload_cast<indigox::size_>(&IXMolecule::GetDihedral, py::const_))
+  .def("GetDihedral", py::overload_cast<size_t>(&IXMolecule::GetDihedral, py::const_))
   .def("GetDihedral", py::overload_cast<crAtom, crAtom, crAtom, crAtom>(&IXMolecule::GetDihedral))
   .def("GetDihedralID", &IXMolecule::GetDihedralID)
   .def("GetDihedrals", dihedral_get, py::keep_alive<0, 1>())
@@ -87,8 +86,8 @@ void GeneratePyMolecule(py::module& m) {
   // Molecule modification
   .def("NewAtom", py::overload_cast<>(&IXMolecule::NewAtom))
   .def("NewAtom", py::overload_cast<Element>(&IXMolecule::NewAtom))
-  .def("NewAtom", py::overload_cast<string_>(&IXMolecule::NewAtom))
-  .def("NewAtom", py::overload_cast<string_, Element>(&IXMolecule::NewAtom))
+  .def("NewAtom", py::overload_cast<std::string>(&IXMolecule::NewAtom))
+  .def("NewAtom", py::overload_cast<std::string, Element>(&IXMolecule::NewAtom))
   .def("NewBond", &IXMolecule::NewBond)
   .def("PerceiveAngles", &IXMolecule::PerceiveAngles)
   .def("PerceiveDihedrals", &IXMolecule::PerceiveDihedrals)

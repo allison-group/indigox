@@ -4,9 +4,10 @@
 #ifndef INDIGOX_UTILS_COMMON_HPP
 #define INDIGOX_UTILS_COMMON_HPP
 
+#include <iterator>
+#include <string>
 #include <type_traits>
 
-#include "numerics.hpp"
 
 // forward definitions of serilisation stuff
 namespace cereal {
@@ -21,7 +22,6 @@ namespace cereal {
 
 //! utils namespace for useful utility functions
 namespace indigox::utils {
-  
   enum class Option {
     Yes     = 1,
     No      = Yes << 1,
@@ -45,25 +45,25 @@ namespace indigox::utils {
   /*! \brief Convert a string to upper case.
    *  \param s the string to convert.
    *  \return the uppercase version of s. */
-  string_ ToUpper(const string_& s);
+    std::string ToUpper(const std::string& s);
   
   /*! \brief Convert a string to lower case.
    *  \param s the string to convert.
    *  \return the lower case version of s. */
-  string_ ToLower(const string_& s);
+    std::string ToLower(const std::string& s);
   
   /*! \brief Convert a string to lower case with a single leading upper case.
    *  \details Acts on the string as a whole, ignoring any white space.
    *  \param s the string the convert.
    *  \return the lower case version of s with a leading upper case letter. */
-  string_ ToUpperFirst(const string_& s);
+    std::string ToUpperFirst(const std::string& s);
   
   /*! \brief Generate a random string.
    *  \details All upper and lower case letters are available.
    *  \param length the number of characters to generate.
    *  \param seed the seed for the random number generator. If 
    *  \return the randomly generated string. */
-  string_ GetRandomString(size_ length, size_ seed = 0);
+    std::string GetRandomString(size_t length, size_t seed = 0);
   
   /*! \brief Check if a given shared_ptr<T> is in a weak_ptr<T> container.
    *  \details Checks all weak_ptr<T> instances in the iterator range to see
@@ -90,10 +90,10 @@ namespace indigox::utils {
    *  \tparam T the stored type.
    *  \param t the shared_ptr<T> to check.
    *  \return if the shared_ptr references a null instance. */
-  template<typename T>
-  inline bool IsNull(std::shared_ptr<T> t) {
-    return !(t && *t);
-  }
+//  template<typename T>
+//  inline bool IsNull(std::shared_ptr<T> t) {
+//    return !(t && *t);
+//  }
   
 }  // namespace indigox::utils
 

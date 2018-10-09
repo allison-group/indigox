@@ -1,10 +1,10 @@
 #include <chrono>
+#include <cstdint>
 
 #include <indigox/algorithm/electron_assignment/assigner.hpp>
 #include <indigox/algorithm/electron_assignment/local_optimisation.hpp>
 #include <indigox/graph/assignment.hpp>
 #include <indigox/utils/common.hpp>
-#include <indigox/utils/numerics.hpp>
 
 namespace indigox::algorithm {
   
@@ -13,7 +13,7 @@ namespace indigox::algorithm {
   using LO_Settings = IXLocalOptimisation::Settings;
   
   Option LO_Settings::OPTIMISE_LEVEL = Option::All;
-  uint_ LO_Settings::TIMEOUT = 1000;
+  uint32_t LO_Settings::TIMEOUT = 1000;
   Option LO_Settings::USE_CACHE = Option::Default;
   
   IXLocalOptimisation::IXLocalOptimisation(const ScoreTable& t)
@@ -40,7 +40,7 @@ namespace indigox::algorithm {
     score_t round_min_score = current_min_score;
     current_min_assigns.insert(initial);
     scored_assigns.emplace(initial, current_min_score);
-    size_ current_assigns_count = current_min_assigns.size();
+    size_t current_assigns_count = current_min_assigns.size();
     start = high_resolution_clock::now();
     std::vector<AssignMask> nbrs;
     do {
@@ -105,7 +105,7 @@ namespace indigox::algorithm {
     _loc_masks.clear();
     AssignMask bitmask = AssignMask(_locs.size());
     graph::AGVertex previous;
-    for (size_ i = 0; i < _locs.size(); ++i) {
+    for (size_t i = 0; i < _locs.size(); ++i) {
       graph::AGVertex current = _locs[i];
       if (current == previous) bitmask.set(i);
       else {
@@ -125,16 +125,16 @@ namespace indigox::algorithm {
     LocMasks_t::const_iterator srcEnd = _loc_masks.end();
     
     for (; srcBegin != srcEnd; ++srcBegin) {
-      size_ srcIdx = srcBegin->second.find_first();
-      size_ srcLoc = srcIdx + (m & srcBegin->second).count() - 1;
+      size_t srcIdx = srcBegin->second.find_first();
+      size_t srcLoc = srcIdx + (m & srcBegin->second).count() - 1;
       if (srcIdx > srcLoc) continue;
       LocMasks_t::const_iterator tgtBegin = _loc_masks.begin();
       LocMasks_t::const_iterator tgtEnd = _loc_masks.end();
       for (; tgtBegin != tgtEnd; ++tgtBegin) {
         if (tgtBegin == srcBegin) continue;
-        size_ tgtIdx = tgtBegin->second.find_first();
-        size_ tgtCount = tgtBegin->second.count();
-        size_ tgtLoc = tgtIdx + (m & tgtBegin->second).count();
+        size_t tgtIdx = tgtBegin->second.find_first();
+        size_t tgtCount = tgtBegin->second.count();
+        size_t tgtLoc = tgtIdx + (m & tgtBegin->second).count();
         if (tgtCount + tgtIdx == tgtLoc) continue;
         AssignMask nbr(m);
         nbr.flip(srcLoc);

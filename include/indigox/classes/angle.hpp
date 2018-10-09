@@ -1,6 +1,7 @@
 /*! \file angle.hpp */
 #include <array>
 #include <memory>
+#include <string>
 
 #include "../utils/common.hpp"
 #include "../utils/counter.hpp"
@@ -73,7 +74,7 @@ namespace indigox {
      *  \details This value may be modified without warning. Use with caution.
      *  For a constant identifier to the angle, use the IXAngle::GetUniqueID().
      *  \return the tag assigned to the angle. */
-    inline uid_ GetTag() const { return _tag; }
+    inline uint32_t GetTag() const { return _tag; }
     
     /*! \brief Molecule this angle is associated with.
      *  \details The returned shared_ptr is empty if the angle is not assigned
@@ -86,13 +87,13 @@ namespace indigox {
      *  string is Angle(MALFORMED), otherwise it is of the form:
      *  Angle(NAME_BEGIN, NAME_CENTRAL, NAME_END).
      *  \return a string representation of the dihedral. */
-    string_ ToString() const;
+    std::string ToString() const;
     
     /*! \brief Set the tag of this angle.
      *  \details The tag of an angle should not be considered stable. Use with
      *  caution.
      *  \param tag the tag to set. */
-    inline void SetTag(uid_ tag) { _tag = tag; }
+    inline void SetTag(uint32_t tag) { _tag = tag; }
     
     /*! \brief Switch the begin and end atoms of the angle.
      *  \details The beginning atom will become the end atom and vice versa. The
@@ -107,14 +108,14 @@ namespace indigox {
     
     /*! \brief Number of atoms this angle contains.
      *  \return 3. */
-    size_ NumAtoms() const { return  _atms.size(); }
+    size_t NumAtoms() const { return  _atms.size(); }
     
     /*! \brief Get the index from the molecule.
      *  \details Calculates the index of the angle in the container of angles
      *  of the molecule it is a part of. If the molecule is dead, the index
      *  returned is the tag of the angle.
      *  \return the index of the angle. */
-    size_ GetIndex() const;
+    size_t GetIndex() const;
     
     /*! \brief Get the assigned type.
      *  \return the assigned ff type for the angle. */
@@ -135,7 +136,7 @@ namespace indigox {
     //! The molecule this angle is assigned to.
     _Molecule _mol;
     //! Tag (unstable)
-    uid_ _tag;
+    uint32_t _tag;
     //! MM angle type
     FFAngle _type;
     //! \brief Atoms which make up the angle.

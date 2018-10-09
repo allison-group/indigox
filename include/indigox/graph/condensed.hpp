@@ -11,56 +11,13 @@
 
 #include "base_graph.hpp"
 #include "../utils/common.hpp"
-#include "../utils/numerics.hpp"
+#include "../utils/fwd_declares.hpp"
 
-
-// Forward declares
-namespace indigox::test {
-  struct TestCondensedMolecularGraph;
-  struct TestCondensedVertex;
-  struct TestCondensedEdge;
-}
 namespace indigox::graph {
-  class IXMolecularGraph;
-  class IXMGVertex;
-  class IXMGEdge;
-  
-  using MolecularGraph = std::shared_ptr<IXMolecularGraph>;
-  using MGVertex = std::shared_ptr<IXMGVertex>;
-  using MGEdge = std::shared_ptr<IXMGEdge>;
-  
-  using _MolecularGraph = std::weak_ptr<IXMolecularGraph>;
-  using _MGVertex = std::weak_ptr<IXMGVertex>;
-  using _MGEdge = std::weak_ptr<IXMGEdge>;
-  
-  class IXCondensedMolecularGraph;
-  class IXCMGVertex;
-  class IXCMGEdge;
-  
-  //! \brief shared_ptr for normal use of the IXCondensedMolecularGraph class.
-  using CondensedMolecularGraph = std::shared_ptr<IXCondensedMolecularGraph>;
-  //! \brief shared_ptr for normal use of the IXCMGVertex class.
-  using CMGVertex = std::shared_ptr<IXCMGVertex>;
-  //! \brief shared_ptr for normal use of the IXCMGEdge class.
-  using CMGEdge = std::shared_ptr<IXCMGEdge>;
-  
-  /*! \brief weak_ptr for non-ownership reference to the IXCondensedMolecularGraph class.
-   *  \details Intended for internal use only. */
-  using _CondensedMolecularGraph = std::weak_ptr<IXCondensedMolecularGraph>;
-  /*! \brief weak_ptr for non-ownership reference to the IXCMGVertex class.
-   *  \details Intended for internal use only. */
-  using _CMGVertex = std::weak_ptr<IXCMGVertex>;
-  /*! \brief weak_ptr for non-ownership reference to the IXCMGEdge class.
-   *  \details Intended for internal use only. */
-  using _CMGEdge = std::weak_ptr<IXCMGEdge>;
-  
   //! \brief type used to store the isomorphism testing mask for IXCMGVertex.
   using VertexIsoMask = eastl::bitset<32, uint64_t>;
   //! \brief type used to store the isomorphism testing mask for IXCMGEdge.
   using EdgeIsoMask = eastl::bitset<16, uint32_t>;
-}
-
-namespace indigox::graph {
   
   /*! \brief Class for the vertices of an IXCondensedMolecularGraph. */
   class IXCMGVertex : public std::enable_shared_from_this<IXCMGVertex> {
@@ -68,7 +25,7 @@ namespace indigox::graph {
     //! \brief Enum for the contracted symmetry groups
     enum class ContractedSymmetry {
       Hydrogen, //!< Group for contracted hydrogen atoms.
-      Flourine, //!< Group for contracted flourine atoms.
+      Fluorine, //!< Group for contracted fluorine atoms.
       Chlorine, //!< Group for contracted chlorine atoms.
       Bromine,  //!< Group for contracted bromine atoms.
       Iodine    //!< Group for contracted iodine atoms.
@@ -102,11 +59,11 @@ namespace indigox::graph {
     
     /*! \brief Get the number of contracted vertices.
      *  \return the number of contracted vertices. */
-    inline size_ NumContracted() const { return _con.size(); }
+    inline size_t NumContracted() const { return _con.size(); }
     
     /*! \brief Get the number of contracted vertices in the symmetry group.
      *  \return the number of vertices of the given symmetry group contracted. */
-    size_ NumContracted(ContractedSymmetry sym) const;
+    size_t NumContracted(ContractedSymmetry sym) const;
     
     /*! \brief Get the isomorphism testing mask.
      *  \return the isomorphism testing mask. */
@@ -320,9 +277,9 @@ namespace indigox::graph {
      *  std::numeric_limits<size_>::max().
      *  \param v the vertex to obtain the degree of.
      *  \return the degree of the vertex. */
-    size_ Degree(const CMGVertex v) const {
+    size_t Degree(const CMGVertex v) const {
       return HasVertex(v)
-             ? _g.Degree(v.get()) : std::numeric_limits<size_>::max();
+             ? _g.Degree(v.get()) : std::numeric_limits<size_t>::max();
     }
     
     /*! \brief Get the edge between two vertices.
@@ -455,11 +412,11 @@ namespace indigox::graph {
     
     /*! \brief The number of edges in the graph.
      *  \return the number of edges. */
-    inline size_ NumEdges() const { return _g.NumEdges(); }
+    inline size_t NumEdges() const { return _g.NumEdges(); }
     
     /*! \brief The number of vertices in the graph.
      *  \return the number of vertices. */
-    inline size_ NumVertices() const { return _g.NumVertices(); }
+    inline size_t NumVertices() const { return _g.NumVertices(); }
     
   private:
     //! \brief Snapshot of the molecular graph source.

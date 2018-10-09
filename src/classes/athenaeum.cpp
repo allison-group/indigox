@@ -20,9 +20,9 @@
 namespace indigox {
   using MolFrags = IXAthenaeum::MolFrags;
   // Default states for Athenaeum settings
-  uint_ IXAthenaeum::Settings::AutomaticVertexLimit = 40;
+  uint32_t IXAthenaeum::Settings::AutomaticVertexLimit = 40;
   bool IXAthenaeum::Settings::AutomaticFragmentCycles = false;
-  uint_ IXAthenaeum::Settings::AutomaticMaximumCycleSize = 8;
+  uint32_t IXAthenaeum::Settings::AutomaticMaximumCycleSize = 8;
   
   IXFragment::IXFragment(const graph::CondensedMolecularGraph &G,
                          const Molecule &mol,
@@ -52,7 +52,7 @@ namespace indigox {
     
     std::deque<std::pair<Vert, Vert>> tmp_bnd;
     // Get the bonds which are allowed, including dangling bonds
-    for (auto it = mol->GetBonds(); it.first != it.second; ++it.first) {
+    for (auto it = mol->GetBondIters(); it.first != it.second; ++it.first) {
       auto atms = (*it.first)->GetAtoms();
       graph::MGVertex v1 = molG->GetVertex(atms.first);
       graph::MGVertex v2 = molG->GetVertex(atms.second);
@@ -71,7 +71,7 @@ namespace indigox {
     _bnds.assign(tmp_bnd.begin(), tmp_bnd.end());
     
     std::deque<stdx::triple<Vert, Vert, Vert>> tmp_ang;
-    for (auto it = mol->GetAngles(); it.first != it.second; ++it.first) {
+    for (auto it = mol->GetAngleIters(); it.first != it.second; ++it.first) {
       auto atms = (*it.first)->GetAtoms();
       graph::MGVertex v1 = molG->GetVertex(atms.first);
       graph::MGVertex v2 = molG->GetVertex(atms.second);
@@ -94,7 +94,7 @@ namespace indigox {
     _angs.assign(tmp_ang.begin(), tmp_ang.end());
     
     std::deque<stdx::quad<Vert, Vert, Vert, Vert>> tmp_dhd;
-    for (auto it = mol->GetDihedrals(); it.first != it.second; ++it.first) {
+    for (auto it = mol->GetDihedralIters(); it.first != it.second; ++it.first) {
       auto atms = (*it.first)->GetAtoms();
       graph::MGVertex v1 = molG->GetVertex(atms.first);
       graph::MGVertex v2 = molG->GetVertex(atms.second);
@@ -128,14 +128,14 @@ namespace indigox {
   
   IXAthenaeum::IXAthenaeum(Forcefield ff) : indigox::IXAthenaeum(ff, 0, 0) { }
   
-  IXAthenaeum::IXAthenaeum(Forcefield ff, uint_ overlap, uint_ ring_overlap)
+  IXAthenaeum::IXAthenaeum(Forcefield ff, uint32_t overlap, uint32_t ring_overlap)
   : _ff(ff), _overlap(overlap), _roverlap(ring_overlap), _man(false) { }
   
   bool __allow_bond_break(const Bond&) {
     return true;
   }
   
-  size_ IXAthenaeum::AddAllFragments(const Molecule &mol) {
+  size_t IXAthenaeum::AddAllFragments(const Molecule &mol) {
     using namespace indigox::graph;
     // Check vertex limit (throw?)
     if (mol->NumAtoms() > Settings::AutomaticVertexLimit) return 0;
@@ -157,7 +157,7 @@ namespace indigox {
     // Get all the subgraphs
     std::vector<CondensedMolecularGraph> sub_graphs;
     algorithm::ConnectedSubgraphs(G, sub_graphs);
-    size_ num = 0;
+    size_t num = 0;
     
     // Iterate over all subgraphs
     for (CondensedMolecularGraph frag_g : sub_graphs) {
@@ -246,12 +246,12 @@ namespace indigox {
     return false;
   }
   
-  size_ IXAthenaeum::NumFragments() const {
+  size_t IXAthenaeum::NumFragments() const {
     return std::accumulate(_frags.begin(), _frags.end(), 0,
-                           [](size_ i, auto& j){ return i + j.second.size(); });
+                           [](size_t i, auto& j){ return i + j.second.size(); });
   }
   
-  size_ IXAthenaeum::NumFragments(const Molecule &mol) const {
+  size_t IXAthenaeum::NumFragments(const Molecule &mol) const {
     if (_graphs.find(mol) == _graphs.end()) return 0;
     return _frags.at(_graphs.at(mol)).size();
   }

@@ -1,7 +1,7 @@
 /*! \file assignment.hpp */
 #ifndef INDIGOX_GRAPH_ASSIGNMENT_HPP
 #define INDIGOX_GRAPH_ASSIGNMENT_HPP
-
+#include <cstdint>
 #include <limits>
 #include <map>
 #include <memory>
@@ -11,37 +11,7 @@
 
 #include "base_graph.hpp"
 #include "../utils/common.hpp"
-#include "../utils/numerics.hpp"
-
-// Foward declares
-namespace indigox {
-  namespace test { class IXAssignmentGraph; }
-  namespace graph {
-    class IXMolecularGraph;
-    class IXAssignmentGraph;
-    class IXMGVertex;
-    class IXAGVertex;
-    class IXMGEdge;
-    
-    using MolecularGraph = std::shared_ptr<IXMolecularGraph>;
-    //! \brief shared_ptr for normal use of the IXAssignmentGraph class.
-    using AssignmentGraph = std::shared_ptr<IXAssignmentGraph>;
-    using MGVertex = std::shared_ptr<IXMGVertex>;
-    //! \brief shared_ptr for normal use of the IXEAGVertex class.
-    using AGVertex = std::shared_ptr<IXAGVertex>;
-    using MGEdge = std::shared_ptr<IXMGEdge>;
-    
-    using _MolecularGraph = std::weak_ptr<IXMolecularGraph>;
-    /*! \brief weak_ptr for non-ownership reference to the IXAssignmentGraph class.
-     *  \details Intended for internal use only. */
-    using _AssignmentGraph = std::weak_ptr<IXAssignmentGraph>;
-    using _MGVertex = std::weak_ptr<IXMGVertex>;
-    /*! \brief weak_ptr for non-ownership reference to the IXAGVertex class.
-     *  \details Intended for internal use only. */
-    using _AGVertex = std::weak_ptr<IXAGVertex>;
-    using _MGEdge = std::weak_ptr<IXMGEdge>;
-  }
-}
+#include "../utils/fwd_declares.hpp"
 
 // Local declarations
 namespace indigox::graph {
@@ -94,27 +64,27 @@ namespace indigox::graph {
     
     /*! \brief Get the number of pre-assigned electrons.
      *  \return the number of pre-assigned eletrons. */
-    inline uint_ GetPreAssignedCount() const { return _pre; }
+    inline uint32_t GetPreAssignedCount() const { return _pre; }
     
     /*! \brief Set the number of pre-assigned eletrons.
      *  \details ElectronAssignerAlgorithms will not modify this value.
      *  \param count the number of electrons to pre-assign. */
-    inline void SetPreAssignedCount(const uint_ count) { _pre = count; }
+    inline void SetPreAssignedCount(const uint32_t count) { _pre = count; }
     
     /*! \brief Get the number of assigned electrons.
      *  \details Does not include preassigned electrons.
      *  \return the number of assigned electrons. */
-    inline uint_ GetAssignedCount() const { return _count; }
+    inline uint32_t GetAssignedCount() const { return _count; }
     
     /*! \brief Get the total number of assigned electrons.
      *  \details The total number of electrons is the sum of the number of
      *  pre-assigned electrons and the number of assigned electrons.
      *  \return the total number of assigned electrons. */
-    inline uint_ GetTotalAssigned() const { return _pre + _count; }
+    inline uint32_t GetTotalAssigned() const { return _pre + _count; }
     
     /*! \brief Set the number of assigned eletrons.
      *  \param count the number of electrons to assign. */
-    inline void SetAssignedCount(const uint_ count) { _count = count; }
+    inline void SetAssignedCount(const uint32_t count) { _count = count; }
     
   private:
     //! \brief reference to an MGVertex
@@ -125,7 +95,7 @@ namespace indigox::graph {
      *  \brief pre-assigned electrons
      *  \property _count
      *  \brief assigned electrons */
-    uint_ _pre, _count;
+    uint32_t _pre, _count;
   };
   
   /*! \brief Class used to assign electrons to a molecule.
@@ -135,7 +105,7 @@ namespace indigox::graph {
    *  Additionally, the edges of the graph are not accessible in any way. */
   class IXAssignmentGraph {
     //! \brief Friendship allows IXAssignmentGraph to be properly tested
-    friend class indigox::test::IXAssignmentGraph;
+    friend struct indigox::test::TestAssignmentGraph;
     
     //! \brief Type of the internally utilised graph.
     using graph_type = IXGraphBase<IXAGVertex, std::nullptr_t>;
@@ -197,14 +167,14 @@ namespace indigox::graph {
     
     /*! \brief Get the number of vertices in the graph.
      *  \return the number of vertices in the graph. */
-    inline size_ NumVertices() const { return _g.NumVertices(); }
+    inline size_t NumVertices() const { return _g.NumVertices(); }
     
     /*! \brief Get the degree of a vertex.
      *  \details If the provided vertex is not part of the graph, the returned
      *  value is std::numeric_limits<size_>::max()
      *  \return the degree of the vertex. */
-    inline size_ Degree(const AGVertex& v) const {
-      return HasVertex(v) ? _g.Degree(v.get()) : std::numeric_limits<size_>::max();
+    inline size_t Degree(const AGVertex& v) const {
+      return HasVertex(v) ? _g.Degree(v.get()) : std::numeric_limits<size_t>::max();
     }
     
     /*! \brief Get the neighbours of a vertex.

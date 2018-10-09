@@ -1,3 +1,5 @@
+__all__ = ["LoadFile"]
+
 ## \brief Load a file.
 #  \details Loads the given file line-by-line. Comments are removed from
 #  the line.
