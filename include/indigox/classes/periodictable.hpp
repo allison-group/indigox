@@ -4,9 +4,11 @@
 #ifndef INDIGOX_CLASSES_PERIODIC_TABLE_HPP
 #define INDIGOX_CLASSES_PERIODIC_TABLE_HPP
 
+#include <array>
 #include <cstdint>
 #include <iostream>
-#include <map>
+
+#include <EASTL/vector_map.h>
 
 #include "../utils/common.hpp"
 
@@ -17,106 +19,10 @@ namespace indigox {
     struct TestElement;
   }
   
-  class IXPeriodicTable;
-  class IXElement;
+  class PeriodicTable;
+  class Element;
   
-  //! \brief shared_ptr for normal use of the IXPeriodicTable class.
-  using PeriodicTable = std::shared_ptr<IXPeriodicTable>;
-  //! \brief shared_ptr for normal use of the IXElement class.
-  using Element = std::shared_ptr<IXElement>;
-  /*! \brief weak_ptr for non-ownership reference to the IXPeriodicTable class.
-   *  \details Intended for internal use only. */
-  using _PeriodicTable = std::weak_ptr<IXPeriodicTable>;
-  /*! \brief weak_ptr for non-ownership reference to the IXElement class.
-   *  \details Intended for internal use only. */
-  using _Element = std::weak_ptr<IXElement>;
-  
-  /*! \class IXPeriodicTable periodictable.hpp indigox/classes/periodictable.hpp
-   *  \brief Singleton class for storing and access elemental information.
-   *  \details The IXPeriodicTable class provides the only means to access
-   *  the IXElement class. Access to the instance should only be obtained
-   *  using the GetInstance() method. Like most other classes in the indigoX
-   *  library, usage is primarily intended through the use of smart pointers. */
-  class IXPeriodicTable {
-    using element_type = Element;
-    using atomic_number_map_type = std::map<uint8_t, element_type>;
-    using atomic_symbol_map_type = std::map<std::string, element_type>;
-    
-  public:
-    /*! \brief Get the element with the given atomic number.
-     *  \param z the atomic number of the element to get.
-     *  \returns the requested element.
-     *  \throw std::invalid_argument If the requested atomic number does not exist
-     *  within the PeriodicTable. */
-    Element GetElement(const uint8_t z) const noexcept;
-    
-    /*! \brief Get the element with the given name or symbol.
-     *  \details Name based matches are made ignoring case. Symbol matches are
-     *  made checking case as well.
-     *  \param name the name or symbol of the element to get.
-     *  \returns the requested element.
-     *  \throw std::invalid_argument If the requested name or symbol does not
-     *  exist within the PeriodicTable. */
-    Element GetElement(const std::string name) const noexcept;
-    
-    /*! \brief Get the element with the given atomic number.
-     *  \param z the atomic number of the element to get.
-     *  \return the requested element.
-     *  \see IXPeriodicTable::GetElement(const uint8_t) const */
-    Element operator[](const uint8_t z) const noexcept { return GetElement(z); }
-    
-    /*! \brief Get the element with the given name or symbol.
-     *  \param name the name or symbol of the element to get.
-     *  \return the requested element.
-     *  \see IXPeriodicTable::GetElement(const std::string) const */
-    Element operator[](const std::string name) const noexcept {
-      return GetElement(name);
-    }
-    
-    /*! \brief Get the element for use when an element is not defined.
-     *  \details As there is not much point in an undefined element, this
-     *  method is intended for internal use.
-     *  \return the undefined Element. */
-    Element GetUndefined() const { return _null; }
-    
-    /*! \brief Number of elements in the PeriodicTable.
-     *  \return the number of elements in the PeriodicTable. */
-    size_t NumElements() const { return _z_to.size(); }
-    
-    /*! \brief Get a textual representation of the PeriodicTable.
-     *  \details The textual representation lays out the elements of the
-     *  PeriodicTable as one would expect in a normal periodic table. Each
-     *  element has its atomic number and symbol printed.
-     *  \return a string containing a tabular layout of the PeriodicTable
-     *  elements. */
-    std::string ToString() const;
-  
-  private:
-    //! Default constructor.
-    IXPeriodicTable() = default;
-    
-    /*! \brief Generate Elements.
-     *  \details Currently, the first 109 elements are generated. These are
-     *  hard coded into the implementation file. These are populated into both
-     *  the _z_to and _name_to maps. */
-    void GeneratePeriodicTable();
-    
-    //! Friendship allows for access to a single IXPeriodicTable instance.
-    friend PeriodicTable GetPeriodicTable();
-    
-    //! Friendship allws for testing implementation
-    friend struct indigox::test::TestPeriodicTable;
-  
-  private:
-    //! Undefined element.
-    element_type _null;
-    //! Map atomic numbers to elements.
-    atomic_number_map_type _z_to;
-    //! Map symbol and name to elements.
-    atomic_symbol_map_type _name_to;
-  };
-  
-  /*! \class IXElement periodictable.hpp indigox/classes/periodictable.hpp
+  /*! \class Element periodictable.hpp indigox/classes/periodictable.hpp
    *  \brief Read only class for storing elemental information.
    *  \details Contains a large amount of relevant information pertaining
    *  to elements. Information includes atomic mass, atomic number, atomic
@@ -127,18 +33,14 @@ namespace indigox {
    *  other classes in the indigoX library, usage is primarily intended through
    *  the use of smart pointers.
    */
-  class IXElement {
+  class Element {
     //! Friendship allows IXPeriodicTable to create new IXElement instances.
-    friend class IXPeriodicTable;
+    friend class PeriodicTable;
     
     //! Friendship allows testing
     friend struct indigox::test::TestElement;
-    
+
   public:
-    
-    // No default constructor provided
-    IXElement() = delete;
-    
     /*! \brief Get atomic mass.
      *  \return the atomic mass of the element. */
     double GetAtomicMass() const { return _mass; }
@@ -194,7 +96,7 @@ namespace indigox {
     /*! \brief Get electronegativity.
      *  \return the electronegativity of the element on the Pauling scale. */
     double GetElectronegativity() const { return _chi; }
-
+    
     /*! \brief Get a textual representation of the element.
      *  \details Representation contains the element's name, symbol and atomic
      *  number.
@@ -206,7 +108,7 @@ namespace indigox {
      *  \brief Element name.
      *  \property _sym
      *  \brief Atomic symbol. */
-    const std::string _nme, _sym;
+    std::string _nme, _sym;
     /*! \property _grp
      *  \brief IUPAC group.
      *  \property _prd
@@ -219,7 +121,7 @@ namespace indigox {
      *  \brief Octet.
      *  \property _hyp
      *  \brief Hypervalent octet. */
-    const uint8_t _grp, _prd, _Z, _val, _oct, _hyp;
+    uint8_t _grp, _prd, _Z, _val, _oct, _hyp;
     /*! \property _mass
      *  \brief Relative atomic mass.
      *  \property _rad
@@ -230,10 +132,19 @@ namespace indigox {
      *  \brief Van der Waals radius.
      *  \property _chi
      *  \brief Electronegativity. */
-    const double _mass, _rad, _cov, _vdw, _chi;
+    double _mass, _rad, _cov, _vdw, _chi;
     
-  private:
-    /*! \brief Construct new IXElement instance given data.
+  public:
+    Element() = default; // No default constructor provided
+    
+    Element(const Element&) = default;
+    Element(Element&&) = default;
+    Element& operator=(const Element&) = default;
+    Element& operator=(Element&&) = default;
+    
+    operator bool() const noexcept { return bool(_Z); }
+    
+    /*! \brief Construct new Element instance given data.
      *  \param Z atomic number.
      *  \param name element name.
      *  \param sym atomic symbol.
@@ -247,10 +158,91 @@ namespace indigox {
      *  \param cov covalent radius in angstroms.
      *  \param vdw van der Waals radius i angstroms.
      *  \param chi electronegativity. */
-    IXElement(uint8_t Z, std::string name, std::string sym, double mass,
-              uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct, uint8_t hyp,
-              double rad, double cov, double vdw, double chi);
+    Element(uint8_t Z, std::string name, std::string sym, double mass,
+            uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct, uint8_t hyp,
+            double rad, double cov, double vdw, double chi);
   };
+  
+#define INDIGOX_NUMBER_ELEMENTS 119
+  /*! \class PeriodicTable periodictable.hpp indigox/classes/periodictable.hpp
+   *  \brief Singleton class for storing and access elemental information.
+   *  \details The IXPeriodicTable class provides the only means to access
+   *  the IXElement class. Access to the instance should only be obtained
+   *  using the GetInstance() method. Like most other classes in the indigoX
+   *  library, usage is primarily intended through the use of smart pointers. */
+  class PeriodicTable {
+  public:
+    /*! \brief Get the element with the given atomic number.
+     *  \param z the atomic number of the element to get.
+     *  \returns the requested element.
+     *  \throw std::invalid_argument If the requested atomic number does not exist
+     *  within the PeriodicTable. */
+    const Element& GetElement(const uint8_t z) const;
+    
+    /*! \brief Get the element with the given name or symbol.
+     *  \details Name based matches are made ignoring case. Symbol matches are
+     *  made checking case as well.
+     *  \param name the name or symbol of the element to get.
+     *  \returns the requested element.
+     *  \throw std::invalid_argument If the requested name or symbol does not
+     *  exist within the PeriodicTable. */
+    const Element& GetElement(const std::string name) const;
+    
+    /*! \brief Get the element with the given atomic number.
+     *  \param z the atomic number of the element to get.
+     *  \return the requested element.
+     *  \see IXPeriodicTable::GetElement(const uint8_t) const */
+    const Element& operator[](const uint8_t z) const { return GetElement(z); }
+    
+    /*! \brief Get the element with the given name or symbol.
+     *  \param name the name or symbol of the element to get.
+     *  \return the requested element.
+     *  \see IXPeriodicTable::GetElement(const std::string) const */
+    const Element& operator[](const std::string name) const { return GetElement(name);
+    }
+    
+    /*! \brief Get the element for use when an element is not defined.
+     *  \details As there is not much point in an undefined element, this
+     *  method is intended for internal use.
+     *  \return the undefined Element. */
+    const Element& GetUndefined() const { return _elems.at(0); }
+    
+    /*! \brief Number of elements in the PeriodicTable.
+     *  \return the number of elements in the PeriodicTable. */
+    inline size_t NumElements() const { return _elems.size() - 1; }
+    
+    /*! \brief Get a textual representation of the PeriodicTable.
+     *  \details The textual representation lays out the elements of the
+     *  PeriodicTable as one would expect in a normal periodic table. Each
+     *  element has its atomic number and symbol printed.
+     *  \return a string containing a tabular layout of the PeriodicTable
+     *  elements. */
+    std::string ToString() const;
+  
+  private:
+    //! Default constructor.
+    PeriodicTable() = default;
+    
+    /*! \brief Generate Elements.
+     *  \details Currently, the first 118 elements are generated. These are
+     *  hard coded into the implementation file. These are populated into both
+     *  the _z_to and _name_to maps. */
+    void GeneratePeriodicTable();
+    
+    //! Friendship allows for access to a single PeriodicTable instance.
+    friend const PeriodicTable& GetPeriodicTable();
+    
+    //! Friendship allws for testing implementation
+    friend struct indigox::test::TestPeriodicTable;
+  
+  private:
+    //! Map atomic numbers to elements.
+    std::array<Element, INDIGOX_NUMBER_ELEMENTS> _elems;
+    //! Map symbol and name to vector index.
+    eastl::vector_map<std::string, size_t> _name_to_idx;
+  };
+  
+ 
 
   // Operators have to be explicitly inlined or python bindings linkage fails
   
@@ -259,11 +251,8 @@ namespace indigox {
    *  \param os output stream to print to.
    *  \param e Element to print.
    *  \return the output stream. */
-  inline std::ostream& operator<<(std::ostream& os, const IXElement& e) {
-    return os << "Element(" << e.GetName() << ")";
-  }
   inline std::ostream& operator<<(std::ostream& os, const Element& e) {
-    return e ? (os << *e) : os;
+    return os << "Element(" << e.GetName() << ")";
   }
   
   /*! \brief Print a PeriodicTable to an output stream.
@@ -271,11 +260,8 @@ namespace indigox {
    *  \param os output stream to print to.
    *  \param pt PeriodicTable to print.
    *  \return the output stream. */
-  inline std::ostream& operator<<(std::ostream& os, const IXPeriodicTable& pt) {
-    return os << "PeriodicTable(" << pt.NumElements() << " elements)";
-  }
   inline std::ostream& operator<<(std::ostream& os, const PeriodicTable& pt) {
-    return pt ? (os << *pt) : os;
+    return os << "PeriodicTable(" << pt.NumElements() << " elements)";
   }
   
   // Comparison operators
@@ -285,10 +271,9 @@ namespace indigox {
    *  always be false.
    *  \param l, r element and integer to compare.
    *  \return if the element has the given atomic number. */
-  inline bool operator==(const IXElement& l, uint8_t r) {
+  inline bool operator==(const Element& l, uint8_t r) {
     return l.GetAtomicNumber() == r;
   }
-  inline bool operator==(const Element& l, uint8_t r) { return l && *l == r; }
   
   /*! \brief Equality test of Element and string.
    *  \details If the size of r is less than or equal to two, compares if the
@@ -298,11 +283,10 @@ namespace indigox {
    *  the undefined element, result will always be false.
    *  \param l, r element and string to compare.
    *  \return if the element has the given atomic symbol or name. */
-  inline bool operator==(const IXElement& l, std::string r) {
+  inline bool operator==(const Element& l, std::string r) {
     return r.size() <= 2 ? (l.GetSymbol() == r)
           : (l.GetName() == utils::ToUpperFirst(r));
   }
-  inline bool operator==(const Element& l, std::string r) { return l && *l == r; }
   
   /*! \brief Equality test of two Elements.
    *  \details Checks if the stored pointers are equivalent. If either of the
@@ -310,19 +294,10 @@ namespace indigox {
    *  be false.
    *  \param l, r elements to compare.
    *  \return if the elements are the name. */
-  inline bool operator==(const IXElement& l, const IXElement& r) {
+  inline bool operator==(const Element& l, const Element& r) {
     return (l.GetAtomicNumber() == r.GetAtomicNumber()
             && l.GetSymbol() == r.GetSymbol()
             && l.GetName() == r.GetName());
-  }
-  inline bool operator==(const Element& l, const IXElement& r) {
-    return l && *l == r;
-  }
-  inline bool operator==(const IXElement& l, const Element& r) {
-    return r && l == *r;
-  }
-  inline bool operator==(const Element& l, const Element& r) {
-    return (!l || !r) ? l.get() == r.get() : *l == *r;
   }
   
   // Inverse eq operators
@@ -330,14 +305,12 @@ namespace indigox {
    *  \param l, r integer and Element to compare.
    *  \return if the element has the given atomic number.
    *  \see operator==(Element, uint8_t) */
-  inline bool operator==(uint8_t l, const IXElement& r) { return r == l; }
   inline bool operator==(uint8_t l, const Element& r) { return r == l; }
   
   /*! \brief Equality test of string and Element.
    *  \param l, r string and Element to compare.
    *  \return if the element has the given atomic symbol or name.
    *  \see operator==(Element, std::string) */
-  inline bool operator==(std::string l, const IXElement& r) { return r == l; }
   inline bool operator==(std::string l, const Element& r) { return r == l; }
   
   // Neq operators
@@ -345,37 +318,30 @@ namespace indigox {
    *  \param l, r Element and integer to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, uint8_t) */
-  inline bool operator!=(const IXElement& l, uint8_t r) { return !(l == r); }
   inline bool operator!=(const Element& l, uint8_t r) { return !(l == r); }
   /*! \brief Inequality test of integer and Element.
    *  \param l, r integer and Element to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, uint8_t) */
-  inline bool operator!=(uint8_t l, const IXElement& r) { return !(r == l); }
   inline bool operator!=(uint8_t l, const Element& r) { return !(r == l); }
   /*! \brief Inequality test of Element and string.
    *  \param l, r Element and string to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, std::string) */
-  inline bool operator!=(const IXElement& l, std::string r) { return !(l == r); }
   inline bool operator!=(const Element& l, std::string r) { return !(l == r); }
   /*! \brief Inequality test of string and Element.
    *  \param l, r string and Element to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, std::string) */
-  inline bool operator!=(std::string l, const IXElement& r) { return !(r == l); }
   inline bool operator!=(std::string l, const Element& r) { return !(r == l); }
   /*! \brief Inequality test of two Elements.
    *  \param l, r Elements to compare.
    *  \return negation of equality test of the parameters.
    *  \see operator==(Element, Element) */
-  inline bool operator!=(const IXElement& l, const IXElement& r) { return !(l == r); }
-  inline bool operator!=(const IXElement& l, const Element& r) { return !(l == r); }
-  inline bool operator!=(const Element& l, const IXElement& r) { return !(l == r); }
   inline bool operator!=(const Element& l, const Element& r) { return !(l == r); }
 
   // Helper access function
-  PeriodicTable GetPeriodicTable();
+  const PeriodicTable& GetPeriodicTable();
   
 } // namespace indigox
 

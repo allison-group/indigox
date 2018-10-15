@@ -37,15 +37,15 @@ namespace indigox::algorithm {
   int16_t settings::MaxChargeMagnitude = -1;
   uint16_t settings::MaxNumResults = 64;
   eastl::vector_set<Element> settings::AllowedElements = {
-    GetPeriodicTable()->GetElement("H"),
-    GetPeriodicTable()->GetElement("C"),
-    GetPeriodicTable()->GetElement("N"),
-    GetPeriodicTable()->GetElement("O"),
-    GetPeriodicTable()->GetElement("S"),
-    GetPeriodicTable()->GetElement("P"),
-    GetPeriodicTable()->GetElement("F"),
-    GetPeriodicTable()->GetElement("Cl"),
-    GetPeriodicTable()->GetElement("Br")
+    GetPeriodicTable().GetElement("H"),
+    GetPeriodicTable().GetElement("C"),
+    GetPeriodicTable().GetElement("N"),
+    GetPeriodicTable().GetElement("O"),
+    GetPeriodicTable().GetElement("S"),
+    GetPeriodicTable().GetElement("P"),
+    GetPeriodicTable().GetElement("F"),
+    GetPeriodicTable().GetElement("Cl"),
+    GetPeriodicTable().GetElement("Br")
   };
   
   AAlgo::AssignAlgorithm(const ScoreTable& t)
@@ -76,7 +76,7 @@ namespace indigox::algorithm {
     // Calculate number of electrons to assign
     int count = -mol->GetMolecularCharge();
     for (auto its = mol->GetAtomIters(); its.first != its.second; ++its.first)
-      count += (*its.first)->GetElement()->GetValenceElectronCount();
+      count += (*its.first)->GetElement().GetValenceElectronCount();
     for (auto its = _g->GetVertices(); its.first != its.second; ++its.first)
       count -= (*its.first)->GetPreAssignedCount();
     
@@ -105,9 +105,9 @@ namespace indigox::algorithm {
       indigox::graph::MGVertex v = *its.first;
       int octet;
       if (G.Degree(v) > 2)
-        octet = (v)->GetAtom()->GetElement()->GetHypervalentOctet();
+        octet = (v)->GetAtom()->GetElement().GetHypervalentOctet();
       else
-        octet = (v)->GetAtom()->GetElement()->GetOctet();
+        octet = (v)->GetAtom()->GetElement().GetOctet();
       
       int bonded = 2 * G.Degree(v);
       int missing = octet - bonded;
@@ -133,17 +133,17 @@ namespace indigox::algorithm {
       indigox::graph::MGVertex u = G.GetSource(e), v = G.GetTarget(e);
       int u_oct;
       if (G.Degree(u) > 2)
-        u_oct = u->GetAtom()->GetElement()->GetHypervalentOctet();
+        u_oct = u->GetAtom()->GetElement().GetHypervalentOctet();
       else
-        u_oct = u->GetAtom()->GetElement()->GetOctet();
+        u_oct = u->GetAtom()->GetElement().GetOctet();
       int u_bonded = 2 * G.Degree(u);
       int u_missing = u_oct - u_bonded;
       
       int v_oct;
       if (G.Degree(v) > 2)
-        v_oct = v->GetAtom()->GetElement()->GetHypervalentOctet();
+        v_oct = v->GetAtom()->GetElement().GetHypervalentOctet();
       else
-        v_oct = v->GetAtom()->GetElement()->GetOctet();
+        v_oct = v->GetAtom()->GetElement().GetOctet();
       int v_bonded = 2 * G.Degree(v);
       int v_missing = v_oct - v_bonded;
       
@@ -210,8 +210,8 @@ namespace indigox::algorithm {
     size_t occurances = std::count(_locs.begin(), _locs.end(), v);
     key_t k = 0;
     if (v->IsVertexMapped()) {
-      Element e = v->GetSourceVertex()->GetAtom()->GetElement();
-      char fc = e->GetValenceElectronCount() - v->GetTotalAssigned();
+      const Element& e = v->GetSourceVertex()->GetAtom()->GetElement();
+      char fc = e.GetValenceElectronCount() - v->GetTotalAssigned();
       uint8_t valence = v->GetTotalAssigned();
       size_t nbr_count = 0;
       auto nbrs_it = _g->GetNeighbours(v);
@@ -229,11 +229,11 @@ namespace indigox::algorithm {
       // occurances of the vertex and all its neighbours is 0
       if (occurances == 0 && nbr_count == 0) return 0;
       // Valence check (valence must be less than or equal target octet
-      if ((_g->Degree(v) > 2 && valence > e->GetHypervalentOctet())
-          || (valence > e->GetOctet())) return _inf;
+      if ((_g->Degree(v) > 2 && valence > e.GetHypervalentOctet())
+          || (valence > e.GetOctet())) return _inf;
       
       // Create the key
-      k = e->GetAtomicNumber() + (std::abs(fc) << 8);
+      k = e.GetAtomicNumber() + (std::abs(fc) << 8);
       if (fc < 0) k += 1 << 15;
     } else {
       // Can set the score to 0 when no occurances of the vertex
@@ -252,13 +252,13 @@ namespace indigox::algorithm {
       Element e1 = u1->GetSourceVertex()->GetAtom()->GetElement();
       Element e2 = u1->GetSourceVertex()->GetAtom()->GetElement();
       // Valence check of vertices making up edge vertex
-      if ((_g->Degree(u1) > 2 && valence_u1 > e1->GetHypervalentOctet())
-          || (valence_u1 > e1->GetOctet())) return _inf;
-      if ((_g->Degree(u2) > 2 && valence_u2 > e2->GetHypervalentOctet())
-          || (valence_u2 > e2->GetOctet())) return _inf;
+      if ((_g->Degree(u1) > 2 && valence_u1 > e1.GetHypervalentOctet())
+          || (valence_u1 > e1.GetOctet())) return _inf;
+      if ((_g->Degree(u2) > 2 && valence_u2 > e2.GetHypervalentOctet())
+          || (valence_u2 > e2.GetOctet())) return _inf;
       
       // Create the key
-      k = e1->GetAtomicNumber() + (e2->GetAtomicNumber() << 8);
+      k = e1.GetAtomicNumber() + (e2.GetAtomicNumber() << 8);
       k += v->GetTotalAssigned() << 20;
     }
     // Find the key score
@@ -321,7 +321,7 @@ namespace indigox::algorithm {
       } else {
         Atom a = v->GetSourceVertex()->GetAtom();
         if (!a) return false;
-        char fc = a->GetElement()->GetValenceElectronCount();
+        char fc = a->GetElement().GetValenceElectronCount();
         fc -= v->GetTotalAssigned();
         for (auto ns = _g->GetNeighbours(v); ns.first != ns.second; ++ns.first)
           fc -= (*ns.first)->GetTotalAssigned() / 2;
@@ -345,7 +345,7 @@ namespace indigox::algorithm {
       file.GetAllLines(lines);
     }
     
-    IXPeriodicTable PT = *GetPeriodicTable();
+    const PeriodicTable& PT = GetPeriodicTable();
     
     double multiplier = 100000;
     
@@ -359,7 +359,7 @@ namespace indigox::algorithm {
       
       if (items.size() == 3) {    // Atom score
         // Expect Element, formal charge, score
-        Element e = PT[items[0]];
+        const Element& e = PT[items[0]];
         if (!e) continue;
         char fc = std::stoi(items[1]);
         long s = std::llround(std::stod(items[2]) * multiplier);
@@ -400,14 +400,14 @@ namespace indigox::algorithm {
       }
     }
     for (auto eets_quad : tmp_dat) {
-      if (!(eets_quad.second->GetAtomicNumber())) {
-        key_t k = eets_quad.first->GetAtomicNumber();
+      if (!(eets_quad.second.GetAtomicNumber())) {
+        key_t k = eets_quad.first.GetAtomicNumber();
         k += std::abs(eets_quad.third) << 8;
         if (eets_quad.third < 0) k += 1 << 15;
         _table.emplace(k, eets_quad.fourth - local_atom_min.at(eets_quad.first));
       } else {
-        key_t k = eets_quad.first->GetAtomicNumber();
-        k += eets_quad.second->GetAtomicNumber() << 8;
+        key_t k = eets_quad.first.GetAtomicNumber();
+        k += eets_quad.second.GetAtomicNumber() << 8;
         k += (eets_quad.third * 2) << 20;
         auto ee = std::make_pair(eets_quad.first, eets_quad.second);
         _table.emplace(k, eets_quad.fourth - local_bond_min.at(ee));

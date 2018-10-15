@@ -15,21 +15,19 @@ void GeneratePyPeriodicTable(py::module& m) {
   
   m.def("GetPeriodicTable", &GetPeriodicTable);
   
-  py::class_<IXPeriodicTable, PeriodicTable>(m, "PeriodicTable")
+  py::class_<PeriodicTable>(m, "PeriodicTable")
   // No constructor
   // allow [] access to elements
-  .def("__getitem__", py::overload_cast<const uint8_t>(&IXPeriodicTable::GetElement, py::const_))
-  .def("__getitem__", py::overload_cast<const std::string>(&IXPeriodicTable::GetElement, py::const_))
+  .def("__getitem__", py::overload_cast<const uint8_t>(&PeriodicTable::GetElement, py::const_))
+  .def("__getitem__", py::overload_cast<const std::string>(&PeriodicTable::GetElement, py::const_))
   // allow len(pt) to give the number of elements
-  .def("__len__", &IXPeriodicTable::NumElements)
-  .def("__repr__", [](PeriodicTable pt) {
-    std::stringstream ss; ss << pt; return ss.str();
-  })
-  .def("GetElement", py::overload_cast<const uint8_t>(&IXPeriodicTable::GetElement, py::const_))
-  .def("GetElement", py::overload_cast<const std::string>(&IXPeriodicTable::GetElement, py::const_))
-  .def("GetUndefined", &IXPeriodicTable::GetUndefined)
-  .def("NumElements", &IXPeriodicTable::NumElements)
-  .def("ToString", &IXPeriodicTable::ToString)
+  .def("__len__", &PeriodicTable::NumElements)
+  .def("__repr__", [](const PeriodicTable& pt) { return pt.ToString(); })
+  .def("GetElement", py::overload_cast<const uint8_t>(&PeriodicTable::GetElement, py::const_))
+  .def("GetElement", py::overload_cast<const std::string>(&PeriodicTable::GetElement, py::const_))
+  .def("GetUndefined", &PeriodicTable::GetUndefined)
+  .def("NumElements", &PeriodicTable::NumElements)
+  .def("ToString", &PeriodicTable::ToString)
   // Pickle support
 //  .def(py::pickle(&PicklePeriodicTable, &UnpicklePeriodicTable))
   ;

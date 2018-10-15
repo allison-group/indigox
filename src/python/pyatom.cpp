@@ -40,7 +40,7 @@ void GeneratePyAtom(pybind11::module& m) {
   .def("GetType", &IXAtom::GetType)
   // Setters
   .def("SetAromaticity", &IXAtom::SetAromaticity)
-  .def("SetElement", py::overload_cast<Element>(&IXAtom::SetElement))
+  .def("SetElement", py::overload_cast<const Element&>(&IXAtom::SetElement))
   .def("SetElement", py::overload_cast<std::string>(&IXAtom::SetElement))
   .def("SetElement", py::overload_cast<unsigned int>(&IXAtom::SetElement))
   .def("SetFormalCharge", &IXAtom::SetFormalCharge)

@@ -62,7 +62,7 @@ namespace indigox::algorithm {
   SortOrder GetVertexSortOrder(const graph::AGVertex &v) {
     if (v->IsVertexMapped()) {
       Atom a = v->GetSourceVertex()->GetAtom();
-      switch (a->GetElement()->GetAtomicNumber()) {
+      switch (a->GetElement().GetAtomicNumber()) {
         case 7:   // Nitrogen
           switch (a->NumBonds()) {
             case 1: return SortOrder::N_ONE;
@@ -109,9 +109,9 @@ namespace indigox::algorithm {
     } else {
       Atom a = v->GetSourceEdge()->GetBond()->GetSourceAtom();
       Atom b = v->GetSourceEdge()->GetBond()->GetTargetAtom();
-      switch (a->GetElement()->GetAtomicNumber()) {
+      switch (a->GetElement().GetAtomicNumber()) {
         case 6:
-          switch (b->GetElement()->GetAtomicNumber()) {
+          switch (b->GetElement().GetAtomicNumber()) {
             case 6:
               if (a->NumBonds() == 2 && b->NumBonds() == 2)
                 return SortOrder::C_TWO_C_TWO;
@@ -135,7 +135,7 @@ namespace indigox::algorithm {
             default: return SortOrder::UNDEFINED;
           }
         case 7:
-          switch (b->GetElement()->GetAtomicNumber()) {
+          switch (b->GetElement().GetAtomicNumber()) {
             case 6:
               if (a->NumBonds() == 1 && b->NumBonds() == 2)
                 return SortOrder::C_TWO_N_ONE;
@@ -153,7 +153,7 @@ namespace indigox::algorithm {
             default: return SortOrder::UNDEFINED;
           }
         case 8:
-          switch (b->GetElement()->GetAtomicNumber()) {
+          switch (b->GetElement().GetAtomicNumber()) {
             case 6:
               if (a->NumBonds() == 1 && b->NumBonds() == 3)
                 return SortOrder::C_THREE_O_ONE;
@@ -173,7 +173,7 @@ namespace indigox::algorithm {
             default: return SortOrder::UNDEFINED;
           }
         case 15:
-          switch (b->GetElement()->GetAtomicNumber()) {
+          switch (b->GetElement().GetAtomicNumber()) {
             case 8:
               if (a->NumBonds() == 4 && b->NumBonds() == 1)
                 return SortOrder::O_ONE_P_FOUR;
@@ -181,7 +181,7 @@ namespace indigox::algorithm {
             default: return SortOrder::UNDEFINED;
           }
         case 16:
-          switch (b->GetElement()->GetAtomicNumber()) {
+          switch (b->GetElement().GetAtomicNumber()) {
             case 6:
               if (a->NumBonds() == 1 && b->NumBonds() == 3)
                 return SortOrder::C_THREE_S_ONE;
@@ -362,7 +362,7 @@ namespace indigox::algorithm {
       graph::AGVertex v = _unique_locs[pos];
       score_t min_s = _inf;
       if (v->IsVertexMapped()) {
-        key_t k1 = v->GetSourceVertex()->GetAtom()->GetElement()->GetAtomicNumber();
+        key_t k1 = v->GetSourceVertex()->GetAtom()->GetElement().GetAtomicNumber();
         for (key_t fc = 0; fc < 10; ++fc) {
           // Positive formal charges
           key_t mask = k1 + (fc << 8);
@@ -381,8 +381,8 @@ namespace indigox::algorithm {
         auto nbrs = _g->GetNeighbours(v);
         graph::AGVertex u1 = *nbrs.first++;
         graph::AGVertex u2 = *nbrs.first;
-        key_t k1 = u1->GetSourceVertex()->GetAtom()->GetElement()->GetAtomicNumber();
-        k1 += (u2->GetSourceVertex()->GetAtom()->GetElement()->GetAtomicNumber() << 8);
+        key_t k1 = u1->GetSourceVertex()->GetAtom()->GetElement().GetAtomicNumber();
+        k1 += (u2->GetSourceVertex()->GetAtom()->GetElement().GetAtomicNumber() << 8);
         for (key_t bond_e = 1; bond_e < 10; ++bond_e) {
           key_t mask = k1 + (bond_e << 20);
           if (_table.find(mask) == _table.end()) continue;
@@ -428,9 +428,9 @@ namespace indigox::algorithm {
         if (!(me_e % 2) && ! nbr_e) step = 2;
         size_t toplace = nbr_e + me_e;
         if (extras < toplace) toplace = extras;
-        Element e = v->GetSourceVertex()->GetAtom()->GetElement();
-        int fc = e->GetValenceElectronCount() - v->GetPreAssignedCount();
-        key_t k1 = e->GetAtomicNumber();
+        const Element& e = v->GetSourceVertex()->GetAtom()->GetElement();
+        int fc = e.GetValenceElectronCount() - v->GetPreAssignedCount();
+        key_t k1 = e.GetAtomicNumber();
         for (int i = 0; i <= static_cast<int>(toplace); i += step) {
           key_t mask = k1 + (abs(fc + i) << 8);
           if ((fc + i) < 0) mask += (1 << 15);
@@ -443,8 +443,8 @@ namespace indigox::algorithm {
         auto nbrs = _g->GetNeighbours(v);
         graph::AGVertex u1 = *nbrs.first++;
         graph::AGVertex u2 = *nbrs.first;
-        key_t k1 = u1->GetSourceVertex()->GetAtom()->GetElement()->GetAtomicNumber();
-        k1 += (u2->GetSourceVertex()->GetAtom()->GetElement()->GetAtomicNumber() << 8);
+        key_t k1 = u1->GetSourceVertex()->GetAtom()->GetElement().GetAtomicNumber();
+        k1 += (u2->GetSourceVertex()->GetAtom()->GetElement().GetAtomicNumber() << 8);
         size_t toplace = extra_positions[pos];
         if (_opts[__pairs]) toplace += toplace;
         

@@ -73,9 +73,7 @@ namespace indigox {
     
     /*! \brief Element of the atom.
      *  \return the element of this atom. */
-    inline Element GetElement() const {
-      return _elem.expired() ? GetPeriodicTable()->GetUndefined() : _elem.lock();
-    }
+    inline const Element& GetElement() const { return _elem; }
     
     /*! \brief Formal charge on the atom.
      *  \return the formal charge on the atom. */
@@ -139,18 +137,18 @@ namespace indigox {
     
     /*! \brief Set the element of this atom.
      *  \param e the element to set to. */
-    void SetElement(Element e);
+    void SetElement(const Element& e);
     
     /*! \brief Set the element of this atom.
      *  \param e the name or atomic symbol of the element to set. */
     inline void SetElement(std::string e) {
-      SetElement(GetPeriodicTable()->GetElement(e));
+      SetElement(GetPeriodicTable().GetElement(e));
     }
     
     /*! \brief Set the element of this atom.
      *  \param e the atomic number of the element to set. */
     inline void SetElement(uint32_t e){
-      SetElement(GetPeriodicTable()->GetElement(e));
+      SetElement(GetPeriodicTable().GetElement(e));
     }
     
     /*! \brief Set the formal charge of this atom.
@@ -311,7 +309,7 @@ namespace indigox {
     //! The molecule this atom is assigned to.
     _Molecule _mol;
     //! The atoms element.
-    _Element _elem;
+    Element _elem;
     //! Formal charge.
     int32_t _fc;
     //! Tag (unstable).

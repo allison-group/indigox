@@ -758,7 +758,7 @@ namespace indigox {
   std::string IXMolecule::GetFormula() {
     if (_emerge[static_cast<size_t>(Emergent::MOLECULAR_FORMULA)]) {
       std::map<std::string, size_t> e_count;
-      for (Atom atm : _atms) e_count[atm->GetElement()->GetSymbol()]++;
+      for (Atom atm : _atms) e_count[atm->GetElement().GetSymbol()]++;
       std::stringstream ss;
       if (e_count["C"]) ss << "C";
       if (e_count["C"] > 1) ss << e_count["C"];
@@ -1085,7 +1085,7 @@ namespace indigox {
     benzene.PerceiveDihedrals();
     benzene.get_angs()[3]->SwapOrder(); // for better coverage of RemoveAtom
     
-    Element test_element = GetPeriodicTable()->GetElement("W");
+    Element test_element = GetPeriodicTable().GetElement("W");
     blankmol.Init();
     
     // New atom with no parameters

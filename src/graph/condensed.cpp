@@ -14,11 +14,11 @@
 namespace indigox::graph {
   
   eastl::vector_set<Element> __con_elem = {
-    GetPeriodicTable()->GetElement("H"),
-    GetPeriodicTable()->GetElement("F"),
-    GetPeriodicTable()->GetElement("Cl"),
-    GetPeriodicTable()->GetElement("Br"),
-    GetPeriodicTable()->GetElement("I")};
+    GetPeriodicTable().GetElement("H"),
+    GetPeriodicTable().GetElement("F"),
+    GetPeriodicTable().GetElement("Cl"),
+    GetPeriodicTable().GetElement("Br"),
+    GetPeriodicTable().GetElement("I")};
 
   test_suite_open("CondensedMolecularGraph");
   
@@ -66,7 +66,7 @@ namespace indigox::graph {
     // Is S stereo (1 bit)
     // Is aromatic (1 bit)
     VertexIsoMask atm_num, fc_mag, h, f, cl, br, i;
-    atm_num.from_uint64(v->GetAtom()->GetElement()->GetAtomicNumber());
+    atm_num.from_uint64(v->GetAtom()->GetElement().GetAtomicNumber());
     fc_mag.from_uint64(abs(v->GetAtom()->GetFormalCharge())); fc_mag <<= 7;
     h.from_uint32(NumContracted(CS::Hydrogen)); h <<= 11;
     f.from_uint32(NumContracted(CS::Fluorine)); f <<= 14;

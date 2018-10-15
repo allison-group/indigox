@@ -37,9 +37,7 @@ namespace indigox {
   using Dihedral = std::shared_ptr<IXDihedral>;
   using _Dihedral = std::weak_ptr<IXDihedral>;
   
-  class IXElement;
-  using Element = std::shared_ptr<IXElement>;
-  using _Element = std::weak_ptr<IXElement>;
+  class Element;
   
   // CherryPicker Related
   class IXParamMolecule;

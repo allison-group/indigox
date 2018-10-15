@@ -70,7 +70,7 @@ namespace indigox::graph {
   uint32_t __VertexPrePlace(size_t degree, const Element& element) {
     switch (degree) {
       case 1:
-        switch (element->GetAtomicNumber()) {
+        switch (element.GetAtomicNumber()) {
           case 9:   // F
           case 17:  // Cl
           case 35:  // Br
@@ -85,7 +85,7 @@ namespace indigox::graph {
         }
         break;
       case 2:
-        switch (element->GetAtomicNumber()) {
+        switch (element.GetAtomicNumber()) {
           case 8:   // O
           case 16:  // S
             return 4;
