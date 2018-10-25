@@ -277,6 +277,9 @@ namespace indigox::graph {
     
     Molecule& GetMolecule() const;
     
+    // Can only generate/get the condensed graph when molecule is frozen
+    CondensedMolecularGraph& GetCondensedGraph();
+    
   private:
     //! \brief Map Atoms to their corresponding MGVertex
     AtomMap _at2v;
@@ -284,6 +287,9 @@ namespace indigox::graph {
     BondMap _bn2e;
     //! \brief Source molecule
     wMolecule _mol;
+    //! \brief Condensed version of graph
+    sCondensedMolecularGraph _cond;
+    
   };
 }  // namespace indigox::graph
 

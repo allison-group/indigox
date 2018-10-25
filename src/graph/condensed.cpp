@@ -288,9 +288,13 @@ namespace indigox::graph {
   CondensedMolecularGraph::CondensedMolecularGraph()
   : _source(wMolecularGraph()) { }
   
+  CondensedMolecularGraph::CondensedMolecularGraph(MolecularGraph& g)
+  : _source(g.weak_from_this()) { }
+  
   sCondensedMolecularGraph Condense(MolecularGraph& MG) {
-    sCondensedMolecularGraph CG = std::make_shared<CondensedMolecularGraph>();
-    CG->_source = MG.weak_from_this();
+    using CMG = sCondensedMolecularGraph;
+    CMG CG = CMG(new CondensedMolecularGraph(MG));
+    
     
     for (const MGVertex& v : MG.GetVertices()) {
       // Add vertex for all non-leaf vertices

@@ -4,6 +4,7 @@
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
 #include <indigox/classes/molecule.hpp>
+#include <indigox/graph/condensed.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/utils/serialise.hpp>
 
@@ -120,7 +121,8 @@ namespace indigox::graph {
     archive(INDIGOX_SERIAL_NVP("graph", cereal::base_class<graph_type>(this)),
             INDIGOX_SERIAL_NVP("atom_map", _at2v),
             INDIGOX_SERIAL_NVP("bond_map", _bn2e),
-            INDIGOX_SERIAL_NVP("molecule", _mol));
+            INDIGOX_SERIAL_NVP("molecule", _mol),
+            INDIGOX_SERIAL_NVP("condensed_graph", _cond));
   }
   
   template <typename Archive>
@@ -128,7 +130,8 @@ namespace indigox::graph {
     archive(INDIGOX_SERIAL_NVP("graph", cereal::base_class<graph_type>(this)),
             INDIGOX_SERIAL_NVP("atom_map", _at2v),
             INDIGOX_SERIAL_NVP("bond_map", _bn2e),
-            INDIGOX_SERIAL_NVP("molecule", _mol));
+            INDIGOX_SERIAL_NVP("molecule", _mol),
+            INDIGOX_SERIAL_NVP("condensed_graph", _cond));
   }
   
   INDIGOX_SERIALISE_SPLIT(MolecularGraph);
@@ -514,6 +517,13 @@ namespace indigox::graph {
 //    }
 //    return {_c.cbegin(), _c.cend()};
 //  }
+  
+  CondensedMolecularGraph& MolecularGraph::GetCondensedGraph() {
+    if (!IsFrozen())
+      throw std::runtime_error("Can only condense a frozen graph");
+    if (!_cond) _cond = Condense(*this);
+    return *_cond;
+  }
   
   test_suite_close();
 }

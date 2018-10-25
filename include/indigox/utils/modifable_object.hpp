@@ -20,6 +20,7 @@ namespace indigox::utils {
       ++_state;
     }
     inline void FreezeModifications() { _frozen = true; }
+    inline bool IsFrozen() const { return _frozen; }
     
   private:
     template <typename Archive>
