@@ -68,6 +68,8 @@ namespace indigox {
      *  via the Molecule shared_ptr. */
     Molecule();
     
+    void Init();
+    
   public:
     //! \brief Destructor to clear all members, just in case
     ~Molecule();
@@ -203,7 +205,7 @@ namespace indigox {
     
     /*! \brief Get the molecular graph for this molecule.
      *  \return the molecular graph of this molecule. */
-    inline const graph::MolecularGraph& GetGraph() const { return *_g; }
+    inline graph::MolecularGraph& GetGraph() const { return *_g; }
     
     /*! \brief Get the name of the molecule.
      *  \return the name of the molecule. */
@@ -456,6 +458,8 @@ namespace indigox {
     //! State when dihedrals were last percieved
     ModifiableObject::State _dihedral_perceive;
   };
+  
+  sMolecule CreateMolecule();
 }
 
 #endif /* INDIGOX_MOLECULE_HPP */

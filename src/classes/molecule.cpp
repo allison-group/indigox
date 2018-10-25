@@ -109,6 +109,10 @@ namespace indigox {
   _q(0), _g(std::make_shared<graph::MolecularGraph>()), _formula_cache(0, ""),
   _angle_perceive(0), _dihedral_perceive(0) { }
   
+  void Molecule::Init() {
+    _g->_mol = weak_from_this();
+  }
+  
   Molecule::~Molecule() {
     _g->Clear();
     for (sAtom atm : _atms) atm->Clear();
@@ -1149,6 +1153,12 @@ namespace indigox {
     check_eq(1, randmol.get_dhds().size());
   }
  */
+  
+  sMolecule CreateMolecule() {
+    sMolecule tmp = sMolecule(new Molecule());
+    tmp->Init();
+    return tmp;
+  }
   
   test_suite_close();
 }
