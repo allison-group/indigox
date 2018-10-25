@@ -8,6 +8,8 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 
+#include "../utils/serialise.hpp"
+#include "../utils/modifable_object.hpp"
 #include "../utils/simple_bimap.hpp"
 #include "../utils/triple.hpp"
 
@@ -43,12 +45,6 @@ namespace indigox::graph {
       int32_t component;
       //! \brief Label used for (sub-)graph isomorphism.
       uint64_t isomorphism;
-      //! \brief An integer label.
-      int32_t ilabel;
-      //! \brief A floating point label
-      double flabel;
-      //! \brief A colour for graph algorithms
-      boost::default_color_type colour;
     };
   };
   
@@ -81,7 +77,7 @@ namespace indigox::graph {
             class D=Undirected,
             class VertProp=GraphLabel,
             class EdgeProp=GraphLabel>
-  class BaseGraph {
+  class BaseGraph : public utils::ModifiableObject {
     //! \brief Friendship allows serialisation
     friend class cereal::access;
   public:
@@ -119,22 +115,28 @@ namespace indigox::graph {
     using NbrsContain = std::map<V, std::vector<V>>;
     //! \brief Friendship allows algorithms access to the underlying boost graph.
     friend struct access;
+    //! \brief Type for storing components
+    using ComponentContain = std::vector<VertContain>;
     
-  public:
+  protected:
     //! \brief Underlying boost graph.
     graph_type _g;
     //! \brief Map vertices to their descriptors.
     VertMap _vm;
     //! \brief Map edges to their descriptors.
     EdgeMap _em;
-    //! \brief Container for giving iterator access to all vertices
+    //! \brief Container for giving access to all vertices
     VertContain _v;
-    //! \brief Container for giving iterator access to all edges
+    //! \brief Container for giving access to all edges
     EdgeContain _e;
     //! \brief Container for predecessors of a vertex (v such that edge u->v exists)
     NbrsContain _pre;
     //! \brief Container for successors of a vertex. Only used in directed graphs
     NbrsContain _suc;
+    //! \brief Components container
+    ComponentContain _comp;
+    //! \brief State when components were last calculated
+    utils::ModifiableObject::State _comp_state;
     
   private:
     template <typename Archive>
@@ -145,7 +147,8 @@ namespace indigox::graph {
         edges.emplace_back(GetSourceVertex(e), GetTargetVertex(e), e);
 
       archive(INDIGOX_SERIAL_NVP("vertices", _v),
-              INDIGOX_SERIAL_NVP("edges", edges));
+              INDIGOX_SERIAL_NVP("edges", edges),
+              INDIGOX_SERIAL_NVP("state", cereal::base_class<utils::ModifiableObject>(this)));
     }
 
     template <typename Archive>
@@ -158,11 +161,14 @@ namespace indigox::graph {
       // Build the graph
       for (V& v : vertices) AddVertex(v);
       for (auto& e : edges) AddEdge(e.first, e.second, e.third);
+      
+      // Reload state
+      archive(INDIGOX_SERIAL_NVP("state", cereal::base_class<utils::ModifiableObject>(this)));
     }
     
   public:
     //! \brief Default constructor
-    BaseGraph() : _g() { }
+    BaseGraph() : _g(), _comp_state(0) { }
     
   protected:
     // Modification methods protected.
@@ -183,6 +189,7 @@ namespace indigox::graph {
      *  the graph may arise.
      *  \param v the vertex to add. */
     void AddVertex(const V& v) {
+      ModificationMade();
       VertType vboost = boost::add_vertex(VertProp(), _g);
       _vm.insert(v, vboost);
       _v.emplace_back(v);
@@ -196,6 +203,7 @@ namespace indigox::graph {
      *  the graph.
      *  \param v the vertex to remove. */
     void RemoveVertex(const V& v) {
+      ModificationMade();
       VertType vboost = GetDescriptor(v);
       // Remove adjacent edges
       PredIter vi, vi_end;
@@ -233,6 +241,7 @@ namespace indigox::graph {
      *  \param u, v vertices the edge is between.
      *  \param e the edge. */
     void AddEdge(const V& u, const V& v, const E& e) {
+      ModificationMade();
       if (!HasVertex(u)) AddVertex(u);
       if (!HasVertex(v)) AddVertex(v);
       VertType uboost = GetDescriptor(u);
@@ -247,6 +256,7 @@ namespace indigox::graph {
      *  part of the graph.
      *  \param e the edge to remove. */
     void RemoveEdge(const E& e) {
+      ModificationMade();
       EdgeType eboost = GetDescriptor(e);
       _em.erase(eboost);
       _e.erase(std::find(_e.begin(), _e.end(), e));
@@ -423,25 +433,41 @@ namespace indigox::graph {
       return GetV(target);
     }
     
-    /*! \brief Get the connected components of the graph.
-     *  \param[out] components where the connected components will be written to.
-     *  \return the number of connected components. */
-//    size_ ConnectedComponents(std::vector<std::vector<V*>>& components) {
-//      static_assert(!D::is_directed, "Requires an undirected graph.");
-//      size_ num = __connected_components_worker();
-//      components.clear();
-//      components.assign(num, std::vector<V*>());
-//      for (auto v : _verts.right)
-//        components[(*_graph)[v.first].ilabel].push_back(v.second);
-//      return num;
-//    }
+    /*! \brief Determine if the graph is connected
+     *  \return if the graph is connected or not. */
+    bool IsConnected() {
+      GetConnectedComponents();
+      return _comp.size() == 1;
+    }
     
-    /*! \brief Number of connected components of the graph.
-     *  \return the number of connected components. */
-//    size_ NumConnectedComponents() {
-//      static_assert(!D::is_directed, "Requires an undirected graph.");
-//      return __connected_components_worker();
-//    }
+    /*! \brief Get the connected components of the graph.
+     *  \return reference to the connected components of the graph. */
+    const ComponentContain& GetConnectedComponents() {
+      static_assert(!D::is_directed, "Connectivity requires an undirected graph");
+      if (_comp_state == GetCurrentState()) return _comp;
+      using VertIdxMap = eastl::vector_map<VertType, int>;
+      using namespace boost;
+      VertIdxMap data;
+      associative_property_map<VertIdxMap> indexMap(data);
+      VertIter begin, end;
+      std::tie(begin, end) = boost::vertices(_g);
+      for (int i = 0; begin != end; ++begin, ++i) put(indexMap, *begin, i);
+      size_t num = connected_components(_g, get(&VertProp::component, _g),
+                                        vertex_index_map(indexMap));
+      _comp.clear();
+      _comp.assign(num, VertContain());
+      for (auto& v : _vm.right)
+        _comp[_g[v.first].component].emplace_back(v.second);
+      _comp_state = GetCurrentState();
+      return _comp;
+    }
+    
+    /*! \brief Get the number of connected components of the graph.
+     *  \return the number of cnnected components of the graph. */
+    size_t NumConnectedComponents() {
+      GetConnectedComponents();
+      return _comp.size();
+    }
     
   private:
     /*! \brief Get vertex descriptor of a vertex.
@@ -473,26 +499,6 @@ namespace indigox::graph {
      *  \param v vertex descriptor to get indegree of.
      *  \return the indegree of the given vertex descriptor. */
     size_t InDegree(VertType v) const { return boost::in_degree(v, _g); }
-    
-    //! \cond
-    /*! \brief Worker method for calculating connected components.
-     *  \details Each vertex is labeled with the ID of the component it is
-     *  a part of. */
-//    size_ __connected_components_worker() {
-//      using namespace boost;
-//      using VertIdxMap = std::map<VertType, size_>;
-//      VertIdxMap data;
-//      associative_property_map<VertIdxMap> indexMap(data);
-//      auto verts = vertices(*_graph);
-//      for (size_ i = 0; verts.first != verts.second; ++verts.first, ++i)
-//        put(indexMap, *verts.first, i);
-//
-//      auto num = connected_components(*_graph,
-//                                      get(&VertProp::component, *_graph),
-//                                      vertex_index_map(indexMap));
-//      return static_cast<size_>(num);
-//    }
-    //! \endcond
   };
   
 }
