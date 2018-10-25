@@ -17,27 +17,23 @@ namespace cereal {
 namespace indigox {
   
   // Molecule related
-  class IXMolecule;
-  using Molecule = std::shared_ptr<IXMolecule>;
-  using _Molecule = std::weak_ptr<IXMolecule>;
-  
-  class IXAtom;
-  using Atom = std::shared_ptr<IXAtom>;
-  using _Atom = std::weak_ptr<IXAtom>;
-  
-  class IXBond;
-  using Bond = std::shared_ptr<IXBond>;
-  using _Bond = std::weak_ptr<IXBond>;
-  
-  class IXAngle;
-  using Angle = std::shared_ptr<IXAngle>;
-  using _Angle = std::weak_ptr<IXAngle>;
-  
-  class IXDihedral;
-  using Dihedral = std::shared_ptr<IXDihedral>;
-  using _Dihedral = std::weak_ptr<IXDihedral>;
-  
+  class Molecule;
+  using sMolecule = std::shared_ptr<Molecule>;
+  using wMolecule = std::weak_ptr<Molecule>;
+  class Atom;
+  using sAtom = std::shared_ptr<Atom>;
+  using wAtom = std::weak_ptr<Atom>;
+  class Bond;
+  using sBond = std::shared_ptr<Bond>;
+  using wBond = std::weak_ptr<Bond>;
+  class Angle;
+  using sAngle = std::shared_ptr<Angle>;
+  using wAngle = std::weak_ptr<Angle>;
+  class Dihedral;
+  using sDihedral = std::shared_ptr<Dihedral>;
+  using wDihedral = std::weak_ptr<Dihedral>;
   class Element;
+  class PeriodicTable;
   
   // CherryPicker Related
   class IXParamMolecule;
@@ -61,34 +57,30 @@ namespace indigox {
   using _ParamDihedral = std::weak_ptr<IXParamDihedral>;
   
   // Forcefield related
-  class IXForcefield;
-  using Forcefield = std::shared_ptr<IXForcefield>;
-  using _Forcefield = std::weak_ptr<IXForcefield>;
-  
-  class IXFFAtom;
-  using FFAtom = std::shared_ptr<IXFFAtom>;
-  using _FFAtom = std::weak_ptr<IXFFAtom>;
-  
-  class IXFFBond;
-  using FFBond = std::shared_ptr<IXFFBond>;
-  using _FFBond = std::weak_ptr<IXFFBond>;
-  
-  class IXFFAngle;
-  using FFAngle = std::shared_ptr<IXFFAngle>;
-  using _FFAngle = std::weak_ptr<IXFFAngle>;
-  
-  class IXFFDihedral;
-  using FFDihedral = std::shared_ptr<IXFFDihedral>;
-  using _FFDihedral = std::weak_ptr<IXFFDihedral>;
+  class Forcefield;
+  using sForcefield = std::shared_ptr<Forcefield>;
+  using wForcefield = std::weak_ptr<Forcefield>;
+  class FFAtom;
+  using sFFAtom = std::shared_ptr<FFAtom>;
+  using wFFAtom = std::weak_ptr<FFAtom>;
+  class FFBond;
+  using sFFBond = std::shared_ptr<FFBond>;
+  using wFFBond = std::weak_ptr<FFBond>;
+  class FFAngle;
+  using sFFAngle = std::shared_ptr<FFAngle>;
+  using wFFAngle = std::weak_ptr<FFAngle>;
+  class FFDihedral;
+  using sFFDihedral = std::shared_ptr<FFDihedral>;
+  using wFFDihedral = std::weak_ptr<FFDihedral>;
   
   // Athenaeum related
-  class IXFragment;
-  using Fragment = std::shared_ptr<IXFragment>;
-  using _Fragment = std::weak_ptr<IXFragment>;
+  class Fragment;
+  using sFragment = std::shared_ptr<Fragment>;
+  using wFragment = std::weak_ptr<Fragment>;
   
-  class IXAthenaeum;
-  using Athenaeum = std::shared_ptr<IXAthenaeum>;
-  using _Athenaeum = std::weak_ptr<IXAthenaeum>;
+  class Athenaeum;
+  using sAthenaeum = std::shared_ptr<Athenaeum>;
+  using wAthenaeum = std::weak_ptr<Athenaeum>;
   
   namespace algorithm {
     template <class VertType>
@@ -121,30 +113,18 @@ namespace indigox {
     using _AGVertex = std::weak_ptr<IXAGVertex>;
     
     // MolecularGraph
-    class IXMolecularGraph;
-    using MolecularGraph = std::shared_ptr<IXMolecularGraph>;
-    using _MolecularGraph = std::weak_ptr<IXMolecularGraph>;
-    
-    class IXMGVertex;
-    using MGVertex = std::shared_ptr<IXMGVertex>;
-    using _MGVertex = std::weak_ptr<IXMGVertex>;
-    
-    class IXMGEdge;
-    using MGEdge = std::shared_ptr<IXMGEdge>;
-    using _MGEdge = std::weak_ptr<IXMGEdge>;
+    class MolecularGraph;
+    using sMolecularGraph = std::shared_ptr<MolecularGraph>;
+    using wMolecularGraph = std::weak_ptr<MolecularGraph>;
+    class MGVertex;
+    class MGEdge;
     
     // CondensedMolecularGraph
-    class IXCondensedMolecularGraph;
-    using CondensedMolecularGraph = std::shared_ptr<IXCondensedMolecularGraph>;
-    using _CondensedMolecularGraph = std::weak_ptr<IXCondensedMolecularGraph>;
-    
-    class IXCMGVertex;
-    using CMGVertex = std::shared_ptr<IXCMGVertex>;
-    using _CMGVertex = std::weak_ptr<IXCMGVertex>;
-    
-    class IXCMGEdge;
-    using CMGEdge = std::shared_ptr<IXCMGEdge>;
-    using _CMGEdge = std::weak_ptr<IXCMGEdge>;
+    class CondensedMolecularGraph;
+    using sCondensedMolecularGraph = std::shared_ptr<CondensedMolecularGraph>;
+    using wCondensedMolecularGraph = std::weak_ptr<CondensedMolecularGraph>;
+    class CMGVertex;
+    class CMGEdge;
   }
   
   namespace test {
@@ -153,11 +133,21 @@ namespace indigox {
     struct TestFFBond;
     struct TestFFAngle;
     struct TestFFDihedral;
+    
     struct TestMolecule;
     struct TestAtom;
+    struct TestBond;
+    struct TestAngle;
+    struct TestDihedral;
+    struct TestElement;
+    struct TestPeriodicTable;
+    
     struct TestAssignmentGraph;
     struct TestCondensedMolecularGraph;
     struct TestCondensedVertex;
     struct TestCondensedEdge;
+    struct TestMolecularGraph;
+    struct TestMolecularVertex;
+    struct TestMolecularEdge;
   }
 }

@@ -13,31 +13,47 @@
 #include <indigox/test/bond_test.hpp>
 
 namespace indigox::graph {
-  test_suite_open("IXMolecularGraph");
+  test_suite_open("MolecularGraph");
+  
+  struct MGVertex::MGVertexData {
+    wAtom atom;
+    wMolecularGraph graph;
+    
+    MGVertexData() = default;
+    MGVertexData(wAtom a, wMolecularGraph g) : atom(a), graph(g) { }
+    
+    template <typename Archive>
+    void serialise(Archive& archive, const uint32_t) {
+      archive(INDIGOX_SERIAL_NVP("atom", atom),
+              INDIGOX_SERIAL_NVP("graph", graph));
+    }
+  };
+  
+  struct MGEdge::MGEdgeData {
+    wBond bond;
+    wMolecularGraph graph;
+    
+    MGEdgeData() = default;
+    MGEdgeData(wBond b, wMolecularGraph g) : bond(b), graph(g) { }
+    
+    template <typename Archive>
+    void serialise(Archive& archive, const uint32_t) {
+      archive(INDIGOX_SERIAL_NVP("bond", bond),
+              INDIGOX_SERIAL_NVP("graph", graph));
+    }
+  };
   
 // ============================================================================
 // == SERIALISATION ===========================================================
 // ============================================================================
   
   template <typename Archive>
-  void IXMGVertex::save(Archive &archive, const uint32_t) const {
-    archive(INDIGOX_SERIAL_NVP("source_atom", _atom),
-            INDIGOX_SERIAL_NVP("graph", _graph));
+  void MGVertex::serialise(Archive &archive, const uint32_t) {
+    archive(INDIGOX_SERIAL_NVP("data", _dat));
   }
+  INDIGOX_SERIALISE(MGVertex);
   
-  template <typename Archive>
-  void IXMGVertex::load_and_construct(Archive &archive,
-                                      cereal::construct<IXMGVertex> &construct,
-                                      const uint32_t) {
-    Atom atom;
-    MolecularGraph g;
-    archive(INDIGOX_SERIAL_NVP("source_atom", atom),
-            INDIGOX_SERIAL_NVP("graph", g));
-    construct(atom, g);
-  }
-  INDIGOX_SERIALISE_SPLIT(IXMGVertex);
-  
-  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXMGVertex serialisation", T, ixmolv_serial) {
+/*  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXMGVertex serialisation", T, ixmolv_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     
@@ -63,26 +79,15 @@ namespace indigox::graph {
     check_eq(loaded->GetGraph(), graph_loaded);
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixmolv_serial, ixserial<IXMGVertex>);
+ */
   
   template <typename Archive>
-  void IXMGEdge::save(Archive &archive, const uint32_t) const {
-    archive(INDIGOX_SERIAL_NVP("source_bond", _bond),
-            INDIGOX_SERIAL_NVP("graph", _graph));
+  void MGEdge::serialise(Archive &archive, const uint32_t) {
+    archive(INDIGOX_SERIAL_NVP("data", _dat));
   }
+  INDIGOX_SERIALISE(MGEdge);
   
-  template <typename Archive>
-  void IXMGEdge::load_and_construct(Archive &archive,
-                                    cereal::construct<IXMGEdge> &construct,
-                                    const uint32_t) {
-    Bond bond;
-    MolecularGraph g;
-    archive(INDIGOX_SERIAL_NVP("source_bond", bond),
-            INDIGOX_SERIAL_NVP("graph", g));
-    construct(bond, g);
-  }
-  INDIGOX_SERIALISE_SPLIT(IXMGEdge);
-  
-  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXMGEdge serialisation", T, ixmole_serial) {
+/*  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXMGEdge serialisation", T, ixmole_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     
@@ -108,44 +113,27 @@ namespace indigox::graph {
     check_eq(loaded->GetGraph(), loaded_graph);
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixmole_serial, ixserial<IXMGEdge>);
+ */
   
   template <typename Archive>
-  void IXMolecularGraph::save(Archive &archive, const uint32_t) const {
-    archive(INDIGOX_SERIAL_NVP("source_molecule", _source),
-            INDIGOX_SERIAL_NVP("vertices", _v),
-            INDIGOX_SERIAL_NVP("edges", _e));
+  void MolecularGraph::save(Archive &archive, const uint32_t) const {
+    archive(INDIGOX_SERIAL_NVP("graph", cereal::base_class<graph_type>(this)),
+            INDIGOX_SERIAL_NVP("atom_map", _at2v),
+            INDIGOX_SERIAL_NVP("bond_map", _bn2e),
+            INDIGOX_SERIAL_NVP("molecule", _mol));
   }
   
   template <typename Archive>
-  void IXMolecularGraph::load_and_construct(Archive &archive,
-                                            cereal::construct<IXMolecularGraph> &construct,
-                                            const uint32_t) {
-    // Reload everything
-    Molecule mol;
-    archive(INDIGOX_SERIAL_NVP("source_molecule", mol));
-    construct(mol);
-    archive(INDIGOX_SERIAL_NVP("vertices", construct->_v),
-            INDIGOX_SERIAL_NVP("edges", construct->_e));
-    
-    // Rebuild the underlying graph
-    for (MGVertex v : construct->_v) {
-      construct->_at2v.emplace(v->GetAtom(), v);
-      construct->_n.emplace(v, VertContain());
-      construct->_g.AddVertex(v.get());
-    }
-    for (MGEdge e : construct->_e) {
-      Bond b = e->GetBond();
-      construct->_bn2e.emplace(b, e);
-      MGVertex u = construct->_at2v.at(b->GetSourceAtom());
-      MGVertex v = construct->_at2v.at(b->GetTargetAtom());
-      construct->_n[u].emplace_back(v);
-      construct->_n[v].emplace_back(u);
-      construct->_g.AddEdge(u.get(), v.get(), e.get());
-    }
+  void MolecularGraph::load(Archive &archive, const uint32_t) {
+    archive(INDIGOX_SERIAL_NVP("graph", cereal::base_class<graph_type>(this)),
+            INDIGOX_SERIAL_NVP("atom_map", _at2v),
+            INDIGOX_SERIAL_NVP("bond_map", _bn2e),
+            INDIGOX_SERIAL_NVP("molecule", _mol));
   }
-  INDIGOX_SERIALISE_SPLIT(IXMolecularGraph);
   
-  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXMolecularGraph serialisation", T, ixmolg_serial) {
+  INDIGOX_SERIALISE_SPLIT(MolecularGraph);
+  
+ /* DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXMolecularGraph serialisation", T, ixmolg_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     test::MolecularGraphTestFixture fixture;
@@ -182,19 +170,45 @@ namespace indigox::graph {
       check(fixture.blank.get_g().HasEdge(loaded->GetEdge(bnd).get()));
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixmolg_serial, ixserial<IXMolecularGraph>);
+*/
   
 // ============================================================================
 // == CONSTRUCTION ============================================================
 // ============================================================================
   
-  MolecularGraph IXMolecularGraph::CreateSnapshot() const {
-    MolecularGraph G(new IXMolecularGraph(Molecule()));
-    for (MGVertex v : _v) G->AddVertex(v->GetAtom());
-    for (MGEdge e : _e) G->AddEdge(e->GetBond());
-    return G;
+  MGVertex::MGVertex() : _dat(nullptr) { }
+  MGVertex::MGVertex(const MGVertex& v) : _dat(v._dat) { }
+  MGVertex::MGVertex(MGVertex&& v) noexcept : _dat(std::move(v._dat)) { }
+  MGVertex& MGVertex::operator=(const MGVertex &v) {
+    if (&v != this) _dat = v._dat;
+    return *this;
   }
+  MGVertex& MGVertex::operator=(MGVertex &&v) {
+    _dat = std::move(v._dat);
+    return *this;
+  }
+  MGVertex::MGVertex(Atom& a, MolecularGraph& graph)
+  : _dat(std::make_shared<MGVertexData>(a.weak_from_this(), graph.weak_from_this())) { }
   
-  test_case("IXMolecularGraph construction") {
+  MGEdge::MGEdge() : _dat(nullptr) { }
+  MGEdge::MGEdge(const MGEdge& e) : _dat(e._dat) { }
+  MGEdge::MGEdge(MGEdge&& e) noexcept : _dat(std::move(e._dat)) { }
+  MGEdge& MGEdge::operator=(const MGEdge& e) {
+    if (&e != this) _dat = e._dat;
+    return *this;
+  }
+  MGEdge& MGEdge::operator=(MGEdge &&e) {
+    _dat = std::move(e._dat);
+    return *this;
+  }
+  MGEdge::MGEdge(Bond& b, MolecularGraph& graph)
+  : _dat(std::make_shared<MGEdgeData>(b.weak_from_this(), graph.weak_from_this())) { }
+  
+  MolecularGraph::MolecularGraph(Molecule& mol)
+  : BaseGraph<MGVertex, MGEdge>(), _at2v(), _bn2e(),
+  _mol(mol.shared_from_this()) { }
+  
+/*  test_case("IXMolecularGraph construction") {
     using G = test::TestMolecularGraph;
     using V = test::TestMolecularVertex;
     using E = test::TestMolecularEdge;
@@ -213,12 +227,13 @@ namespace indigox::graph {
     check(blank.get_n().empty());
     check_eq(blank.get_source().lock(), mol_fixture.blankmol.imp);
   }
+  */
   
 // ============================================================================
 // == FINDING ITEMS ===========================================================
 // ============================================================================
   
-  test_case_fixture(test::MolecularGraphTestFixture, "IXMolecularGraph has items") {
+/*  test_case_fixture(test::MolecularGraphTestFixture, "IXMolecularGraph has items") {
     for (Atom atm : mol_fixture.a_randmol) {
       check_false(benzene.HasVertex(atm));
       check(random.HasVertex(atm));
@@ -253,50 +268,32 @@ namespace indigox::graph {
     check_false(benzene.HasEdge(MGEdge()));
     check_false(benzene.HasEdge(MGVertex(), MGVertex()));
   }
+ */
   
   
 // ============================================================================
 // == GETTING =================================================================
 // ============================================================================
   
-  size_t IXMolecularGraph::Degree(const MGVertex v) const {
-    if (!HasVertex(v)) return std::numeric_limits<size_t>::max();
-    return _g.Degree(v.get());
+  Atom& MGVertex::GetAtom() const { return *_dat->atom.lock(); }
+  MolecularGraph& MGVertex::GetGraph() const { return *_dat->graph.lock(); }
+  
+  Bond& MGEdge::GetBond() const { return *_dat->bond.lock(); }
+  MolecularGraph& MGEdge::GetGraph() const { return *_dat->graph.lock(); }
+  
+  MGEdge MolecularGraph::GetEdge(Bond& bnd) const {
+    if (!HasEdge(bnd)) throw std::out_of_range("No such edge");
+    return _bn2e.at(bnd.shared_from_this());
   }
   
-  MGEdge IXMolecularGraph::GetEdge(const MGVertex u, const MGVertex v) const {
-    if (!HasEdge(u, v)) return MGEdge();
-    return _g.GetEdge(u.get(), v.get())->shared_from_this();
+  MGVertex MolecularGraph::GetVertex(Atom& atm) const {
+    if (!HasVertex(atm)) throw std::out_of_range("No such vertex");
+    return _at2v.at(atm.shared_from_this());
   }
   
-  MGEdge IXMolecularGraph::GetEdge(const Bond bnd) const {
-    if (!HasEdge(bnd)) return MGEdge();
-    return _bn2e.at(bnd);
-  }
+  Molecule& MolecularGraph::GetMolecule() const { return *_mol.lock(); }
   
-  MGVertex IXMolecularGraph::GetVertex(const Atom atm) const {
-    if (!HasVertex(atm)) return MGVertex();
-    return _at2v.at(atm);
-  }
-  
-  MGVertex IXMolecularGraph::GetSource(const MGEdge e) const {
-    if (!HasEdge(e)) return MGVertex();
-    return _g.GetSource(e.get())->shared_from_this();
-  }
-  
-  MGVertex IXMolecularGraph::GetTarget(const MGEdge e) const {
-    if (!HasEdge(e)) return MGVertex();
-    return _g.GetTarget(e.get())->shared_from_this();
-  }
-  
-  std::pair<MGVertex, MGVertex>
-  IXMolecularGraph::GetVertices(const MGEdge e) const {
-    if (!HasEdge(e)) return {MGVertex(), MGVertex()};
-    auto res = _g.GetVertices(e.get());
-    return {res.first->shared_from_this(), res.second->shared_from_this()};
-  }
-  
-  test_case_fixture(test::MolecularGraphTestFixture, "IXMolecularGraph getting") {
+/*  test_case_fixture(test::MolecularGraphTestFixture, "IXMolecularGraph getting") {
     // Numbers of things
     check_eq(mol_fixture.benzene.NumAtoms(), benzene.NumVertices());
     check_eq(mol_fixture.randmol.NumBonds(), random.NumEdges());
@@ -357,30 +354,35 @@ namespace indigox::graph {
       check_eq(expected, obtained);
     }
   }
+ */
   
 // ============================================================================
 // == STRUCTURE MODIFICATION ==================================================
 // ============================================================================
   
-  MGVertex IXMolecularGraph::AddVertex(const Atom atm) {
-    MGVertex v = MGVertex(new IXMGVertex(atm, shared_from_this()));
-    _at2v.emplace(atm, v);
-    _v.emplace_back(v);
-    _n.emplace(v, VertContain());
-    _g.AddVertex(v.get());
+  void MolecularGraph::Clear() {
+    _at2v.clear();
+    _bn2e.clear();
+    graph_type::Clear();
+  }
+  
+  MGVertex MolecularGraph::AddVertex(Atom& atm) {
+    MGVertex v = MGVertex(atm, *this);
+    _at2v.emplace(atm.shared_from_this(), v);
+    graph_type::AddVertex(v);
     return v;
   }
   
-  void IXMolecularGraph::RemoveVertex(const MGVertex v) {
-    std::vector<MGVertex> nbrs(_n[v].begin(), _n[v].end());
-    for (MGVertex n : nbrs) RemoveEdge(v, n);
-    _g.RemoveVertex(v.get());
-    _at2v.erase(v->GetAtom());
-    _v.erase(std::find(_v.begin(), _v.end(), v));
-    _n.erase(v);
+  void MolecularGraph::RemoveVertex(MGVertex& v) {
+    _at2v.erase(v.GetAtom().shared_from_this());
+    for (const MGVertex& u : graph_type::GetNeighbours(v)) {
+      MGEdge e = GetEdge(u, v);
+      _bn2e.erase(e.GetBond().shared_from_this());
+    }
+    graph_type::RemoveVertex(v);
   }
   
-  test_case_fixture(test::MolecularGraphTestFixture,
+ /* test_case_fixture(test::MolecularGraphTestFixture,
                     "IXMolecularGraph adding and removing vertices") {
     
     // New Vertex
@@ -415,39 +417,38 @@ namespace indigox::graph {
     check_eq(2, benzene.get_n().at(benzene.get_v()[4]).size());
     check_eq(0, benzene.get_n().at(benzene.get_v()[5]).size());
   }
+  */
   
-  MGEdge IXMolecularGraph::AddEdge(const Bond bnd) {
-    Atom source = bnd->GetSourceAtom();
-    Atom target = bnd->GetTargetAtom();
-    if (!HasVertex(source)) AddVertex(source);
-    if (!HasVertex(target)) AddVertex(target);
+  MGEdge MolecularGraph::AddEdge(Bond& bnd) {
+    Atom& source = bnd.GetSourceAtom();
+    Atom& target = bnd.GetTargetAtom();
     // Edges will only be added when a bond is added to the molecule
     MGVertex u = GetVertex(source);
     MGVertex v = GetVertex(target);
-    MGEdge e = MGEdge(new IXMGEdge(bnd, shared_from_this()));
-    _bn2e.emplace(bnd, e);
-    _e.emplace_back(e);
-    _n[u].emplace_back(v);
-    _n[v].emplace_back(u);
-    _g.AddEdge(u.get(), v.get(), e.get());
+    MGEdge e = MGEdge(bnd, *this);
+    _bn2e.emplace(bnd.shared_from_this(), e);
+    graph_type::AddEdge(u, v, e);
     return e;
   }
   
-  void IXMolecularGraph::RemoveEdge(const MGEdge e) {
-    _g.RemoveEdge(e.get());
-    _bn2e.erase(e->GetBond());
-    _e.erase(std::find(_e.begin(), _e.end(), e));
-    MGVertex u = _at2v[e->GetBond()->GetSourceAtom()];
-    MGVertex v = _at2v[e->GetBond()->GetTargetAtom()];
-    _n[u].erase(std::find(_n[u].begin(), _n[u].end(), v));
-    _n[v].erase(std::find(_n[v].begin(), _n[v].end(), u));
+  void MolecularGraph::RemoveEdge(MGEdge& e) {
+    _bn2e.erase(e.GetBond().shared_from_this());
+    graph_type::RemoveEdge(e);
   }
   
-  void IXMolecularGraph::RemoveEdge(const MGVertex u, const MGVertex v) {
-    RemoveEdge(GetEdge(u, v));
+  void MolecularGraph::RemoveEdge(MGVertex& u, MGVertex& v) {
+    MGEdge e = GetEdge(u, v);
+    RemoveEdge(e);
   }
   
-  test_case_fixture(test::MolecularGraphTestFixture,
+  bool MolecularGraph::HasVertex(Atom &v) const {
+    return _at2v.find(v.shared_from_this()) != _at2v.end();
+  }
+  
+  bool MolecularGraph::HasEdge(Bond &e) const {
+    return _bn2e.find(e.shared_from_this()) != _bn2e.end(); }
+  
+/*  test_case_fixture(test::MolecularGraphTestFixture,
                     "IXMolecularGraph adding and removing edges") {
     Atom a1 = test::CreateGenericTestAtom().imp;
     Atom a2 = test::CreateGenericTestAtom().imp;
@@ -496,38 +497,7 @@ namespace indigox::graph {
     check_eq(4, blank.get_n().size());
     check_eq(1, blank.get_bn2e().size());
   }
-  
-  void IXMolecularGraph::Clear() {
-    _source.reset();
-    _g.Clear();
-    _at2v.clear();
-    _bn2e.clear();
-    _v.clear();
-    _e.clear();
-    _n.clear();
-  }
-  
-  test_case_fixture(test::MolecularGraphTestFixture,
-                    "IXMolecularGraph clearing methods") {
-    check_false(benzene.get_source().expired());
-    check_ne(0, benzene.get_g().NumVertices());
-    check_false(benzene.get_at2v().empty());
-    check_false(benzene.get_bn2e().empty());
-    check_false(benzene.get_v().empty());
-    check_false(benzene.get_e().empty());
-    check_false(benzene.get_n().empty());
-    
-    check_nothrow(benzene.Clear());
-    
-    check(benzene.get_source().expired());
-    check_eq(0, benzene.get_g().NumVertices());
-    check(benzene.get_at2v().empty());
-    check(benzene.get_bn2e().empty());
-    check(benzene.get_v().empty());
-    check(benzene.get_e().empty());
-    check(benzene.get_n().empty());
-  }
-  
+*/
   
 //  std::pair<IXMolecularGraph::CompIter, IXMolecularGraph::CompIter>
 //  IXMolecularGraph::GetConnectedComponents() {
@@ -547,4 +517,5 @@ namespace indigox::graph {
   
   test_suite_close();
 }
+
 

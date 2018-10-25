@@ -4,6 +4,7 @@
 #include <string>
 
 #include "../utils/common.hpp"
+#include "../utils/fwd_declares.hpp"
 #include "../utils/counter.hpp"
 #include "../utils/triple.hpp"
 
@@ -11,37 +12,19 @@
 #define INDIGOX_CLASSES_ANGLE_HPP
 
 namespace indigox {
-  class IXAtom;
-  class IXAngle;
-  class IXFFAngle;
-  class IXMolecule;
-  namespace test { struct TestAngle; }
-  
-  using Atom = std::shared_ptr<IXAtom>;
-  //! \brief shared_ptr for normal use of the IXAngle class.
-  using Angle = std::shared_ptr<IXAngle>;
-  using Molecule = std::shared_ptr<IXMolecule>;
-  using FFAngle = std::shared_ptr<IXFFAngle>;
-  
-  using _Atom = std::weak_ptr<IXAtom>;
-  /*! \brief weak_ptr for non-ownership reference to the IXAngle class.
-   *  \details Intended for internal use only. */
-  using _Angle = std::weak_ptr<IXAngle>;
-  using _Molecule = std::weak_ptr<IXMolecule>;
-  
-  class IXAngle
-  : public utils::IXCountableObject<IXAngle>,
-  public std::enable_shared_from_this<IXAngle> {
-    //! \brief Friendship allows IXMolecule to create new angles.
-    friend class indigox::IXMolecule;
-    //! \brief Friendship allows IXAngle to be tested.
+  class Angle
+  : public utils::IXCountableObject<Angle>,
+  public std::enable_shared_from_this<Angle> {
+    //! \brief Friendship allows Molecule to create new angles.
+    friend class indigox::Molecule;
+    //! \brief Friendship allows Angle to be tested.
     friend struct indigox::test::TestAngle;
     //! \brief Friendship allows serialisation.
     friend class cereal::access;
     
   private:
-    //! \brief Container for storing IXAtom reference assigned to an IXAngle.
-    using AngleAtoms = std::array<_Atom, 3>;
+    //! \brief Container for storing Atom reference assigned to an Angle.
+    using AngleAtoms = std::array<wAtom, 3>;
     
   public:
     // iterator aliases
@@ -54,21 +37,23 @@ namespace indigox {
     
     template <typename Archive>
     static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXAngle>& construct,
+                                   cereal::construct<Angle>& construct,
                                    const uint32_t version);
     
+    void Clear();
+    
   public:
-    IXAngle() = delete;  // no default constructor
+    Angle() = delete;  // no default constructor
     
     /*! \brief Normal constructor.
      *  \details Creates an angle between three atoms, linking it to the given
      *  Molecule. Atom \p b is always the central atom of the angle.
      *  \param a,b,c the three atoms to construct an angle between.
      *  \param m the molecule to assign the angle to. */
-    IXAngle(Atom a, Atom b, Atom c, Molecule m);
+    Angle(Atom& a, Atom& b, Atom& c, Molecule& m);
     
     //! \brief Destructor
-    ~IXAngle() { }
+    ~Angle() { }
     
     /*! \brief Tag of the angle.
      *  \details This value may be modified without warning. Use with caution.
@@ -80,7 +65,7 @@ namespace indigox {
      *  \details The returned shared_ptr is empty if the angle is not assigned
      *  to a valid molecule.
      *  \return the molecule associated with this angle. */
-    inline Molecule GetMolecule() const { return _mol.lock(); }
+    Molecule& GetMolecule() const { return *_mol.lock(); }
     
     /*! \brief String representation of the angle.
      *  \details If any of the atoms of the angle are not valid, the returned
@@ -99,11 +84,11 @@ namespace indigox {
      *  \details The beginning atom will become the end atom and vice versa. The
      *  central atom will always remain the central atom. */
     inline void SwapOrder() { std::swap(_atms[0], _atms[2]); }
-        
+    
     /*! \brief Get the atoms of the angle.
      *  \return triple of the atoms of the angle. */
-    inline stdx::triple<Atom, Atom, Atom> GetAtoms() const {
-      return stdx::make_triple(_atms[0].lock(), _atms[1].lock(), _atms[2].lock());
+    inline stdx::triple<Atom&, Atom&, Atom&> GetAtoms() const {
+      return {*_atms[0].lock(), *_atms[1].lock(), *_atms[2].lock()};
     }
     
     /*! \brief Number of atoms this angle contains.
@@ -119,34 +104,24 @@ namespace indigox {
     
     /*! \brief Get the assigned type.
      *  \return the assigned ff type for the angle. */
-    FFAngle GetType() const { return _type; }
+    FFAngle& GetType() const { return *_type.lock(); }
     
     /*! \brief Assign an FFAngle type.
      *  \param type the FFAngle type to assign. */
-    void SetType(FFAngle type) { _type = type; }
-    
-  private:
-    /*! \brief Clear all information.
-     *  \details Erases all information stored on the angle, and resets
-     *  everything back to a just created state. */
-    void Clear();
-    
+    void SetType(FFAngle& type);
     
   private:
     //! The molecule this angle is assigned to.
-    _Molecule _mol;
+    wMolecule _mol;
     //! Tag (unstable)
     uint32_t _tag;
     //! MM angle type
-    FFAngle _type;
+    wFFAngle _type;
     //! \brief Atoms which make up the angle.
     AngleAtoms _atms;
   };
   
-  std::ostream& operator<<(std::ostream& os, const IXAngle& ang);
-  inline std::ostream& operator<<(std::ostream& os, const Angle& ang) {
-    return ang ? os << *ang : os;
-  }
+  std::ostream& operator<<(std::ostream& os, const Angle& ang);
 }
 
 #endif  /* INDIGOX_CLASSES_ANGLE_HPP */

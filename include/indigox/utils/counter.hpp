@@ -35,7 +35,6 @@ namespace indigox::utils {
   
   template <class T>
   uint32_t IXCountableObject<T>::_count = 0;
-  
 }
 
 #endif /* INDIGOX_UTILS_COUNTER_HPP */

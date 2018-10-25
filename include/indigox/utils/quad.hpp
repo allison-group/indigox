@@ -7,7 +7,7 @@
 
 namespace stdx {    // extended std namespace
   
-  template <class _T1, class _T2, class _T3, class _T4>
+  template <class _T1, class _T2=_T1, class _T3=_T2, class _T4=_T3>
   struct quad
   {
     typedef _T1 first_type;
@@ -210,12 +210,11 @@ namespace stdx {    // extended std namespace
     }
     
     template <typename Archive>
-    void Serialise(Archive& archive, const uint32_t) {
+    void serialise(Archive& archive, const uint32_t) {
       archive(INDIGOX_SERIAL_NVP("first", first),
               INDIGOX_SERIAL_NVP("second", second),
               INDIGOX_SERIAL_NVP("third", third),
               INDIGOX_SERIAL_NVP("fourth", fourth));
-      
     }
     
   };

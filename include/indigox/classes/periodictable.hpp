@@ -11,16 +11,9 @@
 #include <EASTL/vector_map.h>
 
 #include "../utils/common.hpp"
+#include "../utils/fwd_declares.hpp"
 
 namespace indigox {
-  
-  namespace test {
-    struct TestPeriodicTable;
-    struct TestElement;
-  }
-  
-  class PeriodicTable;
-  class Element;
   
   /*! \class Element periodictable.hpp indigox/classes/periodictable.hpp
    *  \brief Read only class for storing elemental information.

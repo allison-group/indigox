@@ -9,6 +9,7 @@
 #include <boost/graph/connected_components.hpp>
 
 #include "../utils/simple_bimap.hpp"
+#include "../utils/triple.hpp"
 
 //! Namespace for all graph related functionality.
 namespace indigox::graph {
@@ -80,7 +81,9 @@ namespace indigox::graph {
             class D=Undirected,
             class VertProp=GraphLabel,
             class EdgeProp=GraphLabel>
-  class IXGraphBase final {
+  class BaseGraph {
+    //! \brief Friendship allows serialisation
+    friend class cereal::access;
   public:
     //! \brief Type of the underlying boost graph.
     using graph_type = boost::adjacency_list<boost::setS,      // Edge container
@@ -105,9 +108,15 @@ namespace indigox::graph {
     using EdgeIter = typename graph_type::edge_iterator;
     
     //! \brief Type for bidirectional mapping of V to vertex descriptor type.
-    using VertMap = indigox::utils::SimpleBiMap<V*, VertType>;
+    using VertMap = indigox::utils::SimpleBiMap<V, VertType>;
     //! \brief Type for bidirectional mapping of E to edge descriptor type.
-    using EdgeMap = indigox::utils::SimpleBiMap<E*, EdgeType>;
+    using EdgeMap = indigox::utils::SimpleBiMap<E, EdgeType>;
+    //! \brief Type for storing vertices.
+    using VertContain = std::vector<V>;
+    //! \brief Type for storing edges
+    using EdgeContain = std::vector<E>;
+    //! \brief Type for storing neighbours
+    using NbrsContain = std::map<V, std::vector<V>>;
     //! \brief Friendship allows algorithms access to the underlying boost graph.
     friend struct access;
     
@@ -115,13 +124,57 @@ namespace indigox::graph {
     //! \brief Underlying boost graph.
     graph_type _g;
     //! \brief Map vertices to their descriptors.
-    VertMap _verts;
+    VertMap _vm;
     //! \brief Map edges to their descriptors.
-    EdgeMap _edges;
+    EdgeMap _em;
+    //! \brief Container for giving iterator access to all vertices
+    VertContain _v;
+    //! \brief Container for giving iterator access to all edges
+    EdgeContain _e;
+    //! \brief Container for predecessors of a vertex (v such that edge u->v exists)
+    NbrsContain _pre;
+    //! \brief Container for successors of a vertex. Only used in directed graphs
+    NbrsContain _suc;
+    
+  private:
+    template <typename Archive>
+    void save(Archive& archive, const uint32_t) const {
+      std::vector<stdx::triple<V, V, E>> edges;
+      edges.reserve(NumEdges());
+      for (const E& e : _e)
+        edges.emplace_back(GetSourceVertex(e), GetTargetVertex(e), e);
+
+      archive(INDIGOX_SERIAL_NVP("vertices", _v),
+              INDIGOX_SERIAL_NVP("edges", edges));
+    }
+
+    template <typename Archive>
+    void load(Archive& archive, const uint32_t) {
+      VertContain vertices;
+      std::vector<stdx::triple<V, V, E>> edges;
+      archive(INDIGOX_SERIAL_NVP("vertices", vertices),
+              INDIGOX_SERIAL_NVP("edges", edges));
+
+      // Build the graph
+      for (V& v : vertices) AddVertex(v);
+      for (auto& e : edges) AddEdge(e.first, e.second, e.third);
+    }
     
   public:
     //! \brief Default constructor
-    IXGraphBase() : _g() { }
+    BaseGraph() : _g() { }
+    
+  protected:
+    // Modification methods protected.
+    void Clear() {
+      _vm.clear();
+      _em.clear();
+      _v.clear();
+      _e.clear();
+      _pre.clear();
+      _suc.clear();
+      _g.clear();
+    }
     
     /*! \brief Add a new vertex to the graph.
      *  \details It is the callers responsability to ensure that the vertex
@@ -129,9 +182,12 @@ namespace indigox::graph {
      *  the vertices in the graph and the what the _verts member thinks are in
      *  the graph may arise.
      *  \param v the vertex to add. */
-    void AddVertex(V* v) {
-      VertType v_ = boost::add_vertex(VertProp(), _g);
-      _verts.insert(v, v_);
+    void AddVertex(const V& v) {
+      VertType vboost = boost::add_vertex(VertProp(), _g);
+      _vm.insert(v, vboost);
+      _v.emplace_back(v);
+      _pre.emplace(v, VertContain());
+      if (D::is_directed) _suc.emplace(v, VertContain());
     }
     
     /*! \brief Remove a vertex from the graph.
@@ -139,26 +195,35 @@ namespace indigox::graph {
      *  the callers responsibility to ensure that the vertex removed is within
      *  the graph.
      *  \param v the vertex to remove. */
-    void RemoveVertex(V* v) {
-      VertType v_ = GetDescriptor(v);
+    void RemoveVertex(const V& v) {
+      VertType vboost = GetDescriptor(v);
       // Remove adjacent edges
-      NbrsIter vi, vi_end;
-      std::tie(vi, vi_end) = boost::adjacent_vertices(v_, _g);
+      PredIter vi, vi_end;
+      std::tie(vi, vi_end) = boost::inv_adjacent_vertices(vboost, _g);
       for (; vi != vi_end; ++vi) {
-        _edges.erase(boost::edge(v_, *vi, _g).first);
+        V u = GetV(*vi);
+        E e = GetE(boost::edge(vboost, *vi, _g).first);
+        _em.erase(e);
+        _e.erase(std::find(_e.begin(), _e.end(), e));
       }
       // Remove incident edges of directed graphs
       if (D::is_directed) {
-        PredIter vp, vp_end;
-        std::tie(vp, vp_end) = boost::inv_adjacent_vertices(v_, _g);
+        NbrsIter vp, vp_end;
+        std::tie(vp, vp_end) = boost::adjacent_vertices(vboost, _g);
         for (; vp != vp_end; ++vp) {
-          _edges.erase(boost::edge(*vp, v_, _g).first);
+          V u = GetV(*vp);
+          E e = GetE(boost::edge(*vp, vboost, _g).first);
+          _em.erase(e);
+          _e.erase(std::find(_e.begin(), _e.end(), e));
         }
       }
       // Remove the vertex
-      _verts.erase(v_);
-      boost::clear_vertex(v_, _g);
-      boost::remove_vertex(v_, _g);
+      _vm.erase(v);
+      _v.erase(std::find(_v.begin(), _v.end(), v));
+      _pre.erase(v);
+      if (D::is_directed) _suc.erase(v);
+      boost::clear_vertex(vboost, _g);
+      boost::remove_vertex(vboost, _g);
     }
     
     /*! \brief Add a new edge to the graph.
@@ -167,56 +232,55 @@ namespace indigox::graph {
      *  callers responsibility to ensure that the edge is not part of the graph.
      *  \param u, v vertices the edge is between.
      *  \param e the edge. */
-    void AddEdge(V* u, V* v, E* e) {
+    void AddEdge(const V& u, const V& v, const E& e) {
       if (!HasVertex(u)) AddVertex(u);
       if (!HasVertex(v)) AddVertex(v);
-      VertType u_ = GetDescriptor(u);
-      VertType v_ = GetDescriptor(v);
-      
-      EdgeType e_ = boost::add_edge(u_, v_, EdgeProp(), _g).first;
-      _edges.insert(e, e_);
+      VertType uboost = GetDescriptor(u);
+      VertType vboost = GetDescriptor(v);
+      EdgeType eboost = boost::add_edge(uboost, vboost, EdgeProp(), _g).first;
+      _em.insert(e, eboost);
+      _e.emplace_back(e);
     }
     
     /*! \brief Remove an edge from the graph.
      *  \details It is the callers responsibility to ensure that the edge is a
      *  part of the graph.
      *  \param e the edge to remove. */
-    void RemoveEdge(E* e) {
-      EdgeType e_ = GetDescriptor(e);
-      _edges.erase(e_);
-      boost::remove_edge(e_, _g);
+    void RemoveEdge(const E& e) {
+      EdgeType eboost = GetDescriptor(e);
+      _em.erase(eboost);
+      _e.erase(std::find(_e.begin(), _e.end(), e));
+      boost::remove_edge(eboost, _g);
     }
     
     /*! \brief Remove an edge from the graph.
      *  \details It is the callers responsibility to ensure that there is an
      *  edge between u and v to remove.
      *  \param u, v vertices to remove an edge from between. */
-    void RemoveEdge(V* u, V* v) {
-      VertType u_ = GetDescriptor(u);
-      VertType v_ = GetDescriptor(v);
-      EdgeType e = boost::edge(u_, v_, _g).first;
-      _edges.erase(e);
-      boost::remove_edge(e, _g);
+    void RemoveEdge(const V& u, const V& v) {
+      E e = GetEdge(u, v);
+      RemoveEdge(e);
     }
     
+  public:
     /*! \brief Is the vertex in the graph.
      *  \param v vertex to search for.
      *  \return if the requested vertex is contained in the graph or not. */
-    bool HasVertex(V* v) const {
-      return _verts.left.find(v) != _verts.left.end();
+    bool HasVertex(const V& v) const {
+      return _vm.left.find(v) != _vm.left.end();
     }
     
     /*! \brief Is the edge in the graph.
      *  \param e edge to search for.
      *  \return if the requested edge is contained in the graph or not. */
-    bool HasEdge(E* e) const {
-      return _edges.left.find(e) != _edges.left.end();
+    bool HasEdge(const E& e) const {
+      return _em.left.find(e) != _em.left.end();
     }
     
     /*! \brief Does an edge exist between two vertices.
      *  \param u, v vertices to check between.
      *  \return if there is an edge between the two vertices. */
-    bool HasEdge(V* u, V* v) const {
+    bool HasEdge(const V& u, const V& v) const {
       if (!HasVertex(u) || !HasVertex(v)) return false;
       VertType u_ = GetDescriptor(u);
       VertType v_ = GetDescriptor(v);
@@ -225,26 +289,20 @@ namespace indigox::graph {
     
     /*! \brief Number of vertices in the graph.
      *  \return the number of vertices in the graph. */
-    size_t NumVertices() const { return boost::num_vertices(_g); }
+    int64_t NumVertices() const { return boost::num_vertices(_g); }
     
     /*! \brief Number of edges in the graph.
      *  \return the number of edges in the graph. */
-    size_t NumEdges() const { return boost::num_edges(_g); }
-    
-    //! \brief Removes all edges and vertices from the graph.
-    void Clear() {
-      _g.clear();
-      _verts.clear();
-      _edges.clear();
-    }
+    int64_t NumEdges() const { return boost::num_edges(_g); }
     
     /*! \brief Degree of a vertex.
      *  \details In the case of a directed graph, the degree of a vertex is the
-     *  number of edges leaving the vertex. It is the callers responsibilty to
-     *  ensure that the vertex is a prt of the graph.
+     *  number of edges leaving the vertex.
      *  \param v the vertex to get the degree of.
      *  \return pair of the degree of the vertex and if it is valid. */
-    size_t Degree(V* v) const { return OutDegree(GetDescriptor(v)); }
+    int64_t Degree(const V& v) const {
+      return HasVertex(v) ? OutDegree(GetDescriptor(v)) : -1;
+    }
     
     /*! \brief Indegree of a vertex.
      *  \details The indegree of a vertex is the number of edges entering the
@@ -253,7 +311,8 @@ namespace indigox::graph {
      *  the graph.
      *  \param v the vertex to get indegree of.
      *  \return pair of the indegree of the vertex and if it is valid. */
-    size_t InDegree(V* v) const {
+    int64_t InDegree(const V& v) const {
+      if (!HasVertex(v)) return -1;
       if (D::is_directed) return InDegree(GetDescriptor(v));
       return OutDegree(GetDescriptor(v));
     }
@@ -266,12 +325,14 @@ namespace indigox::graph {
      *  \param[out] nbrs the vector where the list of neighbours will be set.
      *  The vector is cleared before any neighbouring vertices are added to it.
      *  \return if the vector has been populated or not. */
-    void GetNeighbours(V* v, std::vector<V*>& nbrs) const {
-      VertType v_ = GetDescriptor(v);
-      nbrs.clear(); nbrs.reserve(OutDegree(v_));
-      NbrsIter begin, end;
-      std::tie(begin, end) = boost::adjacent_vertices(v_, _g);
-      for (; begin != end; ++begin) nbrs.push_back(_verts.right.at(*begin));
+    const VertContain& GetNeighbours(const V& v) {
+      static_assert(!D::is_directed, "Requires an undirected graph.");
+      VertType vboost = GetDescriptor(v);
+      auto adjis = boost::adjacent_vertices(vboost, _g);
+      _pre.at(v).clear();
+      for (; adjis.first != adjis.second; ++adjis.first)
+        _pre.at(v).emplace_back(GetV(*adjis.first));
+      return _pre.at(v);
     }
     
     /*! \brief Get the predecessor vertices of a vertex.
@@ -283,16 +344,24 @@ namespace indigox::graph {
      *  \param[out] pres the vector where the list of predecessors will be set.
      *  The vector is cleared before any predecessing vertices are added to it.
      *  \return if the vector has been populated or not. */
-    void GetPredecessors(V* v, std::vector<V*>& pres) const {
-      if (!D::is_directed) {
-        GetNeighbours(v, pres);
-        return;
-      }
-      VertType v_ = GetDescriptor(v);
-      pres.clear(); pres.reserve(InDegree(v_));
-      PredIter begin, end;
-      std::tie(begin, end) = boost::inv_adjacent_vertices(v_, _g);
-      for (; begin != end; ++begin) pres.push_back(_verts.right.at(*begin));
+    const VertContain& GetPredecessors(const V& v) {
+      static_assert(D::is_directed, "Requires a directed graph.");
+      VertType vboost = GetDescriptor(v);
+      auto adjis = boost::inv_adjacent_vertices(vboost, _g);
+      _pre.at(v).clear();
+      for (; adjis.first != adjis.second; ++adjis.first)
+        _pre.at(v).emplace_back(GetV(*adjis.first));
+      return _pre.at(v);
+    }
+    
+    const VertContain& GetSuccessors(const V& v) {
+      static_assert(D::is_directed, "Requires a directed graph.");
+      VertType vboost = GetDescriptor(v);
+      auto adjis = boost::adjacent_vertices(vboost, _g);
+      _suc.at(v).clear();
+      for (; adjis.first != adjis.second; ++adjis.first)
+        _suc.at(v).emplace_back(GetV(*adjis.first));
+      return _suc.at(v);
     }
     
     /*! \brief Get the two vertices that make up an edge.
@@ -301,45 +370,35 @@ namespace indigox::graph {
      *  \param e the edge to get vertices of.
      *  \return a pair of a pair of the two vertices making up the edge and if
      *  they are valid. */
-    std::pair<V*, V*> GetVertices(E* e) const {
-      EdgeType e_ = GetDescriptor(e);
-      VertType u = boost::source(e_, _g);
-      VertType v = boost::target(e_, _g);
-      return {_verts.right.at(u), _verts.right.at(v)};
+    std::pair<V, V> GetVertices(const E& e) const {
+      EdgeType eboost = GetDescriptor(e);
+      VertType u = boost::source(eboost, _g);
+      VertType v = boost::target(eboost, _g);
+      return {GetV(u), GetV(v)};
     }
     
     /*! \brief Get the vertices of the graph.
      *  \param[out] verts the vector where the list of vertices will be set.
      *  The vector is cleared before any vertices are added to it.
      *  \return the number of vertices added to the vector. */
-    size_t GetVertices(std::vector<V*>& verts) const {
-      verts.clear(); verts.reserve(NumVertices());
-      auto begin = _verts.left.begin();
-      auto end = _verts.left.end();
-      for (; begin != end; ++begin) verts.push_back(begin->first);
-      return verts.size();
-    }
+    const VertContain& GetVertices() const { return _v; }
     
     /*! \brief Get the edges of the graph.
      *  \param[out] edges the vector where the list of edges will be set.
      *  The vector is cleared before any edges are added to it.
      *  \return the number of edges added to the vector. */
-    size_t GetEdges(std::vector<E*>& edges) const {
-      edges.clear(); edges.reserve(NumEdges());
-      EdgeIter begin, end;
-      std::tie(begin, end) = boost::edges(_g);
-      for (; begin != end; ++begin) edges.push_back(_edges.right.at(*begin));
-      return edges.size();
-    }
+    const EdgeContain& GetEdges() const { return _e; }
     
     /*! \brief Get the edge between two vertices.
      *  \details It is the callers responsibilty to ensure that the vertices
      *  are a part of the graph.
      *  \param u, v vertices to get the edge between.
      *  \return a pair of the edge between the two vertces and if it is valid.*/
-    E* GetEdge(V* u, V* v) const {
-      auto e = boost::edge(GetDescriptor(u), GetDescriptor(v), _g);
-      return _edges.right.at(e.first);
+    E GetEdge(const V& u, const V& v) const {
+      VertType uboost = GetDescriptor(u);
+      VertType vboost = GetDescriptor(v);
+      EdgeType eboost = boost::edge(uboost, vboost, _g).first;
+      return GetE(eboost);
     }
     
     /*! \brief Get the source vertex of an edge.
@@ -347,8 +406,10 @@ namespace indigox::graph {
      *  part of the graph.
      *  \param e the edge to get the source of.
      *  \return a pair of the source vertex of the edge and if it is valid. */
-    V* GetSource(E* e) const {
-      return _verts.right.at(boost::source(_edges.left.at(e), _g));
+    V GetSourceVertex(const E& e) const {
+      EdgeType eboost = GetDescriptor(e);
+      VertType source = boost::source(eboost, _g);
+      return GetV(source);
     }
     
     /*! \brief Get the target vertex of an edge.
@@ -356,8 +417,10 @@ namespace indigox::graph {
      *  part of the graph.
      *  \param e the edge to get the target of.
      *  \return the target vertex of the edge. */
-    V* GetTarget(E* e) const {
-      return _verts.right.at(boost::target(_edges.left.at(e), _g));
+    V GetTargetVertex(const E& e) const {
+      EdgeType eboost = GetDescriptor(e);
+      VertType target = boost::target(eboost, _g);
+      return GetV(target);
     }
     
     /*! \brief Get the connected components of the graph.
@@ -380,26 +443,26 @@ namespace indigox::graph {
 //      return __connected_components_worker();
 //    }
     
-  public:
+  private:
     /*! \brief Get vertex descriptor of a vertex.
      *  \param v vertex to search for.
      *  \return vertex descriptor of the vertex. */
-    VertType GetDescriptor(V* v) const { return _verts.left.at(v); }
+    VertType GetDescriptor(const V& v) const { return _vm.left.at(v); }
     
     /*! \brief Get the vertex of a vertex descriptor.
      *  \param v the vertex descriptor to search for.
      *  \return the vertex associated with the vertex descriptor. */
-    V* GetVertex(VertType v) const { return _verts.right.at(v); }
+    V GetV(VertType v) const { return _vm.right.at(v); }
     
     /*! \brief Get edge descriptor of an edge.
      *  \param e edge to search for.
      *  \return edge descriptor of the edge. */
-    EdgeType GetDescriptor(E* e) const { return _edges.left.at(e); }
+    EdgeType GetDescriptor(const E& e) const { return _em.left.at(e); }
     
     /*! \brief Get the edge of an edge descriptor.
      *  \param e the edge descriptor to search for.
      *  \return the edge associated with the edge descriptor. */
-    E* GetEdge(EdgeType e) const { return _edges.right.at(e); }
+    E GetE(EdgeType e) const { return _em.right.at(e); }
     
     /*! \brief Outdegree of a vertex.
      *  \param v vertex descriptor to get outdegree of.

@@ -5,45 +5,30 @@
 #include <string>
 
 #include "../utils/counter.hpp"
+#include "../utils/fwd_declares.hpp"
 #include "../utils/quad.hpp"
 
 #ifndef INDIGOX_CLASSES_DIHEDRAL_HPP
 #define INDIGOX_CLASSES_DIHEDRAL_HPP
 
 namespace indigox {
-  class IXAtom;
-  class IXDihedral;
-  class IXMolecule;
-  class IXFFDihedral;
-  namespace test { struct TestDihedral; }
-  
-  using Atom = std::shared_ptr<IXAtom>;
-  //! \brief shared_ptr for normal use of the IXDihedral class.
-  using Dihedral = std::shared_ptr<IXDihedral>;
-  using Molecule = std::shared_ptr<IXMolecule>;
-  using FFDihedral = std::shared_ptr<IXFFDihedral>;
-  
-  using _Atom = std::weak_ptr<IXAtom>;
-  /*! \brief weak_ptr for non-ownership reference to the IXDihedral class.
-   *  \details Intended for internal use only. */
-  using _Dihedral = std::weak_ptr<IXDihedral>;
-  using _Molecule = std::weak_ptr<IXMolecule>;
-  
-  class IXDihedral
-  : public utils::IXCountableObject<IXDihedral>,
-  public std::enable_shared_from_this<IXDihedral> {
-    //! \brief Friendship allows IXMolecule to create new dihedrals.
-    friend class indigox::IXMolecule;
-    //! \brief Friendship allows IXDihedral to be tested.
+  class Dihedral
+  : public utils::IXCountableObject<Dihedral>,
+  public std::enable_shared_from_this<Dihedral> {
+    //! \brief Friendship allows Molecule to create new dihedrals.
+    friend class indigox::Molecule;
+    //! \brief Friendship allows Dihedral to be tested.
     friend struct indigox::test::TestDihedral;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
     
   private:
     //! \brief Container for storing IXAtom references assigned to an IXDihedral.
-    using DihedAtoms = std::array<_Atom, 4>;
+    using DihedAtoms = std::array<wAtom, 4>;
     
   public:
+    //! \brief Type for storing dihedral parameters
+    using DihedTypes = std::vector<wFFDihedral>;
     //! \brief Iterator over IXAtom references stored on an IXDihedral.
     using DihedAtomIter = DihedAtoms::const_iterator;
     
@@ -54,21 +39,21 @@ namespace indigox {
     
     template <typename Archive>
     static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXDihedral>& construct,
+                                   cereal::construct<Dihedral>& construct,
                                    const uint32_t version);
-    
+    void Clear();
   public:
-    IXDihedral() = delete;  // no default constructor
+    Dihedral() = delete;  // no default constructor
     
     /*! \brief Normal constructor.
      *  \details Creates a dihedral between four atoms, linking it to the given
      *  Molecule.
      *  \param a,b,c,d the four atoms to construct a dihedral between.
      *  \param m the molecule to assign the angle to. */
-    IXDihedral(Atom a, Atom b, Atom c, Atom d, Molecule m);
+    Dihedral(Atom& a, Atom& b, Atom& c, Atom& d, Molecule& m);
     
     //! \brief Destructor
-    ~IXDihedral() { }
+    ~Dihedral() { }
     
     /*! \brief Tag of the dihedral.
      *  \details This value may be modified without warning. Use with caution.
@@ -80,13 +65,13 @@ namespace indigox {
      *  \details The returned shared_ptr is empty if the dihedral is not
      *  assigned to a valid molecule.
      *  \return the molecule associated with this dihedral. */
-    inline Molecule GetMolecule() const { return _mol.lock(); }
+    inline Molecule& GetMolecule() const { return *_mol.lock(); }
     
     /*! \brief Get the atoms of the dihedral.
      *  \return quad of the atoms of the dihedral. */
-    inline stdx::quad<Atom, Atom, Atom, Atom> GetAtoms() const {
-      return stdx::make_quad(_atms[0].lock(), _atms[1].lock(),
-                             _atms[2].lock(), _atms[3].lock());
+    inline stdx::quad<Atom&, Atom&, Atom&, Atom&> GetAtoms() const {
+      return {*_atms[0].lock(), *_atms[1].lock(),
+              *_atms[2].lock(), *_atms[3].lock()};
     }
     
     /*! \brief Number of atoms this dihedral contains.
@@ -123,33 +108,28 @@ namespace indigox {
     
     /*! \brief Get the type of the dihedral.
      *  \return the type of the dihedral. */
-    FFDihedral GetType() const { return _type; }
+    FFDihedral& GetType(size_t pos) const;
+    size_t NumTypes() const { return _types.size(); }
+    const DihedTypes& GetTypes() const { return _types; }
+    
     
     /*! \brief Set the type of the dihedral.
      *  \param type the type of dihedral to set. */
-    void SetType(FFDihedral type) { _type = type; }
-    
-  private:
-    /*! \brief Clear all informations.
-     *  \details Erases all information stored on the angle, and resets
-     *  everything back to a just created state. */
-    void Clear();
+    void AddType(FFDihedral& type);
+    void RemoveType(FFDihedral& type);
     
   private:
     //! The molecule this dihedral is assigned to.
-    _Molecule _mol;
+    wMolecule _mol;
     //! Tag (unstable)
     uint32_t _tag;
     //! \brief Atoms which make up the dihedral.
     DihedAtoms _atms;
     //! \brief Type of dihedral
-    FFDihedral _type;
+    DihedTypes _types;
   };
   
-  std::ostream& operator<<(std::ostream& os, const IXDihedral& dhd);
-  inline std::ostream& operator<<(std::ostream& os, const Dihedral& dhd) {
-    return dhd ? os << *dhd : os;
-  }
+  std::ostream& operator<<(std::ostream& os, const Dihedral& dhd);
 }
 
 #endif /* INDIGOX_CLASSES_DIHEDRAL_HPP */

@@ -16,11 +16,11 @@ namespace indigox {
   test_suite_open("IXForcefield and types");
   
 // ============================================================================
-// == IXFFDihedral Serialisation ==============================================
+// == FFDihedral Serialisation ================================================
 // ============================================================================
   
   template <class Archive>
-  void IXFFDihedral::save(Archive &archive, const uint32_t) const {
+  void FFDihedral::save(Archive &archive, const uint32_t) const {
     archive(INDIGOX_SERIAL_NVP("type", _type),
             INDIGOX_SERIAL_NVP("ff", _ff),
             INDIGOX_SERIAL_NVP("id", _id),
@@ -28,21 +28,20 @@ namespace indigox {
   }
   
   template <class Archive>
-  void IXFFDihedral::load_and_construct(Archive &archive,
-                                        cereal::construct<IXFFDihedral> &construct,
-                                        const uint32_t) {
+  void FFDihedral::load_and_construct(Archive &archive,
+                                      cereal::construct<FFDihedral> &construct,
+                                      const uint32_t) {
     Type t;
-    Forcefield ff;
+    sForcefield ff;
     archive(INDIGOX_SERIAL_NVP("type", t),
             INDIGOX_SERIAL_NVP("ff", ff));
-    
-    construct(t, ff);
+    construct(t, *ff);
     archive(INDIGOX_SERIAL_NVP("id", construct->_id),
             INDIGOX_SERIAL_NVP("data", construct->_dat));
   }
-  INDIGOX_SERIALISE_SPLIT(IXFFDihedral);
+  INDIGOX_SERIALISE_CONSTRUCT(FFDihedral);
   
-  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFDihedral serilisation", T, ixffdhd_serial) {
+/*  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFDihedral serilisation", T, ixffdhd_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     test::FFDihedralTestFixture fixture;
@@ -67,22 +66,23 @@ namespace indigox {
     check_eq(loaded_ff, fixture.dhd.GetForcefield());
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffdhd_serial, ixserial<IXFFDihedral>);
+  */
   
 // ============================================================================
 // == IXFFDihedral Construction ===============================================
 // ============================================================================
   
-  IXFFDihedral::IXFFDihedral(DihedralType type, int id, FFParam parameters,
-                             const Forcefield& ff)
-  : IXFFDihedral(type, ff) {
+  FFDihedral::FFDihedral(DihedralType type, int id, FFParam params,
+                         Forcefield& ff)
+  : FFDihedral(type, ff) {
     _id = id;
-    if (parameters.size() != _mask.count())
+    if (params.size() != _mask.count())
       throw std::range_error("Incorrect item count");
-    std::copy(parameters.begin(), parameters.end(), _dat.begin());
+    std::copy(params.begin(), params.end(), _dat.begin());
   }
   
-  IXFFDihedral::IXFFDihedral(DihedralType type, const Forcefield& ff)
-  : _type(type), _ff(ff) {
+  FFDihedral::FFDihedral(DihedralType type, Forcefield& ff)
+  : _type(type), _ff(ff.weak_from_this()) {
     // Allow phase, force constant, multiplicty
     if (_type == DihedralType::Proper) _mask.from_uint32(7);
     // Allow force constant, ideal angle
@@ -90,7 +90,7 @@ namespace indigox {
     _dat.fill(0);
   }
   
-  test_case("IXFFDihedral construction") {
+/*  test_case("IXFFDihedral construction") {
     Forcefield ff = test::CreateGenericTestForcefield().imp;
     using F = test::TestFFDihedral;
     using T = DihedralType;
@@ -179,13 +179,14 @@ namespace indigox {
     check(improper.get_mask()[AllowEnum::Allow_ForceConstant]);
     check_eq(ff, improper.get_ff().lock());
   }
+ */
   
 // ============================================================================
 // == IXFFAngle Serialisation =================================================
 // ============================================================================
   
   template <class Archive>
-  void IXFFAngle::save(Archive &archive, const uint32_t) const {
+  void FFAngle::save(Archive &archive, const uint32_t) const {
     archive(INDIGOX_SERIAL_NVP("type", _type),
             INDIGOX_SERIAL_NVP("ff", _ff),
             INDIGOX_SERIAL_NVP("id", _id),
@@ -194,22 +195,22 @@ namespace indigox {
   }
   
   template <class Archive>
-  void IXFFAngle::load_and_construct(Archive &archive,
-                                            cereal::construct<IXFFAngle> &construct,
-                                            const uint32_t) {
+  void FFAngle::load_and_construct(Archive &archive,
+                                   cereal::construct<FFAngle> &construct,
+                                   const uint32_t) {
     Type t;
-    Forcefield ff;
+    sForcefield ff;
     archive(INDIGOX_SERIAL_NVP("type", t),
             INDIGOX_SERIAL_NVP("ff", ff));
     
-    construct(t, ff);
+    construct(t, *ff);
     archive(INDIGOX_SERIAL_NVP("id", construct->_id),
             INDIGOX_SERIAL_NVP("data", construct->_dat),
             INDIGOX_SERIAL_NVP("link", construct->_link));
   }
-  INDIGOX_SERIALISE_SPLIT(IXFFAngle);
+  INDIGOX_SERIALISE_CONSTRUCT(FFAngle);
   
-  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFAngle serilisation", T, ixffang_serial) {
+/*  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFAngle serilisation", T, ixffang_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     test::FFAngleTestFixture fixture;
@@ -234,22 +235,22 @@ namespace indigox {
     check_eq(loaded_ff, fixture.ang.GetForcefield());
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffang_serial, ixserial<IXFFAngle>);
+ */
   
 // ============================================================================
 // == IXFFAngle Construction ==============================================
 // ============================================================================
   
-  IXFFAngle::IXFFAngle(AngleType type, int id, FFParam parameters,
-                       const Forcefield& ff)
-  : IXFFAngle(type, ff) {
+  FFAngle::FFAngle(AngleType type, int id, FFParam parameters, Forcefield& ff)
+  : FFAngle(type, ff) {
     _id = id;
     if (parameters.size() != _mask.count())
       throw std::range_error("Incorrect item count");
     std::copy(parameters.begin(), parameters.end(), _dat.begin());
   }
   
-  IXFFAngle::IXFFAngle(AngleType type, const Forcefield& ff)
-  : _type(type), _ff(ff) {
+  FFAngle::FFAngle(AngleType type, Forcefield& ff)
+  : _type(type), _ff(ff.weak_from_this()) {
     // Allow force constant and ideal angle
     if (_type == AngleType::Harmonic) _mask.from_uint32(3);
     // Allow force constant and ideal angle
@@ -257,7 +258,7 @@ namespace indigox {
     _dat.fill(0);
   }
   
-  test_case("IXFFAngle construction") {
+/*  test_case("IXFFAngle construction") {
     Forcefield ff = test::CreateGenericTestForcefield().imp;
     using F = test::TestFFAngle;
     using T = AngleType;
@@ -336,13 +337,14 @@ namespace indigox {
     check_eq(harmonic.imp, cosineharmonic.get_link());
     check_eq(ff, cosineharmonic.get_ff().lock());
   }
+ */
 
 // ============================================================================
 // == IXFFBond Serialisation ==============================================
 // ============================================================================
   
   template <class Archive>
-  void IXFFBond::save(Archive &archive, const uint32_t) const {
+  void FFBond::save(Archive &archive, const uint32_t) const {
     archive(INDIGOX_SERIAL_NVP("type", _type),
             INDIGOX_SERIAL_NVP("ff", _ff),
             INDIGOX_SERIAL_NVP("id", _id),
@@ -351,22 +353,22 @@ namespace indigox {
   }
   
   template <class Archive>
-  void IXFFBond::load_and_construct(Archive &archive,
-                                        cereal::construct<IXFFBond> &construct,
-                                        const uint32_t) {
+  void FFBond::load_and_construct(Archive &archive,
+                                  cereal::construct<FFBond> &construct,
+                                  const uint32_t) {
     Type t;
-    Forcefield ff;
+    sForcefield ff;
     archive(INDIGOX_SERIAL_NVP("type", t),
             INDIGOX_SERIAL_NVP("ff", ff));
     
-    construct(t, ff);
+    construct(t, *ff);
     archive(INDIGOX_SERIAL_NVP("id", construct->_id),
             INDIGOX_SERIAL_NVP("data", construct->_dat),
             INDIGOX_SERIAL_NVP("link", construct->_link));
   }
-  INDIGOX_SERIALISE_SPLIT(IXFFBond);
+  INDIGOX_SERIALISE_CONSTRUCT(FFBond);
   
-  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFBond serilisation", T, ixffbnd_serial) {
+/*  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFBond serilisation", T, ixffbnd_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     test::FFBondTestFixture fixture;
@@ -391,22 +393,22 @@ namespace indigox {
     check_eq(loaded_ff, fixture.bnd.GetForcefield());
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffbnd_serial, ixserial<IXFFBond>);
+ */
   
 // ============================================================================
 // == IXFFBond Construction ===============================================
 // ============================================================================
   
-  IXFFBond::IXFFBond(BondType type, int id, FFParam parameters,
-                     const Forcefield& ff)
-  : IXFFBond(type, ff) {
+  FFBond::FFBond(BondType type, int id, FFParam parameters, Forcefield& ff)
+  : FFBond(type, ff) {
     _id = id;
     if (parameters.size() != _mask.count())
       throw std::range_error("Incorrect item count");
     std::copy(parameters.begin(), parameters.end(), _dat.begin());
   }
   
-  IXFFBond::IXFFBond(BondType type, const Forcefield& ff)
-  : _type(type), _ff(ff) {
+  FFBond::FFBond(BondType type, Forcefield& ff) :
+  _type(type), _ff(ff.weak_from_this()) {
     // Allow force constant and ideal length
     if (_type == BondType::Harmonic) _mask.from_uint32(3);
     // Allow force constant and ideal length
@@ -414,7 +416,7 @@ namespace indigox {
     _dat.fill(0);
   }
   
-  test_case("IXFFBond construction") {
+/*  test_case("IXFFBond construction") {
     Forcefield ff = test::CreateGenericTestForcefield().imp;
     using F = test::TestFFBond;
     using T = BondType;
@@ -493,33 +495,34 @@ namespace indigox {
     check_eq(harmonic.imp, quartic.get_link());
     check_eq(ff, quartic.get_ff().lock());
   }
-  
+ */
+ 
 // ============================================================================
 // == IXFFAtom Serialisation ==============================================
 // ============================================================================
   
   template <class Archive>
-  void IXFFAtom::save(Archive &archive, const uint32_t) const {
+  void FFAtom::save(Archive &archive, const uint32_t) const {
     archive(INDIGOX_SERIAL_NVP("id", _id),
             INDIGOX_SERIAL_NVP("name", _name),
             INDIGOX_SERIAL_NVP("ff", _ff));
   }
   
   template <class Archive>
-  void IXFFAtom::load_and_construct(Archive &archive,
-                                    cereal::construct<IXFFAtom> &construct,
-                                    const uint32_t) {
+  void FFAtom::load_and_construct(Archive &archive,
+                                  cereal::construct<FFAtom> &construct,
+                                  const uint32_t) {
     int id;
     std::string name;
-    Forcefield ff;
+    sForcefield ff;
     archive(INDIGOX_SERIAL_NVP("id", id),
             INDIGOX_SERIAL_NVP("name", name),
             INDIGOX_SERIAL_NVP("ff", ff));
-    construct(id, name, ff);
+    construct(id, name, *ff);
   }
-  INDIGOX_SERIALISE_SPLIT(IXFFAtom);
+  INDIGOX_SERIALISE_CONSTRUCT(FFAtom);
   
-  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFAtom serialisation", T, ixffatm_serial) {
+/*  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("FFAtom serialisation", T, ixffatm_serial) {
     using In = typename T::t1;
     using Out = typename cereal::traits::detail::get_output_from_input<In>::type;
     test::FFAtomTestFixture fixture;
@@ -543,15 +546,16 @@ namespace indigox {
     check_eq(loaded_ff, loaded.get_ff().lock());
   }
   DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixffatm_serial, ixserial<IXFFAtom>);
+ */
   
 // ============================================================================
 // == IXFFAtom Construction ===============================================
 // ============================================================================
   
-  IXFFAtom::IXFFAtom(int id, std::string name, const Forcefield& ff)
-  : _id(id), _name(name), _ff(ff) { }
+  FFAtom::FFAtom(int id, std::string name, Forcefield& ff)
+  : _id(id), _name(name), _ff(ff.weak_from_this()) { }
   
-  test_case("IXFFAtom construction") {
+/*  test_case("IXFFAtom construction") {
     Forcefield ff = test::CreateGenericTestForcefield().imp;
     using F = test::TestFFAtom;
     check_nothrow(F t(23, "TEST", ff));
@@ -568,13 +572,14 @@ namespace indigox {
     check_eq("ATM", atm.get_name());
     check_eq(ff, atm.get_ff().lock());
   }
+ */
   
 // ============================================================================
 // == IXForcefield Serialisation ==============================================
 // ============================================================================
   
   template <class Archive>
-  void IXForcefield::save(Archive &archive, const uint32_t) const {
+  void Forcefield::save(Archive &archive, const uint32_t) const {
     archive(INDIGOX_SERIAL_NVP("family", _family),
             INDIGOX_SERIAL_NVP("name", _name),
             INDIGOX_SERIAL_NVP("atom_types", _atms),
@@ -584,23 +589,26 @@ namespace indigox {
   }
   
   template <class Archive>
-  void IXForcefield::load_and_construct(Archive &archive,
-                                        cereal::construct<IXForcefield> &construct,
-                                        const uint32_t) {
-    construct(FFFamily::Empty, "");
-    archive(INDIGOX_SERIAL_NVP("family", construct->_family),
-            INDIGOX_SERIAL_NVP("name", construct->_name),
-            INDIGOX_SERIAL_NVP("atom_types", construct->_atms),
+  void Forcefield::load_and_construct(Archive &archive,
+                                      cereal::construct<Forcefield> &construct,
+                                      const uint32_t) {
+    FFFamily fam;
+    std::string name;
+    archive(INDIGOX_SERIAL_NVP("family", fam),
+            INDIGOX_SERIAL_NVP("name", name));
+    construct(fam, name);
+    archive(INDIGOX_SERIAL_NVP("atom_types", construct->_atms),
             INDIGOX_SERIAL_NVP("bond_types", construct->_bnds),
             INDIGOX_SERIAL_NVP("angle_types", construct->_angs),
             INDIGOX_SERIAL_NVP("dihedral_types", construct->_dhds));
   }
+  INDIGOX_SERIALISE_CONSTRUCT(Forcefield);
   
 // ============================================================================
 // == IXForcefield Construction ===============================================
 // ============================================================================
   
-  IXForcefield::IXForcefield(FFFamily family, std::string name)
+  Forcefield::Forcefield(FFFamily family, std::string name)
   : _family(family), _name(name) {
     
     if (family == FFFamily::GROMOS) {
@@ -634,129 +642,146 @@ namespace indigox {
 // == IXForcefield Adding types ===============================================
 // ============================================================================
   
-  FFAtom IXForcefield::NewAtomType(int id, std::string name) {
-    if (GetAtomType(id) || GetAtomType(name)) return FFAtom();
-    _atms.emplace_back(std::make_shared<IXFFAtom>(id, name, shared_from_this()));
-    return _atms.back();
+  FFAtom& Forcefield::NewAtomType(int id, std::string name) {
+    auto find_name_id = [&id, &name](sFFAtom atm) {
+      return atm->GetID() == id || atm->GetName() == name;
+    };
+    if (std::find_if(_atms.begin(), _atms.end(), find_name_id) != _atms.end())
+      throw std::out_of_range("Atom type already exists");
+    _atms.emplace_back(std::make_shared<FFAtom>(id, name, *this));
+    return *_atms.back();
   }
   
-  FFBond IXForcefield::NewBondType(BondType type, int id, FFParam param) {
-    if (_bnds.find(type) == _bnds.end()) return FFBond();
-    if (GetBondType(type, id)) return FFBond();
-    _bnds[type].emplace_back(std::make_shared<IXFFBond>(type, id, param,
-                                                        shared_from_this()));
-    return _bnds[type].back();
+  FFBond& Forcefield::NewBondType(BondType type, int id, FFParam param) {
+    if (_bnds.find(type) == _bnds.end())
+      throw std::out_of_range("Unsupported bond type");
+    auto find_id = [&id](sFFBond bnd) { return bnd->GetID() == id; };
+    if (std::find_if(_bnds[type].begin(), _bnds[type].end(), find_id) != _bnds[type].end())
+      throw std::out_of_range("Bond type already exists");
+    _bnds[type].emplace_back(std::make_shared<FFBond>(type, id, param, *this));
+    return *_bnds[type].back();
   }
   
-  FFAngle IXForcefield::NewAngleType(AngleType type, int id, FFParam param) {
-    if (_angs.find(type) == _angs.end()) return FFAngle();
-    if (GetAngleType(type, id)) return FFAngle();
-    _angs[type].emplace_back(std::make_shared<IXFFAngle>(type, id, param,
-                                                         shared_from_this()));
-    return _angs[type].back();
+  FFAngle& Forcefield::NewAngleType(AngleType type, int id, FFParam param) {
+    if (_angs.find(type) == _angs.end())
+      throw std::out_of_range("Unsupported angle type");
+    auto find_id = [&id](sFFAngle ang) { return ang->GetID() == id; };
+    if (std::find_if(_angs[type].begin(), _angs[type].end(), find_id) != _angs[type].end())
+      throw std::out_of_range("Angle type already exists");
+    _angs[type].emplace_back(std::make_shared<FFAngle>(type, id, param, *this));
+    return *_angs[type].back();
   }
   
-  FFDihedral IXForcefield::NewDihedralType(DihedralType type, int id, FFParam param) {
-    if (_dhds.find(type) == _dhds.end()) return FFDihedral();
-    if (GetDihedralType(type, id)) return FFDihedral();
-    _dhds[type].emplace_back(std::make_shared<IXFFDihedral>(type, id, param,
-                                                            shared_from_this()));
-    return _dhds[type].back();
+  FFDihedral& Forcefield::NewDihedralType(DihedralType type, int id, FFParam param) {
+    if (_dhds.find(type) == _dhds.end())
+      throw std::out_of_range("Unsupported dihedral type");
+    auto find_id = [&id](sFFDihedral dhd) { return dhd->GetID() == id; };
+    if (std::find_if(_dhds[type].begin(), _dhds[type].end(), find_id) != _dhds[type].end())
+      throw std::out_of_range("Dihedral type already exists");
+    _dhds[type].emplace_back(std::make_shared<FFDihedral>(type, id, param, *this));
+    return *_dhds[type].back();
   }
   
 // ============================================================================
 // == IXForcefield Atom type handlings ========================================
 // ============================================================================
   
-  FFAtom IXForcefield::GetAtomType(std::string name) const {
-    auto pred = [&name](const FFAtom& t) { return t->GetName() == name; };
-    auto pos = std::find_if(_atms.begin(), _atms.end(), pred);
-    return (pos == _atms.end()) ? FFAtom() : *pos;
+  FFAtom& Forcefield::GetAtomType(std::string name) const {
+    auto find_name = [&name](sFFAtom atm) { return atm->GetName() == name; };
+    auto pos = std::find_if(_atms.begin(), _atms.end(), find_name);
+    if (pos == _atms.end()) throw std::out_of_range("Atom name does not exist");
+    return *(*pos);
   }
   
-  FFAtom IXForcefield::GetAtomType(int id) const {
-    auto pred = [&id](const FFAtom& t) { return t->GetID() == id; };
-    auto pos = std::find_if(_atms.begin(), _atms.end(), pred);
-    return (pos == _atms.end()) ? FFAtom() : *pos;
+  FFAtom& Forcefield::GetAtomType(int id) const {
+    auto find_id = [&id](sFFAtom atm) { return atm->GetID() == id; };
+    auto pos = std::find_if(_atms.begin(), _atms.end(), find_id);
+    if (pos == _atms.end()) throw std::out_of_range("Atom ID does not exist");
+    return *(*pos);
   }
 
 // ============================================================================
 // == IXForcefield Bond type handlings ========================================
 // ============================================================================
   
-  FFBond IXForcefield::GetBondType(BondType type, int id) const {
-    if (_bnds.find(type) == _bnds.end()) return FFBond();
-    auto pred = [&id](const FFBond& t) { return t->GetID() == id; };
-    auto pos = std::find_if(_bnds.at(type).begin(), _bnds.at(type).end(), pred);
-    return (pos == _bnds.at(type).end()) ? FFBond() : *pos;
+  FFBond& Forcefield::GetBondType(BondType type, int id) const {
+    if (_bnds.find(type) == _bnds.end())
+      throw std::out_of_range("Unsupported bond type");
+    auto find_id = [&id](sFFBond bnd) { return bnd->GetID() == id; };
+    auto pos = std::find_if(_bnds.at(type).begin(), _bnds.at(type).end(), find_id);
+    if (pos == _bnds.at(type).end())
+      throw std::out_of_range("Bond ID does not exist");
+    return *(*pos);
   }
   
-  FFBond IXForcefield::GetBondType(int id) const {
+  FFBond& Forcefield::GetBondType(int id) const {
     for (auto& types: _bnds) {
-      FFBond found = GetBondType(types.first, id);
-      if (found) return found;
+      try { return GetBondType(types.first, id); }
+      catch (const std::out_of_range&) { continue; }
     }
-    return FFBond();
+    throw std::out_of_range("Bond ID does not exist");
   }
   
-  void IXForcefield::LinkBondTypes(FFBond a, FFBond b) {
-    if (a->GetLinkedType()) a->GetLinkedType()->_link.reset();
-    if (b->GetLinkedType()) b->GetLinkedType()->_link.reset();
-    a->_link = b;
-    b->_link = a;
+  void Forcefield::LinkBondTypes(FFBond& a, FFBond& b) {
+    a._link = b.weak_from_this();
+    b._link = a.weak_from_this();
   }
   
 // ============================================================================
 // == IXForcefield Angle type handlings =======================================
 // ============================================================================
   
-  FFAngle IXForcefield::GetAngleType(AngleType type, int id) const {
-    if (_angs.find(type) == _angs.end()) return FFAngle();
-    auto pred = [&id](const FFAngle& t) { return t->GetID() == id; };
-    auto pos = std::find_if(_angs.at(type).begin(), _angs.at(type).end(), pred);
-    return (pos == _angs.at(type).end()) ? FFAngle() : *pos;
+  FFAngle& Forcefield::GetAngleType(AngleType type, int id) const {
+    if (_angs.find(type) == _angs.end())
+      throw std::out_of_range("Unsupported angle type");
+    auto find_id = [&id](sFFAngle ang) { return ang->GetID() == id; };
+    auto pos = std::find_if(_angs.at(type).begin(), _angs.at(type).end(), find_id);
+    if (pos == _angs.at(type).end())
+      throw std::out_of_range("Angle ID does not exist");
+    return *(*pos);
   }
   
-  FFAngle IXForcefield::GetAngleType(int id) const {
+  FFAngle& Forcefield::GetAngleType(int id) const {
     for (auto& types: _angs) {
-      FFAngle found = GetAngleType(types.first, id);
-      if (found) return found;
+      try { return GetAngleType(types.first, id); }
+      catch (const std::out_of_range&) { continue; }
     }
-    return FFAngle();
+    throw std::out_of_range("Angle ID does not exist");
   }
   
-  void IXForcefield::LinkAngleTypes(FFAngle a, FFAngle b) {
-    if (a->GetLinkedType()) a->GetLinkedType()->_link.reset();
-    if (b->GetLinkedType()) b->GetLinkedType()->_link.reset();
-    a->_link = b;
-    b->_link = a;
+  void Forcefield::LinkAngleTypes(FFAngle& a, FFAngle& b) {
+    a._link = b.weak_from_this();
+    b._link = a.weak_from_this();
   }
   
 // ============================================================================
 // == IXForcefield Dihedral type handlings ====================================
 // ============================================================================
   
-  FFDihedral IXForcefield::GetDihedralType(DihedralType type, int id) const {
-    if (_dhds.find(type) == _dhds.end()) return FFDihedral();
-    auto pred = [&id](const FFDihedral& t) { return t->GetID() == id; };
-    auto pos = std::find_if(_dhds.at(type).begin(), _dhds.at(type).end(), pred);
-    return (pos == _dhds.at(type).end()) ? FFDihedral() : *pos;
+  FFDihedral& Forcefield::GetDihedralType(DihedralType type, int id) const {
+    if (_dhds.find(type) == _dhds.end())
+      throw std::out_of_range("Unsupported dihedral type");
+    auto find_id = [&id](sFFDihedral dhd) { return dhd->GetID() == id; };
+    auto pos = std::find_if(_dhds.at(type).begin(), _dhds.at(type).end(), find_id);
+    if (pos == _dhds.at(type).end())
+      throw std::out_of_range("Dihedral ID doesn't exist");
+    return *(*pos);
   }
   
-  FFDihedral IXForcefield::GetDihedralType(int id) const {
+  FFDihedral& Forcefield::GetDihedralType(int id) const {
     for (auto& types: _dhds) {
-      FFDihedral found = GetDihedralType(types.first, id);
-      if (found) return found;
+      try { return GetDihedralType(types.first, id); }
+      catch (const std::out_of_range&) { continue; }
     }
-    return FFDihedral();
+    throw std::out_of_range("Dihedral ID does not exist");
   }
   
   
 // ============================================================================
 // == Hardcoded forcefield generations ========================================
 // ============================================================================
-  Forcefield GenerateGROMOS54A7() {
-    Forcefield ff = std::make_shared<IXForcefield>(FFFamily::GROMOS, "54A7");
+  sForcefield GenerateGROMOS54A7() {
+    sForcefield ff = std::make_shared<Forcefield>(FFFamily::GROMOS, "54A7");
     // Add atom types
     std::vector<std::pair<int, std::string>> atom_dat = {
       {2, "OM"}, {1, "O"},

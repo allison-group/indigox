@@ -20,8 +20,7 @@ namespace indigox {
   //! \brief type for collection of parameter inputs
   using FFParam = std::initializer_list<double>;
   
-  
-  class IXFFDihedral {
+  class FFDihedral : public std::enable_shared_from_this<FFDihedral> {
   public:
     /*! \brief Enum for the different function types a dihedral term can have.
      *  \details Though other values are provided, currently only the proper and
@@ -40,7 +39,7 @@ namespace indigox {
     //! \brief Friendship allows IXFFDihedral internals to be tested.
     friend struct indigox::test::TestFFDihedral;
     //! \brief Friendship allows dihedral types to be added to a forcefield.
-    friend class IXForcefield;
+    friend class Forcefield;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
     
@@ -73,11 +72,11 @@ namespace indigox {
     
     template <typename Archive>
     static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXFFDihedral>& construct,
+                                   cereal::construct<FFDihedral>& construct,
                                    const uint32_t version);
     
   public:
-    IXFFDihedral() = delete; // no default constructor
+    FFDihedral() = delete; // no default constructor
     
     /*! \brief Normal construtor
      *  \details Creates a new dihedral term of the specified type.
@@ -85,14 +84,14 @@ namespace indigox {
      *  \param id the ID of the type.
      *  \param parameters the list of parameters for the function.
      *  \param ff the forcefield this type will beloing to. */
-    IXFFDihedral(Type type, int id, FFParam parameters, const Forcefield& ff);
+    FFDihedral(Type type, int id, FFParam parameters, Forcefield& ff);
     
     /*! \brief Empty constructor
      *  \details Creates a new dihedral term of the specified type but without
      *  any parameters set. Used for serialisation purposes.
      *  \param type the type of the potential energy function to use.
      *  \param ff the forcefield to assign to. */
-    IXFFDihedral(Type type, const Forcefield& ff);
+    FFDihedral(Type type, Forcefield& ff);
     
     /*! \brief Get the phase shift (in degrees).
      *  \return the phase shift.
@@ -135,9 +134,7 @@ namespace indigox {
      *  \return the ID of this dihedral type. */
     inline int GetID() const { return _id; }
     
-    /*! \brief Get the forcefield this type belongs to.
-     *  \return the forcefield. */
-    inline Forcefield GetForcefield() const { return _ff.lock(); }
+    Forcefield& GetForcefield() const { return *_ff.lock(); }
     
   private:
     //! The type of the potential energy function.
@@ -149,11 +146,11 @@ namespace indigox {
     //! Mask for the allowed parameters.
     AllowedMask _mask;
     //! Forcefield
-    _Forcefield _ff;
+    wForcefield _ff;
   };
-  using DihedralType = IXFFDihedral::Type;
+  using DihedralType = FFDihedral::Type;
   
-  class IXFFAngle {
+  class FFAngle : public std::enable_shared_from_this<FFAngle> {
   public:
     /*! \brief Enum for the different function types a angle term can have.
      *  \details Though other values are provided, currently only the harmonic and
@@ -170,7 +167,7 @@ namespace indigox {
     //! \brief Friendship allows IXFFAngle internals to be tested.
     friend struct indigox::test::TestFFAngle;
     //! \brief Friendship allows angle types to be added to a forcefield.
-    friend class IXForcefield;
+    friend class Forcefield;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
     
@@ -199,11 +196,11 @@ namespace indigox {
     
     template <typename Archive>
     static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXFFAngle>& construct,
+                                   cereal::construct<FFAngle>& construct,
                                    const uint32_t version);
     
   public:
-    IXFFAngle() = delete;   // no default constructor
+    FFAngle() = delete;   // no default constructor
     
     /*! \brief Normal constructor
      *  \details Creates a new angle of the specified type.
@@ -211,14 +208,14 @@ namespace indigox {
      *  \param id the ID of the type.
      *  \param parameters the list of parameters for the function.
      *  \param ff the forcefield this type will belong to. */
-    IXFFAngle(Type type, int id, FFParam parameters, const Forcefield& ff);
+    FFAngle(Type type, int id, FFParam parameters, Forcefield& ff);
     
     /*! \brief Empty constructor
      *  \details Creates a new dihedral term of the specified type but without
      *  any parameters set. Used for serialisation purposes.
      *  \param type the type of the potential energy function to use.
      *  \param ff the forcefield to assign to. */
-    IXFFAngle(Type type, const Forcefield& ff);
+    FFAngle(Type type, Forcefield& ff);
     
     /*! \brief Get the force constant.
      *  \return the force constant.
@@ -249,11 +246,10 @@ namespace indigox {
      *  \details A linked type is an equivalent type with a different functional
      *  type.
      *  \return the linked type. */
-    inline FFAngle GetLinkedType() const { return _link; }
-    
-    /*! \brief Get the forcefield this type belongs to.
-     *  \return the forcefield. */
-    inline Forcefield GetForcefield() const { return _ff.lock(); }
+    inline FFAngle& GetLinkedType() const {
+      if (_link.expired()) throw std::runtime_error("No linked type");
+      return *_link.lock();
+    }
     
   private:
     //! The type of the potential energy function.
@@ -265,13 +261,13 @@ namespace indigox {
     //! Mask for the allowed parameters.
     AllowedMask _mask;
     //! Linked angle type
-    FFAngle _link;
+    wFFAngle _link;
     //! Forcefield
-    _Forcefield _ff;
+    wForcefield _ff;
   };
-  using AngleType = IXFFAngle::Type;
+  using AngleType = FFAngle::Type;
   
-  class IXFFBond {
+  class FFBond : public std::enable_shared_from_this<FFBond> {
   public:
     /*! \brief Enum for the different function types a bond term can have.
      *  \details Though other values are provided, currently only the harmonic and
@@ -289,7 +285,7 @@ namespace indigox {
     //! \brief Friendship allows IXFFBond internals to be tested.
     friend struct indigox::test::TestFFBond;
     //! \brief Friendship allows bond types to be added to a forcefield.
-    friend class IXForcefield;
+    friend class Forcefield;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
     
@@ -318,11 +314,11 @@ namespace indigox {
     
     template <typename Archive>
     static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXFFBond>& construct,
+                                   cereal::construct<FFBond>& construct,
                                    const uint32_t version);
     
   public:
-    IXFFBond() = delete;   // no default constructor
+    FFBond() = delete;   // no default constructor
     
     /*! \brief Normal constructor
      *  \details Creates a new bond of the specified type.
@@ -330,14 +326,14 @@ namespace indigox {
      *  \param id the ID of the type.
      *  \param parameters the list of parameters for the function.
      *  \param ff the forcefield this type will belong to. */
-    IXFFBond(Type type, int id, FFParam parameters, const Forcefield& ff);
+    FFBond(Type type, int id, FFParam parameters, Forcefield& ff);
     
     /*! \brief Empty constructor
      *  \details Creates a new bond term of the specified type but without any
      *  parameters set. Used for serialisation purposes.
      *  \param type the ytpe of the potential energy function to use.
      *  \param ff the forcefield to assign to. */
-    IXFFBond(Type type, const Forcefield& ff);
+    FFBond(Type type, Forcefield& ff);
     
     /*! \brief Get the force constant.
      *  \return the force constant.
@@ -368,11 +364,12 @@ namespace indigox {
      *  \details A linked type is an equivalent type with a different functional
      *  type.
      *  \return the linked type. */
-    inline FFBond GetLinkedType() const { return _link; }
+    inline FFBond& GetLinkedType() const {
+      if (_link.expired()) throw std::runtime_error("No linked type");
+      return *_link.lock();
+    }
     
-    /*! \brief Get the forcefield this type belongs to.
-     *  \return the forcefield. */
-    inline Forcefield GetForcefield() const { return _ff.lock(); }
+    Forcefield& GetForcefield() const { return *_ff.lock(); }
     
   private:
     //! The type of the potential energy function.
@@ -384,19 +381,19 @@ namespace indigox {
     //! Mask for the allowed parameters.
     AllowedMask _mask;
     //! Linked type
-    FFBond _link;
+    wFFBond _link;
     //! Forcefield
-    _Forcefield _ff;
+    wForcefield _ff;
   };
-  using BondType = IXFFBond::Type;
+  using BondType = FFBond::Type;
   
-  class IXFFAtom {
+  class FFAtom : public std::enable_shared_from_this<FFAtom> {
     //! \brief Friendship allows IXFFAtomType internals to be tested.
     friend struct indigox::test::TestFFAtom;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
     //! \brief Friendship allows atom types to be added to a forcefield.
-    friend class IXForcefield;
+    friend class Forcefield;
     
   private:
     template <typename Archive>
@@ -404,18 +401,18 @@ namespace indigox {
     
     template <typename Archive>
     static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXFFAtom>& construct,
+                                   cereal::construct<FFAtom>& construct,
                                    const uint32_t version);
     
   public:
-    IXFFAtom() = delete;  // no default constructor
+    FFAtom() = delete;  // no default constructor
     
     /*! \brief Normal constructor
      *  \details Creates a new atom term.
      *  \param id the ID of the type.
      *  \param name the name of the atom type.
-     *  \param the forcefield this type will be a part of. */
-    IXFFAtom(int id, std::string name, const Forcefield& ff);
+     *  \param ff the forcefield this type will be a part of. */
+    FFAtom(int id, std::string name, Forcefield& ff);
     
     /*! \brief Get the ID for this type.
      *  \return the ID of this atom type. */
@@ -425,20 +422,18 @@ namespace indigox {
      *  \return the name of this atom type. */
     inline std::string GetName() const { return _name; }
     
-    /*! \brief Get the forcefield this type belongs to.
-     *  \return the forcefield. */
-    inline Forcefield GetForcefield() const { return _ff.lock(); }
+    Forcefield& GetForcefield() const { return *_ff.lock(); }
     
   private:
     //! ID of this atom type
     int _id;
     //! Name of this atom type
     std::string _name;
-    //! Forcefield
-    _Forcefield _ff;
+    //! The forcefield this is part of
+    wForcefield _ff;
   };
   
-  class IXForcefield : public std::enable_shared_from_this<IXForcefield> {
+  class Forcefield : public std::enable_shared_from_this<Forcefield> {
   public:
     /*! \brief Enum for the different families of forcefields.
      *  \details Though other values are provided, currently only the GROMOS
@@ -458,16 +453,16 @@ namespace indigox {
     friend class cereal::access;
     
     //! \brief Type used to store the atom types.
-    using AtomTypes = std::vector<FFAtom>;
+    using AtomTypes = std::vector<sFFAtom>;
     //! \brief Type used to store the bond types.
-    using BondTypes = std::map<BondType, std::vector<FFBond>>;
+    using BondTypes = std::map<BondType, std::vector<sFFBond>>;
     //! \brief Type used to store the angle types.
-    using AngleTypes = std::map<AngleType, std::vector<FFAngle>>;
+    using AngleTypes = std::map<AngleType, std::vector<sFFAngle>>;
     //! \brief Type used to store the dihedral types.
-    using DihedralTypes = std::map<DihedralType, std::vector<FFDihedral>>;
+    using DihedralTypes = std::map<DihedralType, std::vector<sFFDihedral>>;
     
   public:
-    IXForcefield() = delete;  // no default constructor
+    Forcefield() = delete;  // no default constructor
     
     /*! \brief Normal constructor
      *  \details Create a new forcefield from the given family. The family
@@ -477,7 +472,7 @@ namespace indigox {
      *  proper and improper dihedral types.
      *  \param family the family of forcefields to use.
      *  \param name the name of the forcefield. */
-    IXForcefield(Family family, std::string name);
+    Forcefield(Family family, std::string name);
     
   private:
     template <typename Archive>
@@ -485,7 +480,7 @@ namespace indigox {
     
     template <typename Archive>
     static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXForcefield>& construct,
+                                   cereal::construct<Forcefield>& construct,
                                    const uint32_t version);
     
   private:
@@ -494,21 +489,21 @@ namespace indigox {
      *  \param id the id of the bond.
      *  \param parameters the parameters of the bond.
      *  \return the newly created bond type. */
-    FFBond NewBondType(BondType type, int id, FFParam parameters);
+    FFBond& NewBondType(BondType type, int id, FFParam parameters);
     
     /*! \brief Adds a new angle type to the forcefield.
      *  \param type the type of the angle.
      *  \param id the id of the angle.
      *  \param parameters the parameters of the angle.
      *  \return the newly created angle type. */
-    FFAngle NewAngleType(AngleType type, int id, FFParam parameters);
+    FFAngle& NewAngleType(AngleType type, int id, FFParam parameters);
     
     /*! \brief Adds a new dihedral type to the forcefield.
      *  \param type the type of the dihedral.
      *  \param id the id of the dihedral.
      *  \param parameters the parameters of the dihedral.
      *  \return the newly created dihedral type. */
-    FFDihedral NewDihedralType(DihedralType type, int id, FFParam parameters);
+    FFDihedral& NewDihedralType(DihedralType type, int id, FFParam parameters);
     
   public:
     //  Atom type handlings
@@ -518,17 +513,17 @@ namespace indigox {
      *  \return the newly created atom type.
      *  \throws std::runtime_error if an atomtype with the given name or id
      *  already exists within the forcefield. */
-    FFAtom NewAtomType(int id, std::string name);
+    FFAtom& NewAtomType(int id, std::string name);
     
     /*! \brief Get the AtomType with the given name.
      *  \param name the name of the atom type.
      *  \return the atomtype with the name, or an empty shared_ptr. */
-    FFAtom GetAtomType(std::string name) const;
+    FFAtom& GetAtomType(std::string name) const;
     
     /*! \brief Get the AtomType with the given id.
      *  \param id the id of the atom type.
      *  \return the atomtype with the id, or an empty shared_ptr. */
-    FFAtom GetAtomType(int id) const;
+    FFAtom& GetAtomType(int id) const;
     
     /*! \brief Reserve space for atom types.
      *  \param size the amount of space to reserve. */
@@ -547,7 +542,7 @@ namespace indigox {
      *  \param id the id of the bond.
      *  \param a,b the two parameter values.
      *  \return the newly created bond type. */
-    inline FFBond NewBondType(BondType type, int id, double a, double b) {
+    inline FFBond& NewBondType(BondType type, int id, double a, double b) {
       return NewBondType(type, id, {a, b});
     }
     
@@ -555,14 +550,14 @@ namespace indigox {
      *  \param type the type of bond to get.
      *  \param the id of the bond type.
      *  \return the requested bond type, or an empty shared_ptr. */
-    FFBond GetBondType(BondType type, int id) const;
+    FFBond& GetBondType(BondType type, int id) const;
     
     /*! \brief Get the first bond type with the given id.
      *  \details Searches through all allowed bond types in order and returns
      *  the first type with the id.
      *  \param id the id of the bond type.
      *  \return the bond type, or an empty shared_ptr. */
-    FFBond GetBondType(int id) const;
+    FFBond& GetBondType(int id) const;
     
     /*! \brief Link together two equivalent bond types.
      *  \details Two bond types can be linked together when they are regarded as
@@ -570,7 +565,7 @@ namespace indigox {
      *  forcefield provides both harmonic and quartic force constants for all
      *  bond types. This method will remove any existing links.
      *  \param a,b the two types to link. */
-    void LinkBondTypes(FFBond a, FFBond b);
+    void LinkBondTypes(FFBond& a, FFBond& b);
     
     /*! \brief Reserve space for bond types.
      *  \param type the type of bond to reserve space for.
@@ -607,7 +602,7 @@ namespace indigox {
      *  \param id the id of the angle.
      *  \param a,b the two parameter values.
      *  \return the newly created angle type. */
-    inline FFAngle NewAngleType(AngleType type, int id, double a, double b) {
+    inline FFAngle& NewAngleType(AngleType type, int id, double a, double b) {
       return NewAngleType(type, id, {a, b});
     }
     
@@ -615,14 +610,14 @@ namespace indigox {
      *  \param type the type of angle to get.
      *  \param the id of the angle type.
      *  \return the requested angle type, or an empty shared_ptr. */
-    FFAngle GetAngleType(AngleType type, int id) const;
+    FFAngle& GetAngleType(AngleType type, int id) const;
     
     /*! \brief Get the first angle type with the given id.
      *  \details Searches through all allowed angle types in order and returns
      *  the first type with the given id.
      *  \param id the id of the angle type.
      *  \return the angle type, or an empty shared_ptr. */
-    FFAngle GetAngleType(int id) const;
+    FFAngle& GetAngleType(int id) const;
     
     /*! \brief Link together two equivalent angle types.
      *  \details Two angle types can be linked together when they are regarded
@@ -631,7 +626,7 @@ namespace indigox {
      *  constants for all angle types. This method will remove any existing
      *  links.
      *  \param a,b the two types to link. */
-    void LinkAngleTypes(FFAngle a, FFAngle b);
+    void LinkAngleTypes(FFAngle& a, FFAngle& b);
     
     /*! \brief Reserve space for angle types.
      *  \param type the type of angle to reserve space for.
@@ -668,8 +663,8 @@ namespace indigox {
      *  \param id the id of the dihedral.
      *  \param a,b,c the three parameter values.
      *  \return the newly created dihedral type. */
-    inline FFDihedral NewDihedralType(DihedralType type, int id, double a,
-                                      double b, double c) {
+    inline FFDihedral& NewDihedralType(DihedralType type, int id, double a,
+                                       double b, double c) {
       return NewDihedralType(type, id, {b,a,c});
     }
     
@@ -681,8 +676,8 @@ namespace indigox {
      *  \param id the id of the dihedral.
      *  \param a,b the three parameter values.
      *  \return the newly created dihedral type. */
-    inline FFDihedral NewDihedralType(DihedralType type, int id, double a,
-                                      double b) {
+    inline FFDihedral& NewDihedralType(DihedralType type, int id, double a,
+                                       double b) {
       return NewDihedralType(type, id, {b,a});
     }
     
@@ -690,14 +685,14 @@ namespace indigox {
      *  \param type the type of dihedral to get.
      *  \param the id of the dihedral type.
      *  \return the requested dihedral type, or an empty shared_ptr. */
-    FFDihedral GetDihedralType(DihedralType type, int id) const;
+    FFDihedral& GetDihedralType(DihedralType type, int id) const;
     
     /*! \brief Get the first dihedral type with the given id.
      *  \details Searches through all allowed dihedral types in order and
      *  returns the first type with the given id.
      *  \param id the id of the dihedral type.
      *  \return the dihedral type, or an empty shared_ptr. */
-    FFDihedral GetDihedralType(int id) const;
+    FFDihedral& GetDihedralType(int id) const;
     
     /*! \brief Reserve space for dihedral types.
      *  \param type the type of dihedral to reserve space for.
@@ -748,9 +743,9 @@ namespace indigox {
     //! Dihedral types;
     DihedralTypes _dhds;
   };
-  using FFFamily = IXForcefield::Family;
+  using FFFamily = Forcefield::Family;
   
-  Forcefield GenerateGROMOS54A7();
+  sForcefield GenerateGROMOS54A7();
 }
 
 #endif    /* INDIGOX_CLASSES_FORCEFIELD_HPP */

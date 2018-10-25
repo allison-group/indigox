@@ -195,7 +195,7 @@ namespace stdx {    // extended std namespace
     }
     
     template <typename Archive>
-    void Serialise(Archive& archive, const uint32_t) {
+    void serialise(Archive& archive, const uint32_t) {
       archive(INDIGOX_SERIAL_NVP("first", first),
               INDIGOX_SERIAL_NVP("second", second),
               INDIGOX_SERIAL_NVP("third", third));

@@ -17,23 +17,23 @@
 #include "../utils/fwd_declares.hpp"
 
 namespace indigox {
-  class IXAtom
-  : public utils::IXCountableObject<IXAtom>,
-  public std::enable_shared_from_this<IXAtom> {
+  class Atom
+  : public utils::IXCountableObject<Atom>,
+  public std::enable_shared_from_this<Atom> {
     //! \brief Friendship allows IXMolecule to create new atoms.
-    friend class indigox::IXMolecule;
+    friend class indigox::Molecule;
     //! \brief Friendship allows IXAtom to be tested.
     friend struct indigox::test::TestAtom;
     //! \brief Friendship allows IXAtom to be serialised.
     friend class cereal::access;
     
   private:
-    //! \brief Container for storing IXBond references.
-    using AtomBonds = std::vector<_Bond>;
+    //! \brief Container for storing Bond references.
+    using AtomBonds = std::vector<wBond>;
     //! \brief Container for storing IXAngle references.
-    using AtomAngles = std::vector<_Angle>;
+    using AtomAngles = std::vector<wAngle>;
     //! \brief Container for storing IXDihedral references.
-    using AtomDihedrals = std::vector<_Dihedral>;
+    using AtomDihedrals = std::vector<wDihedral>;
   public:  // Make the iterator aliases public for easier external usage
     //! \brief Iterator over IXBond references stored on an IXAtom
     using AtomBondIter = AtomBonds::const_iterator;
@@ -57,19 +57,19 @@ namespace indigox {
     
     template <typename Archive>
     static void load_and_construct(Archive& archive,
-                                   cereal::construct<IXAtom>& construct,
+                                   cereal::construct<Atom>& construct,
                                    const uint32_t version);
     
   public:
-    IXAtom() = delete;  // default constructor for serialise access
+    Atom() = delete;  // default constructor for serialise access
     
     /*! \brief Normal constructor.
      *  \details Links the constructed atom to the given Molecule.
      *  \param m the molecule to assign this atom to. */
-    IXAtom(Molecule m);
+    Atom(Molecule& m);
     
     //! \brief Destructor
-    ~IXAtom() { };
+    ~Atom() { };
     
     /*! \brief Element of the atom.
      *  \return the element of this atom. */
@@ -108,7 +108,7 @@ namespace indigox {
      *  \details The returned shared_ptr is empty of the atom is not assigned
      *  to a valid molecule.
      *  \return the molecule associated with this atom. */
-    inline Molecule GetMolecule() const { return _mol.lock(); }
+    inline Molecule& GetMolecule() const { return *_mol.lock(); }
     
     /*! \brief Atom name.
      *  \return name of the atom. */
@@ -210,46 +210,38 @@ namespace indigox {
      *  \details Assumes that the bond is not already added to the atom.
      *  \param b the bond to add.
      *  \return if the bond was added or not. */
-    inline void AddBond(Bond b) { _bnds.emplace_back(b); }
+    void AddBond(Bond& b);
     
     /*! \brief Add an angle to this atom.
      *  \details Assumes that the angle is not already added to the atom.
      *  \param a the angle to add.
      *  \return if the angle was added or not. */
-    inline void AddAngle(Angle a) { _angs.emplace_back(a); }
+    void AddAngle(Angle& a);
     
     /*! \brief Add a dihedral to this atom.
      *  \details Assumes that the dihedral is not already added to the atom.
      *  \param d the dihedral to add.
      *  \return if the dihedral was added or not. */
-    inline void AddDihedral(Dihedral d) { _dhds.emplace_back(d); }
+    void AddDihedral(Dihedral& d);
     
     /*! \brief Remove a bond from this atom.
      *  \details Assumes that the bond is added to the atom.
      *  \param b the bond to remove.
      *  \return if the bond was removed or not. */
-    inline void RemoveBond(Bond b) {
-      _bnds.erase(utils::WeakContainsShared(_bnds.begin(), _bnds.end(), b));
-    }
+    void RemoveBond(Bond& b);
     
     /*! \brief Remove an angle from this atom.
      *  \details Assumes that the angle is added to the atom.
      *  \param a the angle to remove.
      *  \return if the angle was removed or not. */
-    inline void RemoveAngle(Angle a) {
-      _angs.erase(utils::WeakContainsShared(_angs.begin(), _angs.end(), a));
-    }
+    void RemoveAngle(Angle& a);
     
     /*! \brief Remove a dihedral from this atom.
      *  \details Assumes that the dihedral is added to the atom.
      *  \param d the dihedral to remove.
      *  \return if the dihedral was removed or not. */
-    inline void RemoveDihedral(Dihedral d) {
-      _dhds.erase(utils::WeakContainsShared(_dhds.begin(), _dhds.end(), d));
-    }
+    void RemoveDihedral(Dihedral& d);
     
-    /*! \brief Clear all information.
-     *  \details Erases all information stored on the atom. */
     void Clear();
     
   public:
@@ -260,6 +252,8 @@ namespace indigox {
     std::pair<AtomBondIter, AtomBondIter> GetBondIters() const {
       return std::make_pair(_bnds.begin(), _bnds.end());
     }
+    
+    const AtomBonds& GetBonds() const { return _bnds; }
     
     /*! \brief Get iterator access to the atom's angles.
      *  \details Intended primarily for internal use as the iterators are to
@@ -299,15 +293,15 @@ namespace indigox {
     
     /*! \brief Get the FF type of the atom.
      *  \return the force field type of the atom. */
-    FFAtom GetType() const { return _type; }
+    FFAtom& GetType() const { return *_type.lock(); }
     
     /*! \brief Set the FF type of the atom.
      *  \param type the type to set. */
-    void SetType(FFAtom type) { _type = type; }
+    void SetType(FFAtom& type);
     
   private:
     //! The molecule this atom is assigned to.
-    _Molecule _mol;
+    wMolecule _mol;
     //! The atoms element.
     Element _elem;
     //! Formal charge.
@@ -328,7 +322,7 @@ namespace indigox {
     bool _aromatic;
     
     //! MM type for atom
-    FFAtom _type;
+    wFFAtom _type;
     
     //! Bonds the atom is part of
     AtomBonds _bnds;
@@ -343,15 +337,12 @@ namespace indigox {
    *  \param os the output stream to print to.
    *  \param atom the Atom to print.
    *  \return the output stream after printing. */
-  inline std::ostream& operator<<(std::ostream& os, const IXAtom& atom) {
-    return (os << "Atom(" << atom.GetIndex() << ")");
-  }
   inline std::ostream& operator<<(std::ostream& os, const Atom& atom) {
-    return atom ? os << *atom : os;
+    return (os << "Atom(" << atom.GetIndex() << ")");
   }
   
   //! \brief Type for the stereochemistry enum of an atom.
-  using AtomStereo = indigox::IXAtom::Stereo;
+  using AtomStereo = indigox::Atom::Stereo;
 }
 
 #endif /* INDIGOX_CLASSES_ATOM_HPP */
