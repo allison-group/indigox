@@ -161,6 +161,7 @@ namespace indigox::graph {
     friend class cereal::access;
     //! \brief Friendship allows for generating from a source
     friend sCondensedMolecularGraph Condense(MolecularGraph&);
+    friend class MolecularGraph;
     
     //! \brief Type of the underlying IXGraphBase
     using graph_type = BaseGraph<CMGVertex, CMGEdge>;

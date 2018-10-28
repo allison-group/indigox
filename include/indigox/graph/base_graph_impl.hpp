@@ -268,12 +268,14 @@ namespace indigox::graph {
   // Cycles
   BASEGRAPH(bool)::IsCyclic(const V& v) {
     GetCycles();
-    return _vcyclic_cache.find(v) != _vcyclic_cache.end();
+    auto pos = std::find(_vcyclic_cache.begin(), _vcyclic_cache.end(), v);
+    return pos != _vcyclic_cache.end();
   }
   
   BASEGRAPH(bool)::IsCyclic(const E& e) {
     GetCycles();
-    return _ecyclic_cache.find(e) != _ecyclic_cache.end();
+    auto pos = std::find(_ecyclic_cache.begin(), _ecyclic_cache.end(), e);
+    return pos != _ecyclic_cache.end();
   }
   
   BASEGRAPH(const tBG::CycleEdgeContain&)::GetCycles() {
