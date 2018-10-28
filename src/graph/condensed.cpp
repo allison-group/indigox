@@ -364,20 +364,16 @@ namespace indigox::graph {
     for (const CMGVertex& v : verts) {
       if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
       MGVertex source = v.GetSource();
-      CMGVertex new_v = CMGVertex(source, *G);
-      G->_vmap.emplace(source, new_v);
-      G->graph_type::AddVertex(new_v);
+      G->_vmap.emplace(source, v);
+      G->graph_type::AddVertex(v);
     }
     
     for (const CMGEdge& e : GetEdges()) {
-      MGVertex u = GetSourceVertex(e).GetSource();
-      MGVertex v = GetTargetVertex(e).GetSource();
+      CMGVertex u = GetSourceVertex(e);
+      CMGVertex v = GetTargetVertex(e);
       if (!G->HasVertex(u) || !G->HasVertex(v)) continue;
-      CMGVertex u1 = G->GetVertex(u);
-      CMGVertex v1 = G->GetVertex(v);
-      CMGEdge new_e = CMGEdge(e.GetSource(), *G);
-      G->_emap.emplace(e.GetSource(), new_e);
-      G->graph_type::AddEdge(u1, v1, new_e);
+      G->_emap.emplace(e.GetSource(), e);
+      G->graph_type::AddEdge(u, v, e);
     }
     return G;
   }
@@ -389,21 +385,17 @@ namespace indigox::graph {
     for (const CMGVertex& v : verts) {
       if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
       MGVertex source = v.GetSource();
-      CMGVertex new_v = CMGVertex(source, *G);
-      G->_vmap.emplace(source, new_v);
-      G->graph_type::AddVertex(new_v);
+      G->_vmap.emplace(source, v);
+      G->graph_type::AddVertex(v);
     }
     
     for (const CMGEdge& e : edges) {
       if (!HasEdge(e)) throw std::runtime_error("Non-member edge");
-      MGVertex u = GetSourceVertex(e).GetSource();
-      MGVertex v = GetTargetVertex(e).GetSource();
+      CMGVertex u = GetSourceVertex(e);
+      CMGVertex v = GetTargetVertex(e);
       if (!G->HasVertex(u) || !G->HasVertex(v)) continue;
-      CMGVertex u1 = G->GetVertex(u);
-      CMGVertex v1 = G->GetVertex(v);
-      CMGEdge new_e = CMGEdge(e.GetSource(), *G);
-      G->_emap.emplace(e.GetSource(), new_e);
-      G->graph_type::AddEdge(u1, v1, new_e);
+      G->_emap.emplace(e.GetSource(), e);
+      G->graph_type::AddEdge(u, v, e);
     }
     return G;
   }

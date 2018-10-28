@@ -209,7 +209,7 @@ namespace indigox::graph {
   
   MolecularGraph::MolecularGraph(Molecule& mol)
   : BaseGraph<MGVertex, MGEdge>(), _at2v(), _bn2e(),
-  _mol(mol.shared_from_this()) { }
+  _mol(mol.shared_from_this()), _subg(false) { }
   
 /*  test_case("IXMolecularGraph construction") {
     using G = test::TestMolecularGraph;
@@ -358,6 +358,54 @@ namespace indigox::graph {
     }
   }
  */
+  
+// ============================================================================
+// == Subgraph Generation =====================================================
+// ============================================================================
+  sMolecularGraph MolecularGraph::Subgraph(std::vector<MGVertex> &verts) const {
+    sMolecularGraph G = std::make_shared<MolecularGraph>();
+    G->_subg = true;
+    G->_mol = _mol;
+    
+    for (const MGVertex& v : verts) {
+      if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
+      G->_at2v.emplace(v.GetAtom().shared_from_this(), v);
+      G->graph_type::AddVertex(v);
+    }
+    
+    for (const MGEdge& e : GetEdges()) {
+      MGVertex u = GetSourceVertex(e);
+      MGVertex v = GetTargetVertex(e);
+      if (!G->HasVertex(u) || !G->HasVertex(v)) continue;
+      G->_bn2e.emplace(e.GetBond().shared_from_this(), e);
+      G->graph_type::AddEdge(u, v, e);
+    }
+    return G;
+  }
+  
+  sMolecularGraph MolecularGraph::Subgraph(std::vector<MGVertex> &verts,
+                                           std::vector<MGEdge> &edges) const {
+    sMolecularGraph G = std::make_shared<MolecularGraph>();
+    G->_subg = true;
+    G->_mol = _mol;
+    
+    for (const MGVertex& v : verts) {
+      if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
+      G->_at2v.emplace(v.GetAtom().shared_from_this(), v);
+      G->graph_type::AddVertex(v);
+    }
+    
+    for (const MGEdge& e : edges) {
+      if (!HasEdge(e)) throw std::runtime_error("Non-member edge");
+      MGVertex u = GetSourceVertex(e);
+      MGVertex v = GetTargetVertex(e);
+      if (!G->HasVertex(u) || !G->HasVertex(v)) continue;
+      G->_bn2e.emplace(e.GetBond().shared_from_this(), e);
+      G->graph_type::AddEdge(u, v, e);
+    }
+    return G;
+  }
+  
   
 // ============================================================================
 // == STRUCTURE MODIFICATION ==================================================

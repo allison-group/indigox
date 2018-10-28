@@ -216,34 +216,12 @@ namespace indigox::graph {
      *  \tparam InputIt type of the iterator range provided.
      *  \param begin,end marking the range of vertices to induce subgraph on.
      *  \return a new MolecularGraph. */
-//    template <class InputIt>
     sMolecularGraph Subgraph(std::vector<MGVertex>& vertices) const;
-//      MolecularGraph G = std::make_shared<IXMolecularGraph>();
-//      G->_source = _source;
-//      for (auto& vs : _at2v) {
-//        if (std::find(begin, end, vs.second) == end) continue;
-//        G->_g.AddVertex(vs.second.get());
-//        G->_at2v.emplace(vs.first, vs.second);
-//        G->_v.emplace_back(vs.second);
-//        G->_n.emplace(vs.second, NbrsContain::mapped_type());
-//      }
-//
-//      for (auto& es : _bn2e) {
-//        MGVertex u = GetSource(es.second);
-//        MGVertex v = GetTarget(es.second);
-//        if (!G->HasVertex(u) || !G->HasVertex(v)) continue;
-//        G->_g.AddEdge(u.get(), v.get(), es.second.get());
-//        G->_bn2e.emplace(es.first, es.second);
-//        G->_e.emplace_back(es.second);
-//        G->_n[u].emplace_back(v);
-//        G->_n[v].emplace_back(u);
-//      }
-//
-//      return G;
-//    }
     
     sMolecularGraph Subgraph(std::vector<MGVertex>& vertices,
                              std::vector<MGEdge>& edges) const;
+    
+    bool IsSubgraph() const { return _subg; }
     
     using graph_type::GetEdge;
     using graph_type::HasVertex;
@@ -287,6 +265,8 @@ namespace indigox::graph {
     wMolecule _mol;
     //! \brief Condensed version of graph
     sCondensedMolecularGraph _cond;
+    //! \brief If is subgraph
+    bool _subg;
     
   };
 }  // namespace indigox::graph
