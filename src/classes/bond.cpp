@@ -222,7 +222,14 @@ namespace indigox {
   }
  */
   
-  void Bond::SetType(FFBond& type) { _type = type.weak_from_this(); }
+  void Bond::SetType(FFBond& type) {
+    if (!GetMolecule().HasForcefield())
+      GetMolecule().SetForcefield(type.GetForcefield());
+    if (type.GetForcefield().shared_from_this()
+        != GetMolecule().GetForcefield().shared_from_this())
+      throw std::runtime_error("Bond type is not from molecule's forcefield");
+    _type = type.weak_from_this();
+  }
   
   void Bond::Clear() {
     _mol.reset();

@@ -169,6 +169,8 @@ namespace indigox {
      *  \param type the type of bond to set. */
     void SetType(FFBond& type);
     
+    bool HasType() const { return !_type.expired(); }
+    
   private:
     //! The molecule this bond is assigned to.
     wMolecule _mol;

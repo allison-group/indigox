@@ -110,6 +110,8 @@ namespace indigox {
      *  \param type the FFAngle type to assign. */
     void SetType(FFAngle& type);
     
+    bool HasType() const { return !_type.expired(); }
+    
   private:
     //! The molecule this angle is assigned to.
     wMolecule _mol;

@@ -436,6 +436,14 @@ namespace indigox {
     
     inline const MolDihedrals& GetDihedrals() const { return _dhds; }
     
+    void FreezeModifications();
+    
+    Forcefield& GetForcefield() { return *_ff; }
+    
+    void SetForcefield(Forcefield& ff);
+    
+    bool HasForcefield() const { return bool(_ff); }
+    
   private:
     //! Name of the molecule
     std::string _name;
@@ -449,6 +457,8 @@ namespace indigox {
     MolAngles _angs;
     //! Dihedrals owned by molecule
     MolDihedrals _dhds;
+    //! Forcefield used for parameterisation
+    sForcefield _ff;
     //! Molecular graph of molecule
     graph::sMolecularGraph _g;
     //! Cached molecular formula string

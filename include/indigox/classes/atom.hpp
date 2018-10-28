@@ -295,6 +295,8 @@ namespace indigox {
      *  \return the force field type of the atom. */
     FFAtom& GetType() const { return *_type.lock(); }
     
+    bool HasType() const { return !_type.expired(); }
+    
     /*! \brief Set the FF type of the atom.
      *  \param type the type to set. */
     void SetType(FFAtom& type);

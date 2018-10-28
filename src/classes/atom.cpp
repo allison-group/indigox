@@ -424,6 +424,11 @@ namespace indigox {
   */
   
   void Atom::SetType(FFAtom &type) {
+    if (!GetMolecule().HasForcefield())
+      GetMolecule().SetForcefield(type.GetForcefield());
+    if (type.GetForcefield().shared_from_this()
+        != GetMolecule().GetForcefield().shared_from_this())
+      throw std::runtime_error("Atom type is not from molecule's forcefield");
     _type = type.weak_from_this();
   }
   

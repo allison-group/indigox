@@ -9,6 +9,7 @@
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
 #include <indigox/classes/dihedral.hpp>
+#include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/graph/molecular.hpp>
@@ -1141,6 +1142,17 @@ namespace indigox {
     d.AddDihedral(*dl);
     ModificationMade();
     return *dl;
+  }
+  
+  void Molecule::FreezeModifications() {
+    utils::ModifiableObject::FreezeModifications();
+    _g->FreezeModifications();
+  }
+  
+  void Molecule::SetForcefield(Forcefield &ff) {
+    if (HasForcefield())
+      throw std::runtime_error("Molecule already has a forcefield set.");
+    _ff = ff.shared_from_this();
   }
   
 /*  test_case_fixture(test::MoleculeTestFixture, "IXMolecule adding angles/dihedrals") {

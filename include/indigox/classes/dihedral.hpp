@@ -111,7 +111,7 @@ namespace indigox {
     FFDihedral& GetType(size_t pos) const;
     size_t NumTypes() const { return _types.size(); }
     const DihedTypes& GetTypes() const { return _types; }
-    
+    bool HasType() const { return _types.size() != 0; }
     
     /*! \brief Set the type of the dihedral.
      *  \param type the type of dihedral to set. */

@@ -251,6 +251,8 @@ namespace indigox {
       return *_link.lock();
     }
     
+    Forcefield& GetForcefield() const { return *_ff.lock(); }
+    
   private:
     //! The type of the potential energy function.
     Type _type;

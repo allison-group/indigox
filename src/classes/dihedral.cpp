@@ -205,6 +205,12 @@ namespace indigox {
   }
   
   void Dihedral::AddType(FFDihedral& type) {
+    if (!GetMolecule().HasForcefield())
+      GetMolecule().SetForcefield(type.GetForcefield());
+    if (type.GetForcefield().shared_from_this()
+        != GetMolecule().GetForcefield().shared_from_this())
+      throw std::runtime_error("Dihedral type is not from molecule's forcefield");
+    
     _types.emplace_back(type.weak_from_this());
     // Keep the list of dihedrals ordered
     std::sort(_types.begin(), _types.end(),
