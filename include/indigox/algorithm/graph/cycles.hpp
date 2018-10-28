@@ -8,41 +8,112 @@
 #include <vector>
 
 #include "../../graph/base_graph.hpp"
+#include "../../utils/numerics.hpp"
 
 #ifndef INDIGOX_ALGORITHM_GRAPH_CYCLES_HPP
 #define INDIGOX_ALGORITHM_GRAPH_CYCLES_HPP
 
-template <typename InputIter, typename T>
-size_t combinations(InputIter first, InputIter last, size_t r,
-                    std::vector<std::vector<T>>& out) {
-  out.clear();
-  std::vector<T> pool(first, last);
-  if (r > pool.size()) return 0;
-  std::vector<size_t> indices(r);
-  std::iota(indices.begin(), indices.end(), 0);
-  out.emplace_back(std::vector<T>());
-  for (size_t i : indices) out.back().emplace_back(pool[i]);
-  std::vector<size_t> tmp(r);
-  std::iota(tmp.begin(), tmp.end(), 0);
-  std::reverse(tmp.begin(), tmp.end());
-  while (true) {
-    size_t i = 0;
-    bool broken = false;
-    for (size_t x : tmp) {
-      if (indices[x] != x + pool.size() - r) { i = x; broken = true; break; }
-    }
-    if (!broken) break;
-    ++indices[i];
-    std::vector<size_t> tmp2(r - i - 1);
-    std::iota(tmp2.begin(), tmp2.end(), i + 1);
-    for (size_t j : tmp2) indices[j] = indices[j - 1] + 1;
-    out.emplace_back(std::vector<T>());
-    for (size_t i : indices) out.back().emplace_back(pool[i]);
-  }
-  return out.size();
-}
-
 namespace indigox::algorithm {
+  
+  template<class V, class E, class D, class VP, class EP>
+  int64_t CycleBasis(graph::BaseGraph<V,E,D,VP,EP>& G,
+                     typename graph::BaseGraph<V,E,D,VP,EP>::CycleVertContain& basis) {
+    static_assert(!D::is_directed, "Cycles require an undirected graph");
+    using VertSet = eastl::vector_set<V>;
+    using VertContain = typename graph::BaseGraph<V,E,D,VP,EP>::VertContain;
+    
+    basis.clear();
+    VertContain verts = G.GetVertices();
+    while (!verts.empty()) {
+      V root = verts.back(); verts.pop_back();
+      VertContain stack; stack.push_back(root);
+      eastl::vector_map<V, V> pred; pred.emplace(root, root);
+      eastl::vector_map<V, VertSet> used;
+      used.emplace(root, VertSet());
+      
+      while (!stack.empty()) {  // walk the spanning tree finding cycles
+        V z = stack.back(); stack.pop_back();  // use last in so cycles easier
+        for (const V& nbr : G.GetNeighbours(z)) {
+          if (used.find(nbr) == used.end()) {   // new vert
+            if (pred.find(nbr) == pred.end()) pred.emplace(nbr, z);
+            else pred.at(nbr) = z;
+            stack.push_back(nbr);
+            used.emplace(nbr, VertSet{z});
+          }
+          // self loops
+          else if (nbr == z) basis.emplace_back(VertContain{z});
+          else if (used.at(z).find(nbr) == used.at(z).end()) {  // found a cycle
+            VertSet& pn = used.at(nbr);
+            VertContain cycle{nbr, z};
+            V p = pred.at(z);
+            while (pn.find(p) == pn.end()) {
+              cycle.push_back(p);
+              p = pred.at(p);
+            }
+            cycle.push_back(p);
+            basis.emplace_back(cycle.begin(), cycle.end());
+            used.at(nbr).insert(z);
+          }
+        }
+      }
+      auto part = [&pred] (const V& v) { return pred.find(v) == pred.end(); };
+      verts.erase(std::partition(verts.begin(), verts.end(), part), verts.end());
+    }
+    return basis.size();
+  }
+  
+  template<class V, class E, class D, class VP, class EP>
+  int64_t CycleBasis(graph::BaseGraph<V,E,D,VP,EP>& G,
+                     typename graph::BaseGraph<V,E,D,VP,EP>::CycleEdgeContain& e_basis) {
+    using CycleVertContain = typename graph::BaseGraph<V,E,D,VP,EP>::CycleVertContain;
+    using VertContain = typename graph::BaseGraph<V,E,D,VP,EP>::VertContain;
+    using EdgeContain = typename graph::BaseGraph<V,E,D,VP,EP>::EdgeContain;
+    
+    CycleVertContain v_basis;
+    CycleBasis(G, v_basis);
+    e_basis.clear();
+    if (v_basis.size() == 0) return 0;
+    for (VertContain& path : v_basis) {
+      path.emplace(path.end(), path.back());
+      EdgeContain path_edge;
+      for (size_t i = 1; i < path.size(); ++i)
+        path_edge.emplace(path_edge.end(), G.GetEdge(path[i-1], path[i]));
+      e_basis.emplace(e_basis.end(), path_edge.begin(), path_edge.end());
+    }
+    return e_basis.size();
+  }
+  
+  template<class V, class E, class D, class VP, class EP>
+  int64_t AllCycles(graph::BaseGraph<V,E,D,VP,EP>& G,
+                    typename graph::BaseGraph<V,E,D,VP,EP>::CycleEdgeContain& ecycles) {
+    
+    using CycleEdgeContain = typename graph::BaseGraph<V,E,D,VP,EP>::CycleEdgeContain;
+    using EdgeContain = typename graph::BaseGraph<V,E,D,VP,EP>::EdgeContain;
+    
+    CycleEdgeContain basis_edge;
+    CycleBasis(G, basis_edge);
+    std::vector<size_t> indices(basis_edge.size());
+    std::iota(indices.begin(), indices.end(), 0);
+    for (size_t r = 1; r <= basis_edge.size(); ++r) {
+      std::vector<std::vector<size_t>> combs;
+      Combinations(indices.begin(), indices.end(), r, combs);
+      for (std::vector<size_t>& combo : combs) {
+        EdgeContain xor_set, tmp;
+        while (!combo.empty()) {
+          tmp.clear();
+          size_t i = combo.back(); combo.pop_back();
+          std::set_symmetric_difference(xor_set.begin(), xor_set.end(),
+                                        basis_edge[i].begin(),
+                                        basis_edge[i].end(),
+                                        std::back_inserter(tmp));
+          xor_set.swap(tmp);
+        }
+        ecycles.emplace(ecycles.end(), xor_set.begin(), xor_set.end());
+      }
+    }
+    return ecycles.size();
+  }
+  
   using U = graph::Undirected;
   
   /*! \brief Calculate a list of cycles which form a basis for cycles of G.
@@ -56,96 +127,9 @@ namespace indigox::algorithm {
    *  \param G the graph to determine cycles of.
    *  \param[out] paths vector of paths defining each member of cycle basis.
    */
-  template <class V, class E, class VP, class EP>
-  size_t CycleBasis(const graph::IXGraphBase<V, E, U, VP, EP>& G,
-                   std::vector<std::vector<V*>>& paths) {
-    paths.clear();
-    std::vector<V*> verts;
-    G.GetVertices(verts);
-    while (!verts.empty()) {  // Loop over connected components
-      V* root = verts.back(); verts.pop_back();
-      std::vector<V*> stack; stack.push_back(root);
-      std::map<V*, V*> pred; pred.emplace(root,root);
-      std::map<V*, std::set<V*>> used; used.emplace(root, std::set<V*>());
-      
-      while (!stack.empty()) {  // walk the spanning tree finding cycles
-        V* z = stack.back(); stack.pop_back();  // use last in so cycles easier
-        std::set<V*>& zused = used.at(z);
-        std::vector<V*> nbrs;
-        G.GetNeighbours(z, nbrs);
-        for (V* nbr : nbrs) {
-          if (used.find(nbr) == used.end()) {   // new vert
-            pred.emplace(nbr, z);
-            stack.push_back(nbr);
-            used.emplace(nbr, std::set<V*>{z});
-          }
-          // self loops
-          else if (nbr == z) paths.emplace_back(std::vector<V*>{z});
-          else if (zused.find(nbr) == zused.end()) {  // found a cycle
-            std::set<V*>& pn = used.at(nbr);
-            std::vector<V*> cycle{nbr, z};
-            V* p = pred.at(z);
-            while (pn.find(p) == pn.end()) {
-              cycle.push_back(p);
-              p = pred.at(p);
-            }
-            cycle.push_back(p);
-            paths.emplace_back(cycle.begin(), cycle.end());
-            used.at(nbr).insert(z);
-          }
-        }
-      }
-      auto p = [&pred] (V* v) { return pred.find(v) == pred.end(); };
-      verts.erase(std::partition(verts.begin(), verts.end(), p), verts.end());
-    }
-    return paths.size();
-  }
   
   template <class V, class E, class VP, class EP>
-  size_t AllCycles(const graph::IXGraphBase<V, E, U, VP, EP>& G,
-                 std::vector<std::vector<E*>>& cycles) {
-    static_assert(!std::is_null_pointer<E>::value, "Edge type required");
-    std::vector<std::vector<V*>> basis;
-    std::vector<std::set<E*>> basis_edges;
-    std::vector<E*> cyclic_edges;
-    CycleBasis(G, basis);
-    for (auto& path : basis) {
-      path.push_back(path.front());
-      std::set<E*> edges;
-      for (size_t i = 1; i < path.size(); ++i)
-        edges.insert(G.GetEdge(path[i-1], path[i]));
-      std::vector<E*> tmp;
-      std::set_union(edges.begin(), edges.end(),
-                     cyclic_edges.begin(), cyclic_edges.end(),
-                     std::back_inserter(tmp));
-      cyclic_edges.swap(tmp);
-      basis_edges.emplace_back(edges.begin(), edges.end());
-    }
-    std::vector<size_t> indices(basis_edges.size());
-    std::iota(indices.begin(), indices.end(), 0);
-    for (size_t r = 1; r < basis_edges.size() + 1; ++r) {
-      std::vector<std::vector<size_t>> combos;
-      combinations(indices.begin(), indices.end(), r, combos);
-      for (auto& combo : combos) {
-        std::vector<E*> xor_set;
-        while (!combo.empty()) {
-          size_t i = combo.back();
-          combo.pop_back();
-          std::vector<E*> tmp;
-          std::set_symmetric_difference(xor_set.begin(), xor_set.end(),
-                                        basis_edges[i].begin(),
-                                        basis_edges[i].end(),
-                                        std::back_inserter(tmp));
-          xor_set.swap(tmp);
-        }
-        cycles.emplace_back(xor_set.begin(), xor_set.end());
-      }
-    }
-    return cycles.size();
-  }
-  
-  template <class V, class E, class VP, class EP>
-  size_t MinimalCycles(const graph::IXGraphBase<V, E, U, VP, EP>& G,
+  size_t MinimalCycles(const graph::BaseGraph<V, E, U, VP, EP>& G,
                       std::vector<std::vector<E*>>& min_cycles,
                       bool strict = false) {
     // Gets all the cycles then removes those it doesn't need.

@@ -107,10 +107,6 @@ namespace indigox::graph {
         }
       }
       std::sort(_dat->condensed.begin(), _dat->condensed.end());
-//                [](const CondensedVertex& v1, const CondensedVertex& v2) {
-//                  if (v1.first != v2.first) return v1.first < v2.first;
-//                  return v1.second < v2.second;
-//                });
     }
     
     // Determine Isomorphism Mask
@@ -138,7 +134,7 @@ namespace indigox::graph {
     i.from_uint32(NumContracted(CS::Iodine)); i <<= 23;
     mask = atm_num | fc_mag | h | f | cl | br | i;
     if (atm.GetFormalCharge() < 0) mask.set(10);
-//    if (v->IsCyclic()) _iso_mask.set(26);
+    if (MG.IsCyclic(v)) mask.set(26);
 //    if (v->IsCyclic(8)) _iso_mask.set(27);
     if (atm.GetStereochemistry() == AtomStereo::R) mask.set(28);
     if (atm.GetStereochemistry() == AtomStereo::S) mask.set(29);
@@ -217,7 +213,7 @@ namespace indigox::graph {
     mask.from_uint32(static_cast<uint32_t>(bnd.GetOrder()));
     if (bnd.GetStereochemistry() == BondStereo::E) mask.set(3);
     if (bnd.GetStereochemistry() == BondStereo::Z) mask.set(4);
-//    if (e->IsCyclic()) _iso_mask.set(5);
+    if (g.GetMolecularGraph().IsCyclic(e)) mask.set(5);
 //    if (e->IsCyclic(8)) _iso_mask.set(6);
     if (bnd.GetAromaticity()) mask.set(7);
     _dat->mask = mask;
@@ -279,6 +275,13 @@ namespace indigox::graph {
     _vmap.emplace(v, v_locl);
     graph_type::AddVertex(v_locl);
     return v_locl;
+  }
+  
+  void CondensedMolecularGraph::Clear() {
+    _vmap.clear();
+    _emap.clear();
+    _source.reset();
+    graph_type::Clear();
   }
   
 // ============================================================================

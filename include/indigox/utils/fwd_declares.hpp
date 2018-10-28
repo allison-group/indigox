@@ -83,15 +83,7 @@ namespace indigox {
   using wAthenaeum = std::weak_ptr<Athenaeum>;
   
   namespace algorithm {
-    template <class VertType>
-    struct Path;
-    template <class EdgeType>
-    struct EdgePath;
-    
-    template <class VertType>
-    struct Cycle;
-    template <class EdgeType>
-    struct EdgeCycle;
+    struct access;
     
     class IXCherryPicker;
     using CherryPicker = std::shared_ptr<IXCherryPicker>;
@@ -103,6 +95,10 @@ namespace indigox {
   }
   
   namespace graph {
+    // Base Graph
+    template <class V, class E, class D, class VertProp, class EdgeProp>
+    class BaseGraph;
+    
     // AssignmentGraph
     class IXAssignmentGraph;
     using AssignmentGraph = std::shared_ptr<IXAssignmentGraph>;

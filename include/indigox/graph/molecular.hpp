@@ -130,8 +130,6 @@ namespace indigox::graph {
     friend struct indigox::test::TestMolecularGraph;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
-    //! \brief Friendship allows graph algorithms access to underlying graph
-    friend struct indigox::graph::access;
     
     //! \brief Type of the underlying IXGraphBase
     using graph_type = BaseGraph<MGVertex, MGEdge>;

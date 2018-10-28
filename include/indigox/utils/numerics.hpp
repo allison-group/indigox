@@ -10,16 +10,36 @@
 #include <cmath>
 
 namespace indigox {
-//  using char_ = int8_t;
-//  using uchar_ = uint8_t;
-//  using short_ = int16_t;
-//  using ushort_ = uint16_t;
-//  using int_ = int32_t;
-//  using uint_ = uint32_t;
-//  using long_ = int64_t;
-//  using ulong_ = uint64_t;
-//  using size_ = size_t;
-//  using uid_ = uint64_t;
+  
+  template <typename InputIter, typename T>
+  size_t Combinations(InputIter first, InputIter last, size_t r,
+                      std::vector<std::vector<T>>& out) {
+    out.clear();
+    std::vector<T> pool(first, last);
+    if (r > pool.size()) return 0;
+    std::vector<size_t> indices(r);
+    std::iota(indices.begin(), indices.end(), 0);
+    out.emplace_back(std::vector<T>());
+    for (size_t i : indices) out.back().emplace_back(pool[i]);
+    std::vector<size_t> tmp(r);
+    std::iota(tmp.begin(), tmp.end(), 0);
+    std::reverse(tmp.begin(), tmp.end());
+    while (true) {
+      size_t i = 0;
+      bool broken = false;
+      for (size_t x : tmp) {
+        if (indices[x] != x + pool.size() - r) { i = x; broken = true; break; }
+      }
+      if (!broken) break;
+      ++indices[i];
+      std::vector<size_t> tmp2(r - i - 1);
+      std::iota(tmp2.begin(), tmp2.end(), i + 1);
+      for (size_t j : tmp2) indices[j] = indices[j - 1] + 1;
+      out.emplace_back(std::vector<T>());
+      for (size_t i : indices) out.back().emplace_back(pool[i]);
+    }
+    return out.size();
+  }
   
   /*! \brief Calculate the mean of a range of numbers.
    *  \tparam Iter type of the iterator defining the range.

@@ -159,8 +159,6 @@ namespace indigox::graph {
     friend struct indigox::test::TestCondensedMolecularGraph;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
-    //! \brief Friendship allows graph algorithm access to underlying graph
-    friend struct indigox::graph::access;
     //! \brief Friendship allows for generating from a source
     friend sCondensedMolecularGraph Condense(MolecularGraph&);
     
@@ -212,6 +210,8 @@ namespace indigox::graph {
      *  \param v the source MGVertex.
      *  \return shared_ptr to the newly added vertex. */
     CMGVertex AddVertex(const MGVertex& v);
+    
+    void Clear();
     
   public:
     CondensedMolecularGraph();

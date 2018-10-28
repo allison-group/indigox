@@ -367,10 +367,13 @@ namespace indigox::graph {
     _at2v.clear();
     _bn2e.clear();
     graph_type::Clear();
+    _mol.reset();
+    _cond->Clear();
+    _cond.reset();
   }
   
   MGVertex MolecularGraph::AddVertex(Atom& atm) {
-    MGVertex v = MGVertex(atm, *this);
+    MGVertex v(atm, *this);
     _at2v.emplace(atm.shared_from_this(), v);
     graph_type::AddVertex(v);
     return v;
@@ -428,7 +431,7 @@ namespace indigox::graph {
     // Edges will only be added when a bond is added to the molecule
     MGVertex u = GetVertex(source);
     MGVertex v = GetVertex(target);
-    MGEdge e = MGEdge(bnd, *this);
+    MGEdge e(bnd, *this);
     _bn2e.emplace(bnd.shared_from_this(), e);
     graph_type::AddEdge(u, v, e);
     return e;

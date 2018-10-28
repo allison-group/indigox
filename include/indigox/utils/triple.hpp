@@ -7,7 +7,7 @@
 
 namespace stdx {    // extended std namespace
   
-  template <class _T1, class _T2, class _T3>
+  template <class _T1, class _T2=_T1, class _T3=_T2>
   struct triple
   {
     typedef _T1 first_type;
