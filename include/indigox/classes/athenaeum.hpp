@@ -30,7 +30,7 @@ namespace indigox {
     using AngType = stdx::triple<AtmType>;
     using DhdType = stdx::quad<AtmType>;
     
-    friend bool operator==(const Fragment& a, const Fragment& b);
+    
     
   public:
     Fragment();
@@ -60,6 +60,13 @@ namespace indigox {
     const std::vector<AngType>& GetAngles() const;
     const std::vector<DhdType>& GetDihedrals() const;
     
+    bool operator==(const Fragment& frag) const;
+    bool operator!=(const Fragment& frag) const { return !((*this) == frag); }
+    bool operator<(const Fragment& frag) const;
+    bool operator>(const Fragment& frag) const;
+    bool operator<=(const Fragment& frag) const { return !((*this) > frag); }
+    bool operator>=(const Fragment& frag) const { return !((*this) < frag); }
+    
   private:
     struct FragmentData;
     std::shared_ptr<FragmentData> _dat;
@@ -74,41 +81,41 @@ namespace indigox {
 //      static bool AutomaticFragmentCycles;
 //      // Maximum cycle size to be regarded as a cycle
 //      static uint32_t AutomaticMaximumCycleSize;
-//      
+//
 //    };
-//    
+//
 //    using MolFrags = std::vector<Fragment>;
 //    using CondensedGraphs = std::map<Molecule, graph::CondensedMolecularGraph>;
 //    using FragStore = std::map<graph::CondensedMolecularGraph, MolFrags>;
-//    
+//
 //    Athenaeum() = delete;
 //    Athenaeum(Forcefield& ff);
 //    Athenaeum(Forcefield& ff, uint32_t overlap, uint32_t ring_overlap);
-//    
+//
 //    /*! \brief Determines all the fragments of a molecule and adds them.
 //     *  \returns the number of fragments added. */
 //    size_t AddAllFragments(Molecule& mol);
-//    
+//
 //    /*! \brief Adds the given fragment.
 //     *  \returns if the fragment was added or not. */
 //    bool AddFragment(Molecule& mol, Fragment frag);
-//    
+//
 //    size_t NumFragments() const;
 //    size_t NumFragments(Molecule& mol) const;
-//    
+//
 //    const MolFrags& GetFragments(Molecule& mol) const;
 //    const FragStore& GetFragments() const { return _frags; }
-//    
+//
 //    bool HasFragments(Molecule& mol) const {
 //      return _graphs.find(mol) != _graphs.end();
 //    }
-//    
+//
 //    Forcefield GetForcefield() const;
-//    
+//
 //    bool IsManualSelfConsistent() const { return _man; }
-//    
+//
 //    void SetManual() { _man = true; }
-//    
+//
 //  private:
 //    //! \brief Forcefield used
 //    sForcefield _ff;

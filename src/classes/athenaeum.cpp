@@ -81,6 +81,7 @@ namespace indigox {
     graph::CondensedMolecularGraph& CG = G.GetCondensedGraph();
     std::vector<graph::CMGVertex> contracted_overlap, combined;
     _MGVertexToCMGVertex(frag, _dat->frag, CG);
+    std::sort(_dat->frag.begin(), _dat->frag.end());
     _MGVertexToCMGVertex(overlap, contracted_overlap, CG);
     combined.assign(_dat->frag.begin(),
                     _dat->frag.end());
@@ -91,6 +92,7 @@ namespace indigox {
     _dat->overlap.reserve(contracted_overlap.size());
     for (graph::CMGVertex& v : contracted_overlap)
       _dat->overlap.emplace_back(_GetOverType(v, *_dat->graph), v);
+    std::sort(_dat->overlap.begin(), _dat->overlap.end());
     
     // Combine all MGVertices for checking purposes
     std::vector<AtmType> atm_check(frag.begin(), frag.end());
@@ -207,6 +209,23 @@ namespace indigox {
     return _dat->dihedrals;
   }
   
+  bool Fragment::operator==(const Fragment& frag) const {
+    if (_dat == frag._dat) return true;
+    if (_dat->frag != frag._dat->frag) return false;
+    if (_dat->overlap != frag._dat->overlap) return false;
+    return true;
+  }
+  
+  bool Fragment::operator<(const Fragment &frag) const {
+    if (_dat->frag < frag._dat->frag) return true;
+    return _dat->overlap < frag._dat->overlap;
+  }
+  
+  bool Fragment::operator>(const Fragment &frag) const {
+    if (_dat->frag > frag._dat->frag) return true;
+    return _dat->overlap > frag._dat->overlap;
+  }
+  
 }
 
 //namespace indigox {
@@ -215,23 +234,23 @@ namespace indigox {
 //  uint32_t IXAthenaeum::Settings::AutomaticVertexLimit = 40;
 //  bool IXAthenaeum::Settings::AutomaticFragmentCycles = false;
 //  uint32_t IXAthenaeum::Settings::AutomaticMaximumCycleSize = 8;
-//  
-//  
-//  
+//
+//
+//
 //  IXAthenaeum::IXAthenaeum(Forcefield ff) : indigox::IXAthenaeum(ff, 0, 0) { }
-//  
+//
 //  IXAthenaeum::IXAthenaeum(Forcefield ff, uint32_t overlap, uint32_t ring_overlap)
 //  : _ff(ff), _overlap(overlap), _roverlap(ring_overlap), _man(false) { }
-//  
+//
 //  bool __allow_bond_break(const Bond&) {
 //    return true;
 //  }
-//  
+//
 //  size_t IXAthenaeum::AddAllFragments(const Molecule &mol) {
 //    using namespace indigox::graph;
 //    // Check vertex limit (throw?)
 //    if (mol->NumAtoms() > Settings::AutomaticVertexLimit) return 0;
-//    
+//
 //    // Get the condensed graph
 //    CondensedMolecularGraph G;
 //    if (_graphs.find(mol) != _graphs.end()) G = _graphs.at(mol);
@@ -240,17 +259,17 @@ namespace indigox {
 //      _graphs.emplace(mol, G);
 //      _frags.emplace(G, MolFrags());
 //    }
-//    
+//
 //    eastl::vector_set<CMGVertex> all_v(G->GetVertices().first,
 //                                       G->GetVertices().second);
 //    eastl::vector_set<CMGEdge> all_e(G->GetEdges().first,
 //                                     G->GetEdges().second);
-//    
+//
 //    // Get all the subgraphs
 //    std::vector<CondensedMolecularGraph> sub_graphs;
 //    algorithm::ConnectedSubgraphs(G, sub_graphs);
 //    size_t num = 0;
-//    
+//
 //    // Iterate over all subgraphs
 //    for (CondensedMolecularGraph frag_g : sub_graphs) {
 //      // All vertices and edges in frag_g
@@ -258,7 +277,7 @@ namespace indigox {
 //                                          frag_g->GetVertices().second);
 //      eastl::vector_set<CMGEdge> frag_e(frag_g->GetEdges().first,
 //                                        frag_g->GetEdges().second);
-//      
+//
 //      // All vertices and edges not in frag_g
 //      eastl::vector_set<CMGVertex> other_v;
 //      eastl::vector_set<CMGEdge> other_e;
@@ -272,7 +291,7 @@ namespace indigox {
 //      // Discard graph from all vertices not in f_g
 //      CondensedMolecularGraph d_g = G->Subgraph(other_v.begin(), other_v.end(),
 //                                                other_e.begin(), other_e.end());
-//      
+//
 //      // Find the edges that have been cut
 //      std::vector<std::pair<CMGEdge, std::pair<CMGVertex, CMGVertex>>> cut_e;
 //      for (CMGEdge e : all_e) {
@@ -287,7 +306,7 @@ namespace indigox {
 //        else cut_e.push_back({e, {target, source}});
 //      }
 //      if (!cut_e.size()) continue;
-//      
+//
 //      // Find the overlap vertices from each cut
 //      eastl::vector_set<CMGVertex> overlaps;
 //      for (auto e : cut_e) {
@@ -303,12 +322,12 @@ namespace indigox {
 //        }
 //        other_v.erase(e.second.first);
 //      }
-//      
+//
 //      // Create the fragment
 //      std::vector<CMGVertex> f(frag_v.begin(), frag_v.end());
 //      std::vector<CMGVertex> o(overlaps.begin(), overlaps.end());
 //      Fragment fragment = std::make_shared<IXFragment>(G, mol, f, o);
-//      
+//
 //      // Add the fragment if it isn't added already
 //      MolFrags& fs = _frags.at(G);
 //      if (std::find(fs.begin(), fs.end(), fragment) == fs.end()) {
@@ -318,7 +337,7 @@ namespace indigox {
 //    }
 //    return num;
 //  }
-//  
+//
 //  bool IXAthenaeum::AddFragment(const Molecule &mol, Fragment frag) {
 //    // Get the condensed graph
 //    graph::CondensedMolecularGraph G;
@@ -328,7 +347,7 @@ namespace indigox {
 //      _graphs.emplace(mol, G);
 //      _frags.emplace(G, MolFrags());
 //    }
-//    
+//
 //    // Add the fragment
 //    MolFrags& fs = _frags.at(G);
 //    if (std::find(fs.begin(), fs.end(), frag) == fs.end()) {
@@ -337,20 +356,20 @@ namespace indigox {
 //    }
 //    return false;
 //  }
-//  
+//
 //  size_t IXAthenaeum::NumFragments() const {
 //    return std::accumulate(_frags.begin(), _frags.end(), 0,
 //                           [](size_t i, auto& j){ return i + j.second.size(); });
 //  }
-//  
+//
 //  size_t IXAthenaeum::NumFragments(const Molecule &mol) const {
 //    if (_graphs.find(mol) == _graphs.end()) return 0;
 //    return _frags.at(_graphs.at(mol)).size();
 //  }
-//  
+//
 //  const MolFrags& IXAthenaeum::GetFragments(const Molecule &mol) const {
 //    return _frags.at(_graphs.at(mol));
 //  }
-//  
+//
 //}
 
