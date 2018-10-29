@@ -216,12 +216,12 @@ namespace indigox::graph {
      *  \tparam InputIt type of the iterator range provided.
      *  \param begin,end marking the range of vertices to induce subgraph on.
      *  \return a new MolecularGraph. */
-    sMolecularGraph Subgraph(std::vector<MGVertex>& vertices) const;
+    sMolecularGraph Subgraph(std::vector<MGVertex>& vertices);
     
     sMolecularGraph Subgraph(std::vector<MGVertex>& vertices,
-                             std::vector<MGEdge>& edges) const;
+                             std::vector<MGEdge>& edges);
     
-    bool IsSubgraph() const { return _subg; }
+    bool IsSubgraph() const { return !_subg.expired(); }
     
     using graph_type::GetEdge;
     using graph_type::HasVertex;
@@ -253,6 +253,8 @@ namespace indigox::graph {
     
     Molecule& GetMolecule() const;
     
+    MolecularGraph& GetSuperGraph() const;
+    
     // Can only generate/get the condensed graph when molecule is frozen
     CondensedMolecularGraph& GetCondensedGraph();
     
@@ -266,7 +268,7 @@ namespace indigox::graph {
     //! \brief Condensed version of graph
     sCondensedMolecularGraph _cond;
     //! \brief If is subgraph
-    bool _subg;
+    wMolecularGraph _subg;
     
   };
 }  // namespace indigox::graph

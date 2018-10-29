@@ -294,7 +294,17 @@ namespace indigox::graph {
     return _at2v.at(atm.shared_from_this());
   }
   
-  Molecule& MolecularGraph::GetMolecule() const { return *_mol.lock(); }
+  Molecule& MolecularGraph::GetMolecule() const {
+    if (IsSubgraph())
+      throw std::runtime_error("Subgraphs do not relate to a molecule");
+    return *_mol.lock();
+  }
+  
+  MolecularGraph& MolecularGraph::GetSuperGraph() const {
+    if (!IsSubgraph())
+      throw std::runtime_error("Cannot get supergraph as not a subgraph");
+    return *_subg.lock();
+  }
   
 /*  test_case_fixture(test::MolecularGraphTestFixture, "IXMolecularGraph getting") {
     // Numbers of things
@@ -362,10 +372,9 @@ namespace indigox::graph {
 // ============================================================================
 // == Subgraph Generation =====================================================
 // ============================================================================
-  sMolecularGraph MolecularGraph::Subgraph(std::vector<MGVertex> &verts) const {
+  sMolecularGraph MolecularGraph::Subgraph(std::vector<MGVertex> &verts) {
     sMolecularGraph G = std::make_shared<MolecularGraph>();
-    G->_subg = true;
-    G->_mol = _mol;
+    G->_subg = weak_from_this();
     
     for (const MGVertex& v : verts) {
       if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
@@ -384,10 +393,9 @@ namespace indigox::graph {
   }
   
   sMolecularGraph MolecularGraph::Subgraph(std::vector<MGVertex> &verts,
-                                           std::vector<MGEdge> &edges) const {
+                                           std::vector<MGEdge> &edges) {
     sMolecularGraph G = std::make_shared<MolecularGraph>();
-    G->_subg = true;
-    G->_mol = _mol;
+    G->_subg = weak_from_this();
     
     for (const MGVertex& v : verts) {
       if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");

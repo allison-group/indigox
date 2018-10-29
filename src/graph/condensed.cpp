@@ -331,7 +331,15 @@ namespace indigox::graph {
 // == CondensedMolecularGraph Getting and Checking ============================
 // ============================================================================
   MolecularGraph& CondensedMolecularGraph::GetMolecularGraph() const {
+    if (IsSubgraph())
+      throw std::runtime_error("Subgraphs do not relate to molecular graphs");
     return *_source.lock();
+  }
+  
+  CondensedMolecularGraph& CondensedMolecularGraph::GetSuperGraph() const {
+    if (!IsSubgraph())
+      throw std::runtime_error("Cannot get supergraph of non subgraph");
+    return *_subg.lock();
   }
   
   CMGEdge CondensedMolecularGraph::GetEdge(const MGEdge &e) const {
@@ -359,8 +367,9 @@ namespace indigox::graph {
 // == CondensedMolecularGraph Subgraph generation =============================
 // ============================================================================
   sCondensedMolecularGraph
-  CondensedMolecularGraph::Subgraph(std::vector<CMGVertex> &verts) const {
+  CondensedMolecularGraph::Subgraph(std::vector<CMGVertex> &verts) {
     sCondensedMolecularGraph G = std::make_shared<CondensedMolecularGraph>();
+    G->_subg = weak_from_this();
     for (const CMGVertex& v : verts) {
       if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
       MGVertex source = v.GetSource();
@@ -380,8 +389,9 @@ namespace indigox::graph {
   
   sCondensedMolecularGraph
   CondensedMolecularGraph::Subgraph(std::vector<CMGVertex> &verts,
-                                    std::vector<CMGEdge> &edges) const {
+                                    std::vector<CMGEdge> &edges) {
     sCondensedMolecularGraph G = std::make_shared<CondensedMolecularGraph>();
+    G->_subg = weak_from_this();
     for (const CMGVertex& v : verts) {
       if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
       MGVertex source = v.GetSource();
