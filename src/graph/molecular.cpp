@@ -209,7 +209,7 @@ namespace indigox::graph {
   
   MolecularGraph::MolecularGraph(Molecule& mol)
   : BaseGraph<MGVertex, MGEdge>(), _at2v(), _bn2e(),
-  _mol(mol.shared_from_this()), _subg(false) { }
+  _mol(mol.shared_from_this()), _subg() { }
   
 /*  test_case("IXMolecularGraph construction") {
     using G = test::TestMolecularGraph;

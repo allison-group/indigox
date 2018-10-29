@@ -298,7 +298,6 @@ namespace indigox::graph {
     using CMG = sCondensedMolecularGraph;
     CMG CG = CMG(new CondensedMolecularGraph(MG));
     
-    
     for (const MGVertex& v : MG.GetVertices()) {
       // Add vertex for all non-leaf vertices
       if (MG.Degree(v) > 1) { CG->AddVertex(v); continue; }
@@ -311,9 +310,6 @@ namespace indigox::graph {
       // Add vertex if bond is not single
       MGVertex u = MG.GetNeighbours(v).front();
       BondOrder order = MG.GetEdge(v, u).GetBond().GetOrder();
-//      if (order == BondOrder::UNDEFINED) {
-//        throw std::runtime_error("Attempting to condense a molecule with undefined bond orders");
-//      }
       if (order != BondOrder::SINGLE) { CG->AddVertex(v); continue; }
       // Add vertex if parent is also a leaf
       if (MG.Degree(u) == 1) CG->AddVertex(v);
