@@ -145,6 +145,12 @@ namespace indigox {
    *  using the GetInstance() method. Like most other classes in the indigoX
    *  library, usage is primarily intended through the use of smart pointers. */
   class PeriodicTable {
+    //! Friendship allows for access to a single PeriodicTable instance.
+    friend const PeriodicTable& GetPeriodicTable();
+    
+    //! Friendship allws for testing implementation
+    friend struct indigox::test::TestPeriodicTable;
+    
   public:
     /*! \brief Get the element with the given atomic number.
      *  \param z the atomic number of the element to get.
@@ -187,20 +193,13 @@ namespace indigox {
     inline size_t NumElements() const { return _elems.size() - 1; }
   
   private:
-    //! Default constructor.
-    PeriodicTable() = default;
+    PeriodicTable();
     
     /*! \brief Generate Elements.
      *  \details Currently, the first 118 elements are generated. These are
      *  hard coded into the implementation file. These are populated into both
      *  the _z_to and _name_to maps. */
     void GeneratePeriodicTable();
-    
-    //! Friendship allows for access to a single PeriodicTable instance.
-    friend const PeriodicTable& GetPeriodicTable();
-    
-    //! Friendship allws for testing implementation
-    friend struct indigox::test::TestPeriodicTable;
   
   private:
     //! Map atomic numbers to elements.
@@ -216,7 +215,6 @@ namespace indigox {
    *  \return the output stream. */
   std::ostream& operator<<(std::ostream& os, const PeriodicTable& pt);
   
-  // Helper access function
   const PeriodicTable& GetPeriodicTable();
   
 } // namespace indigox
