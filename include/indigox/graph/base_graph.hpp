@@ -143,6 +143,8 @@ namespace indigox::graph {
     //! \brief Default constructor
     BaseGraph() : _g(), _comp_state(0), _cycle_state(0) { }
     
+    virtual ~BaseGraph() { }
+    
   protected:
     // Modification methods protected.
     void Clear();
