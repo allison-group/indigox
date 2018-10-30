@@ -10,8 +10,8 @@
 
 namespace indigox::graph {
   
-#define GRAPHTEMPLATE template<class V, class E, class D, class VP, class EP>
-#define BG BaseGraph<V,E,D,VP,EP>
+#define GRAPHTEMPLATE template<class V, class E, class S, class D, class VP, class EP>
+#define BG BaseGraph<V,E,S,D,VP,EP>
 #define BASEGRAPH(...) GRAPHTEMPLATE __VA_ARGS__ BG
 #define tBG typename BG
   

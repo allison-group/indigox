@@ -96,7 +96,7 @@ namespace indigox {
   
   namespace graph {
     // Base Graph
-    template <class V, class E, class D, class VertProp, class EdgeProp>
+    template <class V, class E, class S, class D, class VP, class EP>
     class BaseGraph;
     
     // AssignmentGraph

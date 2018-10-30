@@ -121,7 +121,7 @@ namespace indigox::graph {
    *  accessing methods do not make this assumption and so perform sanity
    *  checks. */
   class MolecularGraph :
-  public BaseGraph<MGVertex, MGEdge>,
+  public BaseGraph<MGVertex, MGEdge, sMolecularGraph>,
   public std::enable_shared_from_this<MolecularGraph> {
   public:
     //! \brief Friendship allows an Molecule to own a graph.
@@ -132,7 +132,7 @@ namespace indigox::graph {
     friend class cereal::access;
     
     //! \brief Type of the underlying IXGraphBase
-    using graph_type = BaseGraph<MGVertex, MGEdge>;
+    using graph_type = BaseGraph<MGVertex, MGEdge, sMolecularGraph>;
     //! \brief Container for vertices
     using VertContain = std::vector<MGVertex>;
     //! \brief Container for edges

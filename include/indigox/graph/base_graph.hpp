@@ -54,6 +54,7 @@ namespace indigox::graph {
    *  passed to it. */
   template <class V,
             class E,
+            class S,
             class D=Undirected,
             class VP=GraphLabel,
             class EP=GraphLabel>
@@ -94,13 +95,14 @@ namespace indigox::graph {
     //! \brief Type for storing edges
     using EdgeContain = std::vector<E>;
     //! \brief Type for storing neighbours
-    using NbrsContain = std::map<V, std::vector<V>>;
+    using NbrsContain = std::map<V, VertContain>;
     //! \brief Type for storing components
     using ComponentContain = std::vector<VertContain>;
     //! \brief Type for storing vertex cycles
     using CycleVertContain = std::vector<VertContain>;
     //! \brief Type for storing edge cycles
     using CycleEdgeContain = std::vector<EdgeContain>;
+    using SubgraphType = S;
     
   protected:
     //! \brief Underlying boost graph.
@@ -311,6 +313,9 @@ namespace indigox::graph {
     const CycleEdgeContain& GetCycles();
     
     int64_t NumCycles();
+    
+    virtual S Subgraph(std::vector<V>& verts) = 0;
+    virtual S Subgraph(std::vector<V>& verts, std::vector<E>& edges) = 0;
     
   private:
     /*! \brief Get vertex descriptor of a vertex.

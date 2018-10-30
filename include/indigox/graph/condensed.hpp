@@ -152,7 +152,7 @@ namespace indigox::graph {
   };
   
   class CondensedMolecularGraph:
-  public BaseGraph<CMGVertex, CMGEdge>,
+  public BaseGraph<CMGVertex, CMGEdge, sCondensedMolecularGraph>,
   public std::enable_shared_from_this<CondensedMolecularGraph> {
   public:
     //! \brief Friendship allows IXCondensedMolecularGraph to be tested.
@@ -164,7 +164,7 @@ namespace indigox::graph {
     friend class MolecularGraph;
     
     //! \brief Type of the underlying IXGraphBase
-    using graph_type = BaseGraph<CMGVertex, CMGEdge>;
+    using graph_type = BaseGraph<CMGVertex, CMGEdge, sCondensedMolecularGraph>;
     //! \brief Container for vertices
     using VertContain = std::vector<CMGVertex>;
     //! \brief Container for edges

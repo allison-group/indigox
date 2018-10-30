@@ -208,7 +208,7 @@ namespace indigox::graph {
   : _dat(std::make_shared<MGEdgeData>(b.weak_from_this(), graph.weak_from_this())) { }
   
   MolecularGraph::MolecularGraph(Molecule& mol)
-  : BaseGraph<MGVertex, MGEdge>(), _at2v(), _bn2e(),
+  : BaseGraph<MGVertex, MGEdge, sMolecularGraph>(), _at2v(), _bn2e(),
   _mol(mol.shared_from_this()), _subg() { }
   
 /*  test_case("IXMolecularGraph construction") {
