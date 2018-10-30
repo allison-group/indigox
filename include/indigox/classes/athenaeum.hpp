@@ -30,8 +30,6 @@ namespace indigox {
     using AngType = stdx::triple<AtmType>;
     using DhdType = stdx::quad<AtmType>;
     
-    
-    
   public:
     Fragment();
     
@@ -52,6 +50,7 @@ namespace indigox {
     
     graph::CondensedMolecularGraph& GetGraph() const;
     const std::vector<graph::CMGVertex>& GetFragment() const;
+    size_t Size() const;
     const std::vector<OverlapVertex>& GetOverlap() const;
     bool IsFragmentVertex(graph::CMGVertex& v) const;
     bool IsOverlapVertex(graph::CMGVertex& v) const;
@@ -72,64 +71,61 @@ namespace indigox {
     std::shared_ptr<FragmentData> _dat;
   };
   
-//  class Athenaeum {
-//  public:
-//    struct Settings {
-//      // Maximum vertex count for automatic fragment generation
-//      static uint32_t AutomaticVertexLimit;
-//      // Fully fragment cycles
-//      static bool AutomaticFragmentCycles;
-//      // Maximum cycle size to be regarded as a cycle
-//      static uint32_t AutomaticMaximumCycleSize;
-//
-//    };
-//
-//    using MolFrags = std::vector<Fragment>;
-//    using CondensedGraphs = std::map<Molecule, graph::CondensedMolecularGraph>;
-//    using FragStore = std::map<graph::CondensedMolecularGraph, MolFrags>;
-//
-//    Athenaeum() = delete;
-//    Athenaeum(Forcefield& ff);
-//    Athenaeum(Forcefield& ff, uint32_t overlap, uint32_t ring_overlap);
-//
-//    /*! \brief Determines all the fragments of a molecule and adds them.
-//     *  \returns the number of fragments added. */
-//    size_t AddAllFragments(Molecule& mol);
-//
-//    /*! \brief Adds the given fragment.
-//     *  \returns if the fragment was added or not. */
-//    bool AddFragment(Molecule& mol, Fragment frag);
-//
-//    size_t NumFragments() const;
-//    size_t NumFragments(Molecule& mol) const;
-//
-//    const MolFrags& GetFragments(Molecule& mol) const;
-//    const FragStore& GetFragments() const { return _frags; }
-//
-//    bool HasFragments(Molecule& mol) const {
-//      return _graphs.find(mol) != _graphs.end();
-//    }
-//
-//    Forcefield GetForcefield() const;
-//
-//    bool IsManualSelfConsistent() const { return _man; }
-//
-//    void SetManual() { _man = true; }
-//
-//  private:
-//    //! \brief Forcefield used
-//    sForcefield _ff;
-//    //! \brief Overlap length
-//    uint32_t _overlap;
-//    //! \brief Ring overlap length
-//    uint32_t _roverlap;
-//    //! \brief Manual
-//    bool _man;
-//    //! \brief Condensed graphs
-//    CondensedGraphs _graphs;
-//    //! \brief Per molecule fragments
-//    FragStore _frags;
-//  };
+  class Athenaeum {
+  public:
+    struct Settings {
+      // Maximum vertex count for automatic fragment generation
+      static uint32_t AtomLimit;
+      static uint32_t MinimumFragmentSize;
+      static uint32_t MaximumFragmentSize;
+      // Fully fragment cycles
+      static bool FragmentCycles;
+      // Maximum cycle size to be regarded as a cycle
+      static uint32_t MaximumCycleSize;
+      static uint32_t DefaultOverlap;
+      static uint32_t DefaultCycleOverlap;
+    };
+
+    using FragContain = std::vector<Fragment>;
+    using MoleculeFragments = std::map<sMolecule, FragContain>;
+
+    Athenaeum() = delete;
+    Athenaeum(Forcefield& ff);
+    Athenaeum(Forcefield& ff, uint32_t overlap);
+    Athenaeum(Forcefield& ff, uint32_t overlap, uint32_t ring_overlap);
+
+    size_t NumFragments() const;
+    size_t NumFragments(Molecule& mol) const;
+
+    const MoleculeFragments& GetFragments() const;
+    const FragContain& GetFragments(Molecule& mol) const;
+    bool HasFragments(Molecule& mol) const;
+
+    Forcefield& GetForcefield() const { return *_ff; }
+    bool IsSelfConsistent() const { return _man; }
+    void SetSelfConsistent() { _man = true; }
+//    bool CheckSelfConsistent();
+    
+    /*! \brief Adds the given fragment.
+     *  \returns if the fragment was added or not. */
+    bool AddFragment(Molecule& mol, Fragment& frag);
+    
+    /*! \brief Determines all the fragments of a molecule and adds them.
+     *  \returns the number of fragments added. */
+    size_t AddAllFragments(Molecule& mol);
+
+  private:
+    //! \brief Forcefield used
+    sForcefield _ff;
+    //! \brief Overlap length
+    uint32_t _overlap;
+    //! \brief Ring overlap length
+    uint32_t _roverlap;
+    //! \brief Manual
+    bool _man;
+    //! \brief fragments
+    MoleculeFragments _frags;
+  };
   
 }
 
