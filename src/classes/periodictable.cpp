@@ -13,117 +13,202 @@ namespace indigox {
   
   test_suite_open("Element");
   
+  // ===========================================================================
+  // == Element Data implementation ============================================
+  // ===========================================================================
+  
+  struct Element::ElementImpl {
+    std::string name, symbol;
+    int32_t group, period, atomic_number, valence, octet, hyper_octet;
+    double mass, radius, covalent, vanderwaals, chi;
+    ElementImpl(std::string nme, std::string sym, int32_t grp, int32_t prd,
+                int32_t num, int32_t val, int32_t oct, int32_t hyp, double mas,
+                double rad, double cov, double vdw, double eln)
+    : name(nme), symbol(sym), group(grp), period(prd), atomic_number(num),
+    valence(val), octet(oct), hyper_octet(hyp), mass(mas), radius(rad),
+    covalent(cov), vanderwaals(vdw), chi(eln) { }
+    
+    static std::shared_ptr<ElementImpl> GetNullState() {
+      static std::shared_ptr<ElementImpl> state;
+      if (!state)
+        state = std::make_shared<ElementImpl>("Undefined", "XX", -1, -1, -1, -1,
+                                              -1, -1, -1, -1, -1, -1, -1);
+      return state;
+    }
+  };
+  
+  // ===========================================================================
+  // == Element Construction and Assignment ====================================
+  // ===========================================================================
+  
+  Element::Element() : m_elemdat(ElementImpl::GetNullState()) { }
+  Element::Element(const Element& e2) : m_elemdat(e2.m_elemdat) { }
+  Element::Element(Element&& e2) : m_elemdat(std::move(e2.m_elemdat)) { }
+  Element& Element::operator=(const Element &e2) {
+    if (&e2 != this) m_elemdat = e2.m_elemdat;
+    return *this;
+  }
+  Element& Element::operator=(Element &&e2) {
+    m_elemdat = std::move(e2.m_elemdat);
+    return *this;
+  }
   Element::Element(uint8_t Z, std::string name, std::string sym, double mass,
                    uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct,
                    uint8_t hyp, double rad, double cov, double vdw, double chi)
-  : _nme(name), _sym(sym), _grp(grp), _prd(prd), _Z(Z), _val(val), _oct(oct),
-  _hyp(hyp), _mass(mass), _rad(rad), _cov(cov), _vdw(vdw), _chi(chi) { }
+  : m_elemdat(std::make_shared<ElementImpl>(name, sym, grp, prd, Z, val, oct,
+                                            hyp, mass, rad, cov, vdw, chi)) { }
   
-//  test_case("IXElement construction") {
-//    test::TestElement e = test::CreateGenericTestElement();
-//    check_eq(e.get_Z(), 23);
-//    check_eq(e.get_nme(), "Testium");
-//    check_eq(e.get_sym(), "Tm");
-//    check_eq(e.get_mass(), approximately(12.34));
-//    check_eq(e.get_grp(), 5);
-//    check_eq(e.get_prd(), 6);
-//    check_eq(e.get_val(), 7);
-//    check_eq(e.get_oct(), 8);
-//    check_eq(e.get_hyp(), 9);
-//    check_eq(e.get_rad(), approximately(10.11));
-//    check_eq(e.get_cov(), approximately(12.13));
-//    check_eq(e.get_vdw(), approximately(14.1789));
-//    check_eq(e.get_chi(), approximately(15.8763));
-//  }
+  // ===========================================================================
+  // == Element Data Retrevial =================================================
+  // ===========================================================================
   
-  std::string Element::ToString() const {
-    std::stringstream ss;
-    ss << _nme << "(" << +_Z << ", " << _sym << ")";
-    return ss.str();
+  double Element::GetAtomicMass() const { return m_elemdat->mass;}
+  int32_t Element::GetAtomicNumber() const { return m_elemdat->atomic_number; }
+  double Element::GetAtomicRadius() const { return m_elemdat->radius; }
+  double Element::GetCovalentRadius() const { return m_elemdat->covalent; }
+  double Element::GetVanDerWaalsRadius() const { return m_elemdat->vanderwaals; }
+  std::string Element::GetName() const { return m_elemdat->name; }
+  std::string Element::GetSymbol() const { return m_elemdat->symbol; }
+  int32_t Element::GetGroup() const { return m_elemdat->group; }
+  int32_t Element::GetPeriod() const { return m_elemdat->period; }
+  int32_t Element::GetValenceElectronCount() const { return m_elemdat->valence; }
+  int32_t Element::GetOctet() const { return m_elemdat->octet; }
+  int32_t Element::GetHypervalentOctet() const { return m_elemdat->hyper_octet; }
+  double Element::GetElectronegativity() const { return m_elemdat->chi; }
+  
+  // ===========================================================================
+  // == Element Operators ======================================================
+  // ===========================================================================
+  
+  Element::operator bool() { return m_elemdat->atomic_number != -1; }
+  std::ostream& operator<<(std::ostream& os, const Element& element) {
+    return (os << element.GetSymbol());
+  }
+  bool Element::operator==(int32_t Z) const { return Z == GetAtomicNumber(); }
+  bool Element::operator==(const std::string &name) const {
+    return (name.size() <= 2 ?
+            name == GetSymbol() : utils::ToUpperFirst(name) == GetName());
+  }
+  bool Element::operator==(const Element &element) const {
+    return element.m_elemdat == m_elemdat;
+  }
+  bool Element::operator!=(int32_t Z) const { return !(*this == Z); }
+  bool Element::operator!=(const std::string& Z) const { return !(*this == Z); }
+  bool Element::operator!=(const Element& Z) const { return !(*this == Z); }
+  bool Element::operator<(const Element& element) const {
+    return GetAtomicNumber() < element.GetAtomicNumber();
+  }
+  bool Element::operator>(const Element& element) const {
+    return GetAtomicNumber() > element.GetAtomicNumber();
+  }
+  bool Element::operator<=(const Element &element) const {
+    return GetAtomicNumber() <= element.GetAtomicNumber();
+  }
+  bool Element::operator>=(const Element &element) const {
+    return GetAtomicNumber() >= element.GetAtomicNumber();
   }
   
-//  test_case("IXElement printing methods") {
-//    test::TestElement e = test::CreateGenericTestElement();
-//    check_eq(e.ToString(), "Testium(23, Tm)");
-//    std::stringstream ss;
-//    ss.str(""); ss << e.imp;
-//    check_eq(ss.str(), "Element(Testium)");
-//    ss.str(""); ss << *e.imp;
-//    check_eq(ss.str(), "Element(Testium)");
-//    ss.str(""); ss << Element();
-//    check_eq(ss.str(), "");
-//  }
-//
-//  test_case("IXElement comparison methods") {
-//    Element e1 = test::CreateGenericTestElement().imp;
-//    Element e2 = test::TestElement(6, "Car", "C", 0.0, 5, 6, 7, 8, 9, 0.1,
-//                                   2.3, 4.9, 5.3).imp;
-//
-//    // Check both shared_ptr comparisons
-//    check_ne(e1, e2);
-//    check_eq(e1, e1);
-//    // Check one direct, one shared_ptr comparison
-//    check_eq(e1, *e1);
-//    check_eq(*e1, e1);
-//    check_ne(e2, *e1);
-//    check_ne(*e2, e1);
-//    // Check both direct comparisons
-//    check_ne(*e1, *e2);
-//    check_eq(*e1, e1);
-//    // Check shared_ptr comparisions with integers (atomic number)
-//    check_eq(e1, 23);
-//    check_eq(23, e1);
-//    check_ne(23, e2);
-//    check_ne(e2, 23);
-//    // Check direct comparisions with integers (atomic number)
-//    check_eq(*e2, 6);
-//    check_eq(6, *e2);
-//    check_ne(6, *e1);
-//    check_ne(*e1, 6);
-//    // Check shared_ptr comparisons with strings (name)
-//    check_eq(e1, "Testium");
-//    check_eq(e1, "tesTIUM"); // name compare should be case insensitive
-//    check_eq("Testium", e1);
-//    check_eq("CAR", e2);     // name compare should be case insensitive
-//    check_ne("FAIL", e1);
-//    check_ne(e1, "FAIL");
-//    // Check shared_ptr comparisons with strings (symbol)
-//    check_eq(e1, "Tm");
-//    check_ne(e2, "Tm");
-//    check_ne(e1, "tm");  // symbol compare shoud be case sensitive
-//    check_eq("C", e2);
-//    check_ne("c", e2);   // symbol compare should be case sensitive
-//    // Check direct comparisons with strings (name)
-//    check_eq(*e1, "Testium");
-//    check_eq(*e1, "tesTIUM"); // name compare should be case insensitive
-//    check_eq("Testium", *e1);
-//    check_eq("CAR", *e2);
-//    check_ne("FAIL", *e1);
-//    check_ne(*e1, "FAIL");
-//    // Check direct comparisons with strings (symbol)
-//    check_eq(*e1, "Tm");
-//    check_ne(*e2, "Tm");
-//    check_ne(*e1, "tm");  // symbol compare shoud be case sensitive
-//    check_eq("C", *e2);
-//    check_ne("c", *e2);
-//  }
-//
-//  test_case("IXElement property getting") {
-//    test::TestElement e = test::CreateGenericTestElement();
-//    check_eq(e.GetAtomicNumber(), 23);
-//    check_eq(e.GetName(), "Testium");
-//    check_eq(e.GetSymbol(), "Tm");
-//    check_eq(e.GetAtomicMass(), approximately(12.34));
-//    check_eq(e.GetGroup(), 5);
-//    check_eq(e.GetPeriod(), 6);
-//    check_eq(e.GetValenceElectronCount(), 7);
-//    check_eq(e.GetOctet(), 8);
-//    check_eq(e.GetHypervalentOctet(), 9);
-//    check_eq(e.GetAtomicRadius(), approximately(10.11));
-//    check_eq(e.GetCovalentRadius(), approximately(12.13));
-//    check_eq(e.GetVanDerWaalsRadius(), approximately(14.1789));
-//    check_eq(e.GetElectronegativity(), approximately(15.8763));
-//  }
+/*  test_case("IXElement construction") {
+    test::TestElement e = test::CreateGenericTestElement();
+    check_eq(e.get_Z(), 23);
+    check_eq(e.get_nme(), "Testium");
+    check_eq(e.get_sym(), "Tm");
+    check_eq(e.get_mass(), approximately(12.34));
+    check_eq(e.get_grp(), 5);
+    check_eq(e.get_prd(), 6);
+    check_eq(e.get_val(), 7);
+    check_eq(e.get_oct(), 8);
+    check_eq(e.get_hyp(), 9);
+    check_eq(e.get_rad(), approximately(10.11));
+    check_eq(e.get_cov(), approximately(12.13));
+    check_eq(e.get_vdw(), approximately(14.1789));
+    check_eq(e.get_chi(), approximately(15.8763));
+  }
+ */
+  
+/*  test_case("IXElement printing methods") {
+    test::TestElement e = test::CreateGenericTestElement();
+    check_eq(e.ToString(), "Testium(23, Tm)");
+    std::stringstream ss;
+    ss.str(""); ss << e.imp;
+    check_eq(ss.str(), "Element(Testium)");
+    ss.str(""); ss << *e.imp;
+    check_eq(ss.str(), "Element(Testium)");
+    ss.str(""); ss << Element();
+    check_eq(ss.str(), "");
+  }
+
+    test_case("IXElement comparison methods") {
+    Element e1 = test::CreateGenericTestElement().imp;
+    Element e2 = test::TestElement(6, "Car", "C", 0.0, 5, 6, 7, 8, 9, 0.1,
+                                   2.3, 4.9, 5.3).imp;
+
+    // Check both shared_ptr comparisons
+    check_ne(e1, e2);
+    check_eq(e1, e1);
+    // Check one direct, one shared_ptr comparison
+    check_eq(e1, *e1);
+    check_eq(*e1, e1);
+    check_ne(e2, *e1);
+    check_ne(*e2, e1);
+    // Check both direct comparisons
+    check_ne(*e1, *e2);
+    check_eq(*e1, e1);
+    // Check shared_ptr comparisions with integers (atomic number)
+    check_eq(e1, 23);
+    check_eq(23, e1);
+    check_ne(23, e2);
+    check_ne(e2, 23);
+    // Check direct comparisions with integers (atomic number)
+    check_eq(*e2, 6);
+    check_eq(6, *e2);
+    check_ne(6, *e1);
+    check_ne(*e1, 6);
+    // Check shared_ptr comparisons with strings (name)
+    check_eq(e1, "Testium");
+    check_eq(e1, "tesTIUM"); // name compare should be case insensitive
+    check_eq("Testium", e1);
+    check_eq("CAR", e2);     // name compare should be case insensitive
+    check_ne("FAIL", e1);
+    check_ne(e1, "FAIL");
+    // Check shared_ptr comparisons with strings (symbol)
+    check_eq(e1, "Tm");
+    check_ne(e2, "Tm");
+    check_ne(e1, "tm");  // symbol compare shoud be case sensitive
+    check_eq("C", e2);
+    check_ne("c", e2);   // symbol compare should be case sensitive
+    // Check direct comparisons with strings (name)
+    check_eq(*e1, "Testium");
+    check_eq(*e1, "tesTIUM"); // name compare should be case insensitive
+    check_eq("Testium", *e1);
+    check_eq("CAR", *e2);
+    check_ne("FAIL", *e1);
+    check_ne(*e1, "FAIL");
+    // Check direct comparisons with strings (symbol)
+    check_eq(*e1, "Tm");
+    check_ne(*e2, "Tm");
+    check_ne(*e1, "tm");  // symbol compare shoud be case sensitive
+    check_eq("C", *e2);
+    check_ne("c", *e2);
+  }
+
+  test_case("IXElement property getting") {
+    test::TestElement e = test::CreateGenericTestElement();
+    check_eq(e.GetAtomicNumber(), 23);
+    check_eq(e.GetName(), "Testium");
+    check_eq(e.GetSymbol(), "Tm");
+    check_eq(e.GetAtomicMass(), approximately(12.34));
+    check_eq(e.GetGroup(), 5);
+    check_eq(e.GetPeriod(), 6);
+    check_eq(e.GetValenceElectronCount(), 7);
+    check_eq(e.GetOctet(), 8);
+    check_eq(e.GetHypervalentOctet(), 9);
+    check_eq(e.GetAtomicRadius(), approximately(10.11));
+    check_eq(e.GetCovalentRadius(), approximately(12.13));
+    check_eq(e.GetVanDerWaalsRadius(), approximately(14.1789));
+    check_eq(e.GetElectronegativity(), approximately(15.8763));
+  }
+ */
   
   test_suite_close(); // IXElement
   

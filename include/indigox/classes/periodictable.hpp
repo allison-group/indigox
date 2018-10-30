@@ -32,111 +32,15 @@ namespace indigox {
     
     //! Friendship allows testing
     friend struct indigox::test::TestElement;
-
+    
   public:
-    /*! \brief Get atomic mass.
-     *  \return the atomic mass of the element. */
-    double GetAtomicMass() const { return _mass; }
-    
-    /*! \brief Get atomic number.
-     *  \return the atomic number of the element. */
-    size_t GetAtomicNumber() const { return static_cast<size_t>(_Z); }
-    
-    /*! \brief Get atomic radius.
-     *  \details Radius is in angstroms.
-     *  \return the atomic radius of the element. */
-    double GetAtomicRadius() const { return _rad; }
-    
-    /*! \brief Get covalent radius.
-     *  \details Radius is in angstroms.
-     *  \return the covalent radius of the element. */
-    double GetCovalentRadius() const { return _cov; }
-    
-    /*! \brief Get van der Waals radius.
-     *  \details Radius is in angstroms.
-     *  \return the van der Waals radius of the element. */
-    double GetVanDerWaalsRadius() const { return _vdw; }
-    
-    /*! \brief Get element name.
-     *  \return the name of the element. */
-    std::string GetName() const { return _nme; }
-    
-    /*! \brief Get element symbol.
-     *  \return the symbol of the element. */
-    std::string GetSymbol() const { return _sym; }
-    
-    /*! \brief Get element group number.
-     *  \return the IUPAC group number of the element. */
-    uint8_t GetGroup() const { return _grp; }
-    
-    /*! \brief Get element period.
-     *  \return the period of the periodic table the element is in. */
-    uint8_t GetPeriod() const { return _prd; }
-    
-    /*! \brief Get number of valence electrons
-     *  \return the number of valence electrons the element contains. */
-    uint8_t GetValenceElectronCount() const { return _val; }
-    
-    /*! \brief Get full outer shell octet.
-     *  \return the number of electrons required for a full outer shell. */
-    uint8_t GetOctet() const { return _oct; }
-    
-    /*! \brief Get full outer shell octet whne allowing for hypervalency.
-     *  \return the number of electrons required for a full outer shell in a
-     *  hypervalent state. */
-    uint8_t GetHypervalentOctet() const { return _hyp; }
-    
-    /*! \brief Get electronegativity.
-     *  \return the electronegativity of the element on the Pauling scale. */
-    double GetElectronegativity() const { return _chi; }
-    
-    /*! \brief Get a textual representation of the element.
-     *  \details Representation contains the element's name, symbol and atomic
-     *  number.
-     *  \return textutal representation of the element. */
-    std::string ToString() const;
+    Element();
+    Element(const Element&);
+    Element(Element&&);
+    Element& operator=(const Element&);
+    Element& operator=(Element&&);
     
   private:
-    /*! \property _nme
-     *  \brief Element name.
-     *  \property _sym
-     *  \brief Atomic symbol. */
-    std::string _nme, _sym;
-    /*! \property _grp
-     *  \brief IUPAC group.
-     *  \property _prd
-     *  \brief Period.
-     *  \property _Z
-     *  \brief Atomic number.
-     *  \property _val
-     *  \brief Number of valence electrons.
-     *  \property _oct
-     *  \brief Octet.
-     *  \property _hyp
-     *  \brief Hypervalent octet. */
-    uint8_t _grp, _prd, _Z, _val, _oct, _hyp;
-    /*! \property _mass
-     *  \brief Relative atomic mass.
-     *  \property _rad
-     *  \brief Atomic radius.
-     *  \property _cov
-     *  \brief Covalent radius.
-     *  \property _vdw
-     *  \brief Van der Waals radius.
-     *  \property _chi
-     *  \brief Electronegativity. */
-    double _mass, _rad, _cov, _vdw, _chi;
-    
-  public:
-    Element() = default; // No default constructor provided
-    
-    Element(const Element&) = default;
-    Element(Element&&) = default;
-    Element& operator=(const Element&) = default;
-    Element& operator=(Element&&) = default;
-    
-    operator bool() const noexcept { return bool(_Z); }
-    
     /*! \brief Construct new Element instance given data.
      *  \param Z atomic number.
      *  \param name element name.
@@ -154,7 +58,84 @@ namespace indigox {
     Element(uint8_t Z, std::string name, std::string sym, double mass,
             uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct, uint8_t hyp,
             double rad, double cov, double vdw, double chi);
+
+  public:
+    /*! \brief Get atomic mass.
+     *  \return the atomic mass of the element. */
+    double GetAtomicMass() const;
+    
+    /*! \brief Get atomic number.
+     *  \return the atomic number of the element. */
+    int32_t GetAtomicNumber() const;
+    
+    /*! \brief Get atomic radius.
+     *  \details Radius is in angstroms.
+     *  \return the atomic radius of the element. */
+    double GetAtomicRadius() const;
+    
+    /*! \brief Get covalent radius.
+     *  \details Radius is in angstroms.
+     *  \return the covalent radius of the element. */
+    double GetCovalentRadius() const;
+    
+    /*! \brief Get van der Waals radius.
+     *  \details Radius is in angstroms.
+     *  \return the van der Waals radius of the element. */
+    double GetVanDerWaalsRadius() const;
+    
+    /*! \brief Get element name.
+     *  \return the name of the element. */
+    std::string GetName() const;
+    
+    /*! \brief Get element symbol.
+     *  \return the symbol of the element. */
+    std::string GetSymbol() const;
+    
+    /*! \brief Get element group number.
+     *  \return the IUPAC group number of the element. */
+    int32_t GetGroup() const;
+    
+    /*! \brief Get element period.
+     *  \return the period of the periodic table the element is in. */
+    int32_t GetPeriod() const;
+    
+    /*! \brief Get number of valence electrons
+     *  \return the number of valence electrons the element contains. */
+    int32_t GetValenceElectronCount() const;
+    
+    /*! \brief Get full outer shell octet.
+     *  \return the number of electrons required for a full outer shell. */
+    int32_t GetOctet() const;
+    
+    /*! \brief Get full outer shell octet whne allowing for hypervalency.
+     *  \return the number of electrons required for a full outer shell in a
+     *  hypervalent state. */
+    int32_t GetHypervalentOctet() const;
+    
+    /*! \brief Get electronegativity.
+     *  \return the electronegativity of the element on the Pauling scale. */
+    double GetElectronegativity() const;
+    
+  public:
+    operator bool();
+    bool operator==(int32_t Z) const;
+    bool operator==(const std::string& name) const;
+    bool operator==(const Element& element) const;
+    bool operator!=(int32_t Z) const;
+    bool operator!=(const std::string& name) const;
+    bool operator!=(const Element& element) const;
+    bool operator<(const Element& element) const;
+    bool operator>(const Element& element) const;
+    bool operator<=(const Element& element) const;
+    bool operator>=(const Element& element) const;
+    
+    
+  private:
+    struct ElementImpl;
+    std::shared_ptr<ElementImpl> m_elemdat;
   };
+  
+  std::ostream& operator<<(std::ostream&, const Element&);
   
 #define INDIGOX_NUMBER_ELEMENTS 119
   /*! \class PeriodicTable periodictable.hpp indigox/classes/periodictable.hpp
@@ -235,19 +216,6 @@ namespace indigox {
     eastl::vector_map<std::string, size_t> _name_to_idx;
   };
   
- 
-
-  // Operators have to be explicitly inlined or python bindings linkage fails
-  
-  /*! \brief Print an Element to an output stream.
-   *  \details Prints only the element name.
-   *  \param os output stream to print to.
-   *  \param e Element to print.
-   *  \return the output stream. */
-  inline std::ostream& operator<<(std::ostream& os, const Element& e) {
-    return os << "Element(" << e.GetName() << ")";
-  }
-  
   /*! \brief Print a PeriodicTable to an output stream.
    *  \details Prints number of elements in the PeriodicTable.
    *  \param os output stream to print to.
@@ -257,82 +225,6 @@ namespace indigox {
     return os << "PeriodicTable(" << pt.NumElements() << " elements)";
   }
   
-  // Comparison operators
-  /*! \brief Equality test of Element and integer.
-   *  \details Compares if elements atomic number is equal to the integer. If
-   *  the Element is an empty pointer or the undefined element, result will
-   *  always be false.
-   *  \param l, r element and integer to compare.
-   *  \return if the element has the given atomic number. */
-  inline bool operator==(const Element& l, uint8_t r) {
-    return l.GetAtomicNumber() == r;
-  }
-  
-  /*! \brief Equality test of Element and string.
-   *  \details If the size of r is less than or equal to two, compares if the
-   *  element has the given atomic symbol. This comparison is case-sensitive.
-   *  Otherwise the comparison checks if the element has the given name. This
-   *  comparison is not case sensitive. If the Element is an empty pointer or
-   *  the undefined element, result will always be false.
-   *  \param l, r element and string to compare.
-   *  \return if the element has the given atomic symbol or name. */
-  inline bool operator==(const Element& l, std::string r) {
-    return r.size() <= 2 ? (l.GetSymbol() == r)
-          : (l.GetName() == utils::ToUpperFirst(r));
-  }
-  
-  /*! \brief Equality test of two Elements.
-   *  \details Checks if the stored pointers are equivalent. If either of the
-   *  Elements is an empty pointer or the undefined element, result will always
-   *  be false.
-   *  \param l, r elements to compare.
-   *  \return if the elements are the name. */
-  inline bool operator==(const Element& l, const Element& r) {
-    return (l.GetAtomicNumber() == r.GetAtomicNumber()
-            && l.GetSymbol() == r.GetSymbol()
-            && l.GetName() == r.GetName());
-  }
-  
-  // Inverse eq operators
-  /*! \brief Equality test of integer and Element.
-   *  \param l, r integer and Element to compare.
-   *  \return if the element has the given atomic number.
-   *  \see operator==(Element, uint8_t) */
-  inline bool operator==(uint8_t l, const Element& r) { return r == l; }
-  
-  /*! \brief Equality test of string and Element.
-   *  \param l, r string and Element to compare.
-   *  \return if the element has the given atomic symbol or name.
-   *  \see operator==(Element, std::string) */
-  inline bool operator==(std::string l, const Element& r) { return r == l; }
-  
-  // Neq operators
-  /*! \brief Inequality test of Element and integer.
-   *  \param l, r Element and integer to compare.
-   *  \return negation of equality test of the parameters.
-   *  \see operator==(Element, uint8_t) */
-  inline bool operator!=(const Element& l, uint8_t r) { return !(l == r); }
-  /*! \brief Inequality test of integer and Element.
-   *  \param l, r integer and Element to compare.
-   *  \return negation of equality test of the parameters.
-   *  \see operator==(Element, uint8_t) */
-  inline bool operator!=(uint8_t l, const Element& r) { return !(r == l); }
-  /*! \brief Inequality test of Element and string.
-   *  \param l, r Element and string to compare.
-   *  \return negation of equality test of the parameters.
-   *  \see operator==(Element, std::string) */
-  inline bool operator!=(const Element& l, std::string r) { return !(l == r); }
-  /*! \brief Inequality test of string and Element.
-   *  \param l, r string and Element to compare.
-   *  \return negation of equality test of the parameters.
-   *  \see operator==(Element, std::string) */
-  inline bool operator!=(std::string l, const Element& r) { return !(r == l); }
-  /*! \brief Inequality test of two Elements.
-   *  \param l, r Elements to compare.
-   *  \return negation of equality test of the parameters.
-   *  \see operator==(Element, Element) */
-  inline bool operator!=(const Element& l, const Element& r) { return !(l == r); }
-
   // Helper access function
   const PeriodicTable& GetPeriodicTable();
   
