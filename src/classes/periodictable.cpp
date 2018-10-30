@@ -235,7 +235,8 @@ namespace indigox {
   
   test_suite_open("PeriodicTable");
   
-  std::string PeriodicTable::ToString() const {
+  std::string PeriodicTable_ToString() {
+    const PeriodicTable& PT = GetPeriodicTable();
     std::stringstream ss;
     size_t row_count = 0, restart = 0;
     std::vector<int> elems = {
@@ -249,9 +250,9 @@ namespace indigox {
        0, 0, 0, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71,  0,-1,
        0, 0, 0, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,100,101,102,103,  0,-1
     };
-    if (!NumElements()) return "Empty PeriodicTable";
+    if (!PT.NumElements()) return "Empty PeriodicTable";
     ss << ' ';
-    const Element& _null = _elems.at(0);
+    const Element& _null = PT.GetUndefined();
     for (size_t i = 0; i < elems.size(); ) {
       if (elems[i] == -1) {
         ss << "\n";
@@ -270,7 +271,7 @@ namespace indigox {
       } else if (elems[i] == 0 && elems[i+1] == -1) {
         ss << erow(_null, 3); ++i;
       } else {
-        ss << erow(_elems.at(elems[i]), row_count);
+        ss << erow(PT[elems[i]], row_count);
         ++i;
       }
     }
@@ -282,101 +283,107 @@ namespace indigox {
     return ss.str();
   }
   
-//  test_case("IXPeriodicTable printing methods") {
-//    std::stringstream os;
-//    os << " ---                                                                 --- \n";
-//    os << "|  1|                                                               |  2|\n";
-//    os << "|  H|                                                               | He|\n";
-//    os << " --- ---                                         --- --- --- --- --- --- \n";
-//    os << "|  3|  4|                                       |  5|  6|  7|  8|  9| 10|\n";
-//    os << "| Li| Be|                                       |  B|  C|  N|  O|  F| Ne|\n";
-//    os << " --- ---                                         --- --- --- --- --- --- \n";
-//    os << "| 11| 12|                                       | 13| 14| 15| 16| 17| 18|\n";
-//    os << "| Na| Mg|                                       | Al| Si|  P|  S| Cl| Ar|\n";
-//    os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
-//    os << "| 19| 20| 21| 22| 23| 24| 25| 26| 27| 28| 29| 30| 31| 32| 33| 34| 35| 36|\n";
-//    os << "|  K| Ca| Sc| Ti|  V| Cr| Mn| Fe| Co| Ni| Cu| Zn| Ga| Ge| As| Se| Br| Kr|\n";
-//    os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
-//    os << "| 37| 38| 39| 40| 41| 42| 43| 44| 45| 46| 47| 48| 49| 50| 51| 52| 53| 54|\n";
-//    os << "| Rb| Sr|  Y| Zr| Nb| Mo| Tc| Ru| Rh| Pd| Ag| Cd| In| Sn| Sb| Te|  I| Xe|\n";
-//    os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
-//    os << "| 55| 56| 57| 72| 73| 74| 75| 76| 77| 78| 79| 80| 81| 82| 83| 84| 85| 86|\n";
-//    os << "| Cs| Ba| La| Hf| Ta|  W| Re| Os| Ir| Pt| Au| Hg| Tl| Pb| Bi| Po| At| Rn|\n";
-//    os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
-//    os << "| 87| 88| 89|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|\n";
-//    os << "| Fr| Ra| Ac| Db| Jl| Rf| Bh| Hn| Mt| Ds| Rg| Cn| Nh| Fl| Mc| Lv| Ts| Og|\n";
-//    os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
-//    os << "            | 58| 59| 60| 61| 62| 63| 64| 65| 66| 67| 68| 69| 70| 71|    \n";
-//    os << "            | Ce| Pr| Nd| Pm| Sm| Eu| Gd| Tb| Dy| Ho| Er| Tm| Yb| Lu|    \n";
-//    os << "             --- --- --- --- --- --- --- --- --- --- --- --- --- ---     \n";
-//    os << "            | 90| 91| 92| 93| 94| 95| 96| 97| 98| 99|100|101|102|103|    \n";
-//    os << "            | Th| Pa|  U| Np| Pu| Am| Cm| Bk| Cf| Es| Fm| Md| No| Lr|    \n";
-//    os << "             --- --- --- --- --- --- --- --- --- --- --- --- --- --- ";
-//    std::string expected_to_string = os.str();
-//
-//    test::TestPeriodicTable pt;
-//    os.str(""); os << PeriodicTable();
-//    check_eq(os.str(), "");
-//    os.str(""); os << pt.imp;
-//    check_eq(os.str(), "PeriodicTable(0 elements)");
-//    os.str(""); os << *pt.imp;
-//    check_eq(os.str(), "PeriodicTable(0 elements)");
-//    check_eq("Empty PeriodicTable", pt.ToString());
-//
-//    pt.GeneratePeriodicTable();
-//    os.str(""); os << pt.imp;
-//    check_eq(os.str(), "PeriodicTable(118 elements)");
-//    os.str(""); os << *pt.imp;
-//    check_eq(os.str(), "PeriodicTable(118 elements)");
-//    check_eq(expected_to_string, pt.ToString());
-//  }
+  std::ostream& operator<<(std::ostream& os, const PeriodicTable&) {
+    return (os << PeriodicTable_ToString());
+  }
   
-  const Element& PeriodicTable::GetElement(const uint8_t z) const {
+/*  test_case("IXPeriodicTable printing methods") {
+    std::stringstream os;
+    os << " ---                                                                 --- \n";
+    os << "|  1|                                                               |  2|\n";
+    os << "|  H|                                                               | He|\n";
+    os << " --- ---                                         --- --- --- --- --- --- \n";
+    os << "|  3|  4|                                       |  5|  6|  7|  8|  9| 10|\n";
+    os << "| Li| Be|                                       |  B|  C|  N|  O|  F| Ne|\n";
+    os << " --- ---                                         --- --- --- --- --- --- \n";
+    os << "| 11| 12|                                       | 13| 14| 15| 16| 17| 18|\n";
+    os << "| Na| Mg|                                       | Al| Si|  P|  S| Cl| Ar|\n";
+    os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+    os << "| 19| 20| 21| 22| 23| 24| 25| 26| 27| 28| 29| 30| 31| 32| 33| 34| 35| 36|\n";
+    os << "|  K| Ca| Sc| Ti|  V| Cr| Mn| Fe| Co| Ni| Cu| Zn| Ga| Ge| As| Se| Br| Kr|\n";
+    os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+    os << "| 37| 38| 39| 40| 41| 42| 43| 44| 45| 46| 47| 48| 49| 50| 51| 52| 53| 54|\n";
+    os << "| Rb| Sr|  Y| Zr| Nb| Mo| Tc| Ru| Rh| Pd| Ag| Cd| In| Sn| Sb| Te|  I| Xe|\n";
+    os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+    os << "| 55| 56| 57| 72| 73| 74| 75| 76| 77| 78| 79| 80| 81| 82| 83| 84| 85| 86|\n";
+    os << "| Cs| Ba| La| Hf| Ta|  W| Re| Os| Ir| Pt| Au| Hg| Tl| Pb| Bi| Po| At| Rn|\n";
+    os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+    os << "| 87| 88| 89|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|\n";
+    os << "| Fr| Ra| Ac| Db| Jl| Rf| Bh| Hn| Mt| Ds| Rg| Cn| Nh| Fl| Mc| Lv| Ts| Og|\n";
+    os << " --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- \n";
+    os << "            | 58| 59| 60| 61| 62| 63| 64| 65| 66| 67| 68| 69| 70| 71|    \n";
+    os << "            | Ce| Pr| Nd| Pm| Sm| Eu| Gd| Tb| Dy| Ho| Er| Tm| Yb| Lu|    \n";
+    os << "             --- --- --- --- --- --- --- --- --- --- --- --- --- ---     \n";
+    os << "            | 90| 91| 92| 93| 94| 95| 96| 97| 98| 99|100|101|102|103|    \n";
+    os << "            | Th| Pa|  U| Np| Pu| Am| Cm| Bk| Cf| Es| Fm| Md| No| Lr|    \n";
+    os << "             --- --- --- --- --- --- --- --- --- --- --- --- --- --- ";
+    std::string expected_to_string = os.str();
+
+    test::TestPeriodicTable pt;
+    os.str(""); os << PeriodicTable();
+    check_eq(os.str(), "");
+    os.str(""); os << pt.imp;
+    check_eq(os.str(), "PeriodicTable(0 elements)");
+    os.str(""); os << *pt.imp;
+    check_eq(os.str(), "PeriodicTable(0 elements)");
+    check_eq("Empty PeriodicTable", pt.ToString());
+
+    pt.GeneratePeriodicTable();
+    os.str(""); os << pt.imp;
+    check_eq(os.str(), "PeriodicTable(118 elements)");
+    os.str(""); os << *pt.imp;
+    check_eq(os.str(), "PeriodicTable(118 elements)");
+    check_eq(expected_to_string, pt.ToString());
+  }
+  */
+  
+  Element PeriodicTable::GetElement(const int32_t z) const {
     return (z > 0 && z < 119) ? _elems.at(z) : _elems.at(0);
   }
   
-  const Element& PeriodicTable::GetElement(std::string name) const {
+  Element PeriodicTable::GetElement(std::string name) const {
     if (name.size() > 2) name = utils::ToUpperFirst(name);
     auto pos = _name_to_idx.find(name);
     return (pos == _name_to_idx.end()) ? _elems.at(0) : _elems.at(pos->second);
   }
   
-//  test_case("IXPeriodicTable getting elements") {
-//    // We build our test elements to compare the gets with
-//    test::TestPeriodicTable PT; PT.GeneratePeriodicTable();
-//    Element C = test::TestElement(6, "Carbon" , "C", 12.011000, 14, 2, 4, 8, 8,
-//                                  0.77, 0.77, 1.85, 2.55).imp;
-//    Element K = test::TestElement(19, "Potassium" , "K", 39.098300, 1, 4, 1, 2,
-//                                  2, 2.27, 2.03, 2.31, 0.82).imp;
-//    Element null_element = PT.get_null();
-//
-//    check_eq(null_element, PT.GetUndefined());
-//    // Correct retrival
-//    check_eq(C, PT.GetElement(6));
-//    check_eq(K, PT.GetElement(19));
-//    check_eq(C, PT.GetElement("C"));
-//    check_eq(K, PT.GetElement("K"));
-//    check_eq(C, PT.GetElement("Carbon"));
-//    check_eq(K, PT.GetElement("Potassium"));
-//    // Symbol get case sensitive, name case insensitive
-//    check_ne(C, PT.GetElement("c"));
-//    check_eq(K, PT.GetElement("potASSIUM"));
-//    // Bad requests return null atom
-//    check_eq(null_element, PT.GetElement("k"));
-//    check_eq(null_element, PT.GetElement("NotAnElement"));
-//    check_eq(null_element, PT.GetElement(0));
-//    check_eq(null_element, PT.GetElement(255));
-//    // operators work
-//    check_eq(C, PT["C"]);
-//    check_eq(K, PT[19]);
-//    check_eq(C, PT["Carbon"]);
-//    check_eq(null_element, PT[255]);
-//    check_eq(null_element, PT["NotAnElement"]);
-//
-//  }
+/*  test_case("IXPeriodicTable getting elements") {
+    // We build our test elements to compare the gets with
+    test::TestPeriodicTable PT; PT.GeneratePeriodicTable();
+    Element C = test::TestElement(6, "Carbon" , "C", 12.011000, 14, 2, 4, 8, 8,
+                                  0.77, 0.77, 1.85, 2.55).imp;
+    Element K = test::TestElement(19, "Potassium" , "K", 39.098300, 1, 4, 1, 2,
+                                  2, 2.27, 2.03, 2.31, 0.82).imp;
+    Element null_element = PT.get_null();
+
+    check_eq(null_element, PT.GetUndefined());
+    // Correct retrival
+    check_eq(C, PT.GetElement(6));
+    check_eq(K, PT.GetElement(19));
+    check_eq(C, PT.GetElement("C"));
+    check_eq(K, PT.GetElement("K"));
+    check_eq(C, PT.GetElement("Carbon"));
+    check_eq(K, PT.GetElement("Potassium"));
+    // Symbol get case sensitive, name case insensitive
+    check_ne(C, PT.GetElement("c"));
+    check_eq(K, PT.GetElement("potASSIUM"));
+    // Bad requests return null atom
+    check_eq(null_element, PT.GetElement("k"));
+    check_eq(null_element, PT.GetElement("NotAnElement"));
+    check_eq(null_element, PT.GetElement(0));
+    check_eq(null_element, PT.GetElement(255));
+    // operators work
+    check_eq(C, PT["C"]);
+    check_eq(K, PT[19]);
+    check_eq(C, PT["Carbon"]);
+    check_eq(null_element, PT[255]);
+    check_eq(null_element, PT["NotAnElement"]);
+
+  }
+ */
   
   void PeriodicTable::GeneratePeriodicTable() {
-    _elems[  0] = Element(  0, "Undefined"    , "XX",   0.000000,  0, 0,  0, 0,  0,  0.00,  0.00,  0.00,  0.00);
+    _elems[  0] = Element();
     _elems[  1] = Element(  1, "Hydrogen"     , "H" ,   1.007970,  1, 1,  1, 2,  2,  0.78,  0.30,  1.20,  2.20);
     _elems[  2] = Element(  2, "Helium"       , "He",   4.002602, 18, 1,  2, 2,  2,  1.28,  0.00,  1.22,  0.00);
     _elems[  3] = Element(  3, "Lithium"      , "Li",   6.941000,  1, 2,  1, 2,  2,  1.52,  1.23,  0.00,  0.98);
@@ -502,44 +509,45 @@ namespace indigox {
     }
   }
   
-//  test_case("IXPeriodicTable generation") {
-//    test::TestPeriodicTable PT; PT.GeneratePeriodicTable();
-//    test::TestPeriodicTable::ZType& z_to_element = PT.get_z_to();
-//    test::TestPeriodicTable::XType& name_to_element = PT.get_name_to();
-//
-//    std::string name;
-//    uint8_t z;
-//    Element e;
-//    subcase("Checking atomic number table") {
-//      check_eq(z_to_element.size(), INDIGOX_NUM_ELEMENTS);
-//      DOCTEST_INFO("Current atomic number:");
-//      for (auto& ze : z_to_element) {
-//        std::tie(z, e) = ze;
-//        DOCTEST_CAPTURE(z);
-//        check_eq(e, name_to_element.at(e->GetSymbol()));
-//        check_eq(e, name_to_element.at(e->GetName()));
-//      }
-//    }
-//
-//    subcase("Checking atomic name/symbol table") {
-//      check_eq(name_to_element.size(), INDIGOX_NUM_ELEMENTS * 2);
-//      DOCTEST_INFO("Current atomic symbol/name:");
-//      for (auto& ne : name_to_element) {
-//        std::tie(name, e) = ne;
-//        DOCTEST_CAPTURE(name);
-//        check_eq(e, z_to_element.at(e->GetAtomicNumber()));
-//      }
-//    }
-//
-//    subcase("Checking null atom") {
-//      IXElement null_ = *PT.get_null();
-//      check_eq(null_.GetName(), "Undefined");
-//      check_eq(null_.GetSymbol(), "XX");
-//      check_eq(null_.GetAtomicNumber(), 0);
-//      check_eq(PT.NumElements(), INDIGOX_NUM_ELEMENTS);
-//    }
-//
-//  }
+/*  test_case("IXPeriodicTable generation") {
+    test::TestPeriodicTable PT; PT.GeneratePeriodicTable();
+    test::TestPeriodicTable::ZType& z_to_element = PT.get_z_to();
+    test::TestPeriodicTable::XType& name_to_element = PT.get_name_to();
+
+    std::string name;
+    uint8_t z;
+    Element e;
+    subcase("Checking atomic number table") {
+      check_eq(z_to_element.size(), INDIGOX_NUM_ELEMENTS);
+      DOCTEST_INFO("Current atomic number:");
+      for (auto& ze : z_to_element) {
+        std::tie(z, e) = ze;
+        DOCTEST_CAPTURE(z);
+        check_eq(e, name_to_element.at(e->GetSymbol()));
+        check_eq(e, name_to_element.at(e->GetName()));
+      }
+    }
+
+    subcase("Checking atomic name/symbol table") {
+      check_eq(name_to_element.size(), INDIGOX_NUM_ELEMENTS * 2);
+      DOCTEST_INFO("Current atomic symbol/name:");
+      for (auto& ne : name_to_element) {
+        std::tie(name, e) = ne;
+        DOCTEST_CAPTURE(name);
+        check_eq(e, z_to_element.at(e->GetAtomicNumber()));
+      }
+    }
+
+    subcase("Checking null atom") {
+      IXElement null_ = *PT.get_null();
+      check_eq(null_.GetName(), "Undefined");
+      check_eq(null_.GetSymbol(), "XX");
+      check_eq(null_.GetAtomicNumber(), 0);
+      check_eq(PT.NumElements(), INDIGOX_NUM_ELEMENTS);
+    }
+
+ }
+ */
   
   const PeriodicTable& GetPeriodicTable() {
     using pPeriodicTable = std::unique_ptr<PeriodicTable>;
@@ -551,13 +559,14 @@ namespace indigox {
     return *instance;
   }
   
-//  test_case("IXPeriodicTable GetPeriodicTable helper method") {
-//    PeriodicTable PT = GetPeriodicTable();
-//    check_eq(PT->NumElements(), INDIGOX_NUM_ELEMENTS);
-//    PeriodicTable PT2 = GetPeriodicTable();
-//    check_eq(PT2->NumElements(), INDIGOX_NUM_ELEMENTS);
-//    check_eq(PT.get(), PT2.get());
-//  }
+/*  test_case("IXPeriodicTable GetPeriodicTable helper method") {
+    PeriodicTable PT = GetPeriodicTable();
+    check_eq(PT->NumElements(), INDIGOX_NUM_ELEMENTS);
+    PeriodicTable PT2 = GetPeriodicTable();
+    check_eq(PT2->NumElements(), INDIGOX_NUM_ELEMENTS);
+    check_eq(PT.get(), PT2.get());
+  }
+ */
   
   test_suite_close(); // IXPeriodicTable
   

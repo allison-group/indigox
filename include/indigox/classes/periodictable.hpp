@@ -151,7 +151,7 @@ namespace indigox {
      *  \returns the requested element.
      *  \throw std::invalid_argument If the requested atomic number does not exist
      *  within the PeriodicTable. */
-    const Element& GetElement(const uint8_t z) const;
+    Element GetElement(const int32_t z) const;
     
     /*! \brief Get the element with the given name or symbol.
      *  \details Name based matches are made ignoring case. Symbol matches are
@@ -160,38 +160,31 @@ namespace indigox {
      *  \returns the requested element.
      *  \throw std::invalid_argument If the requested name or symbol does not
      *  exist within the PeriodicTable. */
-    const Element& GetElement(const std::string name) const;
+    Element GetElement(const std::string name) const;
     
     /*! \brief Get the element with the given atomic number.
      *  \param z the atomic number of the element to get.
      *  \return the requested element.
      *  \see IXPeriodicTable::GetElement(const uint8_t) const */
-    const Element& operator[](const uint8_t z) const { return GetElement(z); }
+    Element operator[](const int32_t z) const { return GetElement(z); }
     
     /*! \brief Get the element with the given name or symbol.
      *  \param name the name or symbol of the element to get.
      *  \return the requested element.
      *  \see IXPeriodicTable::GetElement(const std::string) const */
-    const Element& operator[](const std::string name) const { return GetElement(name);
+    Element operator[](const std::string name) const {
+      return GetElement(name);
     }
     
     /*! \brief Get the element for use when an element is not defined.
      *  \details As there is not much point in an undefined element, this
      *  method is intended for internal use.
      *  \return the undefined Element. */
-    const Element& GetUndefined() const { return _elems.at(0); }
+    Element GetUndefined() const { return _elems.at(0); }
     
     /*! \brief Number of elements in the PeriodicTable.
      *  \return the number of elements in the PeriodicTable. */
     inline size_t NumElements() const { return _elems.size() - 1; }
-    
-    /*! \brief Get a textual representation of the PeriodicTable.
-     *  \details The textual representation lays out the elements of the
-     *  PeriodicTable as one would expect in a normal periodic table. Each
-     *  element has its atomic number and symbol printed.
-     *  \return a string containing a tabular layout of the PeriodicTable
-     *  elements. */
-    std::string ToString() const;
   
   private:
     //! Default constructor.
@@ -221,9 +214,7 @@ namespace indigox {
    *  \param os output stream to print to.
    *  \param pt PeriodicTable to print.
    *  \return the output stream. */
-  inline std::ostream& operator<<(std::ostream& os, const PeriodicTable& pt) {
-    return os << "PeriodicTable(" << pt.NumElements() << " elements)";
-  }
+  std::ostream& operator<<(std::ostream& os, const PeriodicTable& pt);
   
   // Helper access function
   const PeriodicTable& GetPeriodicTable();

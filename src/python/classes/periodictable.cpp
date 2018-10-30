@@ -45,9 +45,21 @@ void GeneratePyPeriodicTable(py::module& m) {
   // ===========================================================================
   // == PeriodicTable class bindings ===========================================
   // ===========================================================================
+  py::class_<PeriodicTable>(m, "PeriodicTable")
+  .def("__init__", &GetPeriodicTable, py::return_value_policy::reference)
+  .def("GetElement", py::overload_cast<const int32_t>(&PeriodicTable::GetElement, py::const_))
+  .def("GetElement", py::overload_cast<const std::string>(&PeriodicTable::GetElement, py::const_))
+  .def("__getitem__", py::overload_cast<const int32_t>(&PeriodicTable::operator[], py::const_))
+  .def("__getitem__", py::overload_cast<const std::string>(&PeriodicTable::operator[], py::const_))
+  .def("GetUndefined", &PeriodicTable::GetUndefined)
+  .def("NumElements", &PeriodicTable::NumElements)
+  .def("__str__", &outstream_operator<PeriodicTable>)
+  ;
   
   // ===========================================================================
   // == Module function bindings ===============================================
   // ===========================================================================
+  
+  m.def("GetPeriodicTable", &GetPeriodicTable, py::return_value_policy::reference);
   
 }
