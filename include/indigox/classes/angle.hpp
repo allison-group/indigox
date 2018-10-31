@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 
+#include "forcefield.hpp"
 #include "../utils/common.hpp"
 #include "../utils/fwd_declares.hpp"
 #include "../utils/counter.hpp"
@@ -104,13 +105,13 @@ namespace indigox {
     
     /*! \brief Get the assigned type.
      *  \return the assigned ff type for the angle. */
-    FFAngle& GetType() const { return *_type.lock(); }
+    const FFAngle& GetType() const { return _type; }
     
     /*! \brief Assign an FFAngle type.
      *  \param type the FFAngle type to assign. */
-    void SetType(FFAngle& type);
+    void SetType(const FFAngle& type);
     
-    bool HasType() const { return !_type.expired(); }
+    bool HasType() const { return bool(_type); }
     
   private:
     //! The molecule this angle is assigned to.
@@ -118,7 +119,7 @@ namespace indigox {
     //! Tag (unstable)
     uint32_t _tag;
     //! MM angle type
-    wFFAngle _type;
+    FFAngle _type;
     //! \brief Atoms which make up the angle.
     AngleAtoms _atms;
   };

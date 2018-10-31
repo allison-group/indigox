@@ -5,6 +5,7 @@
 #include "../utils/fwd_declares.hpp"
 #include "../utils/triple.hpp"
 #include "../utils/quad.hpp"
+#include "forcefield.hpp"
 #include "molecule.hpp"
 #include "../graph/condensed.hpp"
 
@@ -101,7 +102,7 @@ namespace indigox {
     const FragContain& GetFragments(Molecule& mol) const;
     bool HasFragments(Molecule& mol) const;
 
-    Forcefield& GetForcefield() const { return *_ff; }
+    const Forcefield& GetForcefield() const { return _ff; }
     bool IsSelfConsistent() const { return _man; }
     void SetSelfConsistent() { _man = true; }
 //    bool CheckSelfConsistent();
@@ -116,7 +117,7 @@ namespace indigox {
 
   private:
     //! \brief Forcefield used
-    sForcefield _ff;
+    Forcefield _ff;
     //! \brief Overlap length
     uint32_t _overlap;
     //! \brief Ring overlap length

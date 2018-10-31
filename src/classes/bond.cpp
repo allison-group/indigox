@@ -225,17 +225,16 @@ namespace indigox {
   void Bond::SetType(FFBond& type) {
     if (!GetMolecule().HasForcefield())
       GetMolecule().SetForcefield(type.GetForcefield());
-    if (type.GetForcefield().shared_from_this()
-        != GetMolecule().GetForcefield().shared_from_this())
+    if (type.GetForcefield() != GetMolecule().GetForcefield())
       throw std::runtime_error("Bond type is not from molecule's forcefield");
-    _type = type.weak_from_this();
+    _type = type;
   }
   
   void Bond::Clear() {
     _mol.reset();
     _order = Order::UNDEFINED;
     _stereo = Stereo::UNDEFINED;
-    _type.reset();
+    _type = FFBond();
     _atms.fill(wAtom());
   }
   

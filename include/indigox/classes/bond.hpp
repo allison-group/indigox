@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "forcefield.hpp"
 #include "../utils/common.hpp"
 #include "../utils/counter.hpp"
 #include "../utils/fwd_declares.hpp"
@@ -163,13 +164,13 @@ namespace indigox {
     
     /*! \brief Get the type of the bond.
      *  \return the type of the bond. */
-    FFBond& GetType() const { return *_type.lock(); }
+    const FFBond& GetType() const { return _type; }
     
     /*! \brief Set the type of the bond.
      *  \param type the type of bond to set. */
     void SetType(FFBond& type);
     
-    bool HasType() const { return !_type.expired(); }
+    bool HasType() const { return bool(_type); }
     
   private:
     //! The molecule this bond is assigned to.
@@ -183,7 +184,7 @@ namespace indigox {
     //! Stereochemistry.
     Stereo _stereo;
     //! Type of bond.
-    wFFBond _type;
+    FFBond _type;
     //! \brief Atoms which make up the bond.
     BondAtoms _atms;
   };

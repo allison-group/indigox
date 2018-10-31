@@ -423,13 +423,12 @@ namespace indigox {
   }
   */
   
-  void Atom::SetType(FFAtom &type) {
+  void Atom::SetType(const FFAtom &type) {
     if (!GetMolecule().HasForcefield())
       GetMolecule().SetForcefield(type.GetForcefield());
-    if (type.GetForcefield().shared_from_this()
-        != GetMolecule().GetForcefield().shared_from_this())
+    if (type.GetForcefield() != GetMolecule().GetForcefield())
       throw std::runtime_error("Atom type is not from molecule's forcefield");
-    _type = type.weak_from_this();
+    _type = type;
   }
   
   void Atom::Clear() {
@@ -441,7 +440,7 @@ namespace indigox {
     _pos.setZero();
     _partial = 0;
     _stereo = Stereo::UNDEFINED;
-    _type.reset();
+    _type = FFAtom();
     _bnds.clear();
     _angs.clear();
     _dhds.clear();

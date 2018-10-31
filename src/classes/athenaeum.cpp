@@ -257,7 +257,7 @@ namespace indigox {
   : Athenaeum(ff, overlap, Settings::DefaultCycleOverlap) { }
   
   Athenaeum::Athenaeum(Forcefield& ff, uint32_t overlap, uint32_t cycleoverlap)
-  : _ff(ff.shared_from_this()), _overlap(overlap), _roverlap(cycleoverlap),
+  : _ff(ff), _overlap(overlap), _roverlap(cycleoverlap),
   _man(false), _frags() { }
   
   size_t Athenaeum::NumFragments() const {
@@ -297,7 +297,7 @@ namespace indigox {
     
     // Check that the molecule forcefield matchs the athenaeum forcefield
     if (!mol.HasForcefield()) return false;
-    if (&mol.GetForcefield() != _ff.get()) return false;
+    if (mol.GetForcefield() != _ff) return false;
     
     sMolecule m = mol.shared_from_this();
     if (_frags.find(m) == _frags.end()) _frags.emplace(m, FragContain());
@@ -316,7 +316,7 @@ namespace indigox {
       throw std::runtime_error("Can only add fragments from frozen molecule");
     if (!mol.HasForcefield())
       throw std::runtime_error("Attempting to fragment unparameterised molecule");
-    if (&mol.GetForcefield() != _ff.get())
+    if (mol.GetForcefield() != _ff)
       throw std::runtime_error("Forcefield mismatch");
     if (mol.NumAtoms() > Settings::AtomLimit)
       throw std::runtime_error("Molecule too large to automagically fragment");

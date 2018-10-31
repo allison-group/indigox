@@ -199,33 +199,24 @@ namespace indigox {
   }
  */
   
-  FFDihedral& Dihedral::GetType(size_t pos) const {
+  const FFDihedral& Dihedral::GetType(size_t pos) const {
     if (pos >= _types.size()) throw std::out_of_range("Invalid position");
-    return *_types.at(pos).lock();
+    return _types.at(pos);
   }
   
-  void Dihedral::AddType(FFDihedral& type) {
+  void Dihedral::AddType(const FFDihedral& type) {
     if (!GetMolecule().HasForcefield())
       GetMolecule().SetForcefield(type.GetForcefield());
-    if (type.GetForcefield().shared_from_this()
-        != GetMolecule().GetForcefield().shared_from_this())
+    if (type.GetForcefield() != GetMolecule().GetForcefield())
       throw std::runtime_error("Dihedral type is not from molecule's forcefield");
     
-    _types.emplace_back(type.weak_from_this());
+    _types.emplace_back(type);
     // Keep the list of dihedrals ordered
-    std::sort(_types.begin(), _types.end(),
-              [](wFFDihedral a, wFFDihedral b){
-                FFDihedral& ar = *a.lock();
-                FFDihedral& br = *b.lock();
-                if (ar.GetType() != br.GetType())
-                  return ar.GetType() < br.GetType();
-                return ar.GetID() < br.GetID();
-              });
+    std::sort(_types.begin(), _types.end());
   }
   
-  void Dihedral::RemoveType(FFDihedral& type) {
-    auto pos = utils::WeakContainsShared(_types.begin(), _types.end(),
-                                         type.shared_from_this());
+  void Dihedral::RemoveType(const FFDihedral& type) {
+    auto pos = std::find(_types.begin(), _types.end(), type);
     if (pos != _types.end()) _types.erase(pos);
   }
   

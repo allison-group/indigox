@@ -28,7 +28,7 @@ namespace indigox {
     
   public:
     //! \brief Type for storing dihedral parameters
-    using DihedTypes = std::vector<wFFDihedral>;
+    using DihedTypes = std::vector<FFDihedral>;
     //! \brief Iterator over IXAtom references stored on an IXDihedral.
     using DihedAtomIter = DihedAtoms::const_iterator;
     
@@ -108,15 +108,15 @@ namespace indigox {
     
     /*! \brief Get the type of the dihedral.
      *  \return the type of the dihedral. */
-    FFDihedral& GetType(size_t pos) const;
+    const FFDihedral& GetType(size_t pos) const;
     size_t NumTypes() const { return _types.size(); }
     const DihedTypes& GetTypes() const { return _types; }
     bool HasType() const { return _types.size() != 0; }
     
     /*! \brief Set the type of the dihedral.
      *  \param type the type of dihedral to set. */
-    void AddType(FFDihedral& type);
-    void RemoveType(FFDihedral& type);
+    void AddType(const FFDihedral& type);
+    void RemoveType(const FFDihedral& type);
     
   private:
     //! The molecule this dihedral is assigned to.

@@ -58,20 +58,10 @@ namespace indigox {
   
   // Forcefield related
   class Forcefield;
-  using sForcefield = std::shared_ptr<Forcefield>;
-  using wForcefield = std::weak_ptr<Forcefield>;
   class FFAtom;
-  using sFFAtom = std::shared_ptr<FFAtom>;
-  using wFFAtom = std::weak_ptr<FFAtom>;
   class FFBond;
-  using sFFBond = std::shared_ptr<FFBond>;
-  using wFFBond = std::weak_ptr<FFBond>;
   class FFAngle;
-  using sFFAngle = std::shared_ptr<FFAngle>;
-  using wFFAngle = std::weak_ptr<FFAngle>;
   class FFDihedral;
-  using sFFDihedral = std::shared_ptr<FFDihedral>;
-  using wFFDihedral = std::weak_ptr<FFDihedral>;
   
   // Athenaeum related
   class Fragment;

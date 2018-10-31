@@ -1149,10 +1149,10 @@ namespace indigox {
     _g->FreezeModifications();
   }
   
-  void Molecule::SetForcefield(Forcefield &ff) {
+  void Molecule::SetForcefield(const Forcefield &ff) {
     if (HasForcefield())
       throw std::runtime_error("Molecule already has a forcefield set.");
-    _ff = ff.shared_from_this();
+    _ff = ff;
   }
   
 /*  test_case_fixture(test::MoleculeTestFixture, "IXMolecule adding angles/dihedrals") {

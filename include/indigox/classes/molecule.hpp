@@ -9,6 +9,7 @@
 #include "atom.hpp"
 #include "bond.hpp"
 #include "dihedral.hpp"
+#include "forcefield.hpp"
 #include "periodictable.hpp"
 #include "../graph/molecular.hpp"
 #include "../utils/counter.hpp"
@@ -438,9 +439,9 @@ namespace indigox {
     
     void FreezeModifications();
     
-    Forcefield& GetForcefield() { return *_ff; }
+    const Forcefield& GetForcefield() const { return _ff; }
     
-    void SetForcefield(Forcefield& ff);
+    void SetForcefield(const Forcefield& ff);
     
     bool HasForcefield() const { return bool(_ff); }
     
@@ -458,7 +459,7 @@ namespace indigox {
     //! Dihedrals owned by molecule
     MolDihedrals _dhds;
     //! Forcefield used for parameterisation
-    sForcefield _ff;
+    Forcefield _ff;
     //! Molecular graph of molecule
     graph::sMolecularGraph _g;
     //! Cached molecular formula string

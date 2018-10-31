@@ -11,7 +11,8 @@
 
 #include <Eigen/Dense>
 
-#include "../classes/periodictable.hpp"
+#include "forcefield.hpp"
+#include "periodictable.hpp"
 #include "../utils/common.hpp"
 #include "../utils/counter.hpp"
 #include "../utils/fwd_declares.hpp"
@@ -293,13 +294,13 @@ namespace indigox {
     
     /*! \brief Get the FF type of the atom.
      *  \return the force field type of the atom. */
-    FFAtom& GetType() const { return *_type.lock(); }
+    const FFAtom& GetType() const { return _type; }
     
-    bool HasType() const { return !_type.expired(); }
+    bool HasType() const { return bool(_type); }
     
     /*! \brief Set the FF type of the atom.
      *  \param type the type to set. */
-    void SetType(FFAtom& type);
+    void SetType(const FFAtom& type);
     
   private:
     //! The molecule this atom is assigned to.
@@ -324,7 +325,7 @@ namespace indigox {
     bool _aromatic;
     
     //! MM type for atom
-    wFFAtom _type;
+    FFAtom _type;
     
     //! Bonds the atom is part of
     AtomBonds _bnds;
