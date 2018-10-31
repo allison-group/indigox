@@ -21,7 +21,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 # Setup some compile flags, for all versions and specific versions
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-private-field -Wpedantic")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-private-field -Wno-exceptions -Wno-unused-local-typedef")
 IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 ENDIF()
@@ -43,28 +43,31 @@ ADD_DEFINITIONS(-DINDIGOX_DISABLE_TESTS=1)
 
 # List all the files to compile into the indigox library
 SET(INDIGOX_LIB_SRCS
-    src/algorithm/electron_assignment/assigner.cpp
-    src/algorithm/electron_assignment/astar_optimisation.cpp
-    src/algorithm/electron_assignment/local_optimisation.cpp
+    src/algorithm/graph/connectivity.cpp
+    src/algorithm/graph/cycles.cpp
+    src/algorithm/graph/paths.cpp
     src/classes/angle.cpp
+    src/classes/athenaeum.cpp
     src/classes/atom.cpp
     src/classes/bond.cpp
     src/classes/dihedral.cpp
     src/classes/forcefield.cpp
     src/classes/molecule.cpp
     src/classes/periodictable.cpp
-    src/graph/assignment.cpp
+    src/graph/condensed.cpp
     src/graph/molecular.cpp
     src/utils/common.cpp
-    src/utils/filereader.cpp)
+    src/utils/modifable_object.cpp
+)
 
 # Build the library
 ADD_LIBRARY(indigox STATIC ${INDIGOX_LIB_SRCS})
 
-# Add EASTL path to include directories
+# Add external paths to include directories
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/EASTL/include)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/cereal/include)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/doctest)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/eigen)
 
 # We provide a boost version so only use system boost if it is newer than
 # provided boost

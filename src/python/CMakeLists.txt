@@ -1,16 +1,12 @@
 SET(INDIGOX_PYTHON_INTERFACE_SRCS
     interface.cpp
-    pyangle.cpp
-    pyassigner.cpp
-    pyatom.cpp
-    pybond.cpp
-    pydihedral.cpp
-    pyforcefield.cpp
-    pyelement.cpp
-    pymolecule.cpp
-    pyperiodictable.cpp
-    pymoleculargraph.cpp
-    pyassignmentgraph.cpp)
+    classes/athenaeum.cpp
+    classes/forcefield.cpp
+    classes/molecule.cpp
+    classes/periodictable.cpp
+    graph/algorithms.cpp
+    graph/graphs.cpp
+)
 
 # Setup pybind11 properly
 SET(PYBIND11_PYTHON_VERSION 3.4)
