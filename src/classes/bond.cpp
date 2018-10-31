@@ -231,11 +231,11 @@ namespace indigox {
   }
   
   void Bond::Clear() {
-    _mol.reset();
-    _order = Order::UNDEFINED;
-    _stereo = Stereo::UNDEFINED;
-    _type = FFBond();
-    _atms.fill(wAtom());
+//    _mol.reset();
+//    _order = Order::UNDEFINED;
+//    _stereo = Stereo::UNDEFINED;
+//    _type = FFBond();
+//    _atms.fill(wAtom());
   }
   
   test_suite_close();

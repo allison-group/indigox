@@ -201,9 +201,9 @@ namespace indigox {
   }
   
   void Angle::Clear() {
-    _mol.reset();
-    _type = FFAngle();
-    _atms.fill(wAtom());
+//    _mol.reset();
+//    _type = FFAngle();
+//    _atms.fill(wAtom());
   }
   
   test_suite_close();

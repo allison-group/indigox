@@ -221,9 +221,9 @@ namespace indigox {
   }
   
   void Dihedral::Clear() {
-    _mol.reset();
-    _atms.fill(wAtom());
-    _types.clear();
+//    _mol.reset();
+//    _atms.fill(wAtom());
+//    _types.clear();
   }
   
   test_suite_close();

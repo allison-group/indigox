@@ -432,18 +432,18 @@ namespace indigox {
   }
   
   void Atom::Clear() {
-    _mol.reset();
-    _elem = GetPeriodicTable().GetUndefined();
-    _fc = 0;
-    _implicitH = 0;
-    _name = "";
-    _pos.setZero();
-    _partial = 0;
-    _stereo = Stereo::UNDEFINED;
-    _type = FFAtom();
-    _bnds.clear();
-    _angs.clear();
-    _dhds.clear();
+//    _mol.reset();
+//    _elem = GetPeriodicTable().GetUndefined();
+//    _fc = 0;
+//    _implicitH = 0;
+//    _name = "";
+//    _pos.setZero();
+//    _partial = 0;
+//    _stereo = Stereo::UNDEFINED;
+//    _type = FFAtom();
+//    _bnds.clear();
+//    _angs.clear();
+//    _dhds.clear();
   }
   
   test_suite_close();

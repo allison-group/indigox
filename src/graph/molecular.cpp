@@ -420,12 +420,12 @@ namespace indigox::graph {
 // ============================================================================
   
   void MolecularGraph::Clear() {
-    _at2v.clear();
-    _bn2e.clear();
-    graph_type::Clear();
-    _mol.reset();
-    _cond->Clear();
-    _cond.reset();
+//    _at2v.clear();
+//    _bn2e.clear();
+//    graph_type::Clear();
+//    _mol.reset();
+//    _cond->Clear();
+//    _cond.reset();
   }
   
   MGVertex MolecularGraph::AddVertex(Atom& atm) {

@@ -278,10 +278,10 @@ namespace indigox::graph {
   }
   
   void CondensedMolecularGraph::Clear() {
-    _vmap.clear();
-    _emap.clear();
-    _source.reset();
-    graph_type::Clear();
+//    _vmap.clear();
+//    _emap.clear();
+//    _source.reset();
+//    graph_type::Clear();
   }
   
 // ============================================================================

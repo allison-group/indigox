@@ -115,15 +115,15 @@ namespace indigox {
   }
   
   Molecule::~Molecule() {
-    _g->Clear();
-    for (sAtom atm : _atms) atm->Clear();
-    _atms.clear();
-    for (sBond bnd : _bnds) bnd->Clear();
-    _bnds.clear();
-    for (sAngle ang : _angs) ang->Clear();
-    _angs.clear();
-    for (sDihedral dhd : _dhds) dhd->Clear();
-    _dhds.clear();
+//    _g->Clear();
+//    for (sAtom atm : _atms) atm->Clear();
+//    _atms.clear();
+//    for (sBond bnd : _bnds) bnd->Clear();
+//    _bnds.clear();
+//    for (sAngle ang : _angs) ang->Clear();
+//    _angs.clear();
+//    for (sDihedral dhd : _dhds) dhd->Clear();
+//    _dhds.clear();
   }
   
 /*  test_case_fixture(test::MoleculeTestFixture, "IXMolecule construction") {
@@ -672,6 +672,7 @@ namespace indigox {
   size_t Molecule::PerceiveAngles() {
     ModifiableObject::State state = GetCurrentState();
     if (state && state == _angle_perceive) return 0;
+    _angle_perceive = state;
     
     // Expected number of angles
     auto sum = [&](size_t current, sAtom v) -> size_t {
@@ -702,13 +703,13 @@ namespace indigox {
       }
       nbrs.clear();
     }
-    _angle_perceive = state;
     return count;
   }
   
   size_t Molecule::PerceiveDihedrals() {
     ModifiableObject::State state = GetCurrentState();
     if (state && state == _dihedral_perceive) return 0;
+    _dihedral_perceive = state;
     
     // Expected number of dihedrals
     auto sum = [&](size_t current, sBond b) -> size_t {
@@ -746,13 +747,13 @@ namespace indigox {
         for (size_t j = 0; j < C_nbrs.size(); ++j) {
           if (C_nbrs[j] == &B) continue;
           if (_FindDihedral(*B_nbrs[i], B, C, *C_nbrs[j]) != -1) continue;
-          NewDihedral(*B_nbrs[i], B, C, *C_nbrs[j]);
+          try { NewDihedral(*B_nbrs[i], B, C, *C_nbrs[j]); }
+          catch (std::exception&) { continue; }
           ++count;
         }
       }
       B_nbrs.clear(); C_nbrs.clear();
     }
-    _dihedral_perceive = state;
     return count;
   }
   
@@ -1130,6 +1131,8 @@ namespace indigox {
   }
   
   Dihedral& Molecule::NewDihedral(Atom &a, Atom &b, Atom &c, Atom &d) {
+    if (&a == &b || &a == &c || &a == &d || &b == &c || &b == &d || &c == &d)
+      throw std::runtime_error("Duplicate atoms in dihedral");
     if (!HasAtom(a) || !HasAtom(b) || !HasAtom(c) || !HasAtom(d))
       throw std::out_of_range("Atoms not part of molecule");
     if (HasDihedral(a, b, c, d))
@@ -1145,6 +1148,8 @@ namespace indigox {
   }
   
   void Molecule::FreezeModifications() {
+    PerceiveAngles();
+    PerceiveDihedrals();
     utils::ModifiableObject::FreezeModifications();
     _g->FreezeModifications();
   }

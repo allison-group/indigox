@@ -60,6 +60,7 @@ namespace indigox {
   void FFAtom::serialise(Archive &archive, const uint32_t) {
     archive(INDIGOX_SERIAL_NVP("data", m_ffatmdat));
   }
+  INDIGOX_SERIALISE(FFAtom);
   
   // ===========================================================================
   // == FFAtom Data Retrevial ==================================================
@@ -147,6 +148,7 @@ namespace indigox {
   void FFBond::serialise(Archive &archive, const uint32_t) {
     archive(INDIGOX_SERIAL_NVP("data", m_ffbnddat));
   }
+  INDIGOX_SERIALISE(FFBond)
   
   // ===========================================================================
   // == FFBond Data Retrevial ==================================================
@@ -250,6 +252,7 @@ namespace indigox {
   void FFAngle::serialise(Archive &archive, const uint32_t) {
     archive(INDIGOX_SERIAL_NVP("data", m_ffangdat));
   }
+  INDIGOX_SERIALISE(FFAngle);
   
   // ===========================================================================
   // == FFAngle Data Retrevial =================================================
@@ -353,6 +356,7 @@ namespace indigox {
   void FFDihedral::serialise(Archive &archive, const uint32_t) {
     archive(INDIGOX_SERIAL_NVP("data", m_ffdhddat));
   }
+  INDIGOX_SERIALISE(FFDihedral);
   
   // ===========================================================================
   // == FFDihedral Data Retrevial ==============================================
