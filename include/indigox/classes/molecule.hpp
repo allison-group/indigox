@@ -298,7 +298,7 @@ namespace indigox {
     /*! \brief Create a new atom of the given element for the molecule.
      *  \param element the element of the new atom.
      *  \return the new atom. */
-    Atom& NewAtom(Element& element);
+    Atom& NewAtom(const Element& element);
     
     /*! \brief Create a new named atom owned by the molecule.
      *  \param name the name of the new atom.
@@ -309,7 +309,7 @@ namespace indigox {
      *  \param name the name of the new atom.
      *  \param element the element of the new atom.
      *  \return the new atom. */
-    Atom& NewAtom(std::string name, Element& element);
+    Atom& NewAtom(std::string name, const Element& element);
     
     /*! \brief Create a bond between two atoms.
      *  \details To create a bond, both atoms need to be owned by the molecule

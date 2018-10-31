@@ -834,7 +834,7 @@ namespace indigox {
     return *atom;
   }
   
-  Atom& Molecule::NewAtom(Element& element) {
+  Atom& Molecule::NewAtom(const Element& element) {
     Atom& atom = NewAtom();
     atom.SetElement(element);
     return atom;
@@ -846,7 +846,7 @@ namespace indigox {
     return atom;
   }
   
-  Atom& Molecule::NewAtom(std::string name, Element& element) {
+  Atom& Molecule::NewAtom(std::string name, const Element& element) {
     Atom& atom = NewAtom();
     atom.SetName(name);
     atom.SetElement(element);

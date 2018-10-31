@@ -59,7 +59,6 @@ void GeneratePyPeriodicTable(py::module& m) {
   // ===========================================================================
   // == Module function bindings ===============================================
   // ===========================================================================
-  
   m.def("GetPeriodicTable", &GetPeriodicTable, py::return_value_policy::reference);
   
 }
