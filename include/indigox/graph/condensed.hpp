@@ -99,6 +99,7 @@ namespace indigox::graph {
     //! \brief The vertex data.
     std::shared_ptr<CMGVertexData> _dat;
   };
+  using ContractedSymmetry = CMGVertex::ContractedSymmetry;
   
   /*! \brief Class for the edges of an IXCondensedMolecularGraph. */
   class CMGEdge {

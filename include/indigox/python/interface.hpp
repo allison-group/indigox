@@ -9,10 +9,8 @@
 #include "../utils/fwd_declares.hpp"
 
 void GeneratePyMolecule(pybind11::module& m);
-void GeneratePyMolecularGraph(pybind11::module& m);
-void GeneratePyCondensedMolecularGraph(pybind11::module& m);
+void GeneratePyGraphs(pybind11::module& m);
 void GeneratePyPeriodicTable(pybind11::module& m);
-void GeneratePyElectronAssignmentGraph(pybind11::module& m);
 void GeneratePyElectronAssigner(pybind11::module& m);
 void GeneratePyForcefield(pybind11::module& m);
 void GeneratePyAthenaeum(pybind11::module& m);

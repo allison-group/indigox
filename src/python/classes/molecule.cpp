@@ -171,7 +171,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   // == Molecule class bindings ================================================
   // ===========================================================================
   py::class_<Molecule, sMolecule>(m, "Molecule")
-  .def("__init__", &CreateMolecule, py::return_value_policy::take_ownership)
+  .def("__init__", &CreateMolecule)
   .def("GetAngle", py::overload_cast<size_t>(&Molecule::GetAngle, py::const_), Ref)
   .def("GetDihedral", py::overload_cast<size_t>(&Molecule::GetDihedral, py::const_), Ref)
   .def("GetAngle", py::overload_cast<Atom&, Atom&, Atom&>(&Molecule::GetAngle), Ref)
@@ -188,7 +188,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("GetBondTag", &Molecule::GetBondTag, Ref)
   .def("GetBondID", &Molecule::GetBondID, Ref)
   .def("GetFormula", &Molecule::GetFormula)
-//  .def("GetGraph", &Molecule::GetGraph, Ref)
+  .def("GetGraph", &Molecule::GetGraph, Ref)
   .def("GetName", &Molecule::GetName)
   .def("GetMolecularCharge", &Molecule::GetMolecularCharge)
   .def("NumAtoms", &Molecule::NumAtoms)
@@ -236,7 +236,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   // ===========================================================================
   // == Module function bindings ===============================================
   // ===========================================================================
-  m.def("CreateMolecule", &CreateMolecule, py::return_value_policy::take_ownership);
+  m.def("CreateMolecule", &CreateMolecule);
   m.def("Benzene", []() -> sMolecule {
     sMolecule mol = CreateMolecule();
     Atom& C1 = mol->NewAtom("C1", GetPeriodicTable().GetElement("C"));

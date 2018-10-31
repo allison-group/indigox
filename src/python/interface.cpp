@@ -11,7 +11,7 @@ PYBIND11_MODULE(pyindigox, m) {
 //  GeneratePyAthenaeum(m);
   // Graph namespace
   pybind11::module m_graph = m.def_submodule("graph");
-//  GeneratePyMolecularGraph(m_graph);
+  GeneratePyGraphs(m_graph);
 //  GeneratePyElectronAssignmentGraph(m_graph);
 //  GeneratePyCondensedMolecularGraph(m_graph);
   // Algorthm namespace
