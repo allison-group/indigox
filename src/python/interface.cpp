@@ -16,6 +16,7 @@ PYBIND11_MODULE(pyindigox, m) {
 //  GeneratePyCondensedMolecularGraph(m_graph);
   // Algorthm namespace
   pybind11::module m_algo = m.def_submodule("algorithm");
+  GeneratePyGraphAlgorithms(m_algo);
 //  GeneratePyElectronAssigner(m_algo);
   
   // Minor utils things

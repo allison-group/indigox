@@ -154,6 +154,4 @@ namespace indigox::algorithm {
   template void
   AllSimplePaths(MolecularGraph::graph_type&, MGVertex, MGVertex,
                  std::vector<std::vector<MGEdge>>&, int64_t);
-  
-  
 }
