@@ -1,5 +1,4 @@
 #include <vector>
-
 #include <EASTL/vector_map.h>
 
 #include <indigox/algorithm/graph/paths.hpp>
@@ -23,6 +22,8 @@ namespace indigox::algorithm {
     
     using NbrType = eastl::vector_map<V, V>;
     NbrType pre, suc;
+    pre.emplace(source, V());
+    suc.emplace(target, V());
     std::vector<V> forward, backward;
     forward.emplace_back(source);
     backward.emplace_back(target);
@@ -72,13 +73,13 @@ namespace indigox::algorithm {
     // Build the path
     path.reserve(pre.size() + suc.size());
     V mid = midpoint;
-    while (pre.find(mid) != pre.end()) {
+    while (pre.at(mid)) {
       V previous = pre.at(mid);
       path.emplace_back(G.GetEdge(previous, mid));
       mid = previous;
     }
     std::reverse(path.begin(), path.end());
-    while (suc.find(midpoint) != suc.end()) {
+    while (suc.at(midpoint)) {
       V next = suc.at(midpoint);
       path.emplace_back(G.GetEdge(midpoint, next));
       midpoint = next;

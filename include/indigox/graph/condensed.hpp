@@ -66,6 +66,7 @@ namespace indigox::graph {
       return l._dat == r._dat; }
     friend bool operator<(const CMGVertex& l, const CMGVertex& r) {
       return l._dat < r._dat; }
+    operator bool() const { return bool(_dat); }
     
   public:
     /*! \brief Get the MGVertex associated with this vertex.
@@ -133,6 +134,7 @@ namespace indigox::graph {
       return l._dat == r._dat; }
     friend bool operator<(const CMGEdge& l, const CMGEdge& r) {
       return l._dat < r._dat; }
+    operator bool() const { return bool(_dat); }
     
   public:
     /*! \brief Get the MGEdge associated with this vertex.

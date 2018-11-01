@@ -62,6 +62,7 @@ namespace indigox::graph {
       return l._dat == r._dat; }
     friend bool operator<(const MGVertex& l, const MGVertex& r) {
       return l._dat < r._dat; }
+    operator bool() const { return bool(_dat); }
     
   private:
     std::shared_ptr<MGVertexData> _dat;
@@ -109,6 +110,7 @@ namespace indigox::graph {
       return l._dat == r._dat; }
     friend bool operator<(const MGEdge& l, const MGEdge& r) {
       return l._dat < r._dat; }
+    operator bool() const { return bool(_dat); }
     
   private:
     std::shared_ptr<MGEdgeData> _dat;
