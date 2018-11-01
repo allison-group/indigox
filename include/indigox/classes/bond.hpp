@@ -168,7 +168,7 @@ namespace indigox {
     
     /*! \brief Set the type of the bond.
      *  \param type the type of bond to set. */
-    void SetType(FFBond& type);
+    void SetType(const FFBond& type);
     
     bool HasType() const { return bool(_type); }
     

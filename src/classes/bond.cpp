@@ -222,7 +222,7 @@ namespace indigox {
   }
  */
   
-  void Bond::SetType(FFBond& type) {
+  void Bond::SetType(const FFBond& type) {
     if (!GetMolecule().HasForcefield())
       GetMolecule().SetForcefield(type.GetForcefield());
     if (type.GetForcefield() != GetMolecule().GetForcefield())
