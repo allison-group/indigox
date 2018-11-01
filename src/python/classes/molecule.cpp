@@ -263,6 +263,7 @@ void GeneratePyMolecule(pybind11::module& m) {
     mol->NewBond(C4, Br).SetOrder(BondOrder::SINGLE);
     mol->NewBond(C5, I1).SetOrder(BondOrder::SINGLE);
     mol->NewBond(C6, H2).SetOrder(BondOrder::SINGLE);
+    mol->FreezeModifications();
     return mol;
   });
 }

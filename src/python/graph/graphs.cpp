@@ -11,6 +11,17 @@
 
 namespace py = pybind11;
 
+PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::ComponentContain);
+PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::CycleEdgeContain);
+PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::ComponentContain);
+PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::CycleEdgeContain);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sCondensedMolecularGraph>);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sMolecularGraph>);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGVertex>);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGEdge>);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGVertex>);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGEdge>);
+
 void GeneratePyGraphs(py::module& m) {
   using namespace indigox;
   using namespace indigox::graph;
@@ -162,5 +173,17 @@ void GeneratePyGraphs(py::module& m) {
   .def("GetCycles", &CMG::GetCycles, Ref)
   .def("NumCycles", &CMG::NumCycles)
   ;
+  
+  py::bind_vector<CondensedMolecularGraph::VertContain>(m, "VectorCMGVertex");
+  py::bind_vector<CondensedMolecularGraph::EdgeContain>(m, "VectorCMGEdge");
+  py::bind_vector<MolecularGraph::VertContain>(m, "VectorMGVertex");
+  py::bind_vector<MolecularGraph::EdgeContain>(m, "VectorMGEdge");
+  py::bind_vector<CondensedMolecularGraph::ComponentContain>(m, "VectorVectorCMGVertex");
+  py::bind_vector<CondensedMolecularGraph::CycleEdgeContain>(m, "VectorVectorCMGEdge");
+  py::bind_vector<MolecularGraph::ComponentContain>(m, "VectorVectorMGVertex");
+  py::bind_vector<MolecularGraph::CycleEdgeContain>(m, "VectorVectorMGEdge");
+  py::bind_vector<std::vector<sCondensedMolecularGraph>>(m, "VectorCondensedMolecularGraph");
+  py::bind_vector<std::vector<sMolecularGraph>>(m, "VectorMolecularGraph");
+  
 }
 

@@ -1,7 +1,5 @@
 #include <vector>
 
-#include <pybind11/pybind11.h>
-
 #include <indigox/python/interface.hpp>
 #include <indigox/algorithm/graph/connectivity.hpp>
 #include <indigox/algorithm/graph/cycles.hpp>
@@ -12,38 +10,60 @@
 
 namespace py = pybind11;
 
+PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::ComponentContain);
+PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::CycleEdgeContain);
+PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::ComponentContain);
+PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::CycleEdgeContain);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sCondensedMolecularGraph>);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sMolecularGraph>);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGVertex>);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGEdge>);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGVertex>);
+PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGEdge>);
+
 void GeneratePyGraphAlgorithms(pybind11::module& m) {
   using namespace indigox::algorithm;
   using namespace indigox::graph;
-  using V1 = CMGVertex;
-  using E1 = CMGEdge;
-  using S1 = sCondensedMolecularGraph;
-  using V2 = MGVertex;
-  using E2 = MGEdge;
-  using S2 = sMolecularGraph;
-  using D = Undirected;
-  using P = GraphLabel;
+  using MG = MolecularGraph;
+  using MGV = MGVertex;
+  using MGE = MGEdge;
+  using VMG = std::vector<sMolecularGraph>;
+  using VMGV = MolecularGraph::VertContain;
+  using VMGE = MolecularGraph::EdgeContain;
+  using VVMGV = MolecularGraph::ComponentContain;
+  using VVMGE = MolecularGraph::CycleEdgeContain;
   
-  using CCContain1 = CondensedMolecularGraph::ComponentContain;
-  using CCContain2 = MolecularGraph::ComponentContain;
-  m.def("ConnectedComponents", &ConnectedComponents<V1,E1,S1,D,P,P,CCContain1>);
-  m.def("ConnectedComponents", &ConnectedComponents<V2,E2,S2,D,P,P,CCContain2>);
-  m.def("ConnectedSubgraphs", &ConnectedSubgraphs<V1,E1,S1,D,P,P>);
-  m.def("ConnectedSubgraphs", &ConnectedSubgraphs<V2,E2,S2,D,P,P>);
+  using CMG = CondensedMolecularGraph;
+  using CMGV = CMGVertex;
+  using CMGE = CMGEdge;
+  using VCMG = std::vector<sCondensedMolecularGraph>;
+  using VCMGV = CondensedMolecularGraph::VertContain;
+  using VCMGE = CondensedMolecularGraph::EdgeContain;
+  using VVCMGV = CondensedMolecularGraph::ComponentContain;
+  using VVCMGE = CondensedMolecularGraph::CycleEdgeContain;
   
-  using CycContainV1 = CondensedMolecularGraph::CycleVertContain;
-  using CycContainE1 = CondensedMolecularGraph::CycleEdgeContain;
-  using CycContainV2 = MolecularGraph::CycleVertContain;
-  using CycContainE2 = MolecularGraph::CycleEdgeContain;
-  m.def("CycleBasis", &CycleBasis<V1,E1,S1,D,P,P,CycContainV1>);
-  m.def("CycleBasis", &CycleBasis<V1,E1,S1,D,P,P,CycContainE1>);
-  m.def("CycleBasis", &CycleBasis<V2,E2,S2,D,P,P,CycContainV2>);
-  m.def("CycleBasis", &CycleBasis<V2,E2,S2,D,P,P,CycContainE2>);
-  m.def("AllCycles", &AllCycles<V1,E1,S1,D,P,P,CycContainE1>);
-  m.def("AllCycles", &AllCycles<V2,E2,S2,D,P,P,CycContainE2>);
+  m.def("ShortestPath", [](MG& g, MGV u, MGV v) { return ShortestPath(g, u, v); });
+  m.def("ShortestPath", [](CMG& g, CMGV u, CMGV v) { return ShortestPath(g, u, v); });
+  m.def("AllSimplePaths", [](MG& g, MGV u, MGV v, VVMGE& p) { AllSimplePaths(g, u, v, p); });
+  m.def("AllSimplePaths", [](MG& g, MGV u, MGV v, VVMGE& p, int64_t sz) { AllSimplePaths(g, u, v, p, sz); });
+  m.def("AllSimplePaths", [](CMG& g, CMGV u, CMGV v, VVCMGE& p) { AllSimplePaths(g, u, v, p); });
+  m.def("AllSimplePaths", [](CMG& g, CMGV u, CMGV v, VVCMGE& p, int64_t sz) { AllSimplePaths(g, u, v, p, sz); });
   
-  m.def("ShortestPath", &ShortestPath<V1,E1,S1,D,P,P>);
-  m.def("ShortestPath", &ShortestPath<V2,E2,S2,D,P,P>);
-  m.def("AllSimplePaths", &AllSimplePaths<V1,E1,S1,D,P,P>);
-  m.def("AllSimplePaths", &AllSimplePaths<V2,E2,S2,D,P,P>);
+  m.def("ConnectedComponents", [](MG& g, VVMGV& c) { return ConnectedComponents(g, c); });
+  m.def("ConnectedComponents", [](CMG& g, VVCMGV& c) { return ConnectedComponents(g, c); });
+  m.def("ConnectedSubgraphs", [](MG& g, VMG& s) { return ConnectedSubgraphs(g, s); });
+  m.def("ConnectedSubgraphs", [](MG& g, VMG& s, int64_t m) { return ConnectedSubgraphs(g, s, m); });
+  m.def("ConnectedSubgraphs", [](MG& g, VMG& s, int64_t m, int64_t M) { return ConnectedSubgraphs(g, s, m, M); });
+  m.def("ConnectedSubgraphs", [](CMG& g, VCMG& s) { return ConnectedSubgraphs(g, s); });
+  m.def("ConnectedSubgraphs", [](CMG& g, VCMG& s, int64_t m) { return ConnectedSubgraphs(g, s, m); });
+  m.def("ConnectedSubgraphs", [](CMG& g, VCMG& s, int64_t m, int64_t M) { return ConnectedSubgraphs(g, s, m, M); });
+  
+  m.def("CycleBasis", [](MG& g, VVMGV& b) { return CycleBasis(g, b); });
+  m.def("CycleBasis", [](MG& g, VVMGE& b) { return CycleBasis(g, b); });
+  m.def("CycleBasis", [](CMG& g, VVCMGV& b) { return CycleBasis(g, b); });
+  m.def("CycleBasis", [](CMG& g, VVCMGE& b) { return CycleBasis(g, b); });
+  m.def("AllCycles", [](MG& g, VVMGE& c) { return AllCycles(g, c); });
+  m.def("AllCycles", [](CMG& g, VVCMGE& c) { return AllCycles(g, c); });
+  
+  
 }
