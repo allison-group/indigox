@@ -123,7 +123,6 @@ namespace indigox {
     //! \brief Atoms which make up the angle.
     AngleAtoms _atms;
   };
-  
   std::ostream& operator<<(std::ostream& os, const Angle& ang);
 }
 

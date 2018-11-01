@@ -192,6 +192,10 @@ namespace indigox {
     return std::distance(be.first, pos);
   }
   
+  std::ostream& operator<<(std::ostream& os, const Atom& atm) {
+    return (os << "Atom(" << atm.GetIndex() << ")");
+  }
+  
 /*  test_case_fixture(test::AtomTestFixture, "IXAtom getting and setting") {
     // Check nothrow
     check_nothrow(atm.AddImplicitHydrogen());

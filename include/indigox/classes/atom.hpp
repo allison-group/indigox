@@ -340,9 +340,7 @@ namespace indigox {
    *  \param os the output stream to print to.
    *  \param atom the Atom to print.
    *  \return the output stream after printing. */
-  inline std::ostream& operator<<(std::ostream& os, const Atom& atom) {
-    return (os << "Atom(" << atom.GetIndex() << ")");
-  }
+  std::ostream& operator<<(std::ostream& os, const Atom& atom);
   
   //! \brief Type for the stereochemistry enum of an atom.
   using AtomStereo = indigox::Atom::Stereo;
