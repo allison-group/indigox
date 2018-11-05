@@ -3,6 +3,7 @@
 #include <initializer_list>
 
 #include <indigox/classes/forcefield.hpp>
+#include <indigox/classes/periodictable.hpp>
 #include <indigox/utils/quad.hpp>
 #include <indigox/utils/triple.hpp>
 
@@ -20,16 +21,22 @@ namespace indigox {
   struct FFAtom::FFAtomImpl {
     int32_t id;
     std::string name;
+    int32_t element;
+    uint32_t implicit_hydrogens;
     Forcefield ff;
     
     FFAtomImpl() = default;
-    FFAtomImpl(int32_t i, std::string n, const Forcefield& f)
-    : id(i), name(n), ff(f) { }
+    FFAtomImpl(int32_t i, std::string n, const Element& e, uint32_t h,
+               const Forcefield& f)
+    : id(i), name(n), element(e.GetAtomicNumber()), implicit_hydrogens(h), ff(f)
+    { }
     
     template <class Archive>
     void serialise(Archive& archive, const uint32_t) {
       archive(INDIGOX_SERIAL_NVP("id", id),
               INDIGOX_SERIAL_NVP("name", name),
+              INDIGOX_SERIAL_NVP("element", element),
+              INDIGOX_SERIAL_NVP("implicitH", implicit_hydrogens),
               INDIGOX_SERIAL_NVP("ff", ff));
     }
   };
@@ -49,8 +56,9 @@ namespace indigox {
     m_ffatmdat = std::move(atm.m_ffatmdat);
     return *this;
   }
-  FFAtom::FFAtom(int32_t id, std::string name, const Forcefield& ff)
-  : m_ffatmdat(std::make_shared<FFAtomImpl>(id, name, ff)) { }
+  FFAtom::FFAtom(int32_t id, std::string name, const Element& e, uint32_t h,
+                 const Forcefield& ff)
+  : m_ffatmdat(std::make_shared<FFAtomImpl>(id, name, e, h, ff)) { }
   
   // ===========================================================================
   // == FFAtom Serialisation ===================================================
@@ -69,6 +77,10 @@ namespace indigox {
   int32_t FFAtom::GetID() const { return m_ffatmdat->id; }
   std::string FFAtom::GetName() const { return m_ffatmdat->name; }
   Forcefield& FFAtom::GetForcefield() const { return m_ffatmdat->ff; }
+  uint32_t FFAtom::GetImplicitHydrogenCount() const {
+    return m_ffatmdat->implicit_hydrogens; }
+  Element FFAtom::GetElement() const {
+    return GetPeriodicTable()[m_ffatmdat->element]; }
   
   // ===========================================================================
   // == FFAtom Operators =======================================================
@@ -553,8 +565,9 @@ namespace indigox {
     return m_ffdat->dihedrals[type].back();
   }
   
-  FFAtom& Forcefield::NewAtomType(int id, std::string name) {
-    FFAtom atm(id, name, *this);
+  FFAtom& Forcefield::NewAtomType(int id, std::string name, const Element& element,
+                                  uint32_t implictH) {
+    FFAtom atm(id, name, element, implictH, *this);
     if (std::find(m_ffdat->atoms.begin(), m_ffdat->atoms.end(), atm)
         != m_ffdat->atoms.end())
       throw std::out_of_range("Atom type already exists");
@@ -720,18 +733,26 @@ namespace indigox {
   Forcefield GenerateGROMOS54A7() {
     Forcefield ff(FFFamily::GROMOS, "54A7");
     // Add atom types
-    std::vector<std::pair<int, std::string>> atom_dat = {
-      {2, "OM"}, {1, "O"},
-      {4, "OE"}, {39, "CChl"}, {32, "F"}, {52, "OUrea"}, {15, "CH2"}, {20, "HC"},
-      {37, "NA+"}, {33, "CL"}, {44, "ODmso"}, {40, "CLChl"}, {45, "CCl4"},
-      {31, "AR"}, {38, "CL-"}, {35, "CMet"}, {21, "H"}, {27, "ZN2+"}, {28, "MG2+"},
-      {46, "CLCl4"}, {36, "OMet"}, {54, "CH3p"}, {51, "CUrea"}, {30, "P,SI"},
-      {7, "NT"}, {26, "FE"}, {43, "CDmso"}, {17, "CH4"}, {29, "CA2+"}, {22, "DUM"},
-      {42, "SDmso"}, {48, "CTFE"}, {5, "OW"}, {34, "BR"}, {49, "CHTFE"}, {14, "CH1"},
-      {41, "HChl"}, {53, "NUrea"}, {23, "S"}, {13, "CH0"}, {19, "CR1"}, {11, "NE"},
-      {16, "CH3"}, {8, "NL"}, {12, "C"}, {10, "NZ"}, {6, "N"}, {24, "CU1+"},
-      {50, "OTFE"}, {25, "CU2+"}, {3, "OA"}, {47, "FTFE"}, {18, "CH2r"}, {9, "NR"}};
-    for (auto& in : atom_dat) ff.NewAtomType(in.first, in.second);
+    PeriodicTable PT = GetPeriodicTable();
+    std::vector<stdx::quad<int, std::string, int, int>> atom_dat = {
+      {2, "OM", 8, 0}, {1, "O", 8, 0}, {4, "OE", 8, 0}, {39, "CChl", 6, 0},
+      {32, "F", 9, 0}, {52, "OUrea", 8, 0}, {15, "CH2", 6, 2}, {20, "HC", 1, 0},
+      {37, "NA+", 11, 0}, {33, "CL", 17, 0}, {44, "ODmso", 8, 0},
+      {40, "CLChl", 17, 0}, {45, "CCl4", 6, 0}, {31, "AR", 18, 0},
+      {38, "CL-", 17, 0}, {35, "CMet", 6, 0}, {21, "H", 1, 0},
+      {27, "ZN2+", 30, 0}, {28, "MG2+", 12, 0}, {46, "CLCl4", 17, 0},
+      {36, "OMet", 8, 0}, {54, "CH3p", 6, 3}, {51, "CUrea", 6, 0},
+      {30, "P,SI", 15, 0}, {7, "NT", 7, 0}, {26, "FE", 26, 0},
+      {43, "CDmso", 6, 0}, {17, "CH4", 6, 4}, {29, "CA2+", 20, 0},
+      {22, "DUM", 0, 0}, {42, "SDmso", 16, 0}, {48, "CTFE", 6, 0},
+      {5, "OW", 8, 0}, {34, "BR", 35, 0}, {49, "CHTFE", 6, 0}, {14, "CH1", 6, 1},
+      {41, "HChl", 1, 0}, {53, "NUrea", 7, 0}, {23, "S", 16, 0},
+      {13, "CH0", 6, 0}, {19, "CR1", 6, 1}, {11, "NE", 7, 0}, {16, "CH3", 6, 3},
+      {8, "NL", 7, 0}, {12, "C", 6, 0}, {10, "NZ", 7, 0}, {6, "N", 7, 0},
+      {24, "CU1+", 29, 0}, {50, "OTFE", 8, 0}, {25, "CU2+", 29, 0},
+      {3, "OA", 8, 0}, {47, "FTFE", 9, 0}, {18, "CH2r", 6, 2}, {9, "NR", 7, 0}};
+    for (auto& in : atom_dat)
+      ff.NewAtomType(in.first, in.second, PT[in.third], in.fourth);
     
     // Add bond types
     std::vector<stdx::quad<int, double, double, double>> bnd_dat = {
