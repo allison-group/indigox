@@ -9,170 +9,581 @@
 #include <indigox/classes/parameterised.hpp>
 
 namespace indigox {
-  void IXParamAtom::MappedWith(Atom mapped) {
-    if (_applied) return;
-    FFAtom t = mapped->GetType();
-    auto t_pos = _counts.find(t);
-    if (t_pos == _counts.end()) _counts.emplace(t, 1);
+  
+  // ===========================================================================
+  // == ParamAtom Data Implementation ==========================================
+  // ===========================================================================
+  
+  struct ParamAtom::ParamAtomImpl {
+    wAtom atom;
+    TypeCounts types;
+    MappedCharge charges;
+    MappedAtoms mapped_atoms;
+    bool applied;
+    
+    ParamAtomImpl(Atom& atm) : atom(atm.weak_from_this()), applied(false) { }
+  };
+  
+  // ===========================================================================
+  // == ParamAtom Construction/Assignment ======================================
+  // ===========================================================================
+  
+  ParamAtom::ParamAtom() : m_patmdat(nullptr) { }
+  ParamAtom::ParamAtom(const ParamAtom& atm) : m_patmdat(atm.m_patmdat) { }
+  ParamAtom::ParamAtom(ParamAtom&& atm) : m_patmdat(std::move(atm.m_patmdat)) { }
+  ParamAtom& ParamAtom::operator=(const ParamAtom &atm) {
+    if (&atm != this) m_patmdat = atm.m_patmdat;
+    return *this;
+  }
+  ParamAtom& ParamAtom::operator=(ParamAtom &&atm) {
+    m_patmdat = std::move(atm.m_patmdat);
+    return *this;
+  }
+  ParamAtom::ParamAtom(Atom& atm)
+  : m_patmdat(std::make_shared<ParamAtomImpl>(atm)) { }
+  
+  // ===========================================================================
+  // == ParamAtom Data Modification ============================================
+  // ===========================================================================
+  
+  void ParamAtom::MappedWith(Atom& mapped) {
+    if (m_patmdat->applied) return;
+    if (!mapped.HasType()) throw std::runtime_error("Needs a parameterised atom");
+    FFAtom t = mapped.GetType();
+    auto t_pos = m_patmdat->types.find(t);
+    if (t_pos == m_patmdat->types.end()) m_patmdat->types.emplace(t, 1);
     else ++t_pos->second;
-    _charges.push_back(mapped->GetPartialCharge());
-    _atms.emplace_back(mapped);
+    m_patmdat->charges.push_back(mapped.GetPartialCharge());
+    m_patmdat->mapped_atoms.emplace_back(mapped.weak_from_this());
   }
   
-  void IXParamAtom::ApplyParameterisation(bool self_consistent) {
-    if (_atms.empty()) return;  // Only parametrise when parameters to apply
-    if (_applied) return;  // Only parameterise if not done so already
-    float_ mean = MeanCharge();
+  bool ParamAtom::ApplyParameterisation(bool self_consistent) {
+    if (m_patmdat->applied) return false;
+    if (m_patmdat->charges.empty()) return false;
+    double mean = MeanCharge();
     if (self_consistent) {
-      if (_counts.size() > 1)
+      if (m_patmdat->types.size() > 1)
         throw std::runtime_error("Types not self-consistent");
       if (boost::math::relative_difference(mean, MeadianCharge()) > 1e-10)
         throw std::runtime_error("Charges mean/median not equal");
       if (boost::math::relative_difference(0.0, StandardDeviationCharge()) > 1e-10)
         throw std::runtime_error("Charge stddev not 0");
     }
-    Atom atm = _atm.lock();
+    sAtom atm = m_patmdat->atom.lock();
     if (!atm) throw std::runtime_error("Mapped atom missing");
     atm->SetType(GetMostCommonType());
     atm->SetPartialCharge(mean);
-    _applied = true;
+    m_patmdat->applied = true;
+    return true;
   }
   
-  void IXParamBond::MappedWith(Bond mapped) {
-    if (_applied) return;
-    FFBond t = mapped->GetType();
-    FFBond t2 = t->GetLinkedType();
-    auto t_pos = _counts.find(t);
-    auto t2_pos = _counts.find(t2);
-    auto end = _counts.end();
+  // ===========================================================================
+  // == ParamAtom Data Retrevial ===============================================
+  // ===========================================================================
+  
+  int64_t ParamAtom::NumSourceAtoms() const {
+    return m_patmdat->mapped_atoms.size(); }
+  Atom& ParamAtom::GetAtom() const { return *m_patmdat->atom.lock(); }
+  double ParamAtom::MeanCharge() const {
+    return CalculateMean(m_patmdat->charges.begin(), m_patmdat->charges.end()); }
+  double ParamAtom::MeadianCharge() {
+    return CalculateMedian(m_patmdat->charges.begin(), m_patmdat->charges.end()); }
+  double ParamAtom::StandardDeviationCharge() const {
+    return CalculateStandardDeviation(m_patmdat->charges.begin(),
+                                      m_patmdat->charges.end()); }
+  FFAtom ParamAtom::GetMostCommonType() const {
+    using T = TypeCounts::value_type;
+    T max = *std::max_element(m_patmdat->types.begin(), m_patmdat->types.end(),
+                              [](T& a, T& b) { return a.second < b.second; });
+    return max.first; }
+  const ParamAtom::TypeCounts& ParamAtom::GetMappedTypeCounts() const {
+    return m_patmdat->types; }
+  const ParamAtom::MappedCharge& ParamAtom::GetMappedCharges() const {
+    return m_patmdat->charges; }
+  
+  // ===========================================================================
+  // == ParamAtom Operators ====================================================
+  // ===========================================================================
+  
+  bool ParamAtom::operator==(const ParamAtom &atm) const {
+    return m_patmdat->atom.lock() == atm.m_patmdat->atom.lock(); }
+  bool ParamAtom::operator!=(const ParamAtom &atm) const {
+    return !(*this == atm); }
+  bool ParamAtom::operator<(const ParamAtom &atm) const {
+    return (m_patmdat->atom.lock()->GetIndex()
+            < atm.m_patmdat->atom.lock()->GetIndex()); }
+  bool ParamAtom::operator>(const ParamAtom &atm) const {
+    return (m_patmdat->atom.lock()->GetIndex()
+            > atm.m_patmdat->atom.lock()->GetIndex()); }
+  bool ParamAtom::operator<=(const ParamAtom &atm) const {
+    return !(*this > atm); }
+  bool ParamAtom::operator>=(const ParamAtom &atm) const {
+    return !(*this < atm); }
+  ParamAtom::operator bool() const { return bool(m_patmdat); }
+  std::ostream& operator<<(std::ostream& os, const ParamAtom& atm) {
+    if (atm) os << "Param[" << atm.GetAtom() << "]";
+    return os;
+  }
+  
+  // ===========================================================================
+  // == ParamBond Data Implementation ==========================================
+  // ===========================================================================
+  
+  struct ParamBond::ParamBondImpl {
+    BondAtoms atoms;
+    wBond bond;
+    TypeCounts types;
+    MappedBonds mapped_bonds;
+    bool applied;
     
-    if (t_pos == end && t2_pos == end) _counts.emplace(t, 1);
+    ParamBondImpl(Atom& a, Atom& b, Bond& bnd)
+    : atoms(a.weak_from_this(), b.weak_from_this()), bond(bnd.weak_from_this()),
+    applied(false) { }
+  };
+  
+  // ===========================================================================
+  // == ParamBond Construction/Assignment ======================================
+  // ===========================================================================
+  
+  ParamBond::ParamBond() : m_pbnddat(nullptr) { }
+  ParamBond::ParamBond(const ParamBond& bnd) : m_pbnddat(bnd.m_pbnddat) { }
+  ParamBond::ParamBond(ParamBond&& bnd) : m_pbnddat(std::move(bnd.m_pbnddat)) { }
+  ParamBond& ParamBond::operator=(const ParamBond &bnd) {
+    if (&bnd != this) m_pbnddat = bnd.m_pbnddat;
+    return *this;
+  }
+  ParamBond& ParamBond::operator=(ParamBond &&bnd) {
+    m_pbnddat = std::move(bnd.m_pbnddat);
+    return *this;
+  }
+  ParamBond::ParamBond(std::pair<Atom&, Atom&> atms, Bond& bnd)
+  : m_pbnddat(std::make_shared<ParamBondImpl>(atms.first, atms.second, bnd)) { }
+  
+  // ===========================================================================
+  // == ParamBond Data Modification ============================================
+  // ===========================================================================
+  
+  void ParamBond::MappedWith(Bond &mapped) {
+    if (m_pbnddat->applied) return;
+    if (!mapped.HasType()) throw std::runtime_error("Needs a parameterised bond");
+    FFBond t = mapped.GetType();
+    FFBond t2 = t.GetLinkedType();
+    auto t_pos = m_pbnddat->types.find(t);
+    auto t2_pos = m_pbnddat->types.find(t2);
+    auto end = m_pbnddat->types.end();
+    
+    if (t_pos == end && t2_pos == end) m_pbnddat->types.emplace(t, 1);
     else if (t2 && t2_pos != end) ++t2_pos->second;
     else ++t_pos->second;
-    
-    _bnds.emplace_back(mapped);
+    m_pbnddat->mapped_bonds.emplace_back(mapped.weak_from_this());
   }
   
-  void IXParamBond::ApplyParameterisation(bool self_consistent) {
-    if (_bnds.empty()) return;  // Only parametrise when parameters to apply
-    if (_applied) return;  // Only parameterise if not done so already
-    if (self_consistent && _counts.size() > 1)
+  bool ParamBond::ApplyParameterisation(bool self_consistent) {
+    if (m_pbnddat->applied) return false;
+    if (m_pbnddat->mapped_bonds.empty()) return false;
+    if (self_consistent && m_pbnddat->types.size() > 1)
       throw std::runtime_error("Types not self-consistent");
-    Bond bnd = _bnd.lock();
+    sBond bnd = m_pbnddat->bond.lock();
     if (!bnd) throw std::runtime_error("Mapped bond missing");
     bnd->SetType(GetMostCommonType());
-    _applied = true;
+    m_pbnddat->applied = true;
+    return true;
   }
   
-  void IXParamAngle::MappedWith(Angle mapped) {
-    if (_applied) return;
-    FFAngle t = mapped->GetType();
-    FFAngle t2 = t->GetLinkedType();
-    auto t_pos = _counts.find(t);
-    auto t2_pos = _counts.find(t2);
-    auto end = _counts.end();
+  // ===========================================================================
+  // == ParamBond Data Retrevial ===============================================
+  // ===========================================================================
+  
+  int64_t ParamBond::NumSourceBonds() const {
+    return m_pbnddat->mapped_bonds.size(); }
+  std::pair<Atom&, Atom&> ParamBond::GetAtoms() const {
+    auto atms = m_pbnddat->atoms;
+    return {*atms.first.lock(), *atms.second.lock()}; }
+  Bond& ParamBond::GetBond() const { return *m_pbnddat->bond.lock(); }
+  FFBond ParamBond::GetMostCommonType() const {
+    using T = TypeCounts::value_type;
+    T max = *std::max_element(m_pbnddat->types.begin(), m_pbnddat->types.end(),
+                              [](T& a, T& b) { return a.second < b.second; });
+    return max.first; }
+  const ParamBond::TypeCounts& ParamBond::GetMappedTypeCounts() const {
+    return m_pbnddat->types; }
+  
+  // ===========================================================================
+  // == ParamBond Operators ====================================================
+  // ===========================================================================
+  
+  bool ParamBond::operator==(const ParamBond& bnd) const {
+    return m_pbnddat->bond.lock() == bnd.m_pbnddat->bond.lock(); }
+  bool ParamBond::operator!=(const ParamBond &bnd) const {
+    return !(*this == bnd); }
+  bool ParamBond::operator<(const ParamBond &bnd) const {
+    return (m_pbnddat->bond.lock()->GetIndex()
+            < bnd.m_pbnddat->bond.lock()->GetIndex()); }
+  bool ParamBond::operator>(const ParamBond &bnd) const {
+    return (m_pbnddat->bond.lock()->GetIndex()
+            > bnd.m_pbnddat->bond.lock()->GetIndex()); }
+  bool ParamBond::operator<=(const ParamBond &bnd) const {
+    return !(*this > bnd); }
+  bool ParamBond::operator>=(const ParamBond &bnd) const {
+    return !(*this < bnd); }
+  ParamBond::operator bool() const { return bool(m_pbnddat); }
+  std::ostream& operator<<(std::ostream& os, const ParamBond& bnd) {
+    if (bnd) os << "Param[" << bnd.GetBond() << "]";
+    return os;
+  }
+  
+  // ===========================================================================
+  // == ParamAngle Data Implementation =========================================
+  // ===========================================================================
+  
+  struct ParamAngle::ParamAngleImpl {
+    AngleAtoms atoms;
+    wAngle angle;
+    TypeCounts types;
+    MappedAngles mapped_angles;
+    bool applied;
     
-    if (t_pos == end && t2_pos == end) _counts.emplace(t, 1);
+    ParamAngleImpl(Atom& a, Atom& b, Atom& c, Angle& ang)
+    : atoms(a.weak_from_this(), b.weak_from_this(), c.weak_from_this()),
+    angle(ang.weak_from_this()), applied(false) { }
+  };
+  
+  // ===========================================================================
+  // == ParamAngle Construction/Assignment =====================================
+  // ===========================================================================
+  
+  ParamAngle::ParamAngle() : m_pangdat(nullptr) { }
+  ParamAngle::ParamAngle(const ParamAngle& ang) : m_pangdat(ang.m_pangdat) { }
+  ParamAngle::ParamAngle(ParamAngle&& ang)
+  : m_pangdat(std::move(ang.m_pangdat)) { }
+  ParamAngle& ParamAngle::operator=(const ParamAngle &ang) {
+    if (&ang != this) m_pangdat = ang.m_pangdat;
+    return *this;
+  }
+  ParamAngle& ParamAngle::operator=(ParamAngle &ang) {
+    m_pangdat = std::move(ang.m_pangdat);
+    return *this;
+  }
+  ParamAngle::ParamAngle(stdx::triple<Atom&> atms, Angle& ang)
+  : m_pangdat(std::make_shared<ParamAngleImpl>(atms.first, atms.second,
+                                               atms.third, ang)) { }
+  
+  // ===========================================================================
+  // == ParamAngle Data Modification ===========================================
+  // ===========================================================================
+  
+  void ParamAngle::MappedWith(Angle& mapped) {
+    if (m_pangdat->applied) return;
+    if (!mapped.HasType()) throw std::runtime_error("Needs a parameterised angle");
+    FFAngle t = mapped.GetType();
+    FFAngle t2 = t.GetLinkedType();
+    auto t_pos = m_pangdat->types.find(t);
+    auto t2_pos = m_pangdat->types.find(t2);
+    auto end = m_pangdat->types.end();
+    
+    if (t_pos == end && t2_pos == end) m_pangdat->types.emplace(t, 1);
     else if (t2 && t2_pos != end) ++t2_pos->second;
     else ++t_pos->second;
     
-    _angs.emplace_back(mapped);
+    m_pangdat->mapped_angles.emplace_back(mapped.weak_from_this());
   }
   
-  void IXParamAngle::ApplyParameterisation(bool self_consistent) {
-    if (_angs.empty()) return;
-    if (_applied) return;
-    if (self_consistent && _counts.size() > 1)
+  bool ParamAngle::ApplyParameterisation(bool self_consistent) {
+    if (m_pangdat->mapped_angles.empty()) return false;
+    if (m_pangdat->applied) return false;
+    if (self_consistent && m_pangdat->types.size() > 1)
       throw std::runtime_error("Types not self-consistent");
-    Angle ang = _ang.lock();
+    sAngle ang = m_pangdat->angle.lock();
     if (!ang) throw std::runtime_error("Mapped angle missing");
     ang->SetType(GetMostCommonType());
-    _applied = true;
+    m_pangdat->applied = true;
+    return true;
   }
   
-  void IXParamDihedral::MappedWith(Dihedral mapped) {
-    if (_applied) return;
-    FFDihedral t = mapped->GetType();
-    auto t_pos = _counts.find(t);
-    if (t_pos == _counts.end()) _counts.emplace(t, 1);
-    else ++t_pos->second;
-    _dhds.emplace_back(mapped);
+  // ===========================================================================
+  // == ParamAngle Data Retrevial ==============================================
+  // ===========================================================================
+  
+  int64_t ParamAngle::NumSourceAngles() const {
+    return m_pangdat->mapped_angles.size(); }
+  stdx::triple<Atom&> ParamAngle::GetAtoms() const {
+    auto atms = m_pangdat->atoms;
+    return {*atms.first.lock(), *atms.second.lock(), *atms.third.lock()}; }
+  Angle& ParamAngle::GetAngle() const { return *m_pangdat->angle.lock(); }
+  FFAngle ParamAngle::GetMostCommonType() const {
+    using T = TypeCounts::value_type;
+    T max = *std::max_element(m_pangdat->types.begin(), m_pangdat->types.end(),
+                              [](T& a, T& b) { return a.second < b.second; });
+    return max.first; }
+  const ParamAngle::TypeCounts& ParamAngle::GetMappedTypeCounts() const {
+    return m_pangdat->types; }
+  
+  // ===========================================================================
+  // == ParamAngle Operators ===================================================
+  // ===========================================================================
+  
+  bool ParamAngle::operator==(const ParamAngle& ang) const {
+    return m_pangdat->angle.lock() == ang.m_pangdat->angle.lock(); }
+  bool ParamAngle::operator!=(const ParamAngle &ang) const {
+    return !(*this == ang); }
+  bool ParamAngle::operator<(const ParamAngle &ang) const {
+    return (m_pangdat->angle.lock()->GetIndex()
+            < ang.m_pangdat->angle.lock()->GetIndex()); }
+  bool ParamAngle::operator>(const ParamAngle &ang) const {
+    return (m_pangdat->angle.lock()->GetIndex()
+            > ang.m_pangdat->angle.lock()->GetIndex()); }
+  bool ParamAngle::operator<=(const ParamAngle &ang) const {
+    return !(*this > ang); }
+  bool ParamAngle::operator>=(const ParamAngle &ang) const {
+    return !(*this < ang); }
+  ParamAngle::operator bool() const { return bool(m_pangdat); }
+  std::ostream& operator<<(std::ostream& os, const ParamAngle& ang) {
+    if (ang) os << "Param[" << ang.GetAngle() << "]";
+    return os;
   }
   
-  void IXParamDihedral::ApplyParameterisation(bool self_consistent) {
-    if (_dhds.empty()) return;
-    if (_applied) return;
-    if (self_consistent && _counts.size() > 1)
+  // ===========================================================================
+  // == ParamDihedral Data Implementation ======================================
+  // ===========================================================================
+  
+  struct ParamDihedral::ParamDihedralImpl {
+    DihedralAtoms atoms;
+    wDihedral dihedral;
+    TypeCounts types;
+    MappedDihedrals mapped_dihedrals;
+    bool applied;
+    
+    ParamDihedralImpl(Atom& a, Atom& b, Atom& c, Atom& d, Dihedral& dhd)
+    : atoms(a.weak_from_this(), b.weak_from_this(), c.weak_from_this(),
+            d.weak_from_this()), dihedral(dhd.weak_from_this()), applied(false)
+    { }
+  };
+  
+  // ===========================================================================
+  // == ParamDihedral Construction/Assignment ==================================
+  // ===========================================================================
+  
+  ParamDihedral::ParamDihedral() : m_pdhddat(nullptr) { }
+  ParamDihedral::ParamDihedral(const ParamDihedral& dhd)
+  : m_pdhddat(dhd.m_pdhddat) { }
+  ParamDihedral::ParamDihedral(ParamDihedral&& dhd)
+  : m_pdhddat(std::move(dhd.m_pdhddat)) { }
+  ParamDihedral& ParamDihedral::operator=(const ParamDihedral &dhd) {
+    if (&dhd != this) m_pdhddat = dhd.m_pdhddat;
+    return *this;
+  }
+  ParamDihedral& ParamDihedral::operator=(ParamDihedral &&dhd) {
+    m_pdhddat = std::move(dhd.m_pdhddat);
+    return *this;
+  }
+  ParamDihedral::ParamDihedral(stdx::quad<Atom&> atms, Dihedral& dhd)
+  : m_pdhddat(std::make_shared<ParamDihedralImpl>(atms.first, atms.second,
+                                                  atms.third, atms.fourth, dhd))
+  { }
+  
+  // ===========================================================================
+  // == ParamDihedral Data Modification ========================================
+  // ===========================================================================
+  
+  void ParamDihedral::MappedWith(Dihedral& mapped) {
+    if (m_pdhddat->applied) return;
+    // Can't throw with dihedrals as they can have no types assigned
+    if (!mapped.HasType()) return;
+    
+    TypeGroup t = mapped.GetTypes();
+    auto t_pos = m_pdhddat->types.emplace(t, 1);
+    if (!t_pos.second) ++(t_pos.first->second);
+    m_pdhddat->mapped_dihedrals.emplace_back(mapped.weak_from_this());
+  }
+  
+  bool ParamDihedral::ApplyParameterisation(bool self_consistent) {
+    if (m_pdhddat->mapped_dihedrals.empty()) return false;
+    if (m_pdhddat->applied) return false;
+    if (self_consistent && m_pdhddat->types.size() > 1)
       throw std::runtime_error("Types not self-consistent");
-    Dihedral dhd = _dhd.lock();
+    sDihedral dhd = m_pdhddat->dihedral.lock();
     if (!dhd) throw std::runtime_error("Mapped dihedral missing");
-    dhd->SetType(GetMostCommonType());
-    _applied = true;
+    dhd->SetTypes(GetMostCommonType());
+    m_pdhddat->applied = true;
+    return true;
   }
   
-  IXParamMolecule::IXParamMolecule(Molecule mol) : _mol(mol) {
-    for (auto it = mol->GetAtoms(); it.first != it.second; ++it.first)
-      _atms.emplace(*it.first, std::make_shared<IXParamAtom>(*it.first));
-    for (auto it = mol->GetBonds(); it.first != it.second; ++it.first) {
-      PBond atms = (*it.first)->GetAtoms();
-      _bnds.emplace(atms, std::make_shared<IXParamBond>(atms, (*it.first)));
+  // ===========================================================================
+  // == ParamDihedral Data Retrevial ===========================================
+  // ===========================================================================
+  
+  int64_t ParamDihedral::NumSourceDihedral() const {
+    return m_pdhddat->mapped_dihedrals.size(); }
+  stdx::quad<Atom&> ParamDihedral::GetParameterisedAtoms() const {
+    return {*m_pdhddat->atoms.first.lock(), *m_pdhddat->atoms.second.lock(),
+      *m_pdhddat->atoms.third.lock(), *m_pdhddat->atoms.fourth.lock()};
+  }
+  Dihedral& ParamDihedral::GetDihedral() const {
+    return *m_pdhddat->dihedral.lock(); }
+  ParamDihedral::TypeGroup ParamDihedral::GetMostCommonType() const {
+    using T = TypeCounts::value_type;
+    T max = *std::max_element(m_pdhddat->types.begin(), m_pdhddat->types.end(),
+                              [](T& a, T& b) { return a.second < b.second; });
+    return max.first; }
+  const ParamDihedral::TypeCounts& ParamDihedral::GetMappedTypeCounts() const {
+    return m_pdhddat->types;
+  }
+  
+  // ===========================================================================
+  // == ParamDihedral Operators ================================================
+  // ===========================================================================
+  
+  bool ParamDihedral::operator==(const ParamDihedral& ang) const {
+    return m_pdhddat->dihedral.lock() == ang.m_pdhddat->dihedral.lock(); }
+  bool ParamDihedral::operator!=(const ParamDihedral &ang) const {
+    return !(*this == ang); }
+  bool ParamDihedral::operator<(const ParamDihedral &ang) const {
+    return (m_pdhddat->dihedral.lock()->GetIndex()
+            < ang.m_pdhddat->dihedral.lock()->GetIndex()); }
+  bool ParamDihedral::operator>(const ParamDihedral &ang) const {
+    return (m_pdhddat->dihedral.lock()->GetIndex()
+            > ang.m_pdhddat->dihedral.lock()->GetIndex()); }
+  bool ParamDihedral::operator<=(const ParamDihedral &ang) const {
+    return !(*this > ang); }
+  bool ParamDihedral::operator>=(const ParamDihedral &ang) const {
+    return !(*this < ang); }
+  ParamDihedral::operator bool() const { return bool(m_pdhddat); }
+  std::ostream& operator<<(std::ostream& os, const ParamDihedral& ang) {
+    if (ang) os << "Param[" << ang.GetDihedral() << "]";
+    return os;
+  }
+  
+  // ===========================================================================
+  // == ParamMolecule Data Implementation ======================================
+  // ===========================================================================
+  struct ParamMolecule::ParamMoleculeImpl {
+    sMolecule mol;
+    ParamAtoms atoms;
+    ParamBonds bonds;
+    ParamAngles angles;
+    ParamDihedrals dihedrals;
+    std::vector<ParamAtom> nonsc_atoms;
+    
+    ParamMoleculeImpl(Molecule& m) : mol(m.shared_from_this()) {
+      for (sAtom atm : m.GetAtoms()) atoms.emplace(atm, ParamAtom(*atm));
+      for (sBond bnd : m.GetBonds()) {
+        auto as = bnd->GetAtoms();
+        sAtom a = as.first.shared_from_this();
+        sAtom b = as.second.shared_from_this();
+        if (a > b) a.swap(b);
+        bonds.emplace(std::make_pair(a, b), ParamBond(as, *bnd));
+      }
+      for (sAngle ang : m.GetAngles()) {
+        auto as = ang->GetAtoms();
+        sAtom a = as.first.shared_from_this();
+        sAtom b = as.second.shared_from_this();
+        sAtom c = as.third.shared_from_this();
+        if (a > c) a.swap(c);
+        angles.emplace(stdx::make_triple(a, b, c), ParamAngle(as, *ang));
+      }
+      for (sDihedral dhd : m.GetDihedrals()) {
+        auto as = dhd->GetAtoms();
+        sAtom a = as.first.shared_from_this();
+        sAtom b = as.second.shared_from_this();
+        sAtom c = as.third.shared_from_this();
+        sAtom d = as.fourth.shared_from_this();
+        if (a > d) a.swap(d);
+        dihedrals.emplace(stdx::make_quad(a, b, c, d), ParamDihedral(as, *dhd));
+      }
     }
-    for (auto it = mol->GetAngles(); it.first != it.second; ++it.first) {
-      PAngle atms = (*it.first)->GetAtoms();
-      _angs.emplace(atms, std::make_shared<IXParamAngle>(atms, (*it.first)));
+  };
+  
+  // ===========================================================================
+  // == ParamMolecule Construction/Assignment ==================================
+  // ===========================================================================
+  
+  ParamMolecule::ParamMolecule() : m_pmoldat(nullptr) { }
+  ParamMolecule::ParamMolecule(const ParamMolecule& pmol)
+  : m_pmoldat(pmol.m_pmoldat) { }
+  ParamMolecule::ParamMolecule(ParamMolecule&& pmol)
+  : m_pmoldat(std::move(pmol.m_pmoldat)) { }
+  ParamMolecule& ParamMolecule::operator=(const ParamMolecule& pmol) {
+    if (&pmol != this) m_pmoldat = pmol.m_pmoldat;
+    return *this;
+  }
+  ParamMolecule& ParamMolecule::operator=(ParamMolecule&& pmol) {
+    m_pmoldat = std::move(pmol.m_pmoldat);
+    return *this;
+  }
+  ParamMolecule::ParamMolecule(Molecule& mol)
+  : m_pmoldat(std::make_shared<ParamMoleculeImpl>(mol)) { }
+  
+  // ===========================================================================
+  // == ParamMolecule Data Modification ========================================
+  // ===========================================================================
+  
+  void ParamMolecule::ApplyParameteristion(bool sc) {
+    for (auto& atm : m_pmoldat->atoms) {
+      bool param = atm.second.ApplyParameterisation(sc);
+      if (!sc && param) m_pmoldat->nonsc_atoms.emplace_back(atm.second);
     }
-    for (auto it = mol->GetDihedrals(); it.first != it.second; ++it.first) {
-      PDihedral atms = (*it.first)->GetAtoms();
-      _dhds.emplace(atms, std::make_shared<IXParamDihedral>(atms, (*it.first)));
-    }
+    for (auto& bnd : m_pmoldat->bonds) bnd.second.ApplyParameterisation(sc);
+    for (auto& ang : m_pmoldat->angles) ang.second.ApplyParameterisation(sc);
+    for (auto& dhd : m_pmoldat->dihedrals) dhd.second.ApplyParameterisation(sc);
   }
   
-  ParamAtom IXParamMolecule::GetAtom(Atom atm) const {
-    auto pos = _atms.find(atm);
-    return pos == _atms.end() ? ParamAtom() : pos->second;
+  // ===========================================================================
+  // == ParamMolecule Data Retrevial ===========================================
+  // ===========================================================================
+  
+  ParamAtom ParamMolecule::GetAtom(Atom &atm) const {
+    auto pos = m_pmoldat->atoms.find(atm.shared_from_this());
+    return pos == m_pmoldat->atoms.end() ? ParamAtom() : pos->second;
   }
   
-  ParamBond IXParamMolecule::GetBond(Bond bnd) const {
-    return GetBond(bnd->GetAtoms());
+  ParamBond ParamMolecule::GetBond(Bond& bnd) const {
+    sAtom a = bnd.GetSourceAtom().shared_from_this();
+    sAtom b = bnd.GetTargetAtom().shared_from_this();
+    return GetBond(std::make_pair(a, b));
   }
   
-  ParamBond IXParamMolecule::GetBond(IXParamMolecule::PBond atms) const {
-    auto pos = _bnds.find(atms);
-    if (pos != _bnds.end()) return pos->second;
-    pos = _bnds.find(std::make_pair(atms.second, atms.first));
-    return pos == _bnds.end() ? ParamBond() : pos->second;
+  ParamBond ParamMolecule::GetBond(PBond atms) const {
+    if (atms.first > atms.second) atms.first.swap(atms.second);
+    auto pos = m_pmoldat->bonds.find(atms);
+    return pos == m_pmoldat->bonds.end() ? ParamBond() : pos->second;
   }
   
-  ParamAngle IXParamMolecule::GetAngle(Angle ang) const {
-    return GetAngle(ang->GetAtoms());
+  ParamAngle ParamMolecule::GetAngle(Angle &ang) const {
+    auto atms = ang.GetAtoms();
+    sAtom a = atms.first.shared_from_this();
+    sAtom b = atms.second.shared_from_this();
+    sAtom c = atms.third.shared_from_this();
+    return GetAngle(stdx::make_triple(a, b, c));
   }
   
-  ParamAngle IXParamMolecule::GetAngle(IXParamMolecule::PAngle atms) const {
-    auto pos = _angs.find(atms);
-    if (pos != _angs.end()) return pos->second;
-    pos = _angs.find(stdx::make_triple(atms.third, atms.second, atms.first));
-    return pos == _angs.end() ? ParamAngle() : pos->second;
+  ParamAngle ParamMolecule::GetAngle(PAngle atms) const {
+    if (atms.first > atms.third) atms.first.swap(atms.third);
+    auto pos = m_pmoldat->angles.find(atms);
+    return pos == m_pmoldat->angles.end() ? ParamAngle() : pos->second;
   }
   
-  ParamDihedral IXParamMolecule::GetDihedral(Dihedral dhd) {
-    return GetDihedral(dhd->GetAtoms());
+  ParamDihedral ParamMolecule::GetDihedral(Dihedral &dhd) {
+    auto atms = dhd.GetAtoms();
+    sAtom a = atms.first.shared_from_this();
+    sAtom b = atms.second.shared_from_this();
+    sAtom c = atms.third.shared_from_this();
+    sAtom d = atms.fourth.shared_from_this();
+    return GetDihedral(stdx::make_quad(a, b, c, d));
   }
   
-  ParamDihedral IXParamMolecule::GetDihedral(IXParamMolecule::PDihedral atms) {
-    auto pos = _dhds.find(atms);
-    if (pos != _dhds.end()) return pos->second;
-    pos = _dhds.find(stdx::make_quad(atms.fourth, atms.third, atms.second, atms.first));
-    if (pos != _dhds.end()) return pos->second;
-    //! \todo Create a new dihedral in the molecule
-    ParamDihedral dhd = std::make_shared<IXParamDihedral>(atms, Dihedral());
-    _dhds.emplace(atms, dhd);
-    return dhd;
+  ParamDihedral ParamMolecule::GetDihedral(PDihedral atms) {
+    if (atms.fourth < atms.first) atms.first.swap(atms.fourth);
+    auto pos = m_pmoldat->dihedrals.find(atms);
+    if (pos != m_pmoldat->dihedrals.end()) return pos->second;
+    Dihedral& newD = m_pmoldat->mol->NewDihedral(*atms.first, *atms.second,
+                                                *atms.third, *atms.fourth);
+    ParamDihedral newPD(newD.GetAtoms(), newD);
+    m_pmoldat->dihedrals.emplace(atms, newPD);
+    return newPD;
   }
   
-  void IXParamMolecule::ApplyParameteristion(bool self_consistent) {
-    for (auto& atm : _atms) atm.second->ApplyParameterisation(self_consistent);
-    for (auto& bnd : _bnds) bnd.second->ApplyParameterisation(self_consistent);
-    for (auto& ang : _angs) ang.second->ApplyParameterisation(self_consistent);
-    for (auto& dhd : _dhds) dhd.second->ApplyParameterisation(self_consistent);
-  }
+  // ===========================================================================
+  // == ParamMolecule Operators ================================================
+  // ===========================================================================
+  
 }

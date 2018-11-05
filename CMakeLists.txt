@@ -53,6 +53,7 @@ SET(INDIGOX_LIB_SRCS
     src/classes/dihedral.cpp
     src/classes/forcefield.cpp
     src/classes/molecule.cpp
+    src/classes/parameterised.cpp
     src/classes/periodictable.cpp
     src/graph/condensed.cpp
     src/graph/molecular.cpp

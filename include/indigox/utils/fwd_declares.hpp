@@ -36,25 +36,11 @@ namespace indigox {
   class PeriodicTable;
   
   // CherryPicker Related
-  class IXParamMolecule;
-  using ParamMolecule = std::shared_ptr<IXParamMolecule>;
-  using _ParamMolecule = std::weak_ptr<IXParamMolecule>;
-  
-  class IXParamAtom;
-  using ParamAtom = std::shared_ptr<IXParamAtom>;
-  using _ParamAtom = std::weak_ptr<IXParamAtom>;
-  
-  class IXParamBond;
-  using ParamBond = std::shared_ptr<IXParamBond>;
-  using _ParamBond = std::weak_ptr<IXParamBond>;
-  
-  class IXParamAngle;
-  using ParamAngle = std::shared_ptr<IXParamAngle>;
-  using _ParamAngle = std::weak_ptr<IXParamAngle>;
-  
-  class IXParamDihedral;
-  using ParamDihedral = std::shared_ptr<IXParamDihedral>;
-  using _ParamDihedral = std::weak_ptr<IXParamDihedral>;
+  class ParamMolecule;
+  class ParamAtom;
+  class ParamBond;
+  class ParamAngle;
+  class ParamDihedral;
   
   // Forcefield related
   class Forcefield;
