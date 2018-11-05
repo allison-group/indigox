@@ -56,6 +56,8 @@ void GeneratePyForcefield(py::module& m) {
   .def("GetID", &FFAtom::GetID)
   .def("GetName", &FFAtom::GetName)
   .def("GetForcefield", &FFAtom::GetForcefield)
+  .def("GetImplicitHydrogenCount", &FFAtom::GetImplicitHydrogenCount)
+  .def("GetElement", &FFAtom::GetElement)
   .def("__bool__", &FFAtom::operator bool)
   .def(py::self == py::self)
   .def(py::self != py::self)
