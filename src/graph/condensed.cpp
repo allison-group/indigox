@@ -149,6 +149,7 @@ namespace indigox::graph {
   void CMGVertex::serialise(Archive &archive, const uint32_t) {
     archive(INDIGOX_SERIAL_NVP("data", _dat));
   }
+  INDIGOX_SERIALISE(CMGVertex);
   
 // ============================================================================
 // == CMGVertex Methods =======================================================
@@ -227,6 +228,7 @@ namespace indigox::graph {
   void CMGEdge::serialise(Archive &archive, const uint32_t) {
     archive(INDIGOX_SERIAL_NVP("data", _dat));
   }
+  INDIGOX_SERIALISE(CMGEdge);
   
 // ============================================================================
 // == CMGEdge Methods =========================================================

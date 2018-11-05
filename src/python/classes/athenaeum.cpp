@@ -80,4 +80,10 @@ void GeneratePyAthenaeum(py::module& m) {
   .def_readwrite_static("DefaultOverlap", &AtSet::DefaultOverlap)
   .def_readwrite_static("DefaultCycleOverlap", &AtSet::DefaultCycleOverlap)
   ;
+  
+  // ===========================================================================
+  // == Module level function bindings =========================================
+  // ===========================================================================
+  m.def("SaveAthenaeum", &SaveAthenaeum);
+  m.def("LoadAthenaeum", &LoadAthenaeum);
 }

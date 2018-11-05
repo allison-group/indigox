@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <deque>
+#include <fstream>
 #include <iterator>
 #include <numeric>
 #include <vector>
@@ -271,6 +272,34 @@ namespace indigox {
   uint32_t Athenaeum::Settings::DefaultOverlap = 2;
   uint32_t Athenaeum::Settings::DefaultCycleOverlap = 2;
   
+  Athenaeum::Athenaeum(const Athenaeum& a)
+  : _ff(a._ff), _overlap(a._overlap), _roverlap(a._roverlap), _man(a._man),
+  _frags(a._frags) { }
+  
+  Athenaeum::Athenaeum(Athenaeum&& a)
+  : _ff(std::move(a._ff)), _overlap(std::move(a._overlap)),
+  _roverlap(std::move(a._roverlap)), _man(std::move(a._man)),
+  _frags(std::move(a._frags)) { }
+  
+  Athenaeum& Athenaeum::operator=(const Athenaeum &a) {
+    if (&a != this) {
+      _ff = a._ff;
+      _overlap = a._overlap;
+      _roverlap = a._roverlap;
+      _man = a._man;
+      _frags = a._frags;
+    }
+    return *this;
+  }
+  Athenaeum& Athenaeum::operator=(Athenaeum &&a) {
+    _ff       = std::move(a._ff);
+    _overlap  = std::move(a._overlap);
+    _roverlap = std::move(a._roverlap);
+    _man      = std::move(a._man);
+    _frags    = std::move(a._frags);
+    return *this;
+  }
+  
   Athenaeum::Athenaeum(Forcefield& ff)
   : Athenaeum(ff, Settings::DefaultOverlap, Settings::DefaultCycleOverlap) { }
   
@@ -460,6 +489,28 @@ namespace indigox {
     }
     
     return _frags.at(m).size() - initial_count;
+  }
+  
+  void SaveAthenaeum(const Athenaeum& a, std::string path) {
+    using Archive = cereal::JSONOutputArchive;
+    std::ofstream os(path);
+    if (!os.is_open()) throw std::runtime_error("Unable to open output stream");
+    Archive archive(os);
+    std::string stype("Athenaeum");
+    archive(stype, a);
+  }
+  
+  Athenaeum LoadAthenaeum(std::string path) {
+    using Archive = cereal::JSONInputArchive;
+    std::ifstream is(path);
+    if (!is.is_open()) throw std::runtime_error("Unable to open input stream");
+    std::string stype;
+    Archive archive(is);
+    archive(stype);
+    if (stype != "Athenaeum") throw std::runtime_error("Not an Athenaeum file");
+    Athenaeum a;
+    archive(a);
+    return a;
   }
   
 }

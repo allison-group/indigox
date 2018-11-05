@@ -103,7 +103,11 @@ namespace indigox {
     void serialise(Archive& archive, const uint32_t version);
     
   public:
-    Athenaeum() = delete;
+    Athenaeum() = default;
+    Athenaeum(const Athenaeum& ath);
+    Athenaeum(Athenaeum&& ath);
+    Athenaeum& operator=(const Athenaeum& ath);
+    Athenaeum& operator=(Athenaeum&& ath);
     Athenaeum(Forcefield& ff);
     Athenaeum(Forcefield& ff, uint32_t overlap);
     Athenaeum(Forcefield& ff, uint32_t overlap, uint32_t ring_overlap);
@@ -140,6 +144,9 @@ namespace indigox {
     //! \brief fragments
     MoleculeFragments _frags;
   };
+  
+  void SaveAthenaeum(const Athenaeum& ath, std::string path);
+  Athenaeum LoadAthenaeum(std::string path);
   
 }
 
