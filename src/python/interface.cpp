@@ -9,6 +9,7 @@ PYBIND11_MODULE(pyindigox, m) {
   GeneratePyPeriodicTable(m);
   GeneratePyForcefield(m);
   GeneratePyAthenaeum(m);
+  GeneratePyParameterisedMolecule(m);
   // Graph namespace
   pybind11::module m_graph = m.def_submodule("graph");
   GeneratePyGraphs(m_graph);

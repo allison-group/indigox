@@ -85,6 +85,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("GetType", &Atom::GetType)
   .def("HasType", &Atom::HasType)
   .def("SetType", &Atom::SetType)
+  .def("__str__", &outstream_operator<Atom>)
   
   .def("GetUniqueID", &Atom::GetUniqueID)
   ;
@@ -112,6 +113,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("GetType", &Bond::GetType)
   .def("SetType", &Bond::SetType)
   .def("HasType", &Bond::HasType)
+  .def("__str__", &outstream_operator<Bond>)
   
   .def("GetUniqueID", &Bond::GetUniqueID)
   ;
@@ -136,6 +138,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("GetType", &Angle::GetType)
   .def("SetType", &Angle::SetType)
   .def("HasType", &Angle::HasType)
+  .def("__str__", &outstream_operator<Angle>)
   
   .def("GetUniqueID", &Angle::GetUniqueID)
   ;
@@ -163,6 +166,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("HasType", &Dihedral::HasType)
   .def("AddType", &Dihedral::AddType)
   .def("RemoveType", &Dihedral::RemoveType)
+  .def("__str__", &outstream_operator<Dihedral>)
   
   .def("GetUniqueID", &Dihedral::GetUniqueID)
   ;

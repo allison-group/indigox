@@ -3,6 +3,7 @@ SET(INDIGOX_PYTHON_INTERFACE_SRCS
     classes/athenaeum.cpp
     classes/forcefield.cpp
     classes/molecule.cpp
+    classes/parammolecule.cpp
     classes/periodictable.cpp
     graph/algorithms.cpp
     graph/graphs.cpp

@@ -18,6 +18,7 @@ void GeneratePyGraphs(pybind11::module& m);
 void GeneratePyForcefield(pybind11::module& m);
 void GeneratePyAthenaeum(pybind11::module& m);
 void GeneratePyGraphAlgorithms(pybind11::module& m);
+void GeneratePyParameterisedMolecule(pybind11::module& m);
 
 void GeneratePyElectronAssigner(pybind11::module& m);
 
