@@ -37,6 +37,7 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def(py::self >= py::self)
   .def("__bool__", &ParamAtom::operator bool)
   .def("__str__", &outstream_operator<ParamAtom>)
+  .def("__repr__", &outstream_operator<ParamAtom>)
   ;
   
   
@@ -61,6 +62,7 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def(py::self >= py::self)
   .def("__bool__", &ParamBond::operator bool)
   .def("__str__", &outstream_operator<ParamBond>)
+  .def("__repr__", &outstream_operator<ParamBond>)
   ;
   
   
@@ -85,6 +87,7 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def(py::self >= py::self)
   .def("__bool__", &ParamAngle::operator bool)
   .def("__str__", &outstream_operator<ParamAngle>)
+  .def("__repr__", &outstream_operator<ParamAngle>)
   ;
   
   
@@ -109,6 +112,7 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def(py::self >= py::self)
   .def("__bool__", &ParamDihedral::operator bool)
   .def("__str__", &outstream_operator<ParamDihedral>)
+  .def("__repr__", &outstream_operator<ParamDihedral>)
   ;
   
   

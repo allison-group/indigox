@@ -86,6 +86,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("HasType", &Atom::HasType)
   .def("SetType", &Atom::SetType)
   .def("__str__", &outstream_operator<Atom>)
+  .def("__repr__", &outstream_operator<Atom>)
   
   .def("GetUniqueID", &Atom::GetUniqueID)
   ;
@@ -114,6 +115,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("SetType", &Bond::SetType)
   .def("HasType", &Bond::HasType)
   .def("__str__", &outstream_operator<Bond>)
+  .def("__repr__", &outstream_operator<Bond>)
   
   .def("GetUniqueID", &Bond::GetUniqueID)
   ;
@@ -139,6 +141,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("SetType", &Angle::SetType)
   .def("HasType", &Angle::HasType)
   .def("__str__", &outstream_operator<Angle>)
+  .def("__repr__", &outstream_operator<Angle>)
   
   .def("GetUniqueID", &Angle::GetUniqueID)
   ;
@@ -167,6 +170,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("AddType", &Dihedral::AddType)
   .def("RemoveType", &Dihedral::RemoveType)
   .def("__str__", &outstream_operator<Dihedral>)
+  .def("__repr__", &outstream_operator<Dihedral>)
   
   .def("GetUniqueID", &Dihedral::GetUniqueID)
   ;
@@ -255,12 +259,12 @@ void GeneratePyMolecule(pybind11::module& m) {
     Atom& Br = mol->NewAtom("Br", GetPeriodicTable().GetElement("Br"));
     Atom& I1 = mol->NewAtom("I1", GetPeriodicTable().GetElement("I"));
     Atom& H2 = mol->NewAtom("H2", GetPeriodicTable().GetElement("H"));
-    mol->NewBond(C1, C2).SetOrder(BondOrder::SINGLE);
-    mol->NewBond(C2, C3).SetOrder(BondOrder::DOUBLE);
-    mol->NewBond(C3, C4).SetOrder(BondOrder::SINGLE);
-    mol->NewBond(C4, C5).SetOrder(BondOrder::DOUBLE);
-    mol->NewBond(C5, C6).SetOrder(BondOrder::SINGLE);
-    mol->NewBond(C6, C1).SetOrder(BondOrder::DOUBLE);
+    mol->NewBond(C1, C2).SetOrder(BondOrder::AROMATIC);
+    mol->NewBond(C2, C3).SetOrder(BondOrder::AROMATIC);
+    mol->NewBond(C3, C4).SetOrder(BondOrder::AROMATIC);
+    mol->NewBond(C4, C5).SetOrder(BondOrder::AROMATIC);
+    mol->NewBond(C5, C6).SetOrder(BondOrder::AROMATIC);
+    mol->NewBond(C6, C1).SetOrder(BondOrder::AROMATIC);
     mol->NewBond(C1, H1).SetOrder(BondOrder::SINGLE);
     mol->NewBond(C2, Cl).SetOrder(BondOrder::SINGLE);
     mol->NewBond(C3, F1).SetOrder(BondOrder::SINGLE);

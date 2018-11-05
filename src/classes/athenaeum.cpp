@@ -18,6 +18,7 @@
 #include <indigox/classes/molecule.hpp>
 #include <indigox/graph/condensed.hpp>
 #include <indigox/graph/molecular.hpp>
+#include <indigox/utils/serialise.hpp>
 
 namespace indigox {
   // ===========================================================================
@@ -32,7 +33,27 @@ namespace indigox {
     std::vector<Fragment::BndType> bonds;
     std::vector<Fragment::AngType> angles;
     std::vector<Fragment::DhdType> dihedrals;
+    
+    FragmentData() = default;
+    
+    template <class Archive>
+    void serialise(Archive& archive, const uint32_t) {
+      archive(INDIGOX_SERIAL_NVP("graph", graph),
+              INDIGOX_SERIAL_NVP("frag_verts", frag),
+              INDIGOX_SERIAL_NVP("overlap_verts", overlap),
+              INDIGOX_SERIAL_NVP("atoms", atoms),
+              INDIGOX_SERIAL_NVP("bonds", bonds),
+              INDIGOX_SERIAL_NVP("angles", angles),
+              INDIGOX_SERIAL_NVP("dihedrals", dihedrals));
+    }
+    
   };
+  
+  template <class Archive>
+  void Fragment::serialise(Archive &archive, const uint32_t) {
+    archive(INDIGOX_SERIAL_NVP("data", _dat));
+  }
+  INDIGOX_SERIALISE(Fragment);
   
   void _MGVertexToCMGVertex(std::vector<graph::MGVertex>& v_in,
                             std::vector<graph::CMGVertex>& v_out,
@@ -264,6 +285,16 @@ namespace indigox {
     return std::accumulate(_frags.begin(), _frags.end(), 0,
                            [](size_t i, auto& j){ return i + j.second.size(); });
   }
+  
+  template <class Archive>
+  void Athenaeum::serialise(Archive &archive, const uint32_t) {
+    archive(INDIGOX_SERIAL_NVP("forcefield", _ff),
+            INDIGOX_SERIAL_NVP("overlap", _overlap),
+            INDIGOX_SERIAL_NVP("ring_overlap", _roverlap),
+            INDIGOX_SERIAL_NVP("manual", _man),
+            INDIGOX_SERIAL_NVP("fragments", _frags));
+  }
+  INDIGOX_SERIALISE(Athenaeum);
   
   size_t Athenaeum::NumFragments(Molecule &mol) const {
     sMolecule m = mol.shared_from_this();

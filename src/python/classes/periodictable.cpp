@@ -40,6 +40,7 @@ void GeneratePyPeriodicTable(py::module& m) {
   .def(py::self <= py::self)
   .def(py::self >= py::self)
   .def("__str__", &outstream_operator<Element>)
+  .def("__repr__", &outstream_operator<Element>)
   ;
   
   // ===========================================================================
@@ -54,6 +55,7 @@ void GeneratePyPeriodicTable(py::module& m) {
   .def("GetUndefined", &PeriodicTable::GetUndefined)
   .def("NumElements", &PeriodicTable::NumElements)
   .def("__str__", &outstream_operator<PeriodicTable>)
+  .def("__repr__", &outstream_operator<PeriodicTable>)
   ;
   
   // ===========================================================================

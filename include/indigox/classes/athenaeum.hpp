@@ -15,6 +15,7 @@
 namespace indigox {
   
   class Fragment {
+    friend class cereal::access;
   public:
     /*! \brief Type of overlapping vertex.
      *  \details Each vertex of an overlap is given a type. This is to enable
@@ -31,6 +32,10 @@ namespace indigox {
     using AngType = stdx::triple<AtmType>;
     using DhdType = stdx::quad<AtmType>;
     
+  private:
+    template <class Archive>
+    void serialise(Archive& archive, const uint32_t version);
+    
   public:
     Fragment();
     
@@ -43,6 +48,8 @@ namespace indigox {
     Fragment(graph::MolecularGraph& G,
              std::vector<graph::MGVertex>& frag,
              std::vector<graph::MGVertex>& overlap);
+    /// \todo Add fragment generation directly from molecule.
+    ///       Needs shared_ptr impl of mol/atom etc data.
     
     Fragment(const Fragment& frag);
     Fragment(Fragment&& frag);
@@ -73,6 +80,7 @@ namespace indigox {
   };
   
   class Athenaeum {
+    friend class cereal::access;
   public:
     struct Settings {
       // Maximum vertex count for automatic fragment generation
@@ -90,6 +98,11 @@ namespace indigox {
     using FragContain = std::vector<Fragment>;
     using MoleculeFragments = std::map<sMolecule, FragContain>;
 
+  private:
+    template <class Archive>
+    void serialise(Archive& archive, const uint32_t version);
+    
+  public:
     Athenaeum() = delete;
     Athenaeum(Forcefield& ff);
     Athenaeum(Forcefield& ff, uint32_t overlap);
