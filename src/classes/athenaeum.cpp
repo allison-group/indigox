@@ -306,7 +306,16 @@ namespace indigox {
   }
   
   bool CanCutEdge(graph::CMGEdge& e, graph::CondensedMolecularGraph& g) {
-    return g.HasEdge(e);
+    if (!g.HasEdge(e)) return false;
+    // Only single or aromatic
+    Bond& bnd = e.GetSource().GetBond();
+    if (bnd.GetOrder() != BondOrder::SINGLE
+        && bnd.GetOrder() != BondOrder::AROMATIC) return false;
+    // Is a hetero bond
+    if (bnd.GetSourceAtom().GetElement() != "C"
+        && bnd.GetTargetAtom().GetElement() != "C") return false;
+    // cyclisation rules
+    return true;
   }
   
   size_t Athenaeum::AddAllFragments(Molecule& mol) {
