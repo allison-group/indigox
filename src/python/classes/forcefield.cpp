@@ -65,6 +65,8 @@ void GeneratePyForcefield(py::module& m) {
   .def(py::self > py::self)
   .def(py::self <= py::self)
   .def(py::self >= py::self)
+  .def("__str__", &outstream_operator<FFAtom>)
+  .def("__repr__", &outstream_operator<FFAtom>)
   ;
   
   // ===========================================================================
@@ -86,6 +88,8 @@ void GeneratePyForcefield(py::module& m) {
   .def(py::self > py::self)
   .def(py::self <= py::self)
   .def(py::self >= py::self)
+  .def("__str__", &outstream_operator<FFBond>)
+  .def("__repr__", &outstream_operator<FFBond>)
   ;
   
   // ===========================================================================
@@ -107,6 +111,8 @@ void GeneratePyForcefield(py::module& m) {
   .def(py::self > py::self)
   .def(py::self <= py::self)
   .def(py::self >= py::self)
+  .def("__str__", &outstream_operator<FFAngle>)
+  .def("__repr__", &outstream_operator<FFAngle>)
   ;
   
   // ===========================================================================
@@ -129,6 +135,8 @@ void GeneratePyForcefield(py::module& m) {
   .def(py::self > py::self)
   .def(py::self <= py::self)
   .def(py::self >= py::self)
+  .def("__str__", &outstream_operator<FFDihedral>)
+  .def("__repr__", &outstream_operator<FFDihedral>)
   ;
   
   // ===========================================================================
@@ -169,6 +177,8 @@ void GeneratePyForcefield(py::module& m) {
   .def("__bool__", &Forcefield::operator bool)
   .def(py::self == py::self)
   .def(py::self != py::self)
+  .def("__str__", &outstream_operator<Forcefield>)
+  .def("__repr__", &outstream_operator<Forcefield>)
   ;
   
   // ===========================================================================

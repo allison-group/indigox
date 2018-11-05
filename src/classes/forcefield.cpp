@@ -100,6 +100,11 @@ namespace indigox {
   bool FFAtom::operator>=(const FFAtom &atm) const { return !(*this < atm); }
   FFAtom::operator bool() const { return bool(m_ffatmdat); }
   
+  std::ostream& operator<<(std::ostream& os, const FFAtom& atm) {
+    if (atm) os << "FFAtom(" << atm.GetID() << ")";
+    return os;
+  }
+  
   // ===========================================================================
   // == FFBond Data implementation =============================================
   // ===========================================================================
@@ -204,6 +209,20 @@ namespace indigox {
   bool FFBond::operator>=(const FFBond &bnd) const { return !(*this < bnd); }
   FFBond::operator bool() const { return bool(m_ffbnddat); }
   
+  std::ostream& operator<<(std::ostream& os, BondType type) {
+    switch (type) {
+      case FFBond::Type::Empty: return os << "Empty";
+      case FFBond::Type::Harmonic: return os << "Harmonic";
+      case FFBond::Type::Quartic: return os << "Quartic";
+      default: return os;
+    }
+  }
+  
+  std::ostream& operator<<(std::ostream& os, const FFBond& bnd) {
+    if (bnd) os << "FFBond(" << bnd.GetType() << ", " << bnd.GetID() << ")";
+    return os;
+  }
+  
   // ===========================================================================
   // == FFAngle Data Implementation ============================================
   // ===========================================================================
@@ -307,6 +326,20 @@ namespace indigox {
   bool FFAngle::operator<=(const FFAngle &bnd) const { return !(*this > bnd); }
   bool FFAngle::operator>=(const FFAngle &bnd) const { return !(*this < bnd); }
   FFAngle::operator bool() const { return bool(m_ffangdat); }
+  
+  std::ostream& operator<<(std::ostream& os, AngleType type) {
+    switch (type) {
+      case FFAngle::Type::Empty: return os << "Empty";
+      case FFAngle::Type::Harmonic: return os << "Harmonic";
+      case FFAngle::Type::CosineHarmonic: return os << "CosineHarmonic";
+      default: return os;
+    }
+  }
+  
+  std::ostream& operator<<(std::ostream& os, const FFAngle& ang) {
+    if (ang) os << "FFAngle(" << ang.GetType() << ", " << ang.GetID() << ")";
+    return os;
+  }
   
   // ===========================================================================
   // == FFDihedral Data Implementation =========================================
@@ -426,6 +459,20 @@ namespace indigox {
     return !(*this < bnd);
   }
   FFDihedral::operator bool() const { return bool(m_ffdhddat); }
+  
+  std::ostream& operator<<(std::ostream& os, DihedralType dhd) {
+    switch (dhd) {
+      case FFDihedral::Type::Empty: return (os << "Empty");
+      case FFDihedral::Type::Proper: return (os << "Proper");
+      case FFDihedral::Type::Improper: return (os << "Improper");
+      default: return os;
+    }
+  }
+  
+  std::ostream& operator<<(std::ostream& os, const FFDihedral& dhd) {
+    if (dhd) os << "FFDihedral(" << dhd.GetType() << ", " << dhd.GetID() << ")";
+    return os;
+  }
   
   // ===========================================================================
   // == Forcefield Data Implementation =========================================
@@ -726,6 +773,11 @@ namespace indigox {
     return !(*this == ff);
   }
   Forcefield::operator bool() const { return bool(m_ffdat); }
+  
+  std::ostream& operator<<(std::ostream& os, const Forcefield& ff) {
+    if (ff) os << "Forcefield(" << ff.GetName() << ")";
+    return os;
+  }
   
   // ===========================================================================
   // == Hardcoded forcefield generations =======================================

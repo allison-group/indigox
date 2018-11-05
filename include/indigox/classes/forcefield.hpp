@@ -672,6 +672,15 @@ namespace indigox {
   using FFFamily = Forcefield::Family;
   
   Forcefield GenerateGROMOS54A7();
+  
+  std::ostream& operator<<(std::ostream& os, const FFAtom& atm);
+  std::ostream& operator<<(std::ostream& os, const FFBond& bnd);
+  std::ostream& operator<<(std::ostream& os, BondType type);
+  std::ostream& operator<<(std::ostream& os, const FFAngle& ang);
+  std::ostream& operator<<(std::ostream& os, AngleType type);
+  std::ostream& operator<<(std::ostream& os, const FFDihedral& dhd);
+  std::ostream& operator<<(std::ostream& os, DihedralType type);
+  std::ostream& operator<<(std::ostream& os, const Forcefield& ff);
 }
 
 #endif    /* INDIGOX_CLASSES_FORCEFIELD_HPP */

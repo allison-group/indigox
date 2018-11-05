@@ -21,4 +21,3 @@ def LoadFile(path, comment='#', blanks=False, strip=True):
         yield line
       elif line:
         yield line
-
