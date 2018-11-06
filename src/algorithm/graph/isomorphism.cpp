@@ -2,6 +2,7 @@
 
 #include <EASTL/vector_map.h>
 
+#include <indigox/algorithm/access.hpp>
 #include <indigox/algorithm/graph/isomorphism.hpp>
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
@@ -11,216 +12,108 @@
 namespace indigox::algorithm {
   using namespace indigox::graph;
   
-  template<class GraphType, class UserCallback>
+  template <class V, class E, class S, class D, class VP, class EP, class VIM>
   struct InternalCallback {
-    using Graph = std::shared_ptr<GraphType>;
-    using Vertex = typename GraphType::VertexType;
-    using BaseGraph = typename GraphType::graph_type;
-    using BoostGraph = typename BaseGraph::graph_type;
-    using BoostVertex = typename BoostGraph::vertex_descriptor;
-    using BoostEdge = typename BoostGraph::edge_descriptor;
-    using BoostVertexIdxMap = eastl::vector_map<BoostVertex, size_t>;
-  public:
-    Graph G_small, G_large;
-    BaseGraph &base_small, &base_large;
-    BoostVertexIdxMap &vmap;
-    UserCallback& user_callback;
+    using GraphType = BaseGraph<V, E, S, D, VP, EP>;
+    using BoostGraph = typename GraphType::graph_type;
+    using Vertex = typename BoostGraph::vertex_descriptor;
+    using Edge = typename BoostGraph::edge_descriptor;
+    using UserCallback = MappingCallback<V,E,S,D,VP,EP>;
+    using VertDescMap = typename GraphType::VertMap::RightType;
+    using EdgeDescMap = typename GraphType::EdgeMap::RightType;
     
-    InternalCallback(Graph small, Graph large, BoostVertexIdxMap& idxmap,
-                     UserCallback& callback)
-    : G_small(small), G_large(large), base_small(access::member_graph(small)),
-    base_large(access::member_graph(large)), vmap(idxmap),
-    user_callback(callback) { }
+    GraphType& small;
+    GraphType& large;
+    VIM& v_id_map;
+    UserCallback& user_callback;
+    VertDescMap& vdm_small;
+    VertDescMap& vdm_large;
+    EdgeDescMap& edm_small;
+    EdgeDescMap& edm_large;
+    
+    InternalCallback(GraphType& s, GraphType& l, VIM& idxmap, UserCallback& cb)
+    : small(s), large(l), v_id_map(idxmap), user_callback(cb),
+    vdm_small(access::GetVertexMap(s).right), vdm_large(access::GetVertexMap(l).right),
+    edm_small(access::GetEdgeMap(s).right), edm_large(access::GetEdgeMap(l).right) { }
     
     template <class CMap1to2, class CMap2to1>
     bool operator()(CMap1to2 one, CMap2to1) {
-      eastl::vector_map<Vertex, Vertex> map;
-      typename BoostGraph::vertex_iterator b, e;
-      std::tie(b, e) = boost::vertices(access::member_graph(base_small));
-      for (; b != e; ++b) {
-        auto vsmall = base_small.GetVertex(*b);
-        auto vlarge = base_large.GetVertex(boost::get(one, *b));
-        map.emplace(vsmall->shared_from_this(), vlarge->shared_from_this());
+      eastl::vector_map<V, V> map;
+      typename BoostGraph::vertex_iterator begin, end;
+      std::tie(begin, end) = boost::vertices(access::GetGraph(small));
+      for (; begin != end; ++begin) {
+        V vs = vdm_small.at(*begin);
+        V vl = vdm_large.at(boost::get(one, *begin));
+        map.emplace(vs, vl);
       }
       return user_callback(map);
     }
     
-    bool operator()(BoostVertex, BoostVertex) { return true; }
-    bool operator()(BoostEdge, BoostEdge) { return true; }
+    virtual bool operator()(Vertex vs, Vertex vl) {
+      return user_callback(vdm_small.at(vs), vdm_large.at(vl));
+    }
+    virtual bool operator()(Edge es, Edge el) {
+      return user_callback(edm_small.at(es), edm_large.at(el));
+    }
   };
   
-  template <class UserCallback>
-  struct CMGCallback
-  : public InternalCallback<IXCondensedMolecularGraph, UserCallback> {
-    using BaseType = InternalCallback<IXCondensedMolecularGraph, UserCallback>;
-    using Graph = typename BaseType::Graph;
-    using BaseGraph = typename BaseType::BaseGraph;
-    using BoostGraph = typename BaseType::BoostGraph;
-    using BoostVertex = typename BaseType::BoostVertex;
-    using BoostEdge = typename BaseType::BoostEdge;
-    using BoostVertexIdxMap = typename BaseType::BoostVertexIdxMap;
+  template <class V, class E, class S, class D, class VP, class EP>
+  void SubgraphIsomorphismsRunner(graph::BaseGraph<V,E,S,D,VP,EP>& G1,
+                                  graph::BaseGraph<V,E,S,D,VP,EP>& G2,
+                                  MappingCallback<V,E,S,D,VP,EP>& callback) {
     
-    using VertexIso = graph::VertexIsoMask;
-    using EdgeIso = graph::EdgeIsoMask;
-    using VertexMasks = eastl::vector_map<BoostVertex, VertexIso>;
-    using EdgeMasks = eastl::vector_map<BoostEdge, EdgeIso>;
+    using GraphType = graph::BaseGraph<V, E, S, D, VP, EP>;
+    using BoostGraph = typename GraphType::graph_type;
+    using Vertex = typename GraphType::VertType;
+    using VertIter = typename GraphType::VertIter;
+    using VertexMap = eastl::vector_map<Vertex, size_t>;
     
-    VertexMasks vmasks;
-    EdgeMasks emasks;
     
-    CMGCallback(Graph small, Graph large, BoostVertexIdxMap& idxmap,
-                UserCallback& callback)
-    : BaseType(small, large, idxmap, callback) {
-      graph::IXCondensedMolecularGraph::VertIter b, e;
-      for (std::tie(b, e) = small->GetVertices(); b != e; ++b) {
-        BoostVertex v = this->base_small.GetDescriptor(b->get());
-        vmasks.emplace(v, (*b)->GetIsomorphismMask());
-      }
-      for (std::tie(b, e) = large->GetVertices(); b != e; ++b) {
-        BoostVertex v = this->base_large.GetDescriptor(b->get());
-        vmasks.emplace(v, (*b)->GetIsomorphismMask());
-      }
-      graph::IXCondensedMolecularGraph::EdgeIter B, E;
-      for (std::tie(B, E) = small->GetEdges(); B != E; ++B) {
-        BoostEdge e_ = this->base_small.GetDescriptor(B->get());
-        emasks.emplace(e_, (*B)->GetIsomorphismMask());
-      }
-      for (std::tie(B, E) = large->GetEdges(); B != E; ++B) {
-        BoostEdge e_ = this->base_large.GetDescriptor(B->get());
-        emasks.emplace(e_, (*B)->GetIsomorphismMask());
-      }
+    if (G2.NumVertices() < G1.NumVertices()) {
+      SubgraphIsomorphismsRunner(G2, G1, callback);
+      return;
     }
     
-    bool operator()(BoostVertex vsmall, BoostVertex vlarge) {
-      return vmasks.at(vsmall) == vmasks.at(vlarge);
-    }
-    
-    bool operator()(BoostEdge esmall, BoostEdge elarge) {
-      return emasks.at(esmall) == emasks.at(elarge);
-    }
-    
-    using BaseType::operator();
-  };
-  
-  template <class UserCallback>
-  struct MGCallback
-  : public InternalCallback<IXMolecularGraph, UserCallback> {
-    using BaseType = InternalCallback<IXMolecularGraph, UserCallback>;
-    using Graph = typename BaseType::Graph;
-    using BaseGraph = typename BaseType::BaseGraph;
-    using BoostGraph = typename BaseType::BoostGraph;
-    using BoostVertex = typename BaseType::BoostVertex;
-    using BoostEdge = typename BaseType::BoostEdge;
-    using BoostVertexIdxMap = typename BaseType::BoostVertexIdxMap;
-    
-    using VertexIso = Element;
-    using EdgeIso = BondOrder;
-    using VertexMasks = eastl::vector_map<BoostVertex, VertexIso>;
-    using EdgeMasks = eastl::vector_map<BoostEdge, EdgeIso>;
-    
-    VertexMasks vmasks;
-    EdgeMasks emasks;
-    
-    MGCallback(Graph small, Graph large, BoostVertexIdxMap& idxmap,
-               UserCallback& callback)
-    : BaseType(small, large, idxmap, callback) {
-      graph::IXMolecularGraph::VertIter b, e;
-      for (std::tie(b, e) = this->G_small->GetVertices(); b != e; ++b) {
-        BoostVertex v = this->base_small.GetDescriptor(b->get());
-        vmasks.emplace(v, (*b)->GetAtom()->GetElement());
-      }
-      for (std::tie(b, e) = this->G_large->GetVertices(); b != e; ++b) {
-        BoostVertex v = this->base_large.GetDescriptor(b->get());
-        vmasks.emplace(v, (*b)->GetAtom()->GetElement());
-      }
-      graph::IXMolecularGraph::EdgeIter B, E;
-      for (std::tie(B, E) = this->G_small->GetEdges(); B != E; ++B) {
-        BoostEdge e_ = this->base_small.GetDescriptor(B->get());
-        emasks.emplace(e_, (*B)->GetBond()->GetOrder());
-      }
-      for (std::tie(B, E) = this->G_large->GetEdges(); B != E; ++B) {
-        BoostEdge e_ = this->base_large.GetDescriptor(B->get());
-        emasks.emplace(e_, (*B)->GetBond()->GetOrder());
-      }
-      
-    }
-    
-    bool operator()(BoostVertex vsmall, BoostVertex vlarge) {
-      return vmasks.at(vsmall) == vmasks.at(vlarge);
-    }
-    
-    bool operator()(BoostEdge esmall, BoostEdge elarge) {
-      return emasks.at(esmall) == emasks.at(elarge);
-    }
-    
-    using BaseType::operator();
-  };
-  
-  template <class GraphType, class InternalCallbackType, class UserCallbackType>
-  void __sg_iso_runner(std::shared_ptr<GraphType> G1,
-                       std::shared_ptr<GraphType> G2,
-                       UserCallbackType& user_callback) {
-    using namespace boost;
-    using BaseGraph = typename GraphType::graph_type;
-    using BoostGraph = typename BaseGraph::graph_type;
-    using BoostVertex = typename BoostGraph::vertex_descriptor;
-    using BoostVertexMap = eastl::vector_map<BoostVertex, size_t>;
-    
-    if (G2->NumVertices() < G1->NumVertices()) G1.swap(G2);
-    
-    // Get the graphs out
-    BaseGraph& base_small = graph::access::member_graph(G1);
-    BaseGraph& base_large = graph::access::member_graph(G2);
-    BoostGraph& boost_small = graph::access::member_graph(base_small);
-    BoostGraph& boost_large = graph::access::member_graph(base_large);
+    BoostGraph& small = access::GetGraph(G1);
+    BoostGraph& large = access::GetGraph(G2);
     
     // Make the vertex map
-    BoostVertexMap vmap;
+    VertexMap vmap;
     size_t i = 0;
-    for (auto vs = vertices(boost_small); vs.first != vs.second; ++vs.first)
-      vmap.emplace(*vs.first, i++);
+    VertIter begin, end;
+    for (std::tie(begin, end) = boost::vertices(small); begin != end; ++begin)
+      vmap.emplace(*begin, i++);
     i = 0;
-    for (auto vs = vertices(boost_large); vs.first != vs.second; ++vs.first)
-      vmap.emplace(*vs.first, i++);
+    for (std::tie(begin, end) = boost::vertices(large); begin != end; ++begin)
+      vmap.emplace(*begin, i++);
     
     // Determine the order of vertices
-    std::vector<BoostVertex> v_order(vertices(boost_small).first,
-                                     vertices(boost_small).second);
+    std::tie(begin, end) = boost::vertices(small);
+    std::vector<Vertex> v_order(begin, end);
     std::sort(v_order.begin(), v_order.end(),
-              [&boost_small](BoostVertex v1, BoostVertex v2) {
-                return degree(v1, boost_small) < degree(v2, boost_small);
+              [&small](Vertex v1, Vertex v2) {
+                return boost::degree(v1, small) < boost::degree(v2, small);
               });
     
-    // Make the callback thing
-    InternalCallbackType callback(G1, G2, vmap, user_callback);
-    associative_property_map<BoostVertexMap> propmap(vmap);
+    // Make the internal callback
+    InternalCallback icallback(G1, G2, vmap, callback);
+    boost::associative_property_map<VertexMap> propmap(vmap);
     
     // Run the isomorphism checking
-    vf2_subgraph_iso(boost_small,  // small graph
-                     boost_large,  // large graph
-                     callback,     // callback object
-                     propmap, // small index map
-                     propmap, // large index map
-                     v_order, // small vertex order,
-                     callback, // edge equivalence
-                     callback); // vertex equivalence
+    boost::vf2_subgraph_iso(small, large, icallback, propmap, propmap,
+                            v_order, icallback, icallback);
+    
   }
   
-  void SubgraphIsomorphisms(CondensedMolecularGraph G1,
-                            CondensedMolecularGraph G2,
-                            MappingCallback<IXCondensedMolecularGraph>& callback) {
-    using UserCallback = MappingCallback<IXCondensedMolecularGraph>;
-    using Graph = IXCondensedMolecularGraph;
-    using Internal = CMGCallback<UserCallback>;
-    __sg_iso_runner<Graph, Internal, UserCallback>(G1, G2, callback);
+  void SubgraphIsomorphisms(CondensedMolecularGraph& G1,
+                            CondensedMolecularGraph& G2,
+                            CMGCallback& CB) {
+    SubgraphIsomorphismsRunner(G1, G2, CB);
   }
   
-  void SubgraphIsomorphisms(graph::MolecularGraph G1,
-                            graph::MolecularGraph G2,
-                            MappingCallback<IXMolecularGraph>& callback) {
-    using UserCallback = MappingCallback<IXMolecularGraph>;
-    using Graph = IXMolecularGraph;
-    using Internal = MGCallback<UserCallback>;
-    __sg_iso_runner<Graph, Internal, UserCallback>(G1, G2, callback);
+  void SubgraphIsomorphisms(MolecularGraph& G1,
+                            MolecularGraph& G2,
+                            MGCallback& CB) {
+    SubgraphIsomorphismsRunner(G1, G2, CB);
   }
 }

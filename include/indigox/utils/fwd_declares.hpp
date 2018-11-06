@@ -1,5 +1,7 @@
 // This file contains forward declarations of all classes used in indigox as
 // well as their shared_ptr and weak_ptr counterparts, as needed.
+#ifndef INDIGOX_UTILS_FWD_DECLARES_HPP
+#define INDIGOX_UTILS_FWD_DECLARES_HPP
 #include <memory>
 
 
@@ -61,9 +63,7 @@ namespace indigox {
   namespace algorithm {
     struct access;
     
-    class IXCherryPicker;
-    using CherryPicker = std::shared_ptr<IXCherryPicker>;
-    using _CherryPicker = std::weak_ptr<IXCherryPicker>;
+    class CherryPicker;
     
     class IXElectronAssigner;
     using ElectronAssigner = std::shared_ptr<IXElectronAssigner>;
@@ -74,6 +74,9 @@ namespace indigox {
     // Base Graph
     template <class V, class E, class S, class D, class VP, class EP>
     class BaseGraph;
+    struct Directed;
+    struct Undirected;
+    struct GraphLabel;
     
     // AssignmentGraph
     class IXAssignmentGraph;
@@ -123,3 +126,5 @@ namespace indigox {
     struct TestMolecularEdge;
   }
 }
+
+#endif

@@ -1,15 +1,37 @@
 #include <cstdint>
 #include <list>
+#include <type_traits>
 
 #include "../utils/fwd_declares.hpp"
+#include "../utils/enum_class_bitwise.hpp"
+#include "../classes/athenaeum.hpp"
+#include "../classes/forcefield.hpp"
 
 #ifndef INDIGOX_ALGORITHM_CHERRYPICKER_HPP
 #define INDIGOX_ALGORITHM_CHERRYPICKER_HPP
 
 namespace indigox::algorithm {
   
-  class IXCherryPicker {
+  class CherryPicker {
   public:
+    
+    enum class VertexParameters {
+      None = 0,
+      ElementType = (1 << 0),
+      FormalCharge = (1 << 1),
+      CondensedVertices = (1 << 2),
+      CyclicNature = (1 << 3),
+      Stereochemistry = (1 << 4),
+      Aromaticity = (1 << 5)
+    };
+    
+    enum class EdgeParameters {
+      None = 0,
+      BondOrder = (1 << 0),
+      Stereochemistry = (1 << 1),
+      CyclicNature = (1 << 2),
+      Aromaticity = (1 << 3)
+    };
     
     struct Settings {
       /*! \brief Allows bonds to be parameterised across the overlap region.
@@ -32,20 +54,23 @@ namespace indigox::algorithm {
        *  atoms. This only applies to dihedrals where the two atoms that are in
        *  the fragment and not the overlap are adjacent to one another. */
       static bool AllowDanglingDihedrals;
+      
+      static VertexParameters VertexMapping;
+      static EdgeParameters EdgeMapping;
     };
     
-    IXCherryPicker() = delete;
-    ~IXCherryPicker() = default;
+    CherryPicker() = delete;
+    ~CherryPicker() = default;
     
-    IXCherryPicker(Forcefield ff) : _ff(ff) { }
+    CherryPicker(const Forcefield& ff);
     
-    bool AddAthenaeum(Athenaeum library);
+    bool AddAthenaeum(const Athenaeum& library);
     
-    bool RemoveAthenaeum(Athenaeum library);
+    bool RemoveAthenaeum(const Athenaeum& library);
     
     size_t NumAthenaeums() const { return _libs.size(); }
     
-    ParamMolecule ParameteriseMolecule(Molecule mol) const;
+    ParamMolecule ParameteriseMolecule(Molecule& mol);
     
     Forcefield GetForcefield() const { return _ff; }
   private:
@@ -54,6 +79,9 @@ namespace indigox::algorithm {
     //! \brief The Athenaeums to use to match
     std::list<Athenaeum> _libs;
   };
+  
+  BITWISE_OPERATORS(CherryPicker::VertexParameters);
+  BITWISE_OPERATORS(CherryPicker::EdgeParameters);
   
 }
 

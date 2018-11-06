@@ -43,8 +43,10 @@ ADD_DEFINITIONS(-DINDIGOX_DISABLE_TESTS=1)
 
 # List all the files to compile into the indigox library
 SET(INDIGOX_LIB_SRCS
+    src/algorithm/cherrypicker.cpp
     src/algorithm/graph/connectivity.cpp
     src/algorithm/graph/cycles.cpp
+    src/algorithm/graph/isomorphism.cpp
     src/algorithm/graph/paths.cpp
     src/classes/angle.cpp
     src/classes/athenaeum.cpp

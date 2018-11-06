@@ -6,8 +6,10 @@
 namespace indigox::utils {
   template <class L, class R>
   struct SimpleBiMap {
-    eastl::vector_map<L, R> left;
-    eastl::vector_map<R, L> right;
+    using LeftType = eastl::vector_map<L, R>;
+    using RightType = eastl::vector_map<R, L>;
+    LeftType left;
+    RightType right;
     
     inline void insert(L l, R r) {
       left.emplace(l, r);
