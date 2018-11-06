@@ -119,9 +119,9 @@ namespace indigox {
     const FragContain& GetFragments(Molecule& mol) const;
     bool HasFragments(Molecule& mol) const;
 
-    const Forcefield& GetForcefield() const { return _ff; }
-    bool IsSelfConsistent() const { return _man; }
-    void SetSelfConsistent() { _man = true; }
+    const Forcefield& GetForcefield() const;
+    bool IsSelfConsistent() const;
+    void SetSelfConsistent();
 //    bool CheckSelfConsistent();
     
     /*! \brief Adds the given fragment.
@@ -131,18 +131,18 @@ namespace indigox {
     /*! \brief Determines all the fragments of a molecule and adds them.
      *  \returns the number of fragments added. */
     size_t AddAllFragments(Molecule& mol);
+    
+    bool operator==(const Athenaeum& ath) const;
+    bool operator!=(const Athenaeum& ath) const { return !((*this) == ath); }
+    bool operator<(const  Athenaeum& ath) const;
+    bool operator>(const  Athenaeum& ath) const;
+    bool operator<=(const Athenaeum& ath) const { return !((*this) > ath); }
+    bool operator>=(const Athenaeum& ath) const { return !((*this) < ath); }
 
   private:
-    //! \brief Forcefield used
-    Forcefield _ff;
-    //! \brief Overlap length
-    uint32_t _overlap;
-    //! \brief Ring overlap length
-    uint32_t _roverlap;
-    //! \brief Manual
-    bool _man;
-    //! \brief fragments
-    MoleculeFragments _frags;
+    struct AthenaeumData;
+    std::shared_ptr<AthenaeumData> m_athendat;
+    
   };
   
   void SaveAthenaeum(const Athenaeum& ath, std::string path);

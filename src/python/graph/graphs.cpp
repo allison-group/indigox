@@ -117,6 +117,7 @@ void GeneratePyGraphs(py::module& m) {
   .def("GetIsomorphismMask", &CMGVertex::GetIsomorphismMask)
   .def("IsContractedHere", &CMGVertex::IsContractedHere)
   .def("GetContractedVertices", &CMGVertex::GetContractedVertices)
+  .def("GetCondensedVertices", &CMGVertex::GetCondensedVertices)
   ;
   
   // ===========================================================================

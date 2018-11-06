@@ -263,6 +263,27 @@ namespace indigox {
   // == Athenaeum implementation ===============================================
   // ===========================================================================
   
+  struct Athenaeum::AthenaeumData {
+    Forcefield ff;
+    uint32_t overlap;
+    uint32_t ring_overlap;
+    bool self_consistent;
+    MoleculeFragments fragments;
+    
+    AthenaeumData() = default;
+    AthenaeumData(Forcefield& f, uint32_t o, uint32_t r)
+    : ff(f), overlap(o), ring_overlap(r), self_consistent(false) { }
+    
+    template <class Archive>
+    void serialise(Archive& archive, const uint32_t) {
+      archive(INDIGOX_SERIAL_NVP("forcefield", ff),
+              INDIGOX_SERIAL_NVP("overlap", overlap),
+              INDIGOX_SERIAL_NVP("ring_overlap", ring_overlap),
+              INDIGOX_SERIAL_NVP("self_consistent", self_consistent),
+              INDIGOX_SERIAL_NVP("fragments", fragments));
+    }
+  };
+  
   // Default settings
   uint32_t Athenaeum::Settings::AtomLimit = 40;
   uint32_t Athenaeum::Settings::MinimumFragmentSize = 1;
@@ -272,31 +293,14 @@ namespace indigox {
   uint32_t Athenaeum::Settings::DefaultOverlap = 2;
   uint32_t Athenaeum::Settings::DefaultCycleOverlap = 2;
   
-  Athenaeum::Athenaeum(const Athenaeum& a)
-  : _ff(a._ff), _overlap(a._overlap), _roverlap(a._roverlap), _man(a._man),
-  _frags(a._frags) { }
-  
-  Athenaeum::Athenaeum(Athenaeum&& a)
-  : _ff(std::move(a._ff)), _overlap(std::move(a._overlap)),
-  _roverlap(std::move(a._roverlap)), _man(std::move(a._man)),
-  _frags(std::move(a._frags)) { }
-  
+  Athenaeum::Athenaeum(const Athenaeum& a) : m_athendat(a.m_athendat) { }
+  Athenaeum::Athenaeum(Athenaeum&& a) : m_athendat(std::move(a.m_athendat)) { }
   Athenaeum& Athenaeum::operator=(const Athenaeum &a) {
-    if (&a != this) {
-      _ff = a._ff;
-      _overlap = a._overlap;
-      _roverlap = a._roverlap;
-      _man = a._man;
-      _frags = a._frags;
-    }
+    if (&a != this) m_athendat = a.m_athendat;
     return *this;
   }
   Athenaeum& Athenaeum::operator=(Athenaeum &&a) {
-    _ff       = std::move(a._ff);
-    _overlap  = std::move(a._overlap);
-    _roverlap = std::move(a._roverlap);
-    _man      = std::move(a._man);
-    _frags    = std::move(a._frags);
+    m_athendat = std::move(a.m_athendat);
     return *this;
   }
   
@@ -307,44 +311,42 @@ namespace indigox {
   : Athenaeum(ff, overlap, Settings::DefaultCycleOverlap) { }
   
   Athenaeum::Athenaeum(Forcefield& ff, uint32_t overlap, uint32_t cycleoverlap)
-  : _ff(ff), _overlap(overlap), _roverlap(cycleoverlap),
-  _man(false), _frags() { }
+  : m_athendat(std::make_shared<AthenaeumData>(ff, overlap, cycleoverlap)) { }
   
   size_t Athenaeum::NumFragments() const {
-    return std::accumulate(_frags.begin(), _frags.end(), 0,
+    return std::accumulate(m_athendat->fragments.begin(),
+                           m_athendat->fragments.end(), 0,
                            [](size_t i, auto& j){ return i + j.second.size(); });
   }
   
   template <class Archive>
   void Athenaeum::serialise(Archive &archive, const uint32_t) {
-    archive(INDIGOX_SERIAL_NVP("forcefield", _ff),
-            INDIGOX_SERIAL_NVP("overlap", _overlap),
-            INDIGOX_SERIAL_NVP("ring_overlap", _roverlap),
-            INDIGOX_SERIAL_NVP("manual", _man),
-            INDIGOX_SERIAL_NVP("fragments", _frags));
+    archive(INDIGOX_SERIAL_NVP("data", m_athendat));
   }
   INDIGOX_SERIALISE(Athenaeum);
   
   size_t Athenaeum::NumFragments(Molecule &mol) const {
     sMolecule m = mol.shared_from_this();
-    if (_frags.find(m) == _frags.end()) return 0;
-    return _frags.at(m).size();
+    auto pos = m_athendat->fragments.find(m);
+    if (pos == m_athendat->fragments.end()) return 0;
+    return pos->second.size();
   }
   
   const Athenaeum::MoleculeFragments& Athenaeum::GetFragments() const {
-    return _frags;
+    return m_athendat->fragments;
   }
   
   const Athenaeum::FragContain& Athenaeum::GetFragments(Molecule& mol) const {
     sMolecule m = mol.shared_from_this();
-    if (_frags.find(m) == _frags.end())
+    auto pos = m_athendat->fragments.find(m);
+    if (pos == m_athendat->fragments.end())
       throw std::runtime_error("No fragmenst for molecule available");
-    return _frags.at(m);
+    return pos->second;
   }
   
   bool Athenaeum::HasFragments(Molecule &mol) const {
     sMolecule m = mol.shared_from_this();
-    return _frags.find(m) != _frags.end();
+    return m_athendat->fragments.find(m) != m_athendat->fragments.end();
   }
 
   bool Athenaeum::AddFragment(Molecule &mol, Fragment &frag) {
@@ -357,11 +359,11 @@ namespace indigox {
     
     // Check that the molecule forcefield matchs the athenaeum forcefield
     if (!mol.HasForcefield()) return false;
-    if (mol.GetForcefield() != _ff) return false;
+    if (mol.GetForcefield() != m_athendat->ff) return false;
     
     sMolecule m = mol.shared_from_this();
-    if (_frags.find(m) == _frags.end()) _frags.emplace(m, FragContain());
-    _frags.at(m).emplace_back(frag);
+    auto pos = m_athendat->fragments.emplace(m, FragContain());
+    pos.first->second.emplace_back(frag);
     return true;
   }
   
@@ -385,14 +387,14 @@ namespace indigox {
       throw std::runtime_error("Can only add fragments from frozen molecule");
     if (!mol.HasForcefield())
       throw std::runtime_error("Attempting to fragment unparameterised molecule");
-    if (mol.GetForcefield() != _ff)
+    if (mol.GetForcefield() != GetForcefield())
       throw std::runtime_error("Forcefield mismatch");
     if (mol.NumAtoms() > Settings::AtomLimit)
       throw std::runtime_error("Molecule too large to automagically fragment");
     
     sMolecule m = mol.shared_from_this();
-    if (_frags.find(m) == _frags.end()) _frags.emplace(m, FragContain());
-    size_t initial_count = _frags.at(m).size();
+    auto pos = m_athendat->fragments.emplace(m, FragContain());
+    size_t initial_count = pos.first->second.size();
     
     // Get all the subgraphs of the molecule's condensed graph
     MolecularGraph& MG = mol.GetGraph();
@@ -446,7 +448,7 @@ namespace indigox {
         for (CMGVertex u : other_vertices) {
           if (overlap_vertices.find(u) != overlap_vertices.end()) continue;
           auto path = algorithm::ShortestPath(CG, u, v);
-          if (!path.empty() && path.size() <= _overlap)
+          if (!path.empty() && path.size() <= m_athendat->overlap)
             overlap_vertices.emplace(u);
         }
       }
@@ -465,7 +467,7 @@ namespace indigox {
         if (withoverlap->Degree(u) > 1) continue;
         for (CMGVertex v : sub_vertices) {
           auto path = algorithm::ShortestPath(*withoverlap, u, v);
-          if (path.size() < _overlap) bad_overlaps = true;
+          if (path.size() < m_athendat->overlap) bad_overlaps = true;
         }
       }
       if (bad_overlaps) continue;
@@ -483,12 +485,12 @@ namespace indigox {
         final_overlap.insert(final_overlap.end(), con.begin(), con.end());
       }
       Fragment f(MG, final_frag, final_overlap);
-      if (std::find(_frags.at(m).begin(), _frags.at(m).end(), f)
-          == _frags.at(m).end())
-        _frags.at(m).emplace_back(f);
+      if (std::find(pos.first->second.begin(), pos.first->second.end(), f)
+          == pos.first->second.end())
+        pos.first->second.emplace_back(f);
     }
     
-    return _frags.at(m).size() - initial_count;
+    return pos.first->second.size() - initial_count;
   }
   
   void SaveAthenaeum(const Athenaeum& a, std::string path) {
@@ -511,6 +513,18 @@ namespace indigox {
     Athenaeum a;
     archive(a);
     return a;
+  }
+  
+  bool Athenaeum::operator==(const Athenaeum& a) const {
+    return m_athendat == a.m_athendat;
+  }
+  
+  bool Athenaeum::operator<(const Athenaeum &ath) const {
+    return m_athendat < ath.m_athendat;
+  }
+  
+  bool Athenaeum::operator>(const Athenaeum &ath) const {
+    return m_athendat > ath.m_athendat;
   }
   
 }

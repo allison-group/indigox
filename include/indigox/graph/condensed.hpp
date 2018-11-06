@@ -95,6 +95,7 @@ namespace indigox::graph {
     bool IsContractedHere(const MGVertex& v) const;
     
     std::vector<MGVertex> GetContractedVertices() const;
+    const std::vector<CondensedVertex>& GetCondensedVertices() const;
     
   private:
     //! \brief The vertex data.

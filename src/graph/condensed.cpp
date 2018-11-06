@@ -184,6 +184,11 @@ namespace indigox::graph {
     return verts;
   }
   
+  const std::vector<CMGVertex::CondensedVertex>&
+  CMGVertex::GetCondensedVertices() const {
+    return _dat->condensed;
+  }
+  
 // ============================================================================
 // == CMGEdge CONSTRUCTION ====================================================
 // ============================================================================

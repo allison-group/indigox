@@ -65,6 +65,12 @@ void GeneratePyAthenaeum(py::module& m) {
   .def("SetSelfConsistent", &Athenaeum::SetSelfConsistent)
   .def("AddFragment", &Athenaeum::AddFragment)
   .def("AddAllFragments", &Athenaeum::AddAllFragments)
+  .def(py::self == py::self)
+  .def(py::self != py::self)
+  .def(py::self < py::self)
+  .def(py::self > py::self)
+  .def(py::self <= py::self)
+  .def(py::self >= py::self)
   ;
   
   // ===========================================================================
