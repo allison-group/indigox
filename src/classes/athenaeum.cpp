@@ -313,17 +313,18 @@ namespace indigox {
   Athenaeum::Athenaeum(Forcefield& ff, uint32_t overlap, uint32_t cycleoverlap)
   : m_athendat(std::make_shared<AthenaeumData>(ff, overlap, cycleoverlap)) { }
   
-  size_t Athenaeum::NumFragments() const {
-    return std::accumulate(m_athendat->fragments.begin(),
-                           m_athendat->fragments.end(), 0,
-                           [](size_t i, auto& j){ return i + j.second.size(); });
-  }
   
   template <class Archive>
   void Athenaeum::serialise(Archive &archive, const uint32_t) {
     archive(INDIGOX_SERIAL_NVP("data", m_athendat));
   }
   INDIGOX_SERIALISE(Athenaeum);
+  
+  size_t Athenaeum::NumFragments() const {
+    return std::accumulate(m_athendat->fragments.begin(),
+                           m_athendat->fragments.end(), 0,
+                           [](size_t i, auto& j){ return i + j.second.size(); });
+  }
   
   size_t Athenaeum::NumFragments(Molecule &mol) const {
     sMolecule m = mol.shared_from_this();
@@ -349,6 +350,18 @@ namespace indigox {
     return m_athendat->fragments.find(m) != m_athendat->fragments.end();
   }
 
+  const Forcefield& Athenaeum::GetForcefield() const {
+    return m_athendat->ff;
+  }
+  
+  bool Athenaeum::IsSelfConsistent() const {
+    return m_athendat->self_consistent;
+  }
+  
+  void Athenaeum::SetSelfConsistent() {
+    m_athendat->self_consistent = true;
+  }
+  
   bool Athenaeum::AddFragment(Molecule &mol, Fragment &frag) {
     // Check that the fragment matches the molecule
     graph::MolecularGraph& MG = mol.GetGraph();
