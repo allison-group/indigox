@@ -190,7 +190,7 @@ namespace indigox::algorithm {
   ParamMolecule CherryPicker::ParameteriseMolecule(Molecule& mol) {
     if (_libs.empty())
       throw std::runtime_error("No Athenaeums to parameterise from");
-    graph::CondensedMolecularGraph& CMG = mol.GetGraph().GetCondensedGraph();
+    graph::sCondensedMolecularGraph CMG = graph::Condense(mol.GetGraph());
     ParamMolecule pmol(mol);
     
     // Populate the masks
@@ -225,10 +225,10 @@ namespace indigox::algorithm {
       edgemask |= graph::EdgeIsoMask(16128);
     
     CherryPickerCallback::VertMasks vmasks;
-    for (CMGV v : CMG.GetVertices())
+    for (CMGV v : CMG->GetVertices())
       vmasks.emplace(v, vertmask & v.GetIsomorphismMask());
     CherryPickerCallback::EdgeMasks emasks;
-    for (CMGE e : CMG.GetEdges())
+    for (CMGE e : CMG->GetEdges())
       emasks.emplace(e, edgemask & e.GetIsomorphismMask());
     
     // Run the matching
@@ -236,10 +236,10 @@ namespace indigox::algorithm {
       for (auto& g_frag : lib.GetFragments()) {
         for (Fragment frag : g_frag.second) {
           if (frag.Size() < CPSet::MinimumFragmentSize) continue;
-          if (frag.GetGraph().NumVertices() > CMG.NumVertices()) continue;
-          CherryPickerCallback callback(CMG, vmasks, emasks, pmol, frag,
+          if (frag.GetGraph().NumVertices() > CMG->NumVertices()) continue;
+          CherryPickerCallback callback(*CMG, vmasks, emasks, pmol, frag,
                                         vertmask, edgemask);
-          SubgraphIsomorphisms(frag.GetGraph(), CMG, callback);
+          SubgraphIsomorphisms(frag.GetGraph(), *CMG, callback);
         }
       }
       pmol.ApplyParameteristion(lib.IsSelfConsistent());
