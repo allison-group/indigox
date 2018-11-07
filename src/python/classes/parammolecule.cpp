@@ -131,6 +131,10 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def("GetAngle", py::overload_cast<ParamMolecule::PAngle>(&ParamMolecule::GetAngle, py::const_))
   .def("GetDihedral", py::overload_cast<Dihedral&>(&ParamMolecule::GetDihedral))
   .def("GetDihedral", py::overload_cast<ParamMolecule::PDihedral>(&ParamMolecule::GetDihedral))
+  .def("GetAtoms", &ParamMolecule::GetAtoms)
+  .def("GetBonds", &ParamMolecule::GetBonds)
+  .def("GetAngles", &ParamMolecule::GetAngles)
+  .def("GetDihedrals", &ParamMolecule::GetDihedrals)
   ;
   
   

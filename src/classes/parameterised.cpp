@@ -582,6 +582,30 @@ namespace indigox {
     return newPD;
   }
   
+  std::vector<ParamAtom> ParamMolecule::GetAtoms() const {
+    std::vector<ParamAtom> atms; atms.reserve(m_pmoldat->atoms.size());
+    for (auto& a : m_pmoldat->atoms) atms.emplace_back(a.second);
+    return atms;
+  }
+  
+  std::vector<ParamBond> ParamMolecule::GetBonds() const {
+    std::vector<ParamBond> atms; atms.reserve(m_pmoldat->bonds.size());
+    for (auto& a : m_pmoldat->bonds) atms.emplace_back(a.second);
+    return atms;
+  }
+  
+  std::vector<ParamAngle> ParamMolecule::GetAngles() const {
+    std::vector<ParamAngle> atms; atms.reserve(m_pmoldat->angles.size());
+    for (auto& a : m_pmoldat->angles) atms.emplace_back(a.second);
+    return atms;
+  }
+  
+  std::vector<ParamDihedral> ParamMolecule::GetDihedrals() const {
+    std::vector<ParamDihedral> atms; atms.reserve(m_pmoldat->dihedrals.size());
+    for (auto& a : m_pmoldat->dihedrals) atms.emplace_back(a.second);
+    return atms;
+  }
+  
   // ===========================================================================
   // == ParamMolecule Operators ================================================
   // ===========================================================================

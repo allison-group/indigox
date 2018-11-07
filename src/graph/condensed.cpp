@@ -127,7 +127,7 @@ namespace indigox::graph {
     VertexIsoMask atm_num, fc_mag, h, f, cl, br, i, mask;
     atm_num.from_uint64(atm.GetElement().GetAtomicNumber());
     fc_mag.from_uint64(abs(atm.GetFormalCharge())); fc_mag <<= 7;
-    h.from_uint32(NumContracted(CS::Hydrogen)); h <<= 11;
+    h.from_uint32(NumContracted(CS::Hydrogen) + atm.GetImplicitCount()); h <<= 11;
     f.from_uint32(NumContracted(CS::Fluorine)); f <<= 14;
     cl.from_uint32(NumContracted(CS::Chlorine)); cl <<= 17;
     br.from_uint32(NumContracted(CS::Bromine)); br <<= 20;

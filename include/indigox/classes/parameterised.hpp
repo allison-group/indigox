@@ -386,6 +386,11 @@ namespace indigox {
      *  \return the parameterisation dihedral. */
     ParamDihedral GetDihedral(PDihedral atms);
     
+    std::vector<ParamAtom> GetAtoms() const;
+    std::vector<ParamBond> GetBonds() const;
+    std::vector<ParamAngle> GetAngles() const;
+    std::vector<ParamDihedral> GetDihedrals() const;
+    
   private:
     struct ParamMoleculeImpl;
     std::shared_ptr<ParamMoleculeImpl> m_pmoldat;

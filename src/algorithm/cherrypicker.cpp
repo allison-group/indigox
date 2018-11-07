@@ -22,6 +22,7 @@ namespace indigox::algorithm {
   VParam CPSet::VertexMapping = (VParam::ElementType | VParam::FormalCharge
                                  | VParam::CondensedVertices);
   EParam CPSet::EdgeMapping = EParam::BondOrder;
+  uint32_t CPSet::MinimumFragmentSize = 4;
   
   CherryPicker::CherryPicker(const Forcefield& ff) : _ff(ff) { }
   
@@ -110,7 +111,6 @@ namespace indigox::algorithm {
       
       while (permutation()) {
         // Parameterise the atoms
-        std::cout << "Parameterise atoms \n";
         auto patms = frag.GetAtoms();
         for (size_t i = 0; i < frag_v.size(); ++i) {
           if (std::find(patms.begin(), patms.end(), frag_v[i]) == patms.end())
@@ -120,7 +120,6 @@ namespace indigox::algorithm {
         }
         
         // Parameterise the bonds
-        std::cout << "Parameterise bonds \n";
         for (auto bnd : frag.GetBonds()) {
           graph::MGVertex v1 = bnd.first, v2 = bnd.second;
           if (!Settings::AllowDanglingBonds
@@ -136,7 +135,6 @@ namespace indigox::algorithm {
         }
         
         // Parameterise the angles
-        std::cout << "Parameterise angles \n";
         for (auto ang : frag.GetAngles()) {
           graph::MGVertex v1 = ang.first, v2 = ang.second, v3 = ang.third;
           if (!Settings::AllowDanglingAngles
@@ -155,7 +153,6 @@ namespace indigox::algorithm {
         }
         
         // Parameterise the dihedrals
-        std::cout << "Parameterise dihedrals \n";
         for (auto dhd : frag.GetDihedrals()) {
           graph::MGVertex v1 = dhd.first, v2 = dhd.second, v3 = dhd.third, v4 = dhd.fourth;
           if (!Settings::AllowDanglingDihedrals
@@ -233,6 +230,7 @@ namespace indigox::algorithm {
     for (Athenaeum& lib : _libs) {
       for (auto& g_frag : lib.GetFragments()) {
         for (Fragment frag : g_frag.second) {
+          if (frag.Size() < CPSet::MinimumFragmentSize) continue;
           if (frag.GetGraph().NumVertices() > CMG.NumVertices()) continue;
           CherryPickerCallback callback(CMG, vmasks, emasks, pmol, frag,
                                         vertmask, edgemask);

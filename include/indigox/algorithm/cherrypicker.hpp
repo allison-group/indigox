@@ -57,6 +57,8 @@ namespace indigox::algorithm {
       
       static VertexParameters VertexMapping;
       static EdgeParameters EdgeMapping;
+      
+      static uint32_t MinimumFragmentSize;
     };
     
     CherryPicker() = delete;
