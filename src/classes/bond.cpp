@@ -108,7 +108,7 @@ namespace indigox {
   
   Bond::Bond(Atom& a, Atom& b, Molecule& m) :
   IXCountableObject<Bond>(), _mol(m.weak_from_this()), _tag(0),
-  _order(Order::UNDEFINED), _aromatic(false), _stereo(Stereo::UNDEFINED),
+  _order(Order::SINGLE), _aromatic(false), _stereo(Stereo::UNDEFINED),
   _atms({a.weak_from_this(),b.weak_from_this()}) { }
   
 /*  test_case_fixture(test::BondTestFixture, "IXBond construction") {
