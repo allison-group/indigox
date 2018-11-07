@@ -189,6 +189,11 @@ namespace indigox::graph {
     return _dat->condensed;
   }
   
+  std::ostream& operator<<(std::ostream& os, const CMGVertex& v) {
+    if (v) os << "CMGVertex(" << v.GetSource().GetAtom().GetTag() << ")";
+    return os;
+  }
+  
 // ============================================================================
 // == CMGEdge CONSTRUCTION ====================================================
 // ============================================================================

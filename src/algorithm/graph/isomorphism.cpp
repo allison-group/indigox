@@ -12,6 +12,17 @@
 namespace indigox::algorithm {
   using namespace indigox::graph;
   
+  bool CMGPrintCallback::operator()(const CorrespondenceMap &cmap)  {
+    std::cout << "Mapping instance " << ++count << ":\n";
+    for (auto& ab : cmap) std::cout << ab.first << " -- " << ab.second << "\n";
+    std::cout << "\n";
+    return true;
+  }
+  
+  bool CMGPrintCallback::operator()(const CMGVertex& vs, const CMGVertex& vl) {
+    return vs.GetIsomorphismMask() == vl.GetIsomorphismMask();
+  }
+  
   template <class V, class E, class S, class D, class VP, class EP, class VIM>
   struct InternalCallback {
     using GraphType = BaseGraph<V, E, S, D, VP, EP>;

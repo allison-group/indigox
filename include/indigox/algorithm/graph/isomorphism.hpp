@@ -24,28 +24,34 @@ namespace indigox::algorithm {
   graph::Undirected, graph::GraphLabel, graph::GraphLabel>
   { };
   
-  
   struct MGCallback
   : public MappingCallback<graph::MGVertex, graph::MGEdge, graph::sMolecularGraph,
   graph::Undirected, graph::GraphLabel, graph::GraphLabel>
   { };
   
-  template <class V, class E, class S, class D, class VP, class EP>
-  struct PrintoutCallback : public MappingCallback<V,E,S,D,VP,EP> {
-    using BaseType = MappingCallback<V,E,S,D,VP,EP>;
-    bool operator()(const typename BaseType::CorrespondenceMap& cmap) override {
+  struct CMGPrintCallback : public CMGCallback {
+    int count;
+    CMGPrintCallback() : count(0) { }
+    bool operator()(const CorrespondenceMap& cmap) override;
+    bool operator()(const graph::CMGVertex& vs, const graph::CMGVertex& vl) override;
+  };
+  
+  struct MGPrintCallback : public MGCallback {
+    int count;
+    MGPrintCallback() : count(0) { }
+    bool operator()(const CorrespondenceMap& cmap) override {
+      std::cout << "Mapping instance " << ++count << ":\n";
       for (auto& ab : cmap) std::cout << ab.first << " -- " << ab.second << "\n";
+      std::cout << "\n";
       return true;
     }
-    
   };
 
   void SubgraphIsomorphisms(graph::CondensedMolecularGraph& G1,
                             graph::CondensedMolecularGraph& G2,
                             CMGCallback& callback);
   
-  void SubgraphIsomorphisms(graph::MolecularGraph& G1,
-                            graph::MolecularGraph& G2,
+  void SubgraphIsomorphisms(graph::MolecularGraph& G1, graph::MolecularGraph& G2,
                             MGCallback& callback);
 }
 
