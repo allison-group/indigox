@@ -47,7 +47,7 @@ namespace indigox {
      *  \param name the name of the atom type.
      *  \param ff the forcefield this type will be a part of. */
     FFAtom(int32_t id, std::string name, const Element& element,
-           uint32_t impH, const Forcefield& ff);
+           const Forcefield& ff);
     
   public:
     /*! \brief Get the ID for this type.
@@ -59,7 +59,6 @@ namespace indigox {
     std::string GetName() const;
     
     Forcefield& GetForcefield() const;
-    uint32_t GetImplicitHydrogenCount() const;
     Element GetElement() const;
     
   public:
@@ -475,8 +474,7 @@ namespace indigox {
      *  \return the newly created atom type.
      *  \throws std::runtime_error if an atomtype with the given name or id
      *  already exists within the forcefield. */
-    FFAtom& NewAtomType(int32_t id, std::string name, const Element& element,
-                        uint32_t implictH = 0);
+    FFAtom& NewAtomType(int32_t id, std::string name, const Element& element);
     
     /*! \brief Reserve space for atom types.
      *  \param size the amount of space to reserve. */

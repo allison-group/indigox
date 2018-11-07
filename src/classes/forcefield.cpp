@@ -22,13 +22,11 @@ namespace indigox {
     int32_t id;
     std::string name;
     int32_t element;
-    uint32_t implicit_hydrogens;
     Forcefield ff;
     
     FFAtomImpl() = default;
-    FFAtomImpl(int32_t i, std::string n, const Element& e, uint32_t h,
-               const Forcefield& f)
-    : id(i), name(n), element(e.GetAtomicNumber()), implicit_hydrogens(h), ff(f)
+    FFAtomImpl(int32_t i, std::string n, const Element& e, const Forcefield& f)
+    : id(i), name(n), element(e.GetAtomicNumber()), ff(f)
     { }
     
     template <class Archive>
@@ -36,7 +34,6 @@ namespace indigox {
       archive(INDIGOX_SERIAL_NVP("id", id),
               INDIGOX_SERIAL_NVP("name", name),
               INDIGOX_SERIAL_NVP("element", element),
-              INDIGOX_SERIAL_NVP("implicitH", implicit_hydrogens),
               INDIGOX_SERIAL_NVP("ff", ff));
     }
   };
@@ -56,9 +53,9 @@ namespace indigox {
     m_ffatmdat = std::move(atm.m_ffatmdat);
     return *this;
   }
-  FFAtom::FFAtom(int32_t id, std::string name, const Element& e, uint32_t h,
+  FFAtom::FFAtom(int32_t id, std::string name, const Element& e,
                  const Forcefield& ff)
-  : m_ffatmdat(std::make_shared<FFAtomImpl>(id, name, e, h, ff)) { }
+  : m_ffatmdat(std::make_shared<FFAtomImpl>(id, name, e, ff)) { }
   
   // ===========================================================================
   // == FFAtom Serialisation ===================================================
@@ -77,8 +74,6 @@ namespace indigox {
   int32_t FFAtom::GetID() const { return m_ffatmdat->id; }
   std::string FFAtom::GetName() const { return m_ffatmdat->name; }
   Forcefield& FFAtom::GetForcefield() const { return m_ffatmdat->ff; }
-  uint32_t FFAtom::GetImplicitHydrogenCount() const {
-    return m_ffatmdat->implicit_hydrogens; }
   Element FFAtom::GetElement() const {
     return GetPeriodicTable()[m_ffatmdat->element]; }
   
@@ -612,9 +607,8 @@ namespace indigox {
     return m_ffdat->dihedrals[type].back();
   }
   
-  FFAtom& Forcefield::NewAtomType(int id, std::string name, const Element& element,
-                                  uint32_t implictH) {
-    FFAtom atm(id, name, element, implictH, *this);
+  FFAtom& Forcefield::NewAtomType(int id, std::string name, const Element& element) {
+    FFAtom atm(id, name, element, *this);
     if (std::find(m_ffdat->atoms.begin(), m_ffdat->atoms.end(), atm)
         != m_ffdat->atoms.end())
       throw std::out_of_range("Atom type already exists");

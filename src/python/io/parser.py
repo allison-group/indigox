@@ -3,7 +3,8 @@ from pathlib import Path
 import indigox as ix
 
 __all__ = ["LoadGromosInteractionFunctionParameterFile",
-           "LoadPDBFile", "LoadMTBFile", "LoadParameterisedMolecule"]
+           "LoadPDBFile", "LoadMTBFile", "LoadParameterisedMolecule",
+           "LoadIXDFile"]
 
 ## \brief Loads a GROMOS IFP file as a forcefield
 #  \details See the GROMOS Manual for definition of the IFP file format.
@@ -71,7 +72,7 @@ def LoadGromosInteractionFunctionParameterFile(path):
 
 ## \brief Loads the given PDB file into a Molecule
 #  \return the loaded molecule
-def LoadPDBFile(path):
+def LoadPDBFile(path, details = None):
   mol = ix.CreateMolecule()
   got_atoms = False
   
@@ -136,10 +137,30 @@ def LoadPDBFile(path):
           continue
     elif record_type == "ENDMDL":
       got_atoms = True
-        
+
+  if details is not None:
+    LoadIXDFile(details, mol)
+  
   return mol
 
-def LoadMTBFile(path, ff = None):
+def LoadIXDFile(path, mol):
+  for line in ix.LoadFile(path.expanduser()):
+    line = line.split()
+    l = list(map(int, line[1:]))
+    if line[0] == "ATOM":
+      atom = mol.GetAtomTag(l[0])
+      atom.SetFormalCharge(l[1])
+      atom.SetImplicitCount(l[2])
+    elif line[0] == "BOND":
+      bond = mol.GetBond(mol.GetAtomTag(l[0]), mol.GetAtomTag(l[1]))
+      bond.SetOrder(l[2])
+    elif line[0] == "MOLECULE":
+      mol.SetMolecularCharge(l[0])
+  tot_charge = sum(atm.GetFormalCharge() for atm in mol.GetAtoms())
+  if tot_charge != mol.GetMolecularCharge():
+    raise InputError("Sum of atom formal charges does not match molecular charge")
+
+def LoadMTBFile(path, ff = None, details=None):
   if ff is None:
     ff = ix.GenerateGROMOS54A7()
   file = list(ix.LoadFile(path.expanduser()))
@@ -177,7 +198,6 @@ def LoadMTBFile(path, ff = None):
           atom.SetType(ff.GetAtomType(int(dat[2])))
           atom.SetPartialCharge(float(dat[4]))
           atom.SetElement(atom.GetType().GetElement())
-          atom.SetImplicitCount(atom.GetType().GetImplicitHydrogenCount())
         elif i < start_line[1] + counts[1]:  # Bond data
           bond = mol.NewBond(mol.GetAtomTag(int(dat[0])),
                              mol.GetAtomTag(int(dat[1])))
@@ -204,18 +224,21 @@ def LoadMTBFile(path, ff = None):
           d = mol.GetAtomTag(int(dat[3]))
           dihedral = mol.GetDihedral(a, b, c, d)
           dihedral.AddType(ff.GetDihedralType(propertype, int(dat[4])))
-
+  
+  if details is not None:
+    LoadIXDFile(details, mol)
+  
   return mol
 
 
-def LoadParameterisedMolecule(coord_path, param_path, ff):
+def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
   if set(coord_path.suffixes) not in [{".pdb"}, {".aa",".pdb"}, {".ua",".pdb"}]:
     raise FileNotFoundError("Unable to handle file: {}".format(coord_path.name))
   if set(param_path.suffixes) not in [{".mtb"}, {".aa",".mtb"}, {".ua",".mtb"}]:
     raise FileNotFoundError("Unable to handle file: {}".format(param_path.name))
   # assume all atoms the same
   mol_coords = LoadPDBFile(coord_path) # only gives coordinate information
-  mol_params = LoadMTBFile(param_path, ff)
+  mol_params = LoadMTBFile(param_path, ff, details)
   if mol_coords.NumAtoms() != mol_params.NumAtoms():
     raise TypeError("Input files have mismatch atom counts")
   for atom in mol_params.GetAtoms():
@@ -223,6 +246,7 @@ def LoadParameterisedMolecule(coord_path, param_path, ff):
     atom.SetX(c_atom.GetX())
     atom.SetY(c_atom.GetY())
     atom.SetZ(c_atom.GetZ())
+
 
   return mol_params
 
