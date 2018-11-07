@@ -22,7 +22,8 @@ namespace indigox::algorithm {
       CondensedVertices = (1 << 2),
       CyclicNature = (1 << 3),
       Stereochemistry = (1 << 4),
-      Aromaticity = (1 << 5)
+      Aromaticity = (1 << 5),
+      Degree = (1 << 6)
     };
     
     enum class EdgeParameters {
@@ -30,7 +31,8 @@ namespace indigox::algorithm {
       BondOrder = (1 << 0),
       Stereochemistry = (1 << 1),
       CyclicNature = (1 << 2),
-      Aromaticity = (1 << 3)
+      Aromaticity = (1 << 3),
+      Degree = (1 << 4)
     };
     
     struct Settings {

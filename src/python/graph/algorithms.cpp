@@ -106,6 +106,7 @@ void GeneratePyGraphAlgorithms(pybind11::module& m) {
   .value("CyclicNature", VParam::CyclicNature)
   .value("Stereochemistry", VParam::Stereochemistry)
   .value("Aromaticity", VParam::Aromaticity)
+  .value("Degree", VParam::Degree)
   ;
   
   py::enum_<EParam>(cp, "EdgeParameters", py::arithmetic())
@@ -114,6 +115,7 @@ void GeneratePyGraphAlgorithms(pybind11::module& m) {
   .value("Stereochemistry", EParam::Stereochemistry)
   .value("CyclicNature", EParam::CyclicNature)
   .value("Aromaticity", EParam::Aromaticity)
+  .value("Degree", EParam::Degree)
   ;
   
   py::class_<CPSet>(cp, "Settings")

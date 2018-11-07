@@ -20,8 +20,8 @@ namespace indigox::algorithm {
   bool CPSet::AllowDanglingAngles = true;
   bool CPSet::AllowDanglingDihedrals = true;
   VParam CPSet::VertexMapping = (VParam::ElementType | VParam::FormalCharge
-                                 | VParam::CondensedVertices);
-  EParam CPSet::EdgeMapping = EParam::BondOrder;
+                                 | VParam::CondensedVertices | VParam::Degree);
+  EParam CPSet::EdgeMapping = EParam::BondOrder | EParam::Degree;
   uint32_t CPSet::MinimumFragmentSize = 4;
   
   CherryPicker::CherryPicker(const Forcefield& ff) : _ff(ff) { }
@@ -192,7 +192,6 @@ namespace indigox::algorithm {
       throw std::runtime_error("No Athenaeums to parameterise from");
     graph::CondensedMolecularGraph& CMG = mol.GetGraph().GetCondensedGraph();
     ParamMolecule pmol(mol);
-    using MappingType = CherryPickerCallback::BaseType;
     
     // Populate the masks
     graph::VertexIsoMask vertmask; vertmask.reset();
@@ -208,6 +207,10 @@ namespace indigox::algorithm {
       vertmask |= graph::VertexIsoMask(0x30000000);
     if ((CPSet::VertexMapping & VParam::Aromaticity) != VParam::None)
       vertmask |= graph::VertexIsoMask(0x40000000);
+    if ((CPSet::VertexMapping & VParam::Degree) != VParam::None) {
+      graph::VertexIsoMask tmp; tmp.from_uint64(0x380000000);
+      vertmask |= tmp;
+    }
     
     graph::EdgeIsoMask edgemask; edgemask.reset();
     if ((CPSet::EdgeMapping & EParam::BondOrder) != EParam::None)
@@ -218,6 +221,8 @@ namespace indigox::algorithm {
       edgemask |= graph::EdgeIsoMask(96);
     if ((CPSet::EdgeMapping & EParam::Aromaticity) != EParam::None)
       edgemask |= graph::EdgeIsoMask(128);
+    if ((CPSet::EdgeMapping & EParam::Degree) != EParam::None)
+      edgemask |= graph::EdgeIsoMask(16128);
     
     CherryPickerCallback::VertMasks vmasks;
     for (CMGV v : CMG.GetVertices())

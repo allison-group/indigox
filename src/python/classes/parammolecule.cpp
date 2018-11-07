@@ -9,6 +9,12 @@
 
 namespace py = pybind11;
 
+PYBIND11_MAKE_OPAQUE(indigox::ParamAtom::TypeCounts);
+PYBIND11_MAKE_OPAQUE(indigox::ParamBond::TypeCounts);
+PYBIND11_MAKE_OPAQUE(indigox::ParamAngle::TypeCounts);
+PYBIND11_MAKE_OPAQUE(indigox::ParamDihedral::TypeGroup);
+PYBIND11_MAKE_OPAQUE(indigox::ParamDihedral::TypeCounts);
+
 void GeneratePyParameterisedMolecule(pybind11::module& m) {
   using namespace indigox;
   py::return_value_policy Ref = py::return_value_policy::reference;
@@ -103,7 +109,7 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def("GetParameterisedAtoms", &ParamDihedral::GetParameterisedAtoms, Ref)
   .def("GetDihedral", &ParamDihedral::GetDihedral, Ref)
   .def("GetMostCommonType", &ParamDihedral::GetMostCommonType)
-  .def("GetMappedTypeCounts", &ParamDihedral::GetMappedTypeCounts)
+  .def("GetMappedTypeCounts", &ParamDihedral::GetMappedTypeCounts, Ref)
   .def(py::self == py::self)
   .def(py::self != py::self)
   .def(py::self < py::self)
@@ -137,5 +143,11 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def("GetDihedrals", &ParamMolecule::GetDihedrals)
   ;
   
+  // container bindings
+  py::bind_map<ParamAtom::TypeCounts>(m, "VecMapFFAtomInt");
+  py::bind_map<ParamBond::TypeCounts>(m, "VecMapFFBondInt");
+  py::bind_map<ParamAngle::TypeCounts>(m, "VecMapFFAngleInt");
+  py::bind_vector<ParamDihedral::TypeGroup>(m, "VectorFFDihedral");
+  py::bind_map<ParamDihedral::TypeCounts>(m, "VecMapVectorFFDihedralInt");
   
 }

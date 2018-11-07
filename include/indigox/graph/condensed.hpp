@@ -17,7 +17,7 @@
 
 namespace indigox::graph {
   //! \brief type used to store the isomorphism testing mask for IXCMGVertex.
-  using VertexIsoMask = eastl::bitset<32, uint32_t>;
+  using VertexIsoMask = eastl::bitset<64, uint64_t>;
   //! \brief type used to store the isomorphism testing mask for IXCMGEdge.
   using EdgeIsoMask = eastl::bitset<16, uint16_t>;
   

@@ -124,7 +124,7 @@ namespace indigox::graph {
     // Is S stereo (1 bit)
     // Is aromatic (1 bit)
     Atom& atm = v.GetAtom();
-    VertexIsoMask atm_num, fc_mag, h, f, cl, br, i, mask;
+    VertexIsoMask atm_num, fc_mag, h, f, cl, br, i, mask, degree;
     atm_num.from_uint64(atm.GetElement().GetAtomicNumber());
     fc_mag.from_uint64(abs(atm.GetFormalCharge())); fc_mag <<= 7;
     h.from_uint32(NumContracted(CS::Hydrogen) + atm.GetImplicitCount()); h <<= 11;
@@ -132,13 +132,15 @@ namespace indigox::graph {
     cl.from_uint32(NumContracted(CS::Chlorine)); cl <<= 17;
     br.from_uint32(NumContracted(CS::Bromine)); br <<= 20;
     i.from_uint32(NumContracted(CS::Iodine)); i <<= 23;
-    mask = atm_num | fc_mag | h | f | cl | br | i;
+    degree.from_uint32(atm.NumBonds()); degree <<= 31;
+    mask = atm_num | fc_mag | h | f | cl | br | i | degree;
     if (atm.GetFormalCharge() < 0) mask.set(10);
     if (MG.IsCyclic(v)) mask.set(26);
 //    if (v->IsCyclic(8)) _iso_mask.set(27);
     if (atm.GetStereochemistry() == AtomStereo::R) mask.set(28);
     if (atm.GetStereochemistry() == AtomStereo::S) mask.set(29);
     if (atm.GetAromaticity()) mask.set(30);
+    
     _dat->mask = mask;
   }
   
@@ -212,7 +214,7 @@ namespace indigox::graph {
   
   CMGEdge::CMGEdge(const MGEdge& e, CondensedMolecularGraph& g)
   : _dat(std::make_shared<CMGEdgeData>(e, g)) {
-    EdgeIsoMask mask;
+    EdgeIsoMask mask, degree_small, degree_large;
     // Determine Isomorphism Mask
     // Order (3 bits)
     // Is E stereo (1 bit)
@@ -221,7 +223,13 @@ namespace indigox::graph {
     // Is in small cycle (<= 8)(1 bit)
     // Is aromatic (1 bit)
     Bond& bnd = e.GetBond();
+    Atom& a = bnd.GetSourceAtom();
+    Atom& b = bnd.GetTargetAtom();
+    degree_small.from_uint32(a.NumBonds()); degree_small <<= 8;
+    degree_large.from_uint32(b.NumBonds()); degree_large <<= 11;
+    if (a.NumBonds() > b.NumBonds()) std::swap(degree_small, degree_large);
     mask.from_uint32(static_cast<uint32_t>(bnd.GetOrder()));
+    mask |= degree_small | degree_large;
     if (bnd.GetStereochemistry() == BondStereo::E) mask.set(3);
     if (bnd.GetStereochemistry() == BondStereo::Z) mask.set(4);
     if (g.GetMolecularGraph().IsCyclic(e)) mask.set(5);
