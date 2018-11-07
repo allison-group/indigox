@@ -2,15 +2,14 @@
 from pathlib import Path
 import indigox as ix
 
-__all__ = ["LoadGromosInteractionFunctionParameterFile",
-           "LoadPDBFile", "LoadMTBFile", "LoadParameterisedMolecule",
-           "LoadIXDFile"]
+__all__ = ["LoadIFPFile", "LoadPDBFile", "LoadMTBFile", "LoadIXDFile",
+           "LoadParameterisedMolecule", "LoadITPFile" ]
 
 ## \brief Loads a GROMOS IFP file as a forcefield
 #  \details See the GROMOS Manual for definition of the IFP file format.
 #  \param path the path to the IFP file
 #  \return the loaded forcefield
-def LoadGromosInteractionFunctionParameterFile(path):
+def LoadIFPFile(path):
   data = list(ix.LoadFile(path.expanduser()))
   blocks = [data[0]]
   for i in range(len(data) - 1):
@@ -160,9 +159,7 @@ def LoadIXDFile(path, mol):
   if tot_charge != mol.GetMolecularCharge():
     raise InputError("Sum of atom formal charges does not match molecular charge")
 
-def LoadMTBFile(path, ff = None, details=None):
-  if ff is None:
-    ff = ix.GenerateGROMOS54A7()
+def LoadMTBFile(path, ff, details=None):
   file = list(ix.LoadFile(path.expanduser()))
 
   blocks = [file[0]]
@@ -234,11 +231,16 @@ def LoadMTBFile(path, ff = None, details=None):
 def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
   if set(coord_path.suffixes) not in [{".pdb"}, {".aa",".pdb"}, {".ua",".pdb"}]:
     raise FileNotFoundError("Unable to handle file: {}".format(coord_path.name))
-  if set(param_path.suffixes) not in [{".mtb"}, {".aa",".mtb"}, {".ua",".mtb"}]:
+  if set(param_path.suffixes) not in [{".mtb"}, {".aa",".mtb"}, {".ua",".mtb"},
+                                      {".itp"}, {".aa",".itp"}, {".ua",".itp"},
+                                      {".top"}]:
     raise FileNotFoundError("Unable to handle file: {}".format(param_path.name))
   # assume all atoms the same
   mol_coords = LoadPDBFile(coord_path) # only gives coordinate information
-  mol_params = LoadMTBFile(param_path, ff, details)
+  if str(param_path).endswith(".mtb"):
+    mol_params = LoadMTBFile(param_path, ff, details)
+  else:
+    mol_params = LoadIFPFile(param_path, ff, details)
   if mol_coords.NumAtoms() != mol_params.NumAtoms():
     raise TypeError("Input files have mismatch atom counts")
   for atom in mol_params.GetAtoms():
@@ -246,9 +248,58 @@ def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
     atom.SetX(c_atom.GetX())
     atom.SetY(c_atom.GetY())
     atom.SetZ(c_atom.GetZ())
-
-
   return mol_params
+
+def LoadITPFile(path, ff, details=None):
+  mol = ix.CreateMolecule()
+  
+  bondtype = ix.BondType.Harmonic
+  angletype = ix.AngleType.Harmonic
+  impropertype = ix.DihedralType.Improper
+  propertype = ix.DihedralType.Proper
+  
+  current_block = None
+  for line in ix.LoadFile(path.expanduser(), comment=";"):
+    data = line.split()
+    if "[" in data:
+      current_block = data[1]
+    elif current_block == "atoms":
+      atom = mol.NewAtom()
+      atom.SetTag(int(data[0]))
+      atom.SetName(data[4])
+      atom.SetType(ff.GetAtomType(data[1]))
+      atom.SetPartialCharge(float(data[6]))
+      atom.SetElement(atom.GetType().GetElement())
+    elif current_block == "bonds":
+      bond = mol.NewBond(mol.GetAtomTag(int(data[0])),
+                         mol.GetAtomTag(int(data[1])))
+      if len(data) == 3:
+        bond.SetType(ff.GetBondType(bondtype, int(data[2].split("_")[1])))
+    elif current_block == "angles":
+      angle = mol.GetAngle(mol.GetAtomTag(int(data[0])),
+                           mol.GetAtomTag(int(data[1])),
+                           mol.GetAtomTag(int(data[2])))
+      if len(data) == 4:
+        angle.SetType(ff.GetAngleType(angletype, int(data[3].split("_")[1])))
+    elif current_block == "dihedrals":
+      a = mol.GetAtomTag(int(data[0]))
+      b = mol.GetAtomTag(int(data[1]))
+      c = mol.GetAtomTag(int(data[2]))
+      d = mol.GetAtomTag(int(data[3]))
+      if mol.HasDihedral(a,b,c,d):
+        dihedral = mol.GetDihedral(a,b,c,d)
+      else:
+        dihedral = mol.NewDihedral(a,b,c,d)
+      if len(data) == 5:
+        dhd_type, dhd_val = data[4].split("_")
+        if dhd_type == "gi":
+          dihedral.AddType(ff.GetDihedralType(impropertype, int(dhd_val)))
+        elif dhd_type == "gd":
+          dihedral.AddType(ff.GetDihedralType(propertype, int(dhd_val)))
+
+  if details is not None:
+    LoadIXDFile(details, mol)
+  return mol
 
 ## \cond
 if __name__ == "__main__":
