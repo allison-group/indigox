@@ -607,7 +607,7 @@ namespace indigox {
     return m_ffdat->dihedrals[type].back();
   }
   
-  FFAtom& Forcefield::NewAtomType(int id, std::string name, const Element& element) {
+  FFAtom& Forcefield::NewAtomType(int32_t id, std::string name, const Element& element) {
     FFAtom atm(id, name, element, *this);
     if (std::find(m_ffdat->atoms.begin(), m_ffdat->atoms.end(), atm)
         != m_ffdat->atoms.end())
@@ -798,7 +798,7 @@ namespace indigox {
       {24, "CU1+", 29, 0}, {50, "OTFE", 8, 0}, {25, "CU2+", 29, 0},
       {3, "OA", 8, 0}, {47, "FTFE", 9, 0}, {18, "CH2r", 6, 2}, {9, "NR", 7, 0}};
     for (auto& in : atom_dat)
-      ff.NewAtomType(in.first, in.second, PT[in.third], in.fourth);
+      ff.NewAtomType(in.first, in.second, PT[in.third]);
     
     // Add bond types
     std::vector<stdx::quad<int, double, double, double>> bnd_dat = {

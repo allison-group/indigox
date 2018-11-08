@@ -3,7 +3,7 @@ from pathlib import Path
 import indigox as ix
 
 __all__ = ["LoadIFPFile", "LoadPDBFile", "LoadMTBFile", "LoadIXDFile",
-           "LoadParameterisedMolecule", "LoadITPFile" ]
+           "LoadParameterisedMolecule", "LoadITPFile" , "LoadFragmentFile"]
 
 ## \brief Loads a GROMOS IFP file as a forcefield
 #  \details See the GROMOS Manual for definition of the IFP file format.
@@ -152,7 +152,20 @@ def LoadIXDFile(path, mol):
       atom.SetImplicitCount(l[2])
     elif line[0] == "BOND":
       bond = mol.GetBond(mol.GetAtomTag(l[0]), mol.GetAtomTag(l[1]))
-      bond.SetOrder(l[2])
+      if l[2] == 1:
+        bond.SetOrder(ix.BondOrder.SINGLE)
+      elif l[2] == 2:
+        bond.SetOrder(ix.BondOrder.DOUBLE)
+      elif l[2] == 3:
+        bond.SetOrder(ix.BondOrder.TRIPLE)
+      elif l[2] == 4:
+        bond.SetOrder(ix.BondOrder.QUADRUPLE)
+      elif l[2] == 5:
+        bond.SetOrder(ix.BondOrder.AROMATIC)
+      elif l[2] == 6:
+        bond.SetOrder(ix.BondOrder.ONEANDAHALF)
+      elif l[2] == 7:
+        bond.SetOrder(ix.BondOrder.TWOANDAHALF)
     elif line[0] == "MOLECULE":
       mol.SetMolecularCharge(l[0])
   tot_charge = sum(atm.GetFormalCharge() for atm in mol.GetAtoms())
@@ -240,7 +253,7 @@ def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
   if str(param_path).endswith(".mtb"):
     mol_params = LoadMTBFile(param_path, ff, details)
   else:
-    mol_params = LoadIFPFile(param_path, ff, details)
+    mol_params = LoadITPFile(param_path, ff, details)
   if mol_coords.NumAtoms() != mol_params.NumAtoms():
     raise TypeError("Input files have mismatch atom counts")
   for atom in mol_params.GetAtoms():
@@ -260,10 +273,13 @@ def LoadITPFile(path, ff, details=None):
   
   current_block = None
   for line in ix.LoadFile(path.expanduser(), comment=";"):
-    data = line.split()
-    if "[" in data:
+    if "[" in line:
+      data = line.split()
       current_block = data[1]
+    elif "#" in line:
+      current_block = None
     elif current_block == "atoms":
+      data = line.split()
       atom = mol.NewAtom()
       atom.SetTag(int(data[0]))
       atom.SetName(data[4])
@@ -271,17 +287,20 @@ def LoadITPFile(path, ff, details=None):
       atom.SetPartialCharge(float(data[6]))
       atom.SetElement(atom.GetType().GetElement())
     elif current_block == "bonds":
+      data = line.split()
       bond = mol.NewBond(mol.GetAtomTag(int(data[0])),
                          mol.GetAtomTag(int(data[1])))
       if len(data) == 3:
         bond.SetType(ff.GetBondType(bondtype, int(data[2].split("_")[1])))
     elif current_block == "angles":
+      data = line.split()
       angle = mol.GetAngle(mol.GetAtomTag(int(data[0])),
                            mol.GetAtomTag(int(data[1])),
                            mol.GetAtomTag(int(data[2])))
       if len(data) == 4:
         angle.SetType(ff.GetAngleType(angletype, int(data[3].split("_")[1])))
     elif current_block == "dihedrals":
+      data = line.split()
       a = mol.GetAtomTag(int(data[0]))
       b = mol.GetAtomTag(int(data[1]))
       c = mol.GetAtomTag(int(data[2]))
@@ -300,6 +319,47 @@ def LoadITPFile(path, ff, details=None):
   if details is not None:
     LoadIXDFile(details, mol)
   return mol
+
+def LoadFragmentFile(path, ff):
+  file_data = list(ix.LoadFile(path.expanduser()))
+  if file_data.count("MOLECULE") != 1:
+    raise InputError("Expect only one molecule per file")
+  if file_data[0] != "MOLECULE":
+    raise InputError("Expected MOLECULE block")
+  if file_data.count("FRAGMENT") != file_data.count("OVERLAP"):
+    raise InputError("Should have same number of fragment and overlaps")
+
+  if "END" in file_data[1:4]:
+    raise InputError("Missing input files")
+  coord_path = path.parent / file_data[1].strip()
+  param_path = path.parent / file_data[2].strip()
+  detail_path = path.parent / file_data[3].strip()
+  mol = LoadParameterisedMolecule(coord_path, param_path, ff, detail_path)
+  mol.FreezeModifications()
+  g = mol.GetGraph()
+
+  fragments = []
+  current_block = None
+  frag = []
+  overlap = []
+  for line in file_data:
+    if line == "END":
+      if current_block == "OVERLAP":
+        frag = [g.GetVertex(a) for a in frag]
+        overlap = [g.GetVertex(a) for a in overlap]
+        fragments.append(ix.Fragment(g, frag, overlap))
+        frag = []
+        overlap = []
+      current_block = None
+    elif line in ["MOLECULE", "FRAGMENT", "OVERLAP"]:
+      current_block = line
+    elif current_block == "FRAGMENT":
+      frag.extend(mol.GetAtomTag(x) for x in map(int, line.split()))
+    elif current_block == "OVERLAP":
+      overlap.extend(mol.GetAtomTag(x) for x in map(int, line.split()))
+
+  return mol, fragments
+
 
 ## \cond
 if __name__ == "__main__":

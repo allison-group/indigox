@@ -365,10 +365,10 @@ namespace indigox {
   bool Athenaeum::AddFragment(Molecule &mol, Fragment &frag) {
     // Check that the fragment matches the molecule
     graph::MolecularGraph& MG = mol.GetGraph();
-    graph::CondensedMolecularGraph& CG = MG.GetCondensedGraph();
-    graph::CondensedMolecularGraph& fg = frag.GetGraph();
-    while (fg.IsSubgraph()) { fg = fg.GetSuperGraph(); }
-    if (&CG != &fg) return false;
+    graph::sCondensedMolecularGraph CG = MG.GetCondensedGraph().shared_from_this();
+    graph::sCondensedMolecularGraph fg = frag.GetGraph().shared_from_this();
+    while (fg->IsSubgraph()) { fg = fg->GetSuperGraph().shared_from_this(); }
+    if (CG != fg) return false;
     
     // Check that the molecule forcefield matchs the athenaeum forcefield
     if (!mol.HasForcefield()) return false;

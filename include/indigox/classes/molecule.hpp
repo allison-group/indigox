@@ -74,6 +74,8 @@ namespace indigox {
   public:
     //! \brief Destructor to clear all members, just in case
     ~Molecule();
+    Molecule(const Molecule&) = delete;
+    Molecule& operator=(const Molecule&) = delete;
     
     /*! \brief Get the angle at position \p pos.
      *  \details Returns the angle at \p pos after a range check. If \p pos is

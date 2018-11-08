@@ -63,7 +63,8 @@ namespace indigox {
     
   public:
     Atom() = delete;  // default constructor for serialise access
-    
+    Atom(const Atom&) = delete;
+    Atom& operator=(const Atom&) = delete;
     /*! \brief Normal constructor.
      *  \details Links the constructed atom to the given Molecule.
      *  \param m the molecule to assign this atom to. */

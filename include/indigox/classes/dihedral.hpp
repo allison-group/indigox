@@ -44,7 +44,8 @@ namespace indigox {
     void Clear();
   public:
     Dihedral() = delete;  // no default constructor
-    
+    Dihedral(const Dihedral&) = delete;
+    Dihedral& operator=(const Dihedral&) = delete;
     /*! \brief Normal constructor.
      *  \details Creates a dihedral between four atoms, linking it to the given
      *  Molecule.

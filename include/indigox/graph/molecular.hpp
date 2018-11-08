@@ -162,6 +162,8 @@ namespace indigox::graph {
     /*! \brief Construct with a molecule.
      *  \param mol the molecule to reference to. */
     MolecularGraph() = default;
+    MolecularGraph(const MolecularGraph&) = delete;
+    MolecularGraph& operator=(const MolecularGraph&) = delete;
     
   private:
     MolecularGraph(Molecule& mol);

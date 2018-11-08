@@ -309,10 +309,10 @@ namespace indigox::graph {
 // ============================================================================
   
   CondensedMolecularGraph::CondensedMolecularGraph()
-  : _source(wMolecularGraph()) { }
+  : _source(wMolecularGraph()), _subg() { }
   
   CondensedMolecularGraph::CondensedMolecularGraph(MolecularGraph& g)
-  : _source(g.weak_from_this()) { }
+  : _source(g.weak_from_this()), _subg() { }
   
   sCondensedMolecularGraph Condense(MolecularGraph& MG) {
     using CMG = sCondensedMolecularGraph;
@@ -346,16 +346,16 @@ namespace indigox::graph {
 // ============================================================================
 // == CondensedMolecularGraph Getting and Checking ============================
 // ============================================================================
-  MolecularGraph& CondensedMolecularGraph::GetMolecularGraph() const {
+  MolecularGraph& CondensedMolecularGraph::GetMolecularGraph() {
     if (IsSubgraph())
       throw std::runtime_error("Subgraphs do not relate to molecular graphs");
     return *_source.lock();
   }
   
-  CondensedMolecularGraph& CondensedMolecularGraph::GetSuperGraph() const {
+  CondensedMolecularGraph& CondensedMolecularGraph::GetSuperGraph() {
     if (!IsSubgraph())
       throw std::runtime_error("Cannot get supergraph of non subgraph");
-    return *_subg.lock();
+    return *_subg;
   }
   
   CMGEdge CondensedMolecularGraph::GetEdge(const MGEdge &e) const {
@@ -385,7 +385,7 @@ namespace indigox::graph {
   sCondensedMolecularGraph
   CondensedMolecularGraph::Subgraph(std::vector<CMGVertex> &verts) {
     sCondensedMolecularGraph G = std::make_shared<CondensedMolecularGraph>();
-    G->_subg = weak_from_this();
+    G->_subg = shared_from_this();
     for (const CMGVertex& v : verts) {
       if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
       MGVertex source = v.GetSource();
@@ -407,7 +407,7 @@ namespace indigox::graph {
   CondensedMolecularGraph::Subgraph(std::vector<CMGVertex> &verts,
                                     std::vector<CMGEdge> &edges) {
     sCondensedMolecularGraph G = std::make_shared<CondensedMolecularGraph>();
-    G->_subg = weak_from_this();
+    G->_subg = shared_from_this();
     for (const CMGVertex& v : verts) {
       if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
       MGVertex source = v.GetSource();

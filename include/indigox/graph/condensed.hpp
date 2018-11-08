@@ -221,6 +221,8 @@ namespace indigox::graph {
     
   public:
     CondensedMolecularGraph();
+    CondensedMolecularGraph(const CondensedMolecularGraph&) = delete;
+    CondensedMolecularGraph& operator=(const CondensedMolecularGraph&) = delete;
     
   private:
     /*! \brief Construct a condensed molecular graph from a MolecularGraph.
@@ -251,13 +253,13 @@ namespace indigox::graph {
     sCondensedMolecularGraph Subgraph(std::vector<CMGVertex>& verts,
                                       std::vector<CMGEdge>& edges);
     
-    bool IsSubgraph() const { return !_subg.expired(); }
+    bool IsSubgraph() const { return bool(_subg); }
     
     /*! \brief Get the source MolecularGraph.
      *  \return the molecular graph used to construt this. */
-    MolecularGraph& GetMolecularGraph() const;
+    MolecularGraph& GetMolecularGraph();
     
-    CondensedMolecularGraph& GetSuperGraph() const;
+    CondensedMolecularGraph& GetSuperGraph();
     
     using graph_type::GetEdge;
     using graph_type::HasVertex;
@@ -306,7 +308,7 @@ namespace indigox::graph {
     //! \brief Snapshot of the molecular graph source.
     wMolecularGraph _source;
     
-    wCondensedMolecularGraph _subg;
+    sCondensedMolecularGraph _subg;
   };
   
   sCondensedMolecularGraph Condense(MolecularGraph& G);

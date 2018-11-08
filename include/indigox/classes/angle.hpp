@@ -45,7 +45,8 @@ namespace indigox {
     
   public:
     Angle() = delete;  // no default constructor
-    
+    Angle(const Angle&) = delete;
+    Angle& operator=(const Angle&) = delete;
     /*! \brief Normal constructor.
      *  \details Creates an angle between three atoms, linking it to the given
      *  Molecule. Atom \p b is always the central atom of the angle.

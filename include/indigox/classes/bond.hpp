@@ -65,7 +65,8 @@ namespace indigox {
     
   public:
     Bond() = delete;  // no default constructor
-    
+    Bond(const Bond&) = delete;
+    Bond& operator=(const Bond&) = delete;
     /*! \brief Normal constructor.
      *  \details Creates a bond between the two atoms, linking it to the given
      *  Molecule.

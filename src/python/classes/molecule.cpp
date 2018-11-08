@@ -125,7 +125,9 @@ void GeneratePyMolecule(pybind11::module& m) {
   // ===========================================================================
   auto get_atoms_ang = [](const Angle& ang) {
     stdx::triple<Atom&, Atom&, Atom&> atms = ang.GetAtoms();
-    return std::make_tuple(atms.first, atms.second, atms.third);
+    return std::make_tuple(atms.first.shared_from_this(),
+                           atms.second.shared_from_this(),
+                           atms.third.shared_from_this());
   };
   
   py::class_<Angle, sAngle>(m, "Angle")
@@ -134,7 +136,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("ToString", &Angle::ToString)
   .def("SetTag", &Angle::SetTag)
   .def("SwapOrder", &Angle::SwapOrder)
-  .def("GetAtoms", get_atoms_ang, Ref)
+  .def("GetAtoms", get_atoms_ang)
   .def("NumAtoms", &Angle::NumAtoms)
   .def("GetIndex", &Angle::GetIndex)
   .def("GetType", &Angle::GetType)
@@ -151,13 +153,16 @@ void GeneratePyMolecule(pybind11::module& m) {
   // ===========================================================================
   auto get_atoms_dhd = [](const Dihedral& dhd) {
     stdx::quad<Atom&, Atom&, Atom&, Atom&> atms = dhd.GetAtoms();
-    return std::make_tuple(atms.first, atms.second, atms.third, atms.fourth);
+    return std::make_tuple(atms.first.shared_from_this(),
+                           atms.second.shared_from_this(),
+                           atms.third.shared_from_this(),
+                           atms.fourth.shared_from_this());
   };
   
   py::class_<Dihedral, sDihedral>(m, "Dihedral")
   .def("GetTag", &Dihedral::GetTag)
   .def("GetMolecule", &Dihedral::GetMolecule, Ref)
-  .def("GetAtoms", get_atoms_dhd, Ref)
+  .def("GetAtoms", get_atoms_dhd)
   .def("NumAtoms", &Dihedral::NumAtoms)
   .def("SwapOrder", &Dihedral::SwapOrder)
   .def("ToString", &Dihedral::ToString)
