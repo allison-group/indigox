@@ -507,7 +507,7 @@ namespace indigox {
   }
   
   void SaveAthenaeum(const Athenaeum& a, std::string path) {
-    using Archive = cereal::JSONOutputArchive;
+    using Archive = cereal::PortableBinaryOutputArchive;
     std::ofstream os(path);
     if (!os.is_open()) throw std::runtime_error("Unable to open output stream");
     Archive archive(os);
@@ -516,7 +516,7 @@ namespace indigox {
   }
   
   Athenaeum LoadAthenaeum(std::string path) {
-    using Archive = cereal::JSONInputArchive;
+    using Archive = cereal::PortableBinaryInputArchive;
     std::ifstream is(path);
     if (!is.is_open()) throw std::runtime_error("Unable to open input stream");
     std::string stype;

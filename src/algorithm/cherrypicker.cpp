@@ -190,6 +190,8 @@ namespace indigox::algorithm {
   ParamMolecule CherryPicker::ParameteriseMolecule(Molecule& mol) {
     if (_libs.empty())
       throw std::runtime_error("No Athenaeums to parameterise from");
+    if (!mol.GetGraph().IsConnected())
+      throw std::runtime_error("CherryPicker requires a connected molecule");
     graph::sCondensedMolecularGraph CMG = graph::Condense(mol.GetGraph());
     ParamMolecule pmol(mol);
     
