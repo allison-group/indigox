@@ -164,8 +164,8 @@ namespace indigox {
   
   std::ostream& operator<<(std::ostream& os, const Angle& ang) {
     auto s = ang.GetAtoms();
-    os << "Angle(" << s.first.GetIndex() << ", " << s.second.GetIndex()
-       << ", " << s.third.GetIndex() << ")";
+    os << "Angle(" << s.first.GetIndex() + 1 << ", " << s.second.GetIndex() + 1
+       << ", " << s.third.GetIndex() + 1<< ")";
     return os;
   }
   

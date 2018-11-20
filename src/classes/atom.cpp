@@ -193,7 +193,7 @@ namespace indigox {
   }
   
   std::ostream& operator<<(std::ostream& os, const Atom& atm) {
-    return (os << "Atom(" << atm.GetIndex() << ")");
+    return (os << "Atom(" << atm.GetIndex() + 1 << ")");
   }
   
 /*  test_case_fixture(test::AtomTestFixture, "IXAtom getting and setting") {

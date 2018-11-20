@@ -192,7 +192,7 @@ namespace indigox {
   
   std::ostream& operator<<(std::ostream& os, const Bond& bnd) {
     auto s = bnd.GetAtoms();
-    os << "Bond(" << s.first.GetIndex() << ", " << s.second.GetIndex() << ")";
+    os << "Bond(" << s.first.GetIndex() + 1 << ", " << s.second.GetIndex() + 1 << ")";
     return os;
   }
   

@@ -169,8 +169,8 @@ namespace indigox {
   
   std::ostream& operator<<(std::ostream& os, const Dihedral& dhd) {
     auto s = dhd.GetAtoms();
-    os << "Dihedral(" << s.first.GetIndex() << ", " << s.second.GetIndex()
-       << ", " << s.third.GetIndex() << ", " << s.fourth.GetIndex() << ")";
+    os << "Dihedral(" << s.first.GetIndex() + 1 << ", " << s.second.GetIndex() + 1
+       << ", " << s.third.GetIndex() + 1 << ", " << s.fourth.GetIndex() + 1 << ")";
     return os;
   }
   

@@ -192,6 +192,8 @@ namespace indigox::algorithm {
       throw std::runtime_error("No Athenaeums to parameterise from");
     if (!mol.GetGraph().IsConnected())
       throw std::runtime_error("CherryPicker requires a connected molecule");
+    mol.PerceiveAngles();
+    mol.PerceiveDihedrals();
     graph::sCondensedMolecularGraph CMG = graph::Condense(mol.GetGraph());
     ParamMolecule pmol(mol);
     
@@ -236,7 +238,9 @@ namespace indigox::algorithm {
     // Run the matching
     for (Athenaeum& lib : _libs) {
       for (auto& g_frag : lib.GetFragments()) {
+        int frag_count = 0;
         for (Fragment frag : g_frag.second) {
+          ++frag_count;
           if (frag.Size() < CPSet::MinimumFragmentSize) continue;
           if (frag.GetGraph().NumVertices() > CMG->NumVertices()) continue;
           CherryPickerCallback callback(*CMG, vmasks, emasks, pmol, frag,
