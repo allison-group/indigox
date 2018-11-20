@@ -290,15 +290,15 @@ def LoadITPFile(path, ff, details=None):
       data = line.split()
       bond = mol.NewBond(mol.GetAtomTag(int(data[0])),
                          mol.GetAtomTag(int(data[1])))
-      if len(data) == 3:
-        bond.SetType(ff.GetBondType(bondtype, int(data[2].split("_")[1])))
+      if data[-1].starts_with("gb"):
+        bond.SetType(ff.GetBondType(bondtype, int(data[-1].split("_")[1])))
     elif current_block == "angles":
       data = line.split()
       angle = mol.GetAngle(mol.GetAtomTag(int(data[0])),
                            mol.GetAtomTag(int(data[1])),
                            mol.GetAtomTag(int(data[2])))
-      if len(data) == 4:
-        angle.SetType(ff.GetAngleType(angletype, int(data[3].split("_")[1])))
+      if data[-1].starts_with("ga"):
+        angle.SetType(ff.GetAngleType(angletype, int(data[-1].split("_")[1])))
     elif current_block == "dihedrals":
       data = line.split()
       a = mol.GetAtomTag(int(data[0]))
@@ -309,12 +309,10 @@ def LoadITPFile(path, ff, details=None):
         dihedral = mol.GetDihedral(a,b,c,d)
       else:
         dihedral = mol.NewDihedral(a,b,c,d)
-      if len(data) == 5:
-        dhd_type, dhd_val = data[4].split("_")
-        if dhd_type == "gi":
-          dihedral.AddType(ff.GetDihedralType(impropertype, int(dhd_val)))
-        elif dhd_type == "gd":
-          dihedral.AddType(ff.GetDihedralType(propertype, int(dhd_val)))
+      if data[-1].starts_with("gi"):
+        dihedral.AddType(ff.GetDihedralType(impropertype, int(data[-1].split("_")[1])))
+      elif data[-1].starts_with("gd"):
+        dihedral.AddType(ff.GetDihedralType(propertype, int(data[-1].split("_")[1])))
 
   if details is not None:
     LoadIXDFile(details, mol)
