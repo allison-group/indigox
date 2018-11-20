@@ -265,14 +265,16 @@ namespace indigox::graph {
     archive(INDIGOX_SERIAL_NVP("graph", cereal::base_class<graph_type>(this)),
             INDIGOX_SERIAL_NVP("verts", _vmap),
             INDIGOX_SERIAL_NVP("edges", _emap),
-            INDIGOX_SERIAL_NVP("source", _source));
+            INDIGOX_SERIAL_NVP("source", _source),
+            INDIGOX_SERIAL_NVP("supergraph", _subg));
   }
   template <typename Archive>
   void CondensedMolecularGraph::load(Archive &archive, const uint32_t) {
     archive(INDIGOX_SERIAL_NVP("graph", cereal::base_class<graph_type>(this)),
             INDIGOX_SERIAL_NVP("verts", _vmap),
             INDIGOX_SERIAL_NVP("edges", _emap),
-            INDIGOX_SERIAL_NVP("source", _source));
+            INDIGOX_SERIAL_NVP("source", _source),
+            INDIGOX_SERIAL_NVP("supergraph", _subg));
   }
   INDIGOX_SERIALISE_SPLIT(CondensedMolecularGraph);
 

@@ -122,7 +122,8 @@ namespace indigox::graph {
             INDIGOX_SERIAL_NVP("atom_map", _at2v),
             INDIGOX_SERIAL_NVP("bond_map", _bn2e),
             INDIGOX_SERIAL_NVP("molecule", _mol),
-            INDIGOX_SERIAL_NVP("condensed_graph", _cond));
+            INDIGOX_SERIAL_NVP("condensed_graph", _cond),
+            INDIGOX_SERIAL_NVP("super_graph", _subg));
   }
   
   template <typename Archive>
@@ -131,7 +132,8 @@ namespace indigox::graph {
             INDIGOX_SERIAL_NVP("atom_map", _at2v),
             INDIGOX_SERIAL_NVP("bond_map", _bn2e),
             INDIGOX_SERIAL_NVP("molecule", _mol),
-            INDIGOX_SERIAL_NVP("condensed_graph", _cond));
+            INDIGOX_SERIAL_NVP("condensed_graph", _cond),
+            INDIGOX_SERIAL_NVP("super_graph", _subg));
   }
   
   INDIGOX_SERIALISE_SPLIT(MolecularGraph);
