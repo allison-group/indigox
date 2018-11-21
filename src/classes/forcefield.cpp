@@ -761,7 +761,10 @@ namespace indigox {
   // ===========================================================================
   
   bool Forcefield::operator==(const Forcefield &ff) const {
-    return m_ffdat == ff.m_ffdat;
+    if (GetFamily() != ff.GetFamily()) return false;
+    if (GetName() != ff.GetName()) return false;
+    /// \todo Add more indepth comparision
+    return true;
   }
   bool Forcefield::operator!=(const Forcefield &ff) const {
     return !(*this == ff);

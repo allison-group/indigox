@@ -238,9 +238,7 @@ namespace indigox::algorithm {
     // Run the matching
     for (Athenaeum& lib : _libs) {
       for (auto& g_frag : lib.GetFragments()) {
-        int frag_count = 0;
         for (Fragment frag : g_frag.second) {
-          ++frag_count;
           if (frag.Size() < CPSet::MinimumFragmentSize) continue;
           if (frag.GetGraph().NumVertices() > CMG->NumVertices()) continue;
           CherryPickerCallback callback(*CMG, vmasks, emasks, pmol, frag,
