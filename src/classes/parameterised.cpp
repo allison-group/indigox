@@ -72,7 +72,8 @@ namespace indigox {
     sAtom atm = m_patmdat->atom.lock();
     if (!atm) throw std::runtime_error("Mapped atom missing");
     atm->SetType(GetMostCommonType());
-    atm->SetPartialCharge(mean);
+    if (!self_consistent) atm->SetPartialCharge(mean);
+    else atm->SetPartialCharge(MeadianCharge());
     m_patmdat->applied = true;
     return true;
   }
@@ -487,7 +488,10 @@ namespace indigox {
         sAtom b = as.second.shared_from_this();
         sAtom c = as.third.shared_from_this();
         sAtom d = as.fourth.shared_from_this();
-        if (a > d) a.swap(d);
+        if (a > d) {
+          a.swap(d);
+          b.swap(c);
+        }
         dihedrals.emplace(stdx::make_quad(a, b, c, d), ParamDihedral(as, *dhd));
       }
     }
@@ -572,7 +576,10 @@ namespace indigox {
   }
   
   ParamDihedral ParamMolecule::GetDihedral(PDihedral atms) {
-    if (atms.fourth < atms.first) atms.first.swap(atms.fourth);
+    if (atms.fourth < atms.first) {
+      atms.first.swap(atms.fourth);
+      atms.second.swap(atms.third);
+    }
     auto pos = m_pmoldat->dihedrals.find(atms);
     if (pos != m_pmoldat->dihedrals.end()) return pos->second;
     Dihedral& newD = m_pmoldat->mol->NewDihedral(*atms.first, *atms.second,
@@ -585,24 +592,40 @@ namespace indigox {
   std::vector<ParamAtom> ParamMolecule::GetAtoms() const {
     std::vector<ParamAtom> atms; atms.reserve(m_pmoldat->atoms.size());
     for (auto& a : m_pmoldat->atoms) atms.emplace_back(a.second);
+    std::sort(atms.begin(), atms.end(),
+              [](ParamAtom& a, ParamAtom& b) {
+                return a.GetAtom().GetIndex() < b.GetAtom().GetIndex();
+              });
     return atms;
   }
   
   std::vector<ParamBond> ParamMolecule::GetBonds() const {
     std::vector<ParamBond> atms; atms.reserve(m_pmoldat->bonds.size());
     for (auto& a : m_pmoldat->bonds) atms.emplace_back(a.second);
+    std::sort(atms.begin(), atms.end(),
+              [](ParamBond& a, ParamBond& b) {
+                return a.GetBond().GetIndex() < b.GetBond().GetIndex();
+              });
     return atms;
   }
   
   std::vector<ParamAngle> ParamMolecule::GetAngles() const {
     std::vector<ParamAngle> atms; atms.reserve(m_pmoldat->angles.size());
     for (auto& a : m_pmoldat->angles) atms.emplace_back(a.second);
+    std::sort(atms.begin(), atms.end(),
+              [](ParamAngle& a, ParamAngle& b) {
+                return a.GetAngle().GetIndex() < b.GetAngle().GetIndex();
+              });
     return atms;
   }
   
   std::vector<ParamDihedral> ParamMolecule::GetDihedrals() const {
     std::vector<ParamDihedral> atms; atms.reserve(m_pmoldat->dihedrals.size());
     for (auto& a : m_pmoldat->dihedrals) atms.emplace_back(a.second);
+    std::sort(atms.begin(), atms.end(),
+              [](ParamDihedral& a, ParamDihedral& b) {
+                return a.GetDihedral().GetIndex() < b.GetDihedral().GetIndex();
+              });
     return atms;
   }
   

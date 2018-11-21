@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <array>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <numeric>
@@ -1175,6 +1176,28 @@ namespace indigox {
     sMolecule tmp = sMolecule(new Molecule());
     tmp->Init();
     return tmp;
+  }
+  
+  void SaveMolecule(Molecule& mol, std::string path) {
+    using Archive = cereal::PortableBinaryOutputArchive;
+    std::ofstream os(path);
+    if (!os.is_open()) throw std::runtime_error("Unable to open output stream");
+    Archive archive(os);
+    std::string stype("Molecule");
+    archive(stype, mol.shared_from_this());
+  }
+  
+  sMolecule LoadMolecule(std::string path) {
+    using Archive = cereal::PortableBinaryInputArchive;
+    std::ifstream is(path);
+    if (!is.is_open()) throw std::runtime_error("Unable to open input stream");
+    std::string stype;
+    Archive archive(is);
+    archive(stype);
+    if (stype != "Molecule") throw std::runtime_error("Not a Molecule file");
+    sMolecule mol;
+    archive(mol);
+    return mol;
   }
   
   test_suite_close();

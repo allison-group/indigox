@@ -473,6 +473,9 @@ namespace indigox {
   };
   
   sMolecule CreateMolecule();
+  void SaveMolecule(Molecule& mol, std::string path);
+  sMolecule LoadMolecule(std::string path);
+  
 }
 
 #endif /* INDIGOX_MOLECULE_HPP */

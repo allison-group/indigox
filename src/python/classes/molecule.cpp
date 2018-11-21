@@ -250,6 +250,8 @@ void GeneratePyMolecule(pybind11::module& m) {
   // == Module function bindings ===============================================
   // ===========================================================================
   m.def("CreateMolecule", &CreateMolecule);
+  m.def("SaveMolecule", &SaveMolecule);
+  m.def("LoadMolecule", &LoadMolecule);
   m.def("Benzene", []() -> sMolecule {
     sMolecule mol = CreateMolecule();
     Atom& C1 = mol->NewAtom("C1", GetPeriodicTable().GetElement("C"));
