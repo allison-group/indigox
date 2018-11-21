@@ -187,14 +187,14 @@ namespace indigox {
       if (c_pos == atm_check.end()) continue;
       auto d_pos = std::find(atm_check.begin(), atm_check.end(), d);
       if (d_pos == atm_check.end()) continue;
-      bool d1 = std::distance(atm_check.begin(), a_pos) >= acceptable_pos;
-      bool d2 = std::distance(atm_check.begin(), b_pos) >= acceptable_pos;
-      bool d3 = std::distance(atm_check.begin(), c_pos) >= acceptable_pos;
-      bool d4 = std::distance(atm_check.begin(), d_pos) >= acceptable_pos;
+      bool d1 = std::distance(atm_check.begin(), a_pos) < acceptable_pos;
+      bool d2 = std::distance(atm_check.begin(), b_pos) < acceptable_pos;
+      bool d3 = std::distance(atm_check.begin(), c_pos) < acceptable_pos;
+      bool d4 = std::distance(atm_check.begin(), d_pos) < acceptable_pos;
       // Need two adjacent atoms to not be dangling
       if (!((d1 && d2) || (d2 && d3) || (d3 && d4))) continue;
-      if (d1 || d2 || d3 || d4) tmp_dhd.emplace_back(a, b, c, d);
-      else tmp_dhd.emplace_front(a, b, c, d);
+      if (d1 || d2 || d3 || d4) tmp_dhd.emplace_front(a, b, c, d);
+      else tmp_dhd.emplace_back(a, b, c, d);
     }
     _dat->dihedrals.assign(tmp_dhd.begin(), tmp_dhd.end());
   }
