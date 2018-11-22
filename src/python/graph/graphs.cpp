@@ -97,7 +97,9 @@ void GeneratePyGraphs(py::module& m) {
   .def("NumConnectedComponents", &MG::NumConnectedComponents)
   .def("GetConnectedComponents", &MG::GetConnectedComponents, Ref)
   .def("IsCyclic", py::overload_cast<const MGV&>(&MG::IsCyclic))
+  .def("IsCyclic", py::overload_cast<const MGV&, uint32_t>(&MG::IsCyclic))
   .def("IsCyclic", py::overload_cast<const MGE&>(&MG::IsCyclic))
+  .def("IsCyclic", py::overload_cast<const MGE&, uint32_t>(&MG::IsCyclic))
   .def("GetCycles", &MG::GetCycles, Ref)
   .def("NumCycles", &MG::NumCycles)
   ;
@@ -170,7 +172,9 @@ void GeneratePyGraphs(py::module& m) {
   .def("NumConnectedComponents", &CMG::NumConnectedComponents)
   .def("GetConnectedComponents", &CMG::GetConnectedComponents, Ref)
   .def("IsCyclic", py::overload_cast<const CMGV&>(&CMG::IsCyclic))
+  .def("IsCyclic", py::overload_cast<const CMGV&, uint32_t>(&CMG::IsCyclic))
   .def("IsCyclic", py::overload_cast<const CMGE&>(&CMG::IsCyclic))
+  .def("IsCyclic", py::overload_cast<const CMGE&, uint32_t>(&CMG::IsCyclic))
   .def("GetCycles", &CMG::GetCycles, Ref)
   .def("NumCycles", &CMG::NumCycles)
   ;

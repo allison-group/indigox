@@ -305,10 +305,14 @@ namespace indigox::graph {
      *  \return if the vertex is in a cycle or not. */
     bool IsCyclic(const V& v);
     
+    bool IsCyclic(const V& v, uint32_t sz);
+    
     /*! \brief Determine if an edge of this graph is cycle.
      *  \param e the edge to check if in a cycle.
      *  \return if the edge is in a cycle or not. */
     bool IsCyclic(const E& e);
+    
+    bool IsCyclic(const E& e, uint32_t sz);
     
     /*! \brief Get the cycles of the graph
      *  \return the cycles of the graph. */

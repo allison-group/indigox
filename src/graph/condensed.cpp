@@ -135,7 +135,7 @@ namespace indigox::graph {
     degree.from_uint32(atm.NumBonds()); degree <<= 31;
     mask = atm_num | fc_mag | h | f | cl | br | i | degree;
     if (atm.GetFormalCharge() < 0) mask.set(10);
-    if (MG.IsCyclic(v)) mask.set(26);
+    if (MG.IsCyclic(v, 8)) mask.set(26);
 //    if (v->IsCyclic(8)) _iso_mask.set(27);
     if (atm.GetStereochemistry() == AtomStereo::R) mask.set(28);
     if (atm.GetStereochemistry() == AtomStereo::S) mask.set(29);
@@ -232,7 +232,7 @@ namespace indigox::graph {
     mask |= degree_small | degree_large;
     if (bnd.GetStereochemistry() == BondStereo::E) mask.set(3);
     if (bnd.GetStereochemistry() == BondStereo::Z) mask.set(4);
-    if (g.GetMolecularGraph().IsCyclic(e)) mask.set(5);
+    if (g.GetMolecularGraph().IsCyclic(e, 8)) mask.set(5);
 //    if (e->IsCyclic(8)) _iso_mask.set(6);
     if (bnd.GetAromaticity()) mask.set(7);
     _dat->mask = mask;
