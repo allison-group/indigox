@@ -216,7 +216,7 @@ def LoadMTBFile(path, ff, details=None):
           angle = mol.GetAngle(mol.GetAtomTag(int(dat[0])),
                                mol.GetAtomTag(int(dat[1])),
                                mol.GetAtomTag(int(dat[2])));
-          angle.SetType(ff.GetAngleType(angletype, int(dat[2])))
+          angle.SetType(ff.GetAngleType(angletype, int(dat[3])))
         elif i < start_line[3] + counts[3]:  # Improper dihedrals
           a = mol.GetAtomTag(int(dat[0]))
           b = mol.GetAtomTag(int(dat[1]))
