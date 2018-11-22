@@ -64,9 +64,9 @@ namespace indigox {
     if (self_consistent) {
       if (m_patmdat->types.size() > 1)
         throw std::runtime_error("Types not self-consistent");
-      if (boost::math::relative_difference(mean, MeadianCharge()) > 1e-10)
+      if (std::fabs(mean - MeadianCharge()) > 1e-10)
         throw std::runtime_error("Charges mean/median not equal");
-      if (boost::math::relative_difference(0.0, StandardDeviationCharge()) > 1e-10)
+      if (std::fabs(0.0 - StandardDeviationCharge()) > 1e-10)
         throw std::runtime_error("Charge stddev not 0");
     }
     sAtom atm = m_patmdat->atom.lock();
