@@ -604,7 +604,13 @@ namespace indigox {
     for (auto& a : m_pmoldat->bonds) atms.emplace_back(a.second);
     std::sort(atms.begin(), atms.end(),
               [](ParamBond& a, ParamBond& b) {
-                return a.GetBond().GetIndex() < b.GetBond().GetIndex();
+                size_t aa = a.GetAtoms().first.GetIndex();
+                size_t ab = a.GetAtoms().second.GetIndex();
+                if (aa > ab) std::swap(aa, ab);
+                size_t ba = b.GetAtoms().first.GetIndex();
+                size_t bb = b.GetAtoms().second.GetIndex();
+                if (ba > bb) std::swap(ba, bb);
+                return (aa == ba) ? (ab < bb) : (aa < ba);
               });
     return atms;
   }
@@ -614,7 +620,17 @@ namespace indigox {
     for (auto& a : m_pmoldat->angles) atms.emplace_back(a.second);
     std::sort(atms.begin(), atms.end(),
               [](ParamAngle& a, ParamAngle& b) {
-                return a.GetAngle().GetIndex() < b.GetAngle().GetIndex();
+                size_t aa = a.GetAtoms().first.GetIndex();
+                size_t ab = a.GetAtoms().second.GetIndex();
+                size_t ac = a.GetAtoms().third.GetIndex();
+                if (aa > ac) std::swap(aa, ac);
+                size_t ba = b.GetAtoms().first.GetIndex();
+                size_t bb = b.GetAtoms().second.GetIndex();
+                size_t bc = b.GetAtoms().third.GetIndex();
+                if (ba > bc) std::swap(ba, bc);
+                if (ab == bb && aa == ba) return ac < bc;
+                else if (ab == bb) return aa < ba;
+                else return ab < bb;
               });
     return atms;
   }
@@ -624,7 +640,20 @@ namespace indigox {
     for (auto& a : m_pmoldat->dihedrals) atms.emplace_back(a.second);
     std::sort(atms.begin(), atms.end(),
               [](ParamDihedral& a, ParamDihedral& b) {
-                return a.GetDihedral().GetIndex() < b.GetDihedral().GetIndex();
+                size_t aa = a.GetParameterisedAtoms().first.GetIndex();
+                size_t ab = a.GetParameterisedAtoms().second.GetIndex();
+                size_t ac = a.GetParameterisedAtoms().third.GetIndex();
+                size_t ad = a.GetParameterisedAtoms().fourth.GetIndex();
+                if (ab > ac) { std::swap(ab, ac); std::swap(aa, ad); }
+                size_t ba = b.GetParameterisedAtoms().first.GetIndex();
+                size_t bb = b.GetParameterisedAtoms().second.GetIndex();
+                size_t bc = b.GetParameterisedAtoms().third.GetIndex();
+                size_t bd = b.GetParameterisedAtoms().fourth.GetIndex();
+                if (bb > bc) { std::swap(bb, bc); std::swap(ba, bd); }
+                if (ab == bb && ac == bc && aa == ba) return ad < bd;
+                else if (ab == bb && ac == bc) return aa < ba;
+                else if (ab == bb) return ac < bc;
+                else return ab < bb;
               });
     return atms;
   }
