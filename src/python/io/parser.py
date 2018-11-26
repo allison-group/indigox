@@ -181,8 +181,8 @@ def LoadMTBFile(path, ff, details=None):
       blocks.append(file[i+1])
     
   mol = ix.CreateMolecule()
-  bondtype = ix.BondType.Harmonic
-  angletype = ix.AngleType.Harmonic
+  bondtype = ix.BondType.Quartic
+  angletype = ix.AngleType.CosineHarmonic
   impropertype = ix.DihedralType.Improper
   propertype = ix.DihedralType.Proper
   for b in blocks:

@@ -34,4 +34,5 @@ TARGET_LINK_LIBRARIES(pyindigox PRIVATE indigox)
 # Set install rules
 INSTALL(TARGETS pyindigox DESTINATION ${PYTHON_SITE_PACKAGES}/indigox)
 INSTALL(FILES __init__.py DESTINATION ${PYTHON_SITE_PACKAGES}/indigox)
-INSTALL(FILES io/__init__.py io/misc.py io/parser.py DESTINATION ${PYTHON_SITE_PACKAGES}/indigox/io)
+INSTALL(FILES io/__init__.py io/misc.py io/parser.py
+              io/serialiser.py DESTINATION ${PYTHON_SITE_PACKAGES}/indigox/io)
