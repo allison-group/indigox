@@ -192,6 +192,27 @@ namespace indigox {
     return std::distance(be.first, pos);
   }
   
+  std::vector<sBond> Atom::GetBonds() const {
+    std::vector<sBond> bnds;
+    bnds.reserve(NumBonds());
+    for (wBond bnd : _bnds) bnds.emplace_back(bnd.lock());
+    return bnds;
+  }
+  
+  std::vector<sAngle> Atom::GetAngles() const {
+    std::vector<sAngle> bnds;
+    bnds.reserve(NumAngles());
+    for (wAngle bnd : _angs) bnds.emplace_back(bnd.lock());
+    return bnds;
+  }
+  
+  std::vector<sDihedral> Atom::GetDihedrals() const {
+    std::vector<sDihedral> bnds;
+    bnds.reserve(NumDihedrals());
+    for (wDihedral bnd : _dhds) bnds.emplace_back(bnd.lock());
+    return bnds;
+  }
+  
   std::ostream& operator<<(std::ostream& os, const Atom& atm) {
     return (os << "Atom(" << atm.GetIndex() + 1 << ")");
   }

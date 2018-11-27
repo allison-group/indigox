@@ -255,7 +255,9 @@ namespace indigox {
       return std::make_pair(_bnds.begin(), _bnds.end());
     }
     
-    const AtomBonds& GetBonds() const { return _bnds; }
+    std::vector<sBond> GetBonds() const;
+    std::vector<sAngle> GetAngles() const;
+    std::vector<sDihedral> GetDihedrals() const;
     
     /*! \brief Get iterator access to the atom's angles.
      *  \details Intended primarily for internal use as the iterators are to

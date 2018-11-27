@@ -253,8 +253,7 @@ namespace indigox::algorithm {
           CherryPickerCallback callback(*CMG, vmasks, emasks, pmol, frag,
                                         vertmask, edgemask);
           SubgraphIsomorphisms(frag.GetGraph(), *CMG, callback);
-          if (!callback.has_mapping && frag.GetSupersets().size() == fragments.size())
-            fragments -= frag.GetSupersets();
+          if (!callback.has_mapping) fragments -= frag.GetSupersets();
         }
       }
       pmol.ApplyParameteristion(lib.IsSelfConsistent());

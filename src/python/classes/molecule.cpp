@@ -77,7 +77,9 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("SetAromaticity", &Atom::SetAromaticity)
   .def("GetStereochemistry", &Atom::GetStereochemistry)
   .def("GetAromaticity", &Atom::GetAromaticity)
-  .def("GetBonds", &Atom::GetBonds, Ref)
+  .def("GetBonds", &Atom::GetBonds)
+  .def("GetAngles", &Atom::GetAngles)
+  .def("GetDihedrals", &Atom::GetDihedrals)
   .def("NumBonds", &Atom::NumBonds)
   .def("NumAngles", &Atom::NumAngles)
   .def("NumDihedrals", &Atom::NumDihedrals)
@@ -94,6 +96,12 @@ void GeneratePyMolecule(pybind11::module& m) {
   // ===========================================================================
   // == Bond class bindings ====================================================
   // ===========================================================================
+  auto get_atoms_bnd = [](const Bond& bnd) {
+    std::pair<Atom&, Atom&> atms = bnd.GetAtoms();
+    return std::make_pair(atms.first.shared_from_this(),
+                          atms.second.shared_from_this());
+  };
+  
   py::class_<Bond, sBond>(m, "Bond")
   .def("GetTag", &Bond::GetTag)
   .def("GetMolecule", &Bond::GetMolecule, Ref)
@@ -108,7 +116,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("SwapOrder", &Bond::SwapOrder)
   .def("SetAromaticity", &Bond::SetAromaticity)
   .def("SetStereochemistry", &Bond::SetStereochemistry)
-  .def("GetAtoms", &Bond::GetAtoms, Ref)
+  .def("GetAtoms", get_atoms_bnd)
   .def("NumAtoms", &Bond::NumAtoms)
   .def("GetIndex", &Bond::GetIndex)
   .def("GetType", &Bond::GetType)
