@@ -182,6 +182,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("HasType", &Dihedral::HasType)
   .def("AddType", &Dihedral::AddType)
   .def("RemoveType", &Dihedral::RemoveType)
+  .def("GetPriority", &Dihedral::GetPriority)
   .def("__str__", &outstream_operator<Dihedral>)
   .def("__repr__", &outstream_operator<Dihedral>)
   

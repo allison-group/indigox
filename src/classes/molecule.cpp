@@ -730,7 +730,7 @@ namespace indigox {
     for (sBond bn : _bnds) {
       Atom& B = bn->GetAtoms().first;
       Atom& C = bn->GetAtoms().second;
-      if (B.NumBonds() < 2 || B.NumBonds() < 2) continue;
+      if (B.NumBonds() < 2 || C.NumBonds() < 2) continue;
       
       for (wBond bn : B.GetBonds()) {
         auto atms = bn.lock()->GetAtoms();
@@ -755,6 +755,38 @@ namespace indigox {
       }
       B_nbrs.clear(); C_nbrs.clear();
     }
+    
+    // Determining priorities
+    for (sBond bn : _bnds) {
+      Atom& B = bn->GetAtoms().first;
+      Atom& C = bn->GetAtoms().second;
+      if (B.NumBonds() < 2 || C.NumBonds() < 2) continue;
+      std::vector<sDihedral> dihedrals = B.GetDihedrals(), bnd_dhds;
+      for (sDihedral dhd : B.GetDihedrals()) {
+        auto atms = dhd->GetAtoms();
+        if ((atms.second.shared_from_this() == B.shared_from_this()
+             && atms.third.shared_from_this() == C.shared_from_this())
+            || (atms.second.shared_from_this() == C.shared_from_this()
+                && atms.third.shared_from_this() == B.shared_from_this()))
+          bnd_dhds.emplace_back(dhd);
+      }
+      std::sort(bnd_dhds.begin(), bnd_dhds.end(),
+                [](sDihedral a, sDihedral b) {
+                  auto a_atms = a->GetAtoms();
+                  auto b_atms = b->GetAtoms();
+                  int32_t w_a = (a_atms.first.GetElement().GetAtomicNumber()
+                                 * a_atms.first.GetElement().GetAtomicNumber());
+                  w_a += (a_atms.fourth.GetElement().GetAtomicNumber()
+                          *a_atms.fourth.GetElement().GetAtomicNumber());
+                  int32_t w_b = (b_atms.first.GetElement().GetAtomicNumber()
+                                 * b_atms.first.GetElement().GetAtomicNumber());
+                  w_b += (b_atms.fourth.GetElement().GetAtomicNumber()
+                          * b_atms.fourth.GetElement().GetAtomicNumber());
+                  return w_a < w_b;
+                });
+      for (uint32_t i = 0; i < bnd_dhds.size(); ++i) bnd_dhds[i]->_priority = i;
+    }
+    
     return count;
   }
   

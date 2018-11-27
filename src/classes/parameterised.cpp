@@ -390,6 +390,11 @@ namespace indigox {
     if (m_pdhddat->applied) return;
     // Can't throw with dihedrals as they can have no types assigned
     if (!mapped.HasType()) return;
+    // Only map with same priority dihedrals.
+    //  To avoid GROMOS duplication in eg NH3 group.
+    if (mapped.GetPriority() >= 0
+        && mapped.GetPriority() != m_pdhddat->dihedral.lock()->GetPriority())
+      return;
     
     TypeGroup t = mapped.GetTypes();
     auto t_pos = m_pdhddat->types.emplace(t, 1);

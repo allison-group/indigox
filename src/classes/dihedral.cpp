@@ -28,7 +28,8 @@ namespace indigox {
     archive(INDIGOX_SERIAL_NVP("molecule", _mol),
             INDIGOX_SERIAL_NVP("atoms", atoms),
             INDIGOX_SERIAL_NVP("tag", _tag),
-            INDIGOX_SERIAL_NVP("type", _types)
+            INDIGOX_SERIAL_NVP("type", _types),
+            INDIGOX_SERIAL_NVP("priority", _priority)
             );
   }
   
@@ -44,7 +45,8 @@ namespace indigox {
     construct(*atoms[0], *atoms[1], *atoms[2], *atoms[3], *m);
     
     archive(INDIGOX_SERIAL_NVP("tag", construct->_tag),
-            INDIGOX_SERIAL_NVP("type", construct->_types));
+            INDIGOX_SERIAL_NVP("type", construct->_types),
+            INDIGOX_SERIAL_NVP("priority", construct->_priority));
   }
   INDIGOX_SERIALISE_CONSTRUCT(Dihedral);
   
@@ -92,7 +94,7 @@ namespace indigox {
   Dihedral::Dihedral(Atom& a, Atom& b, Atom& c, Atom& d, Molecule& m) :
   _mol(m.weak_from_this()), _tag(0),
   _atms({a.weak_from_this(), b.weak_from_this(), c.weak_from_this(),
-    d.weak_from_this()}) { }
+    d.weak_from_this()}), _priority(-1) { }
   
 /*  test_case_fixture(test::DihedralTestFixture, "IXDihedral construction") {
     check_nothrow(test::TestDihedral tdhd(a,b,c,d,mol));

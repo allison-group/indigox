@@ -121,6 +121,7 @@ namespace indigox {
      *  \param type the type of dihedral to set. */
     void AddType(const FFDihedral& type);
     void RemoveType(const FFDihedral& type);
+    int32_t GetPriority() const { return _priority; }
     
   private:
     //! The molecule this dihedral is assigned to.
@@ -131,6 +132,8 @@ namespace indigox {
     DihedAtoms _atms;
     //! \brief Type of dihedral
     DihedTypes _types;
+    //! \brief Priority of dihedral. Only set by PerceiveDihedrals
+    int32_t _priority;
   };
   
   std::ostream& operator<<(std::ostream& os, const Dihedral& dhd);
