@@ -61,6 +61,7 @@ namespace indigox::algorithm {
       static EdgeParameters EdgeMapping;
       
       static uint32_t MinimumFragmentSize;
+      static uint32_t MaximumFragmentSize;
     };
     
     CherryPicker() = delete;

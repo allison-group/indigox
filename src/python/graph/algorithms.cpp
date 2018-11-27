@@ -125,6 +125,7 @@ void GeneratePyGraphAlgorithms(pybind11::module& m) {
   .def_readwrite_static("VertexMapping", &CPSet::VertexMapping)
   .def_readwrite_static("EdgeMapping", &CPSet::EdgeMapping)
   .def_readwrite_static("MinimumFragmentSize", &CPSet::MinimumFragmentSize)
+  .def_readwrite_static("MaximumFragmentSize", &CPSet::MaximumFragmentSize)
   ;
   
   cp.def(py::init<const Forcefield&>())

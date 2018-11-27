@@ -25,6 +25,7 @@ namespace indigox::algorithm {
                                  | VParam::CondensedVertices | VParam::Degree);
   EParam CPSet::EdgeMapping = (EParam::BondOrder | EParam::Degree);
   uint32_t CPSet::MinimumFragmentSize = 4;
+  uint32_t CPSet::MaximumFragmentSize = 0;  // no maximum size
   
   CherryPicker::CherryPicker(const Forcefield& ff) : _ff(ff) { }
   
@@ -249,6 +250,7 @@ namespace indigox::algorithm {
         for (size_t pos = 0; pos < fragments.size(); pos = fragments.find_next(pos)) {
           Fragment frag = g_frag.second[pos];
           if (frag.Size() < CPSet::MinimumFragmentSize) continue;
+          if (CPSet::MaximumFragmentSize && frag.Size() > CPSet::MaximumFragmentSize) continue;
           if (frag.GetGraph().NumVertices() > CMG->NumVertices()) continue;
           CherryPickerCallback callback(*CMG, vmasks, emasks, pmol, frag,
                                         vertmask, edgemask);
