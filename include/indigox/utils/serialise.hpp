@@ -11,6 +11,7 @@
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/types/array.hpp>
 #include <cereal/types/bitset.hpp>
+#include <cereal/types/boost_dynamic_bitset.hpp>
 #include <cereal/types/eastl_bitset.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/memory.hpp>
