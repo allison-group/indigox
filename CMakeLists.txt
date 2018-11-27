@@ -110,7 +110,7 @@ ELSE(DOXYGEN_FOUND)
 ENDIF(DOXYGEN_FOUND)
 
 FILE(COPY data DESTINATION .)
-FILE(COPY examples/python_example.py DESTINATION examples)
+#FILE(COPY examples/python_example.py DESTINATION examples)
 
 # Install examples
 # Install library
