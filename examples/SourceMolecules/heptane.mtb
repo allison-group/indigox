@@ -1,0 +1,61 @@
+TITLE
+Fully UA parameters for 2 heptane.
+END
+FORCEFIELD
+54A7
+END
+PHYSICALCONSTANTS
+# FPEPSI: 1.0/(4.0*PI*EPS0) (EPS0 is the permittivity of vacuum)
+  0.1389354E+03
+# HBAR: Planck's constant HBAR = H/(2* PI)
+  0.6350780E-01
+# SPDL: Speed of light (in nm/ps)
+  2.9979245800E05
+# BOLTZ: Boltzmann's constant
+  8.31441E-03
+END
+LINKEXCLUSIONS
+#nearest neighbour exclusions when linking
+#NRNE
+   2
+END
+MTBUILDBLSOLUTE
+# RNME
+HEP
+# NATM NLIN
+   7     0
+# atoms
+    1   C4   16    5   0.000  1    2    2    3
+    2   C1   15    4   0.000  1    2    3    4
+    3   C2   15    4   0.000  1    2    4    5
+    4   C3   15    4   0.000  1    2    5    6
+    5   C5   15    4   0.000  1    2    6    7
+    6   C6   15    4   0.000  1    1    7
+    7   C7   16    5   0.000  1    0
+# bonds
+   6
+    1    2   27
+    2    3   27
+    3    4   27
+    4    5   27
+    5    6   27
+    6    7   27
+# angles
+   5
+    1    2    3   15
+    2    3    4   15
+    3    4    5   15
+    4    5    6   15
+    5    6    7   15
+# impropers
+   0
+# dihedrals
+   4
+   1    2    3    4    34
+   2    3    4    5    34
+   3    4    5    6    34
+   4    5    6    7    34
+# LJ exceptions
+   0
+END
+

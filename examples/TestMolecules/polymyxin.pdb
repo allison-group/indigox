@@ -1,0 +1,237 @@
+TITLE      Polymyxin B3
+REMARK   1 File created by GaussView 5.0.9
+HETATM    1  C   UEC     0      43.440  11.610  46.310                       C
+HETATM    2  O   UEC     0      43.540  11.150  45.170                       O
+HETATM    3  CA  UEC     0      42.080  12.120  46.810                       C
+HETATM    4  CB  UEC     0      41.820  13.520  46.260                       C
+HETATM    5  CC  UEC     0      40.440  14.050  46.670                       C
+HETATM    6  CD  UEC     0      40.100  15.320  45.890                       C
+HETATM    7  CE  UEC     0      38.740  15.930  46.250                       C
+HETATM    8  CG  UEC     0      38.510  17.240  45.490                       C
+HETATM    9  CH  UEC     0      38.480  17.100  43.960                       C
+HETATM   10  N   DAB     1      44.490  12.120  46.960                       N
+HETATM   11  H   DAB     1      44.340  12.840  47.630                       H
+HETATM   12  CA  DAB     1      45.920  11.730  46.770                       C
+HETATM   13  CB  DAB     1      46.450  11.950  45.330                       C
+HETATM   14  CG  DAB     1      46.000  13.230  44.630                       C
+HETATM   15  ND  DAB     1      45.430  12.930  43.300                       N
+HETATM   16  HD1 DAB     1      44.680  12.270  43.400                       H
+HETATM   17  HD2 DAB     1      45.090  13.760  42.880                       H
+HETATM   18  HD3 DAB     1      46.140  12.530  42.720                       H
+HETATM   19  C   DAB     1      46.840  12.410  47.800                       C
+HETATM   20  O   DAB     1      46.960  13.630  47.800                       O
+HETATM   21  N   TRH     2      47.440  11.620  48.690                       N
+HETATM   22  H   TRH     2      47.550  10.640  48.530                       H
+HETATM   23  CA  TRH     2      48.030  12.160  49.940                       C
+HETATM   24  CB  TRH     2      47.320  11.610  51.200                       C
+HETATM   25  OG1 TRH     2      47.670  10.250  51.500                       O
+HETATM   26  HG1 TRH     2      46.852   9.780  51.679                       H
+HETATM   27  CG2 TRH     2      45.810  11.840  51.210                       C
+HETATM   28  C   TRH     2      49.550  11.970  50.190                       C
+HETATM   29  O   TRH     2      50.160  10.960  49.860                       O
+HETATM   30  N   DAB     3      50.080  12.920  50.970                       N
+HETATM   31  H   DAB     3      49.640  13.820  50.980                       H
+HETATM   32  CA  DAB     3      51.320  12.870  51.790                       C
+HETATM   33  CB  DAB     3      51.110  12.040  53.070                       C
+HETATM   34  CG  DAB     3      51.340  10.510  53.050                       C
+HETATM   35  ND  DAB     3      50.350   9.710  52.320                       N
+HETATM   36  HD1 DAB     3      50.380   9.950  51.340                       H
+HETATM   37  HD2 DAB     3      50.540   8.740  52.430                       H
+HETATM   38  HD3 DAB     3      49.420   9.910  52.640                       H
+HETATM   39  C   DAB     3      52.750  12.670  51.260                       C
+HETATM   40  O   DAB     3      53.680  13.210  51.860                       O
+HETATM   41  N   DAB     4      52.970  11.880  50.200                       N
+HETATM   42  H   DAB     4      52.240  11.620  49.570                       H
+HETATM   43  CA  DAB     4      54.340  11.470  49.800                       C
+HETATM   44  CB  DAB     4      54.240  10.280  48.830                       C
+HETATM   45  CG  DAB     4      55.560   9.490  48.690                       C
+HETATM   46  ND  DAB     4      55.760   8.480  49.750                       N
+HETATM   47  HD1 DAB     4      56.370   8.760  50.490                       H
+HETATM   48  C   DAB     4      55.190  12.610  49.190                       C
+HETATM   49  O   DAB     4      54.980  13.000  48.050                       O
+HETATM   50  N   DAB     5      55.860  13.330  50.090                       N
+HETATM   51  H   DAB     5      55.440  13.450  50.990                       H
+HETATM   52  CA  DAB     5      56.880  14.320  49.680                       C
+HETATM   53  CB  DAB     5      56.490  15.730  50.160                       C
+HETATM   54  CG  DAB     5      56.970  16.860  49.240                       C
+HETATM   55  ND  DAB     5      58.420  17.110  49.260                       N
+HETATM   56  HD1 DAB     5      58.690  17.500  50.140                       H
+HETATM   57  HD2 DAB     5      58.910  16.240  49.130                       H
+HETATM   58  HD3 DAB     5      58.680  17.750  48.530                       H
+HETATM   59  C   DAB     5      58.310  13.970  50.150                       C
+HETATM   60  O   DAB     5      59.250  14.510  49.560                       O
+HETATM   61  N   DPH     6      58.410  13.390  51.350                       N
+HETATM   62  H   DPH     6      57.590  13.190  51.880                       H
+HETATM   63  CA  DPH     6      59.640  12.870  52.010                       C
+HETATM   64  CB  DPH     6      60.650  14.020  52.210                       C
+HETATM   65  CG  DPH     6      61.820  13.820  53.190                       C
+HETATM   66  CD1 DPH     6      63.000  14.510  52.910                       C
+HETATM   67  HD1 DPH     6      63.090  15.090  51.990                       H
+HETATM   68  CD2 DPH     6      61.700  13.130  54.390                       C
+HETATM   69  HD2 DPH     6      60.750  12.680  54.680                       H
+HETATM   70  CE1 DPH     6      64.050  14.490  53.820                       C
+HETATM   71  HE1 DPH     6      64.960  15.070  53.610                       H
+HETATM   72  CE2 DPH     6      62.750  13.120  55.290                       C
+HETATM   73  HE2 DPH     6      62.620  12.640  56.270                       H
+HETATM   74  CZ  DPH     6      63.930  13.800  55.010                       C
+HETATM   75  HZ  DPH     6      64.730  13.850  55.750                       H
+HETATM   76  C   DPH     6      60.190  11.600  51.290                       C
+HETATM   77  O   DPH     6      59.400  10.890  50.680                       O
+HETATM   78  N   LUE     7      61.480  11.280  51.430                       N
+HETATM   79  H   LUE     7      62.120  11.890  51.890                       H
+HETATM   80  CA  LUE     7      62.030  10.000  50.920                       C
+HETATM   81  CB  LUE     7      63.430  10.150  50.270                       C
+HETATM   82  CG  LUE     7      64.550  10.950  50.950                       C
+HETATM   83  CD1 LUE     7      64.480  12.440  50.650                       C
+HETATM   84  CD2 LUE     7      64.750  10.670  52.450                       C
+HETATM   85  C   LUE     7      61.930   8.810  51.910                       C
+HETATM   86  O   LUE     7      61.110   8.820  52.820                       O
+HETATM   87  N   DAB     8      62.700   7.740  51.660                       N
+HETATM   88  H   DAB     8      63.350   7.790  50.900                       H
+HETATM   89  CA  DAB     8      62.770   6.490  52.460                       C
+HETATM   90  CB  DAB     8      63.330   6.840  53.860                       C
+HETATM   91  CG  DAB     8      64.030   5.690  54.610                       C
+HETATM   92  ND  DAB     8      64.540   6.120  55.920                       N
+HETATM   93  HD1 DAB     8      65.220   6.840  55.800                       H
+HETATM   94  HD2 DAB     8      63.790   6.470  56.480                       H
+HETATM   95  HD3 DAB     8      64.960   5.350  56.390                       H
+HETATM   96  C   DAB     8      61.470   5.640  52.520                       C
+HETATM   97  O   DAB     8      61.390   4.710  53.320                       O
+HETATM   98  N   DAB     9      60.570   5.870  51.550                       N
+HETATM   99  H   DAB     9      60.680   6.730  51.050                       H
+HETATM  100  CA  DAB     9      59.270   5.200  51.210                       C
+HETATM  101  CB  DAB     9      59.040   3.780  51.790                       C
+HETATM  102  CG  DAB     9      59.950   2.710  51.180                       C
+HETATM  103  ND  DAB     9      59.810   1.410  51.870                       N
+HETATM  104  HD1 DAB     9      58.880   1.070  51.790                       H
+HETATM  105  HD2 DAB     9      60.440   0.740  51.470                       H
+HETATM  106  HD3 DAB     9      60.030   1.520  52.840                       H
+HETATM  107  C   DAB     9      58.040   6.070  51.520                       C
+HETATM  108  O   DAB     9      58.160   7.070  52.230                       O
+HETATM  109  N   TRH    10      56.970   5.830  50.750                       N
+HETATM  110  H   TRH    10      57.100   5.300  49.910                       H
+HETATM  111  CA  TRH    10      55.560   6.320  50.880                       C
+HETATM  112  CB  TRH    10      55.030   6.800  52.240                       C
+HETATM  113  OG1 TRH    10      55.710   7.970  52.700                       O
+HETATM  114  HG1 TRH    10      56.619   7.759  52.810                       H
+HETATM  115  CG2 TRH    10      55.010   5.680  53.290                       C
+HETATM  116  C   TRH    10      55.080   7.340  49.840                       C
+HETATM  117  O   TRH    10      53.990   7.150  49.290                       O
+END
+CONECT    1    2    3   10
+CONECT    2    1
+CONECT    3    1    4
+CONECT    4    3    5
+CONECT    5    4    6
+CONECT    6    5    7
+CONECT    7    6    8
+CONECT    8    7    9
+CONECT    9    8
+CONECT   10    1   11   12
+CONECT   11   10
+CONECT   12   10   13   19
+CONECT   13   12   14
+CONECT   14   13   15
+CONECT   15   14   16   17   18
+CONECT   16   15
+CONECT   17   15
+CONECT   18   15
+CONECT   19   12   20   21
+CONECT   20   19
+CONECT   21   19   22   23
+CONECT   22   21
+CONECT   23   21   24   28
+CONECT   24   23   27   25
+CONECT   25   24   26
+CONECT   26   25
+CONECT   27   24
+CONECT   28   30   23   29
+CONECT   29   28
+CONECT   30   28   31   32
+CONECT   31   30
+CONECT   32   30   39   33
+CONECT   33   32   34
+CONECT   34   33   35
+CONECT   35   34   37   36   38
+CONECT   36   35
+CONECT   37   35
+CONECT   38   35
+CONECT   39   32   41   40
+CONECT   40   39
+CONECT   41   39   42   43
+CONECT   42   41
+CONECT   43   41   44   48
+CONECT   44   43   45
+CONECT   45   44   46
+CONECT   46   45   47  116
+CONECT   47   46
+CONECT   48   43   49   50
+CONECT   49   48
+CONECT   50   48   51   52
+CONECT   51   50
+CONECT   52   50   53   59
+CONECT   53   52   54
+CONECT   54   53   55
+CONECT   55   54   56   57   58
+CONECT   56   55
+CONECT   57   55
+CONECT   58   55
+CONECT   59   52   60   61
+CONECT   60   59
+CONECT   61   59   62   63
+CONECT   62   61
+CONECT   63   61   76   64
+CONECT   64   63   65
+CONECT   65   64   66   68
+CONECT   66   65   67   70
+CONECT   67   66
+CONECT   68   65   69   72
+CONECT   69   68
+CONECT   70   66   71   74
+CONECT   71   70
+CONECT   72   68   73   74
+CONECT   73   72
+CONECT   74   70   72   75
+CONECT   75   74
+CONECT   76   63   77   78
+CONECT   77   76
+CONECT   78   76   79   80
+CONECT   79   78
+CONECT   80   85   78   81
+CONECT   81   80   82
+CONECT   82   81   83   84
+CONECT   83   82
+CONECT   84   82
+CONECT   85   87   80   86
+CONECT   86   85
+CONECT   87   85   88   89
+CONECT   88   87
+CONECT   89   87   90   96
+CONECT   90   89   91
+CONECT   91   90   92
+CONECT   92   91   93   94   95
+CONECT   93   92
+CONECT   94   92
+CONECT   95   92
+CONECT   96   89   98   97
+CONECT   97   96
+CONECT   98   96  100   99
+CONECT   99   98
+CONECT  100   98  107  101
+CONECT  101  100  102
+CONECT  102  101  103
+CONECT  103  102  104  105  106
+CONECT  104  103
+CONECT  105  103
+CONECT  106  103
+CONECT  107  100  109  108
+CONECT  108  107
+CONECT  109  107  110  111
+CONECT  110  109
+CONECT  111  109  116  112
+CONECT  112  111  113  115
+CONECT  113  112  114
+CONECT  114  113
+CONECT  115  112
+CONECT  116   46  111  117
+CONECT  117  116

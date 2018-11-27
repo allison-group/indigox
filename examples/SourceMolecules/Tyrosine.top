@@ -1,0 +1,342 @@
+; Include forcefield parameters
+#include "gromos54a7.ff/forcefield.itp"
+
+[ moleculetype ]
+; Name            nrexcl
+Protein_chain_A     3
+
+[ atoms ]
+;   nr       type  resnr residue  atom   cgnr     charge       mass  typeB    chargeB      massB
+; residue   1 TRP rtp TRP  q +1.0
+     1         NL      1    TRP      N      1      0.129    14.0067   ; qtot 0.129
+     2          H      1    TRP     H1      1      0.248      1.008   ; qtot 0.377
+     3          H      1    TRP     H2      1      0.248      1.008   ; qtot 0.625
+     4          H      1    TRP     H3      1      0.248      1.008   ; qtot 0.873
+     5        CH1      1    TRP     CA      2      0.127     13.019   ; qtot 1
+     6        CH2      1    TRP     CB      2          0     14.027   ; qtot 1
+     7          C      1    TRP     CG      3      -0.21     12.011   ; qtot 0.79
+     8          C      1    TRP    CD1      3      -0.14     12.011   ; qtot 0.65
+     9         HC      1    TRP    HD1      3       0.14      1.008   ; qtot 0.79
+    10          C      1    TRP    CD2      3          0     12.011   ; qtot 0.79
+    11         NR      1    TRP    NE1      3       -0.1    14.0067   ; qtot 0.69
+    12          H      1    TRP    HE1      3       0.31      1.008   ; qtot 1
+    13          C      1    TRP    CE2      3          0     12.011   ; qtot 1
+    14          C      1    TRP    CE3      4      -0.14     12.011   ; qtot 0.86
+    15         HC      1    TRP    HE3      4       0.14      1.008   ; qtot 1
+    16          C      1    TRP    CZ2      5      -0.14     12.011   ; qtot 0.86
+    17         HC      1    TRP    HZ2      5       0.14      1.008   ; qtot 1
+    18          C      1    TRP    CZ3      6      -0.14     12.011   ; qtot 0.86
+    19         HC      1    TRP    HZ3      6       0.14      1.008   ; qtot 1
+    20          C      1    TRP    CH2      7      -0.14     12.011   ; qtot 0.86
+    21         HC      1    TRP    HH2      7       0.14      1.008   ; qtot 1
+    22          C      1    TRP      C      8       0.45     12.011   ; qtot 1.45
+    23          O      1    TRP      O      8      -0.45    15.9994   ; qtot 1
+; residue   2 TYR rtp TYR  q  0.0
+    24          N      2    TYR      N      9      -0.31    14.0067   ; qtot 0.69
+    25          H      2    TYR      H      9       0.31      1.008   ; qtot 1
+    26        CH1      2    TYR     CA     10          0     13.019   ; qtot 1
+    27        CH2      2    TYR     CB     10          0     14.027   ; qtot 1
+    28          C      2    TYR     CG     10          0     12.011   ; qtot 1
+    29          C      2    TYR    CD1     11      -0.14     12.011   ; qtot 0.86
+    30         HC      2    TYR    HD1     11       0.14      1.008   ; qtot 1
+    31          C      2    TYR    CD2     12      -0.14     12.011   ; qtot 0.86
+    32         HC      2    TYR    HD2     12       0.14      1.008   ; qtot 1
+    33          C      2    TYR    CE1     13      -0.14     12.011   ; qtot 0.86
+    34         HC      2    TYR    HE1     13       0.14      1.008   ; qtot 1
+    35          C      2    TYR    CE2     14      -0.14     12.011   ; qtot 0.86
+    36         HC      2    TYR    HE2     14       0.14      1.008   ; qtot 1
+    37          C      2    TYR     CZ     15      0.203     12.011   ; qtot 1.203
+    38         OA      2    TYR     OH     15     -0.611    15.9994   ; qtot 0.592
+    39          H      2    TYR     HH     15      0.408      1.008   ; qtot 1
+    40          C      2    TYR      C     16       0.45     12.011   ; qtot 1.45
+    41          O      2    TYR      O     16      -0.45    15.9994   ; qtot 1
+; residue   3 CYS rtp CYSH q -1.0
+    42          N      3    CYS      N     17      -0.31    14.0067   ; qtot 0.69
+    43          H      3    CYS      H     17       0.31      1.008   ; qtot 1
+    44        CH1      3    CYS     CA     18          0     13.019   ; qtot 1
+    45        CH2      3    CYS     CB     19       0.15     14.027   ; qtot 1.15
+    46          S      3    CYS     SG     19      -0.37      32.06   ; qtot 0.78
+    47          H      3    CYS     HG     19       0.22      1.008   ; qtot 1
+    48          C      3    CYS      C     20       0.27     12.011   ; qtot 1.27
+    49         OM      3    CYS     O1     20     -0.635    15.9994   ; qtot 0.635
+    50         OM      3    CYS     O2     20     -0.635    15.9994   ; qtot 0
+
+[ bonds ]
+;  ai    aj funct            c0            c1            c2            c3
+    1     2     2    gb_2
+    1     3     2    gb_2
+    1     4     2    gb_2
+    1     5     2    gb_21
+    5     6     2    gb_27
+    5    22     2    gb_27
+    6     7     2    gb_27
+    7     8     2    gb_10
+    7    10     2    gb_16
+    8     9     2    gb_3
+    8    11     2    gb_10
+   10    13     2    gb_16
+   10    14     2    gb_16
+   11    12     2    gb_2
+   11    13     2    gb_10
+   13    16     2    gb_16
+   14    15     2    gb_3
+   14    18     2    gb_16
+   16    17     2    gb_3
+   16    20     2    gb_16
+   18    19     2    gb_3
+   18    20     2    gb_16
+   20    21     2    gb_3
+   22    23     2    gb_5
+   22    24     2    gb_10
+   24    25     2    gb_2
+   24    26     2    gb_21
+   26    27     2    gb_27
+   26    40     2    gb_27
+   27    28     2    gb_27
+   28    29     2    gb_16
+   28    31     2    gb_16
+   29    30     2    gb_3
+   29    33     2    gb_16
+   31    32     2    gb_3
+   31    35     2    gb_16
+   33    34     2    gb_3
+   33    37     2    gb_16
+   35    36     2    gb_3
+   35    37     2    gb_16
+   37    38     2    gb_13
+   38    39     2    gb_1
+   40    41     2    gb_5
+   40    42     2    gb_10
+   42    43     2    gb_2
+   42    44     2    gb_21
+   44    45     2    gb_27
+   44    48     2    gb_27
+   45    46     2    gb_32
+   46    47     2    gb_8
+   48    49     2    gb_6
+   48    50     2    gb_6
+
+[ pairs ]
+;  ai    aj funct            c0            c1            c2            c3
+    1     7     1 
+    1    23     1 
+    1    24     1 
+    2     6     1 
+    2    22     1 
+    3     6     1 
+    3    22     1 
+    4     6     1 
+    4    22     1 
+    5     8     1 
+    5    10     1 
+    5    25     1 
+    5    26     1 
+    6    23     1 
+    6    24     1 
+    7    22     1 
+   22    27     1 
+   22    40     1 
+   23    25     1 
+   23    26     1 
+   24    28     1 
+   24    41     1 
+   24    42     1 
+   25    27     1 
+   25    40     1 
+   26    29     1 
+   26    31     1 
+   26    43     1 
+   26    44     1 
+   27    41     1 
+   27    42     1 
+   28    40     1 
+   33    39     1 
+   35    39     1 
+   40    45     1 
+   40    48     1 
+   41    43     1 
+   41    44     1 
+   42    46     1 
+   42    49     1 
+   42    50     1 
+   43    45     1 
+   43    48     1 
+   44    47     1 
+   45    49     1 
+   45    50     1 
+   46    48     1 
+
+[ angles ]
+;  ai    aj    ak funct            c0            c1            c2            c3
+    2     1     3     2    ga_10
+    2     1     4     2    ga_10
+    2     1     5     2    ga_11
+    3     1     4     2    ga_10
+    3     1     5     2    ga_11
+    4     1     5     2    ga_11
+    1     5     6     2    ga_13
+    1     5    22     2    ga_13
+    6     5    22     2    ga_13
+    5     6     7     2    ga_15
+    6     7     8     2    ga_37
+    6     7    10     2    ga_37
+    8     7    10     2    ga_7
+    7     8     9     2    ga_36
+    7     8    11     2    ga_7
+    9     8    11     2    ga_36
+    7    10    13     2    ga_7
+    7    10    14     2    ga_39
+   13    10    14     2    ga_27
+    8    11    12     2    ga_36
+    8    11    13     2    ga_7
+   12    11    13     2    ga_36
+   10    13    11     2    ga_7
+   10    13    16     2    ga_27
+   11    13    16     2    ga_39
+   10    14    15     2    ga_25
+   10    14    18     2    ga_27
+   15    14    18     2    ga_25
+   13    16    17     2    ga_25
+   13    16    20     2    ga_27
+   17    16    20     2    ga_25
+   14    18    19     2    ga_25
+   14    18    20     2    ga_27
+   19    18    20     2    ga_25
+   16    20    18     2    ga_27
+   16    20    21     2    ga_25
+   18    20    21     2    ga_25
+    5    22    23     2    ga_30
+    5    22    24     2    ga_19
+   23    22    24     2    ga_33
+   22    24    25     2    ga_32
+   22    24    26     2    ga_31
+   25    24    26     2    ga_18
+   24    26    27     2    ga_13
+   24    26    40     2    ga_13
+   27    26    40     2    ga_13
+   26    27    28     2    ga_15
+   27    28    29     2    ga_27
+   27    28    31     2    ga_27
+   29    28    31     2    ga_27
+   28    29    30     2    ga_25
+   28    29    33     2    ga_27
+   30    29    33     2    ga_25
+   28    31    32     2    ga_25
+   28    31    35     2    ga_27
+   32    31    35     2    ga_25
+   29    33    34     2    ga_25
+   29    33    37     2    ga_27
+   34    33    37     2    ga_25
+   31    35    36     2    ga_25
+   31    35    37     2    ga_27
+   36    35    37     2    ga_25
+   33    37    35     2    ga_27
+   33    37    38     2    ga_27
+   35    37    38     2    ga_27
+   37    38    39     2    ga_12
+   26    40    41     2    ga_30
+   26    40    42     2    ga_19
+   41    40    42     2    ga_33
+   40    42    43     2    ga_32
+   40    42    44     2    ga_31
+   43    42    44     2    ga_18
+   42    44    45     2    ga_13
+   42    44    48     2    ga_13
+   45    44    48     2    ga_13
+   44    45    46     2    ga_16
+   45    46    47     2    ga_3
+   44    48    49     2    ga_22
+   44    48    50     2    ga_22
+   49    48    50     2    ga_38
+
+[ dihedrals ]
+;  ai    aj    ak    al funct            c0            c1            c2            c3            c4            c5
+    2     1     5    22     1    gd_39
+    1     5     6     7     1    gd_34
+    1     5    22    24     1    gd_42
+    1     5    22    24     1    gd_45
+    5     6     7    10     1    gd_40
+    5    22    24    26     1    gd_14
+   22    24    26    40     1    gd_44
+   22    24    26    40     1    gd_43
+   24    26    27    28     1    gd_34
+   24    26    40    42     1    gd_45
+   24    26    40    42     1    gd_42
+   26    27    28    29     1    gd_40
+   33    37    38    39     1    gd_11
+   26    40    42    44     1    gd_14
+   40    42    44    48     1    gd_43
+   40    42    44    48     1    gd_44
+   42    44    45    46     1    gd_34
+   42    44    48    50     1    gd_42
+   42    44    48    50     1    gd_45
+   44    45    46    47     1    gd_26
+
+[ dihedrals ]
+;  ai    aj    ak    al funct            c0            c1            c2            c3
+    5     1    22     6     2    gi_2
+    6    10     8     7     2    gi_1
+    7    14    13    10     2    gi_1
+    7    10    13    11     2    gi_1
+    7     8    11    13     2    gi_1
+    8     7    11     9     2    gi_1
+    8    11    13    10     2    gi_1
+    8     7    10    13     2    gi_1
+   10     7     8    11     2    gi_1
+   10    13    16    20     2    gi_1
+   10    14    18    20     2    gi_1
+   11     8    13    12     2    gi_1
+   11    16    10    13     2    gi_1
+   13    10    14    18     2    gi_1
+   13    16    20    18     2    gi_1
+   14    10    18    15     2    gi_1
+   14    10    13    16     2    gi_1
+   14    18    20    16     2    gi_1
+   16    13    20    17     2    gi_1
+   18    14    20    19     2    gi_1
+   20    16    18    21     2    gi_1
+   22     5    24    23     2    gi_1
+   24    22    26    25     2    gi_1
+   26    24    40    27     2    gi_2
+   27    31    29    28     2    gi_1
+   28    29    33    37     2    gi_1
+   28    31    35    37     2    gi_1
+   29    28    33    30     2    gi_1
+   29    28    31    35     2    gi_1
+   29    33    37    35     2    gi_1
+   31    28    35    32     2    gi_1
+   31    28    29    33     2    gi_1
+   31    35    37    33     2    gi_1
+   33    37    29    34     2    gi_1
+   35    37    31    36     2    gi_1
+   37    33    35    38     2    gi_1
+   40    26    42    41     2    gi_1
+   42    40    44    43     2    gi_1
+   44    42    48    45     2    gi_2
+   48    44    50    49     2    gi_1
+
+; Include Position restraint file
+#ifdef POSRES
+#include "posre.itp"
+#endif
+
+; Include water topology
+#include "gromos54a7.ff/spc.itp"
+
+#ifdef POSRES_WATER
+; Position restraint for each water oxygen
+[ position_restraints ]
+;  i funct       fcx        fcy        fcz
+   1    1       1000       1000       1000
+#endif
+
+; Include topology for ions
+#include "gromos54a7.ff/ions.itp"
+
+[ system ]
+; Name
+UNNAMED
+
+[ molecules ]
+; Compound        #mols
+Protein_chain_A     1

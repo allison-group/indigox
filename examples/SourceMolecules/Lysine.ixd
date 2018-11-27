@@ -1,0 +1,21 @@
+ATOM  1  1  0
+ATOM  5  0  1
+ATOM  6  0  1
+ATOM  7  0  3
+ATOM  8  0  3
+ATOM  13  0  1
+ATOM  14  0  2
+ATOM  15  0  2
+ATOM  16  0  2
+ATOM  17  0  2
+ATOM  18  1  0
+ATOM  26  0  1
+ATOM  27  0  2
+ATOM  28  0  2
+ATOM  30  0  3
+ATOM  33  -1  0
+BOND  9  10  2
+BOND  22  23  2
+BOND  31  32  2
+MOLECULE  1
+
