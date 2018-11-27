@@ -752,7 +752,7 @@ public:
     //! Assignment with move semantics.
     /*! \param rhs Source of the assignment. It will become a null value after assignment.
     */
-    GenericValue& operator=(GenericValue& rhs) CEREAL_RAPIDJSON_NOEXCEPT {
+    GenericValue& operator=(GenericValue& rhs) { 
         CEREAL_RAPIDJSON_ASSERT(this != &rhs);
         this->~GenericValue();
         RawAssign(rhs);

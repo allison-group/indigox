@@ -784,7 +784,13 @@ namespace indigox {
                           * b_atms.fourth.GetElement().GetAtomicNumber());
                   return w_a < w_b;
                 });
-      for (uint32_t i = 0; i < bnd_dhds.size(); ++i) bnd_dhds[i]->_priority = i;
+      for (uint32_t i = 0; i < bnd_dhds.size(); ++i) {
+        // Only worry about the H's for now.
+        if (bnd_dhds[i]->GetAtoms().first.GetElement() != "H"
+            && bnd_dhds[i]->GetAtoms().fourth.GetElement() != "H")
+          continue;
+        bnd_dhds[i]->_priority = i;
+      }
     }
     
     return count;
