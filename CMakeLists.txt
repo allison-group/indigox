@@ -90,18 +90,7 @@ IF(BUILD_PYTHON)
   ADD_DEFINITIONS(-DINDIGOX_DISABLE_TESTS=1)
   ADD_SUBDIRECTORY(src/python)
 ELSE()
-  MESSAGE(STATUS "Building of Python bindings disabled.")
-ENDIF()
-
-IF(BUILD_EXAMPLES)
-    ADD_EXECUTABLE(cxx_example examples/cxx_example.cpp)
-    TARGET_INCLUDE_DIRECTORIES(cxx_example BEFORE PRIVATE ${PROJECT_SOURCE_DIR}/include)
-    TARGET_LINK_LIBRARIES(cxx_example indigox)
-    ADD_CUSTOM_TARGET(examples ALL)
-    ADD_DEPENDENCIES(examples cxx_example)
-    INSTALL(TARGETS cxx_example DESTINATION ${CMAKE_INSTALL_PREFIX}/examples)
-    INSTALL(FILES examples/cxx_example.cpp examples/python_example.py
-            DESTINATION ${CMAKE_INSTALL_PREFIX}/examples)
+  MESSAGE(STATUS "Building of Python bindings disabled. Your loss.")
 ENDIF()
 
 # Build documentation
@@ -132,14 +121,14 @@ INSTALL(TARGETS indigox DESTINATION ${CMAKE_INSTALL_LIBDIR})
 #        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Install data files
-INSTALL(FILES data/assignment_scores.dat
+#INSTALL(FILES data/assignment_scores.dat
 #        data/atomenergies_def2tzvppd.txt
 #        data/bondenergies_def2svpd.txt
 #        data/bondenergies_def2svpd_withbsse.txt
 #        data/bondenergies_def2tzvppd.txt
 #        data/bondenergies_def2tzvppd_withbsse.txt
 #        data/periodictable.txt
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+#        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 # Install documentation
 #INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
 
