@@ -2,6 +2,8 @@
 #include <map>
 #include <vector>
 
+#include <boost/dynamic_bitset.hpp>
+
 #include <indigox/algorithm/cherrypicker.hpp>
 #include <indigox/classes/athenaeum.hpp>
 #include <indigox/classes/molecule.hpp>
@@ -21,7 +23,7 @@ namespace indigox::algorithm {
   bool CPSet::AllowDanglingDihedrals = true;
   VParam CPSet::VertexMapping = (VParam::ElementType | VParam::FormalCharge
                                  | VParam::CondensedVertices | VParam::Degree);
-  EParam CPSet::EdgeMapping = EParam::BondOrder | EParam::Degree;
+  EParam CPSet::EdgeMapping = (EParam::BondOrder | EParam::Degree);
   uint32_t CPSet::MinimumFragmentSize = 4;
   
   CherryPicker::CherryPicker(const Forcefield& ff) : _ff(ff) { }
@@ -61,12 +63,13 @@ namespace indigox::algorithm {
     EdgeMasks emasks_small;
     ParamMolecule& pmol;
     Fragment& frag;
+    bool has_mapping;
     
     CherryPickerCallback(GraphType& l, VertMasks& vl, EdgeMasks& el,
                          ParamMolecule& p, Fragment& f,
                          graph::VertexIsoMask vertmask, graph::EdgeIsoMask edgemask)
     : small(f.GetGraph()), large(l), vmasks_large(vl), emasks_large(el), pmol(p),
-    frag(f) {
+    frag(f), has_mapping(false) {
       for (CMGV v : small.GetVertices())
         vmasks_small.emplace(v, v.GetIsomorphismMask() & vertmask);
       for (CMGE e : small.GetEdges())
@@ -77,6 +80,7 @@ namespace indigox::algorithm {
     bool operator()(const CorrespondenceMap& map) override {
       using Settings = CherryPicker::Settings;
       using ConSym = graph::CMGVertex::ContractedSymmetry;
+      has_mapping = true;
       std::vector<graph::MGVertex> frag_v, target_v;
       graph::CondensedMolecularGraph& G = frag.GetGraph();
       graph::MolecularGraph& molG = G.GetSuperGraph().GetMolecularGraph();
@@ -238,12 +242,19 @@ namespace indigox::algorithm {
     // Run the matching
     for (Athenaeum& lib : _libs) {
       for (auto& g_frag : lib.GetFragments()) {
-        for (Fragment frag : g_frag.second) {
+        // Initially all fragments are to be searched
+        boost::dynamic_bitset<> fragments(g_frag.second.size());
+        fragments.set();
+        
+        for (size_t pos = 0; pos < fragments.size(); pos = fragments.find_next(pos)) {
+          Fragment frag = g_frag.second[pos];
           if (frag.Size() < CPSet::MinimumFragmentSize) continue;
           if (frag.GetGraph().NumVertices() > CMG->NumVertices()) continue;
           CherryPickerCallback callback(*CMG, vmasks, emasks, pmol, frag,
                                         vertmask, edgemask);
           SubgraphIsomorphisms(frag.GetGraph(), *CMG, callback);
+          if (!callback.has_mapping && frag.GetSupersets().size() == fragments.size())
+            fragments -= frag.GetSupersets();
         }
       }
       pmol.ApplyParameteristion(lib.IsSelfConsistent());

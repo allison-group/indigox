@@ -5,6 +5,8 @@
 #include <numeric>
 #include <vector>
 
+#include <boost/dynamic_bitset.hpp>
+
 #include <EASTL/iterator.h>
 #include <EASTL/vector_set.h>
 
@@ -34,6 +36,8 @@ namespace indigox {
     std::vector<Fragment::BndType> bonds;
     std::vector<Fragment::AngType> angles;
     std::vector<Fragment::DhdType> dihedrals;
+    boost::dynamic_bitset<> supersets;
+    boost::dynamic_bitset<> graph_mask;
     
     FragmentData() = default;
     
@@ -45,7 +49,9 @@ namespace indigox {
               INDIGOX_SERIAL_NVP("atoms", atoms),
               INDIGOX_SERIAL_NVP("bonds", bonds),
               INDIGOX_SERIAL_NVP("angles", angles),
-              INDIGOX_SERIAL_NVP("dihedrals", dihedrals));
+              INDIGOX_SERIAL_NVP("dihedrals", dihedrals),
+              INDIGOX_SERIAL_NVP("supersets", supersets),
+              INDIGOX_SERIAL_NVP("mask", graph_mask));
     }
     
   };
@@ -130,6 +136,13 @@ namespace indigox {
     // Get the molecule
     Molecule& mol = frag.front().GetAtom().GetMolecule();
     
+    // Set the graph_mask
+    auto& all_v = CG.GetVertices();
+    _dat->graph_mask = boost::dynamic_bitset<>(all_v.size());
+    for (size_t i = 0; i < all_v.size(); ++i) {
+      if (_dat->graph->HasVertex(all_v[i])) _dat->graph_mask.set(i);
+    }
+    
     // Get the bonds which are allowed
     std::deque<BndType> tmp_bnd;
     for (sBond bnd : mol.GetBonds()) {
@@ -201,6 +214,10 @@ namespace indigox {
   
   graph::CondensedMolecularGraph& Fragment::GetGraph() const {
     return *_dat->graph;
+  }
+  
+  const boost::dynamic_bitset<>& Fragment::GetSupersets() const {
+    return _dat->supersets;
   }
   
   const std::vector<graph::CMGVertex>& Fragment::GetFragment() const {
@@ -362,6 +379,27 @@ namespace indigox {
     m_athendat->self_consistent = true;
   }
   
+  void Athenaeum::SortAndMask(Molecule& mol) {
+    sMolecule m = mol.shared_from_this();
+    auto pos = m_athendat->fragments.find(m);
+    FragContain& frags = pos->second;
+    
+    // Sort based on size
+    std::sort(frags.begin(), frags.end(),
+              [](Fragment& a, Fragment& b) {
+                return a.GetGraph().NumVertices() < b.GetGraph().NumVertices();
+              });
+    
+    for (size_t i = 0; i < frags.size(); ++i) {
+      Fragment f = frags[i];
+      f._dat->supersets = boost::dynamic_bitset<>(frags.size());
+      for (size_t j = i + 1; j < frags.size(); ++j) {
+        if (f._dat->graph_mask.is_proper_subset_of(frags[j]._dat->graph_mask))
+          f._dat->supersets.set(j);
+      }
+    }
+  }
+  
   bool Athenaeum::AddFragment(Molecule &mol, Fragment &frag) {
     // Check that the fragment matches the molecule
     graph::MolecularGraph& MG = mol.GetGraph();
@@ -377,6 +415,7 @@ namespace indigox {
     sMolecule m = mol.shared_from_this();
     auto pos = m_athendat->fragments.emplace(m, FragContain());
     pos.first->second.emplace_back(frag);
+    SortAndMask(mol);
     return true;
   }
   
@@ -502,7 +541,7 @@ namespace indigox {
           == pos.first->second.end())
         pos.first->second.emplace_back(f);
     }
-    
+    if (pos.first->second.size() != initial_count) SortAndMask(mol);
     return pos.first->second.size() - initial_count;
   }
   

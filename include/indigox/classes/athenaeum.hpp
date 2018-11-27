@@ -2,6 +2,8 @@
 #include <map>
 #include <vector>
 
+#include <boost/dynamic_bitset_fwd.hpp>
+
 #include "../utils/fwd_declares.hpp"
 #include "../utils/triple.hpp"
 #include "../utils/quad.hpp"
@@ -16,6 +18,7 @@ namespace indigox {
   
   class Fragment {
     friend class cereal::access;
+    friend class Athenaeum;
   public:
     /*! \brief Type of overlapping vertex.
      *  \details Each vertex of an overlap is given a type. This is to enable
@@ -58,6 +61,7 @@ namespace indigox {
     
     graph::CondensedMolecularGraph& GetGraph() const;
     const std::vector<graph::CMGVertex>& GetFragment() const;
+    const boost::dynamic_bitset<>& GetSupersets() const;
     size_t Size() const;
     const std::vector<OverlapVertex>& GetOverlap() const;
     bool IsFragmentVertex(graph::CMGVertex& v) const;
@@ -139,6 +143,9 @@ namespace indigox {
     bool operator<=(const Athenaeum& ath) const { return !((*this) > ath); }
     bool operator>=(const Athenaeum& ath) const { return !((*this) < ath); }
 
+  private:
+    void SortAndMask(Molecule& mol);
+    
   private:
     struct AthenaeumData;
     std::shared_ptr<AthenaeumData> m_athendat;
