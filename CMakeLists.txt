@@ -21,7 +21,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 # Setup some compile flags, for all versions and specific versions
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-private-field -Wno-exceptions -Wno-unused-local-typedef")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 ENDIF()
