@@ -65,6 +65,8 @@ SET(INDIGOX_LIB_SRCS
 
 # Build the library
 ADD_LIBRARY(indigox STATIC ${INDIGOX_LIB_SRCS})
+TARGET_COMPILE_FEATURES(indigox PRIVATE cxx_std_17)
+TARGET_COMPILE_FEATURES(indigox PRIVATE cxx_inline_namespaces)
 
 # Add external paths to include directories
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/EASTL/include)
