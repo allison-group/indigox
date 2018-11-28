@@ -4,7 +4,7 @@ Package containing the CherryPicker algorithm. It is intended that indigox is us
 
 ## Requirements
 - CMake version >= 3.7
-- C++17 compilent compiler.
+- C++17 compilent compiler. In our tests this means GCC >= 7
 - [optional] Boost. The required libraries are provided from boost version 1.66.0
 - [optional] Python >= 3.4, for building the python bindings. Highly recommended
 - [optional] doxygen for building the documentation
