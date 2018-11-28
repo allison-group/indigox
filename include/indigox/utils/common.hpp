@@ -4,6 +4,7 @@
 #ifndef INDIGOX_UTILS_COMMON_HPP
 #define INDIGOX_UTILS_COMMON_HPP
 
+#include <algorithm>
 #include <iterator>
 #include <string>
 #include <type_traits>
