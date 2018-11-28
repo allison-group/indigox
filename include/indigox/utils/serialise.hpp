@@ -20,6 +20,16 @@
 
 #include "fwd_declares.hpp"
 
+namespace stdx {
+  struct typeless
+  {
+    typeless() = delete;
+    typeless(const typeless&) = delete;
+    typeless& operator=(const typeless&) = delete;
+    ~typeless() = delete;
+  };
+}
+
 #define __hr_out  cereal::JSONOutputArchive
 #define __hr_in   cereal::JSONInputArchive
 #define __cr_out  cereal::PortableBinaryOutputArchive

@@ -23,135 +23,146 @@ namespace stdx {    // extended std namespace
     quad(quad const&) = default;
     quad(quad&&) = default;
     
-    template <bool _Val>
-    using _EnableB = typename std::enable_if<_Val, bool>::type;
-    
-    struct _CheckArgs {
-      template <class _U1, class _U2, class _U3, class _U4>
-      static constexpr bool __enable_default() {
-        return std::is_default_constructible<_U1>::value
-        && std::is_default_constructible<_U2>::value
-        && std::is_default_constructible<_U3>::value
-        && std::is_default_constructible<_U4>::value;
-      }
-      
-      template <class _U1, class _U2, class _U3, class _U4>
-      static constexpr bool __enable_explicit() {
-        return std::is_constructible<first_type, _U1>::value
-        && std::is_constructible<second_type, _U2>::value
-        && std::is_constructible<third_type, _U3>::value
-        && std::is_constructible<fourth_type, _U4>::value
-        && (!std::is_convertible<_U1, first_type>::value
-            || !std::is_convertible<_U2, second_type>::value
-            || !std::is_convertible<_U3, third_type>::value
-            || !std::is_convertible<_U4, fourth_type>::value);
-      }
-      
-      template <class _U1, class _U2, class _U3, class _U4>
-      static constexpr bool __enable_implicit() {
-        return std::is_constructible<first_type, _U1>::value
-        && std::is_constructible<second_type, _U2>::value
-        && std::is_constructible<third_type, _U3>::value
-        && std::is_constructible<fourth_type, _U4>::value
-        && std::is_convertible<_U1, first_type>::value
-        && std::is_convertible<_U2, second_type>::value
-        && std::is_convertible<_U3, third_type>::value
-        && std::is_convertible<_U4, fourth_type>::value;
-      }
-    };
-    
-    template <bool _MaybeEnable>
-    using _CheckArgsDep = typename std::conditional<
-    _MaybeEnable, _CheckArgs, std::__check_tuple_constructor_fail>::type;
-    
-    struct _CheckTupleLikeConstructor {
-      template <class _Tuple>
-      static constexpr bool __enable_implicit() {
-        return std::__tuple_convertible<_Tuple, quad>::value;
-      }
-      
-      template <class _Tuple>
-      static constexpr bool __enable_explicit() {
-        return std::__tuple_constructible<_Tuple, quad>::value
-        && !std::__tuple_convertible<_Tuple, quad>::value;
-      }
-      
-      template <class _Tuple>
-      static constexpr bool __enable_assign() {
-        return std::__tuple_assignable<_Tuple, quad>::value;
-      }
-    };
-    
-    template <class _Tuple>
-    using _CheckTLC = typename std::conditional<
-    std::__tuple_like_with_size<_Tuple, 4>::value
-    && !std::is_same<typename std::decay<_Tuple>::type, quad>::value,
-    _CheckTupleLikeConstructor,
-    std::__check_tuple_constructor_fail
-    >::type;
-    
-    template<bool _Dummy = true, _EnableB<
-    _CheckArgsDep<_Dummy>::template __enable_default<_T1, _T2, _T3, _T4>()
-    > = false>
+//    template <bool _Val>
+//    using _EnableB = typename std::enable_if<_Val, bool>::type;
+//
+//    struct _CheckArgs {
+//      template <class _U1, class _U2, class _U3, class _U4>
+//      static constexpr bool __enable_default() {
+//        return std::is_default_constructible<_U1>::value
+//        && std::is_default_constructible<_U2>::value
+//        && std::is_default_constructible<_U3>::value
+//        && std::is_default_constructible<_U4>::value;
+//      }
+//
+//      template <class _U1, class _U2, class _U3, class _U4>
+//      static constexpr bool __enable_explicit() {
+//        return std::is_constructible<first_type, _U1>::value
+//        && std::is_constructible<second_type, _U2>::value
+//        && std::is_constructible<third_type, _U3>::value
+//        && std::is_constructible<fourth_type, _U4>::value
+//        && (!std::is_convertible<_U1, first_type>::value
+//            || !std::is_convertible<_U2, second_type>::value
+//            || !std::is_convertible<_U3, third_type>::value
+//            || !std::is_convertible<_U4, fourth_type>::value);
+//      }
+//
+//      template <class _U1, class _U2, class _U3, class _U4>
+//      static constexpr bool __enable_implicit() {
+//        return std::is_constructible<first_type, _U1>::value
+//        && std::is_constructible<second_type, _U2>::value
+//        && std::is_constructible<third_type, _U3>::value
+//        && std::is_constructible<fourth_type, _U4>::value
+//        && std::is_convertible<_U1, first_type>::value
+//        && std::is_convertible<_U2, second_type>::value
+//        && std::is_convertible<_U3, third_type>::value
+//        && std::is_convertible<_U4, fourth_type>::value;
+//      }
+//    };
+//
+//    struct __check_tuple_constructor_fail {
+//      template <class ...>
+//      static constexpr bool __enable_default() { return false; }
+//      template <class ...>
+//      static constexpr bool __enable_explicit() { return false; }
+//      template <class ...>
+//      static constexpr bool __enable_implicit() { return false; }
+//      template <class ...>
+//      static constexpr bool __enable_assign() { return false; }
+//    };
+//
+//    template <bool _MaybeEnable>
+//    using _CheckArgsDep = typename std::conditional<
+//    _MaybeEnable, _CheckArgs, __check_tuple_constructor_fail>::type;
+//
+//    struct _CheckTupleLikeConstructor {
+//      template <class _Tuple>
+//      static constexpr bool __enable_implicit() {
+//        return std::__tuple_convertible<_Tuple, quad>::value;
+//      }
+//
+//      template <class _Tuple>
+//      static constexpr bool __enable_explicit() {
+//        return std::__tuple_constructible<_Tuple, quad>::value
+//        && !std::__tuple_convertible<_Tuple, quad>::value;
+//      }
+//
+//      template <class _Tuple>
+//      static constexpr bool __enable_assign() {
+//        return std::__tuple_assignable<_Tuple, quad>::value;
+//      }
+//    };
+//
+//    template <class _Tuple>
+//    using _CheckTLC = typename std::conditional<
+//    std::__tuple_like_with_size<_Tuple, 4>::value
+//    && !std::is_same<typename std::decay<_Tuple>::type, quad>::value,
+//    _CheckTupleLikeConstructor,
+//    std::__check_tuple_constructor_fail
+//    >::type;
+//
+//    template<bool _Dummy = true, _EnableB<
+//    _CheckArgsDep<_Dummy>::template __enable_default<_T1, _T2, _T3, _T4>()
+//    > = false>
     inline constexpr quad() : first(), second(), third(), fourth() {}
     
-    template <bool _Dummy = true, _EnableB<
-    _CheckArgsDep<_Dummy>::template
-    __enable_explicit<_T1 const&, _T2 const&, _T3 const&, _T4 const&>()
-    > = false>
-    inline constexpr explicit
-    quad(_T1 const& __t1, _T2 const& __t2, _T3 const& __t3, _T4 const& __t4)
-    : first(__t1), second(__t2), third(__t3), fourth(__t4) {}
-    
-    template<bool _Dummy = true, _EnableB<
-    _CheckArgsDep<_Dummy>::template
-    __enable_implicit<_T1 const&, _T2 const&, _T3 const&, _T4 const&>()
-    > = false>
+//    template <bool _Dummy = true, _EnableB<
+//    _CheckArgsDep<_Dummy>::template
+//    __enable_explicit<_T1 const&, _T2 const&, _T3 const&, _T4 const&>()
+//    > = false>
+//    inline constexpr explicit
+//    quad(_T1 const& __t1, _T2 const& __t2, _T3 const& __t3, _T4 const& __t4)
+//    : first(__t1), second(__t2), third(__t3), fourth(__t4) {}
+//
+//    template<bool _Dummy = true, _EnableB<
+//    _CheckArgsDep<_Dummy>::template
+//    __enable_implicit<_T1 const&, _T2 const&, _T3 const&, _T4 const&>()
+//    > = false>
     inline constexpr
     quad(_T1 const& __t1, _T2 const& __t2, _T3 const& __t3, _T4 const& __t4)
     : first(__t1), second(__t2), third(__t3) , fourth(__t4)  {}
     
-    template<class _U1, class _U2, class _U3, class _U4, _EnableB<
-    _CheckArgs::template __enable_explicit<_U1, _U2, _U3, _U4>()
-    > = false>
-    inline constexpr
-    explicit quad(_U1&& __u1, _U2&& __u2, _U3&& __u3, _U4&& __u4)
-    : first(std::forward<_U1>(__u1)), second(std::forward<_U2>(__u2)),
-    third(std::forward<_U3>(__u3)), fourth(std::forward<_U4>(__u4)) {}
-    
-    template<class _U1, class _U2, class _U3, class _U4, _EnableB<
-    _CheckArgs::template __enable_implicit<_U1, _U2, _U3, _U4>()
-    > = false>
+//    template<class _U1, class _U2, class _U3, class _U4, _EnableB<
+//    _CheckArgs::template __enable_explicit<_U1, _U2, _U3, _U4>()
+//    > = false>
+//    inline constexpr
+//    explicit quad(_U1&& __u1, _U2&& __u2, _U3&& __u3, _U4&& __u4)
+//    : first(std::forward<_U1>(__u1)), second(std::forward<_U2>(__u2)),
+//    third(std::forward<_U3>(__u3)), fourth(std::forward<_U4>(__u4)) {}
+//
+    template<class _U1, class _U2, class _U3, class _U4>//, _EnableB<
+//    _CheckArgs::template __enable_implicit<_U1, _U2, _U3, _U4>()
+//    > = false>
     inline constexpr
     quad(_U1&& __u1, _U2&& __u2, _U3&& __u3, _U4&& __u4)
     : first(std::forward<_U1>(__u1)), second(std::forward<_U2>(__u2)),
     third(std::forward<_U3>(__u3)), fourth(std::forward<_U4>(__u4))  {}
     
-    template<class _U1, class _U2, class _U3, class _U4, _EnableB<
-    _CheckArgs::template __enable_explicit<_U1 const&, _U2 const&, _U3 const&, _U4 const&>()
-    > = false>
-    inline constexpr
-    explicit quad(quad<_U1, _U2, _U3, _U4> const& __p)
-    : first(__p.first), second(__p.second), third(__p.third), fourth(__p.fourth) {}
+//    template<class _U1, class _U2, class _U3, class _U4, _EnableB<
+//    _CheckArgs::template __enable_explicit<_U1 const&, _U2 const&, _U3 const&, _U4 const&>()
+//    > = false>
+//    inline constexpr
+//    explicit quad(quad<_U1, _U2, _U3, _U4> const& __p)
+//    : first(__p.first), second(__p.second), third(__p.third), fourth(__p.fourth) {}
     
-    template<class _U1, class _U2, class _U3, class _U4, _EnableB<
-    _CheckArgs::template __enable_implicit<_U1 const&, _U2 const&, _U3 const&, _U4 const&>()
-    > = false>
+    template<class _U1, class _U2, class _U3, class _U4>//, _EnableB<
+//    _CheckArgs::template __enable_implicit<_U1 const&, _U2 const&, _U3 const&, _U4 const&>()
+//    > = false>
     inline constexpr
     quad(quad<_U1, _U2, _U3, _U4> const& __p)
     : first(__p.first), second(__p.second), third(__p.third), fourth(__p.fourth) {}
     
-    template<class _U1, class _U2, class _U3, class _U4, _EnableB<
-    _CheckArgs::template __enable_explicit<_U1, _U2, _U3, _U4>()
-    > = false>
-    inline constexpr
-    explicit quad(quad<_U1, _U2, _U3, _U4>&&__p)
-    : first(std::forward<_U1>(__p.first)), second(std::forward<_U2>(__p.second)),
-    third(std::forward<_U3>(__p.third)), fourth(std::forward<_U4>(__p.fourth)) {}
+//    template<class _U1, class _U2, class _U3, class _U4, _EnableB<
+//    _CheckArgs::template __enable_explicit<_U1, _U2, _U3, _U4>()
+//    > = false>
+//    inline constexpr
+//    explicit quad(quad<_U1, _U2, _U3, _U4>&&__p)
+//    : first(std::forward<_U1>(__p.first)), second(std::forward<_U2>(__p.second)),
+//    third(std::forward<_U3>(__p.third)), fourth(std::forward<_U4>(__p.fourth)) {}
     
-    template<class _U1, class _U2, class _U3, class _U4, _EnableB<
-    _CheckArgs::template __enable_implicit<_U1, _U2, _U3, _U4>()
-    > = false>
+    template<class _U1, class _U2, class _U3, class _U4>//, _EnableB<
+//    _CheckArgs::template __enable_implicit<_U1, _U2, _U3, _U4>()
+//    > = false>
     inline constexpr
     quad(quad<_U1, _U2, _U3, _U4>&& __p)
     : first(std::forward<_U1>(__p.first)), second(std::forward<_U2>(__p.second)),
@@ -163,7 +174,7 @@ namespace stdx {    // extended std namespace
                     std::is_copy_assignable<second_type>::value &&
                     std::is_copy_assignable<third_type>::value &&
                     std::is_copy_assignable<fourth_type>::value,
-                    quad, std::__nat>::type const& __p)
+                    quad, stdx::typeless>::type const& __p)
     noexcept(std::is_nothrow_copy_assignable<first_type>::value &&
              std::is_nothrow_copy_assignable<second_type>::value &&
              std::is_nothrow_copy_assignable<third_type>::value &&
@@ -182,7 +193,7 @@ namespace stdx {    // extended std namespace
                     std::is_move_assignable<second_type>::value &&
                     std::is_move_assignable<third_type>::value &&
                     std::is_move_assignable<fourth_type>::value,
-                    quad, std::__nat>::type&& __p)
+                    quad, stdx::typeless>::type&& __p)
     noexcept(std::is_nothrow_move_assignable<first_type>::value &&
              std::is_nothrow_move_assignable<second_type>::value &&
              std::is_nothrow_move_assignable<third_type>::value &&
@@ -197,10 +208,10 @@ namespace stdx {    // extended std namespace
     
     inline
     void
-    swap(quad& __p) noexcept(std::__is_nothrow_swappable<first_type>::value &&
-                             std::__is_nothrow_swappable<second_type>::value &&
-                             std::__is_nothrow_swappable<third_type>::value&&
-                             std::__is_nothrow_swappable<fourth_type>::value)
+    swap(quad& __p) noexcept(std::is_nothrow_swappable<first_type>::value &&
+                             std::is_nothrow_swappable<second_type>::value &&
+                             std::is_nothrow_swappable<third_type>::value&&
+                             std::is_nothrow_swappable<fourth_type>::value)
     {
       using std::swap;
       swap(first,  __p.first);
@@ -277,17 +288,17 @@ namespace stdx {    // extended std namespace
   inline
   typename std::enable_if
   <
-  std::__is_swappable<_T1>::value &&
-  std::__is_swappable<_T2>::value &&
-  std::__is_swappable<_T3>::value &&
-  std::__is_swappable<_T4>::value,
+  std::is_swappable<_T1>::value &&
+  std::is_swappable<_T2>::value &&
+  std::is_swappable<_T3>::value &&
+  std::is_swappable<_T4>::value,
   void
   >::type
   swap(quad<_T1, _T2, _T3, _T4>& __x, quad<_T1, _T2, _T3, _T4>& __y)
-  noexcept((std::__is_nothrow_swappable<_T1>::value &&
-            std::__is_nothrow_swappable<_T2>::value &&
-            std::__is_nothrow_swappable<_T3>::value &&
-            std::__is_nothrow_swappable<_T4>::value))
+  noexcept((std::is_nothrow_swappable<_T1>::value &&
+            std::is_nothrow_swappable<_T2>::value &&
+            std::is_nothrow_swappable<_T3>::value &&
+            std::is_nothrow_swappable<_T4>::value))
   {
     __x.swap(__y);
   }
