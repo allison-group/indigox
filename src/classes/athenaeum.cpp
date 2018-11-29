@@ -146,6 +146,7 @@ namespace indigox {
     // Get the bonds which are allowed
     std::deque<BndType> tmp_bnd;
     for (sBond bnd : mol.GetBonds()) {
+      if (!bnd->HasType()) continue;
       AtmType a = G.GetVertex(bnd->GetSourceAtom());
       AtmType b = G.GetVertex(bnd->GetTargetAtom());
       auto a_pos = std::find(atm_check.begin(), atm_check.end(), a);
@@ -165,6 +166,7 @@ namespace indigox {
     // Get the angles which are allowed
     std::deque<AngType> tmp_ang;
     for (sAngle ang : mol.GetAngles()) {
+      if (!ang->HasType()) continue;
       AtmType a = G.GetVertex(ang->GetAtoms().first);
       AtmType b = G.GetVertex(ang->GetAtoms().second);
       AtmType c = G.GetVertex(ang->GetAtoms().third);
@@ -188,6 +190,7 @@ namespace indigox {
     // Get the dihedrals which are allowed
     std::deque<DhdType> tmp_dhd;
     for (sDihedral dhd : mol.GetDihedrals()) {
+      if (!dhd->HasType()) continue;
       AtmType a = G.GetVertex(dhd->GetAtoms().first);
       AtmType b = G.GetVertex(dhd->GetAtoms().second);
       AtmType c = G.GetVertex(dhd->GetAtoms().third);
