@@ -16,24 +16,31 @@ namespace cereal {
   class construct;
 }
 
+#define INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(class_name) \
+class_name() = default; \
+class_name(const class_name&) = default; \
+class_name(class_name&&) = default; \
+class_name& operator=(const class_name&) = default; \
+class_name& operator=(class_name&&) = default; \
+~class_name() = default
+
+#define INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(class_name, short_name) \
+bool operator==(const class_name& short_name) const; \
+bool operator!=(const class_name& short_name) const; \
+bool operator<=(const class_name& short_name) const; \
+bool operator>=(const class_name& short_name) const; \
+bool operator<(const class_name& short_name) const; \
+bool operator>(const class_name& short_name) const; \
+operator bool() const
+
 namespace indigox {
   
   // Molecule related
   class Molecule;
-  using sMolecule = std::shared_ptr<Molecule>;
-  using wMolecule = std::weak_ptr<Molecule>;
   class Atom;
-  using sAtom = std::shared_ptr<Atom>;
-  using wAtom = std::weak_ptr<Atom>;
   class Bond;
-  using sBond = std::shared_ptr<Bond>;
-  using wBond = std::weak_ptr<Bond>;
   class Angle;
-  using sAngle = std::shared_ptr<Angle>;
-  using wAngle = std::weak_ptr<Angle>;
   class Dihedral;
-  using sDihedral = std::shared_ptr<Dihedral>;
-  using wDihedral = std::weak_ptr<Dihedral>;
   class Element;
   class PeriodicTable;
   

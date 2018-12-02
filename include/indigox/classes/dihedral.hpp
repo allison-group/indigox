@@ -12,80 +12,55 @@
 #define INDIGOX_CLASSES_DIHEDRAL_HPP
 
 namespace indigox {
-  class Dihedral
-  : public utils::IXCountableObject<Dihedral>,
-  public std::enable_shared_from_this<Dihedral> {
+  class Dihedral {
     //! \brief Friendship allows Molecule to create new dihedrals.
     friend class indigox::Molecule;
-    //! \brief Friendship allows Dihedral to be tested.
-    friend struct indigox::test::TestDihedral;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
     
-  private:
+  public:
     //! \brief Container for storing IXAtom references assigned to an IXDihedral.
-    using DihedAtoms = std::array<wAtom, 4>;
-    
-  public:
+    using DihedralAtoms = std::array<Atom, 4>;
     //! \brief Type for storing dihedral parameters
-    using DihedTypes = std::vector<FFDihedral>;
-    //! \brief Iterator over IXAtom references stored on an IXDihedral.
-    using DihedAtomIter = DihedAtoms::const_iterator;
+    using DihedralTypes = std::vector<FFDihedral>;
     
   private:
-    
     template <typename Archive>
-    void save(Archive& archive, const uint32_t version) const;
+    void serialise(Archive& archive, const uint32_t version);
     
-    template <typename Archive>
-    static void load_and_construct(Archive& archive,
-                                   cereal::construct<Dihedral>& construct,
-                                   const uint32_t version);
-    void Clear();
   public:
-    Dihedral() = delete;  // no default constructor
-    Dihedral(const Dihedral&) = delete;
-    Dihedral& operator=(const Dihedral&) = delete;
+    INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(Dihedral);
+    INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(Dihedral, dhd);
+    
+  private:
     /*! \brief Normal constructor.
      *  \details Creates a dihedral between four atoms, linking it to the given
      *  Molecule.
      *  \param a,b,c,d the four atoms to construct a dihedral between.
      *  \param m the molecule to assign the angle to. */
-    Dihedral(Atom& a, Atom& b, Atom& c, Atom& d, Molecule& m);
+    Dihedral(const Atom& a, const Atom& b, const Atom& c, const Atom& d,
+             const Molecule& m);
     
-    //! \brief Destructor
-    ~Dihedral() { }
-    
+  public:
     /*! \brief Tag of the dihedral.
      *  \details This value may be modified without warning. Use with caution.
      *  For a constant identifier to the dihedral, use IXDihedral::GetUniqueID().
      *  \return the tag assigned to the dihedral. */
-    inline uint32_t GetTag() const { return _tag; }
+    int32_t GetTag() const;
     
     /*! \brief Molecule this dihedral is associated with.
      *  \details The returned shared_ptr is empty if the dihedral is not
      *  assigned to a valid molecule.
      *  \return the molecule associated with this dihedral. */
-    inline Molecule& GetMolecule() const { return *_mol.lock(); }
+    const Molecule& GetMolecule() const;
     
     /*! \brief Get the atoms of the dihedral.
      *  \return quad of the atoms of the dihedral. */
-    inline stdx::quad<Atom&, Atom&, Atom&, Atom&> GetAtoms() const {
-      return {*_atms[0].lock(), *_atms[1].lock(),
-              *_atms[2].lock(), *_atms[3].lock()};
-    }
+    const DihedralAtoms& GetAtoms() const;
     
     /*! \brief Number of atoms this dihedral contains.
      *  \return 4. */
-    size_t NumAtoms() const { return _atms.size(); }
-    
-    /*! \brief Switch the order of atoms in the dihedral.
-     *  \details The two outer atoms of the dihedral are swapped, as are the two
-     *  inner atoms. */
-    inline void SwapOrder() {
-      std::swap(_atms[0], _atms[3]);
-      std::swap(_atms[1], _atms[2]);
-    }
+    constexpr int64_t NumAtoms() const { return 4; }
     
     /*! \brief String representation of the dihedral.
      *  \details If any of the atoms of the dihedral are not valid, the returned
@@ -98,32 +73,35 @@ namespace indigox {
      *  \details The tag of a dihedral should not be considered stable. Use with
      *  caution.
      *  \param tag the tag to set. */
-    inline void SetTag(uint32_t tag) { _tag = tag; }
+    void SetTag(int32_t tag);
     
     /*! \brief Get the index from the molecule.
      *  \details Calculates the index of the dihedral in the container of
      *  dihedrals of the molecule it is a part of. If the molecule is dead, the
      *  index returned is the tag of the dihedral.
      *  \return the index of the dihedral. */
-    size_t GetIndex() const;
+    int64_t GetIndex() const;
     
     /*! \brief Get the type of the dihedral.
      *  \return the type of the dihedral. */
-    const FFDihedral& GetType(size_t pos) const;
-    size_t NumTypes() const { return _types.size(); }
-    const DihedTypes& GetTypes() const { return _types; }
-    bool HasType() const { return _types.size() != 0; }
-    void SetTypes(const DihedTypes& types) {
-      _types.clear();
-      _types.assign(types.begin(), types.end());
-    }
+    int64_t NumTypes() const;
+    const DihedralTypes& GetTypes() const;
+    bool HasType() const;
+    void SetTypes(const DihedralTypes& types)
+//    {
+//      _types.clear();
+//      _types.assign(types.begin(), types.end());
+//    }
     /*! \brief Set the type of the dihedral.
      *  \param type the type of dihedral to set. */
     void AddType(const FFDihedral& type);
     void RemoveType(const FFDihedral& type);
-    int32_t GetPriority() const { return _priority; }
+    int32_t GetPriority() const;
     
   private:
+    struct Impl;
+    std::shared_ptr<Impl> m_data;
+    
     //! The molecule this dihedral is assigned to.
     wMolecule _mol;
     //! Tag (unstable)
