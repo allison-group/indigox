@@ -81,6 +81,9 @@ namespace indigox {
     void SetType(const FFAngle &type);
 
   private:
+    void SetID(int64_t id);
+
+  private:
     struct Impl;
     std::shared_ptr<Impl> m_data;
   };

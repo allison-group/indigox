@@ -26,12 +26,19 @@ class_name& operator=(class_name&&) = default; \
 
 #define INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(class_name, short_name) \
 bool operator==(const class_name& short_name) const; \
-bool operator!=(const class_name& short_name) const; \
-bool operator<=(const class_name& short_name) const; \
-bool operator>=(const class_name& short_name) const; \
 bool operator<(const class_name& short_name) const; \
 bool operator>(const class_name& short_name) const; \
-operator bool() const
+inline bool operator!=(const class_name& short_name) const { \
+  return !(operator==(short_name)); \
+} \
+inline bool operator<=(const class_name& short_name) const { \
+  return !(operator>(short_name)); \
+} \
+inline bool operator>=(const class_name& short_name) const { \
+  return !(operator<(short_name)); \
+} \
+inline operator bool() const { return bool(m_data); } \
+friend std::ostream &operator<<(std::ostream &os, const Angle &ang)
 
 namespace indigox {
   

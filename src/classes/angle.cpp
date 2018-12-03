@@ -7,6 +7,15 @@
 #include <array>
 #include <memory>
 
+#ifndef INDIGOX_DISABLE_SANITY_CHECKS
+#define _sanity_check_                                                         \
+  if (!(*this))                                                                \
+  throw std::runtime_error(                                                    \
+      "Attempting to access data from invalid angle instance")
+#else
+#define _sanity_check_
+#endif
+
 namespace indigox {
   test_suite_open("Angle");
 
@@ -49,11 +58,7 @@ namespace indigox {
   // =======================================================================
 
   bool Angle::operator==(const Angle &ang) const {
-    if (ang.m_data == m_data) {
-      return true;
-    } else {
-      return false;
-    }
+    return (ang.m_data == m_data);
 
     // Do a more indepth comparison if they're not the exact same angle
     if (ang.m_data->forcefield_type != m_data->forcefield_type) {
@@ -102,40 +107,32 @@ namespace indigox {
   // =======================================================================
 
   int64_t Angle::GetTag() const {
-    return *this ? m_data->tag
-                 : throw std::runtime_error(
-                       "Attempting to access data from invalid angle instance");
+    _sanity_check_;
+    return m_data->tag;
   }
 
   int64_t Angle::GetID() const {
-    return *this ? m_data->unique_id
-                 : throw std::runtime_error(
-                       "Attempting to access data from invalid angle instance");
+    _sanity_check_;
+    return m_data->unique_id;
   }
 
   const Molecule &Angle::GetMolecule() const {
-    return *this ? m_data->molecule
-                 : throw std::runtime_error(
-                       "Attempting to access data from invalid angle instance");
+    _sanity_check_;
+    return m_data->molecule;
   }
 
   const Angle::AngleAtoms &Angle::GetAtoms() const {
-    return *this ? m_data->atoms
-                 : throw std::runtime_error(
-                       "Attempting to access data from invalid angle instance");
+    _sanity_check_;
+    return m_data->atoms;
   }
 
   const FFAngle &Angle::GetType() const {
-    return *this ? m_data->forcefield_type
-                 : throw std::runtime_error(
-                       "Attempting to access data from invalid angle instance");
+    _sanity_check_;
+    return m_data->forcefield_type;
   }
 
   int64_t Angle::GetIndex() const {
-    if (!(*this)) {
-      throw std::runtime_error(
-          "Attempting to access data from invalid angle instance");
-    }
+    _sanity_check_;
     if (!m_data->molecule) {
       return -1;
     }
@@ -150,10 +147,7 @@ namespace indigox {
   // =======================================================================
 
   void Angle::SetType(const FFAngle &type) {
-    if (!(*this)) {
-      throw std::runtime_error(
-          "Attempting to access data from invalid angle instance");
-    }
+    _sanity_check_;
     if (m_data->molecule) {
       if (!m_data->molecule.HasForcefield()) {
         m_data->molecule.SetForcefield(type.GetForcefield());
@@ -165,15 +159,20 @@ namespace indigox {
     m_data->forcefield_type = type;
   }
 
+  void Angle::SetID(int64_t id) {
+    _sanity_check_;
+    m_data->unique_id = id;
+  }
+
   // =======================================================================
   // == OUTPUTTING =========================================================
   // =======================================================================
 
   std::ostream &operator<<(std::ostream &os, const Angle &ang) {
     if (ang) {
-      const Angle::AngleAtoms &atoms = ang.GetAtoms();
-      os << "Angle(" << atoms[0].GetIndex() + 1 << ", "
-         << atoms[1].GetIndex() + 1 << ", " << atoms[2].GetIndex() + 1 << ")";
+      os << "Angle(" << ang.m_data->atoms[0].GetIndex() + 1 << ", "
+         << ang.m_data->atoms[1].GetIndex() + 1 << ", "
+         << ang.m_data->atoms[2].GetIndex() + 1 << ")";
     }
     return os;
   }
