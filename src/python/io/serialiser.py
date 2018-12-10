@@ -66,6 +66,31 @@ TEST   3
       bnd_dat["extra"] = "; Other terms: " + bnd_dat["extra"]
     print(bnd_fmt_str.format(**bnd_dat), file=file)
 
+  # pairs printing
+  print("\n[ pairs ]", file=file)
+  pair_fmt_str = "{atoma:>5} {atomb:>5}  1"
+  for dhd in mol.GetDihedrals():
+    atoms = dhd.GetAtoms()
+    if not mol.HasBond(atoms[0], atoms[1]):
+      continue
+    if not mol.HasBond(atoms[1], atoms[2]):
+      continue
+    if not mol.HasBond(atoms[2], atoms[3]):
+      continue
+
+    if ((mol.GetBond(atoms[0], atoms[1]).GetOrder() == ix.BondOrder.AROMATIC)
+        and (mol.GetBond(atoms[1], atoms[2]).GetOrder() == ix.BondOrder.AROMATIC)
+        and (mol.GetBond(atoms[2], atoms[3]).GetOrder() == ix.BondOrder.AROMATIC)):
+        continue
+
+    if atoms[0].GetIndex() > atoms[3].GetIndex():
+        pair_dat = {"atoma" : atoms[3].GetIndex() + 1,
+                    "atomb" : atoms[0].GetIndex() + 1}
+    else:
+        pair_dat = {"atoma" : atoms[0].GetIndex() + 1,
+                   "atomb" : atoms[3].GetIndex() + 1}
+    print(pair_fmt_str.format(**pair_dat), file=file)
+
   # angle printing
   print("\n[ angles ]", file=file)
   ang_fmt_str = "{atoma:>5} {atomb:>5} {atomc:>5} {typecode:>5}    ga_{typeid}   {extra}"
