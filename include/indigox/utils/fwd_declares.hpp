@@ -38,7 +38,7 @@ inline bool operator>=(const class_name& short_name) const { \
   return !(operator<(short_name)); \
 } \
 inline operator bool() const { return bool(m_data); } \
-friend std::ostream &operator<<(std::ostream &os, const Angle &ang)
+friend std::ostream &operator<<(std::ostream &os, const class_name & short_name)
 
 namespace indigox {
   

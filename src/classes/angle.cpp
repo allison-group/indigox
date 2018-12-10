@@ -3,17 +3,18 @@
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/utils/doctest_proxy.hpp>
+#include <indigox/utils/serialise.hpp>
 
 #include <array>
 #include <memory>
 
 #ifndef INDIGOX_DISABLE_SANITY_CHECKS
-#define _sanity_check_                                                         \
-  if (!(*this))                                                                \
+#define _sanity_check_(x)                                                      \
+  if (!x)                                                                      \
   throw std::runtime_error(                                                    \
       "Attempting to access data from invalid angle instance")
 #else
-#define _sanity_check_
+#define _sanity_check_(x)
 #endif
 
 namespace indigox {
@@ -32,6 +33,9 @@ namespace indigox {
 
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t);
+    
+    Impl() = default;
+    Impl(const Atom &a, const Atom &b, const Atom &c, const Molecule &mol);
   };
 
   // =======================================================================
@@ -60,7 +64,7 @@ namespace indigox {
   bool Angle::operator==(const Angle &ang) const {
     return (ang.m_data == m_data);
 
-    // Do a more indepth comparison if they're not the exact same angle
+    /* // Do a more indepth comparison if they're not the exact same angle?
     if (ang.m_data->forcefield_type != m_data->forcefield_type) {
       return false;
     }
@@ -73,12 +77,17 @@ namespace indigox {
     bool bwd_comp = (ang.m_data->atoms[2] == m_data->atoms[0]) &&
                     (ang.m_data->atoms[0] == m_data->atoms[2]);
     return (fwd_comp || bwd_comp);
+    */
   }
 
   bool Angle::operator<(const Angle &ang) const {
+    _sanity_check_(*this);
+    _sanity_check_(ang);
     return m_data->unique_id < ang.m_data->unique_id;
   }
   bool Angle::operator>(const Angle &ang) const {
+    _sanity_check_(*this);
+    _sanity_check_(ang);
     return m_data->unique_id > ang.m_data->unique_id;
   }
 
@@ -86,12 +95,13 @@ namespace indigox {
   // == CONSTRUCTION =======================================================
   // =======================================================================
 
-  Angle::Angle(const Atom &a, const Atom &b, const Atom &c, const Molecule &m)
-      : m_data(std::make_shared<Impl>()) {
-    m_data->atoms[0] = a;
-    m_data->atoms[1] = b;
-    m_data->atoms[2] = c;
-    m_data->molecule = m;
+  Angle::Impl::Impl(const Atom &a, const Atom &b, const Atom &c,
+                    const Molecule &mol)
+      : atoms({a, b, c}), molecule(mol) {
+  }
+
+  Angle::Angle(const Atom &a, const Atom &b, const Atom &c, const Molecule &mol)
+      : m_data(std::make_shared<Impl>(a, b, c, mol)) {
   }
 
   // =======================================================================
@@ -99,7 +109,8 @@ namespace indigox {
   // =======================================================================
 
   bool Angle::HasType() const {
-    return bool(*this) ? bool(m_data->forcefield_type) : false;
+    _sanity_check_(*this);
+    return bool(m_data->forcefield_type);
   }
 
   // =======================================================================
@@ -107,32 +118,32 @@ namespace indigox {
   // =======================================================================
 
   int64_t Angle::GetTag() const {
-    _sanity_check_;
+    _sanity_check_(*this);
     return m_data->tag;
   }
 
   int64_t Angle::GetID() const {
-    _sanity_check_;
+    _sanity_check_(*this);
     return m_data->unique_id;
   }
 
   const Molecule &Angle::GetMolecule() const {
-    _sanity_check_;
+    _sanity_check_(*this);
     return m_data->molecule;
   }
 
   const Angle::AngleAtoms &Angle::GetAtoms() const {
-    _sanity_check_;
+    _sanity_check_(*this);
     return m_data->atoms;
   }
 
   const FFAngle &Angle::GetType() const {
-    _sanity_check_;
+    _sanity_check_(*this);
     return m_data->forcefield_type;
   }
 
   int64_t Angle::GetIndex() const {
-    _sanity_check_;
+    _sanity_check_(*this);
     if (!m_data->molecule) {
       return -1;
     }
@@ -147,7 +158,7 @@ namespace indigox {
   // =======================================================================
 
   void Angle::SetType(const FFAngle &type) {
-    _sanity_check_;
+    _sanity_check_(*this);
     if (m_data->molecule) {
       if (!m_data->molecule.HasForcefield()) {
         m_data->molecule.SetForcefield(type.GetForcefield());
@@ -160,7 +171,7 @@ namespace indigox {
   }
 
   void Angle::SetID(int64_t id) {
-    _sanity_check_;
+    _sanity_check_(*this);
     m_data->unique_id = id;
   }
 
@@ -169,11 +180,10 @@ namespace indigox {
   // =======================================================================
 
   std::ostream &operator<<(std::ostream &os, const Angle &ang) {
-    if (ang) {
-      os << "Angle(" << ang.m_data->atoms[0].GetIndex() + 1 << ", "
-         << ang.m_data->atoms[1].GetIndex() + 1 << ", "
-         << ang.m_data->atoms[2].GetIndex() + 1 << ")";
-    }
+    _sanity_check_(ang);
+    os << "Angle(" << ang.m_data->atoms[0].GetIndex() + 1 << ", "
+       << ang.m_data->atoms[1].GetIndex() + 1 << ", "
+       << ang.m_data->atoms[2].GetIndex() + 1 << ")";
     return os;
   }
 

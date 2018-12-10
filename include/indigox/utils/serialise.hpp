@@ -13,6 +13,7 @@
 #include <cereal/types/bitset.hpp>
 #include <cereal/types/boost_dynamic_bitset.hpp>
 #include <cereal/types/eastl_bitset.hpp>
+#include <cereal/types/eigen.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/utility.hpp>

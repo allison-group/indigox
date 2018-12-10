@@ -90,3 +90,4 @@ namespace indigox {
 } // namespace indigox
 
 #endif /* INDIGOX_CLASSES_ANGLE_HPP */
+
