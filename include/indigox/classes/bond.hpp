@@ -122,6 +122,9 @@ namespace indigox {
     bool HasType() const;
 
   private:
+    void Reset();
+
+  private:
     struct Impl;
     std::shared_ptr<Impl> m_data;
   };

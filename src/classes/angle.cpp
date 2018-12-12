@@ -2,6 +2,7 @@
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
+#include <indigox/classes/molecule_impl.hpp>
 #include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/utils/serialise.hpp>
 
@@ -19,24 +20,6 @@
 
 namespace indigox {
   test_suite_open("Angle");
-
-  // =======================================================================
-  // == IMPLEMENTATION =====================================================
-  // =======================================================================
-
-  struct Angle::Impl {
-    AngleAtoms atoms;
-    Molecule molecule;
-    int64_t tag;
-    int64_t unique_id;
-    FFAngle forcefield_type;
-
-    template <typename Archive>
-    void serialise(Archive &archive, const uint32_t);
-    
-    Impl() = default;
-    Impl(const Atom &a, const Atom &b, const Atom &c, const Molecule &mol);
-  };
 
   // =======================================================================
   // == SERIALISATION ======================================================
@@ -104,6 +87,14 @@ namespace indigox {
       : m_data(std::make_shared<Impl>(a, b, c, mol)) {
   }
 
+  void Angle::Reset() {
+    m_data->atoms.fill(Atom());
+    m_data->molecule = Molecule();
+    m_data->tag = INT64_MIN;
+    m_data->unique_id = INT64_MIN;
+    m_data->forcefield_type = FFAngle();
+  }
+
   // =======================================================================
   // == STATE CHECKING =====================================================
   // =======================================================================
@@ -168,11 +159,6 @@ namespace indigox {
       }
     }
     m_data->forcefield_type = type;
-  }
-
-  void Angle::SetID(int64_t id) {
-    _sanity_check_(*this);
-    m_data->unique_id = id;
   }
 
   // =======================================================================

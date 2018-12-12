@@ -81,7 +81,7 @@ namespace indigox {
     void SetType(const FFAngle &type);
 
   private:
-    void SetID(int64_t id);
+    void Reset();
 
   private:
     struct Impl;
@@ -90,4 +90,3 @@ namespace indigox {
 } // namespace indigox
 
 #endif /* INDIGOX_CLASSES_ANGLE_HPP */
-

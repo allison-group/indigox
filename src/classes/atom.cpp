@@ -1,9 +1,10 @@
-#include <indigox/classes/atom.hpp>
 #include <indigox/classes/angle.hpp>
+#include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
 #include <indigox/classes/dihedral.hpp>
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
+#include <indigox/classes/molecule_impl.hpp>
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/utils/serialise.hpp>
@@ -20,34 +21,6 @@
 namespace indigox {
 
   test_suite_open("Atom");
-
-  // =======================================================================
-  // == IMPLEMENTATION =====================================================
-  // =======================================================================
-
-  struct Atom::Impl {
-    Molecule molecule;
-    Element element;
-    int32_t formal_charge;
-    int64_t tag;
-    int64_t unique_id;
-    int32_t implicit_hydrogens;
-    Eigen::Vector3d position;
-    std::string name;
-    double partial_charge;
-    Stereo stereochemistry;
-    FFAtom forcefield_type;
-    Atom::AtomBonds bonds;
-    Atom::AtomAngles angles;
-    Atom::AtomDihedrals dihedrals;
-
-    template <typename Archive>
-    void serialise(Archive &archive, const uint32_t);
-
-    Impl() = default;
-    Impl(const Molecule &mol, const Element &elem, double x, double y, double z,
-         std::string n);
-  };
 
   // =======================================================================
   // == SERIALISATION ======================================================
@@ -117,6 +90,23 @@ namespace indigox {
   Atom::Atom(const Molecule &m, const Element &e, double x, double y, double z,
              std::string n)
       : m_data(std::make_shared<Impl>(m, e, x, y, z, n)) {
+  }
+
+  void Atom::Reset() {
+    m_data->element = GetPeriodicTable().GetUndefined();
+    m_data->molecule = Molecule();
+    m_data->formal_charge = INT32_MIN;
+    m_data->tag = INT64_MIN;
+    m_data->unique_id = INT64_MIN;
+    m_data->implicit_hydrogens = UINT32_MAX;
+    m_data->name = "";
+    m_data->position = {HUGE_VAL, HUGE_VAL, HUGE_VAL};
+    m_data->partial_charge = HUGE_VAL;
+    m_data->stereochemistry = AtomStereo::UNDEFINED;
+    m_data->forcefield_type = FFAtom();
+    m_data->bonds.clear();
+    m_data->angles.clear();
+    m_data->dihedrals.clear();
   }
 
   // =======================================================================

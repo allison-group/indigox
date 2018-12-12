@@ -4,17 +4,16 @@
 #ifndef INDIGOX_CLASSES_PERIODIC_TABLE_HPP
 #define INDIGOX_CLASSES_PERIODIC_TABLE_HPP
 
+#include "../utils/common.hpp"
+#include "../utils/fwd_declares.hpp"
+
+#include <EASTL/vector_map.h>
 #include <array>
 #include <cstdint>
 #include <iostream>
 
-#include <EASTL/vector_map.h>
-
-#include "../utils/common.hpp"
-#include "../utils/fwd_declares.hpp"
-
 namespace indigox {
-  
+
   /*! \class Element periodictable.hpp indigox/classes/periodictable.hpp
    *  \brief Read only class for storing elemental information.
    *  \details Contains a large amount of relevant information pertaining
@@ -29,17 +28,17 @@ namespace indigox {
   class Element {
     //! Friendship allows IXPeriodicTable to create new IXElement instances.
     friend class PeriodicTable;
-    
+
     //! Friendship allows testing
     friend struct indigox::test::TestElement;
-    
+
   public:
     Element();
-    Element(const Element&);
-    Element(Element&&);
-    Element& operator=(const Element&);
-    Element& operator=(Element&&);
-    
+    Element(const Element &);
+    Element(Element &&);
+    Element &operator=(const Element &);
+    Element &operator=(Element &&);
+
   private:
     /*! \brief Construct new Element instance given data.
      *  \param Z atomic number.
@@ -63,80 +62,79 @@ namespace indigox {
     /*! \brief Get atomic mass.
      *  \return the atomic mass of the element. */
     double GetAtomicMass() const;
-    
+
     /*! \brief Get atomic number.
      *  \return the atomic number of the element. */
     int32_t GetAtomicNumber() const;
-    
+
     /*! \brief Get atomic radius.
      *  \details Radius is in angstroms.
      *  \return the atomic radius of the element. */
     double GetAtomicRadius() const;
-    
+
     /*! \brief Get covalent radius.
      *  \details Radius is in angstroms.
      *  \return the covalent radius of the element. */
     double GetCovalentRadius() const;
-    
+
     /*! \brief Get van der Waals radius.
      *  \details Radius is in angstroms.
      *  \return the van der Waals radius of the element. */
     double GetVanDerWaalsRadius() const;
-    
+
     /*! \brief Get element name.
      *  \return the name of the element. */
     std::string GetName() const;
-    
+
     /*! \brief Get element symbol.
      *  \return the symbol of the element. */
     std::string GetSymbol() const;
-    
+
     /*! \brief Get element group number.
      *  \return the IUPAC group number of the element. */
     int32_t GetGroup() const;
-    
+
     /*! \brief Get element period.
      *  \return the period of the periodic table the element is in. */
     int32_t GetPeriod() const;
-    
+
     /*! \brief Get number of valence electrons
      *  \return the number of valence electrons the element contains. */
     int32_t GetValenceElectronCount() const;
-    
+
     /*! \brief Get full outer shell octet.
      *  \return the number of electrons required for a full outer shell. */
     int32_t GetOctet() const;
-    
+
     /*! \brief Get full outer shell octet whne allowing for hypervalency.
      *  \return the number of electrons required for a full outer shell in a
      *  hypervalent state. */
     int32_t GetHypervalentOctet() const;
-    
+
     /*! \brief Get electronegativity.
      *  \return the electronegativity of the element on the Pauling scale. */
     double GetElectronegativity() const;
-    
+
   public:
     operator bool();
     bool operator==(int32_t Z) const;
-    bool operator==(const std::string& name) const;
-    bool operator==(const Element& element) const;
+    bool operator==(const std::string &name) const;
+    bool operator==(const Element &element) const;
     bool operator!=(int32_t Z) const;
-    bool operator!=(const std::string& name) const;
-    bool operator!=(const Element& element) const;
-    bool operator<(const Element& element) const;
-    bool operator>(const Element& element) const;
-    bool operator<=(const Element& element) const;
-    bool operator>=(const Element& element) const;
-    
-    
+    bool operator!=(const std::string &name) const;
+    bool operator!=(const Element &element) const;
+    bool operator<(const Element &element) const;
+    bool operator>(const Element &element) const;
+    bool operator<=(const Element &element) const;
+    bool operator>=(const Element &element) const;
+
   private:
     struct ElementImpl;
     std::shared_ptr<ElementImpl> m_elemdat;
   };
-  
-  std::ostream& operator<<(std::ostream&, const Element&);
-  
+
+  std::ostream &operator<<(std::ostream &, const Element &);
+
 #define INDIGOX_NUMBER_ELEMENTS 119
   /*! \class PeriodicTable periodictable.hpp indigox/classes/periodictable.hpp
    *  \brief Singleton class for storing and access elemental information.
@@ -146,19 +144,19 @@ namespace indigox {
    *  library, usage is primarily intended through the use of smart pointers. */
   class PeriodicTable {
     //! Friendship allows for access to a single PeriodicTable instance.
-    friend const PeriodicTable& GetPeriodicTable();
-    
+    friend const PeriodicTable &GetPeriodicTable();
+
     //! Friendship allws for testing implementation
     friend struct indigox::test::TestPeriodicTable;
-    
+
   public:
     /*! \brief Get the element with the given atomic number.
      *  \param z the atomic number of the element to get.
      *  \returns the requested element.
-     *  \throw std::invalid_argument If the requested atomic number does not exist
-     *  within the PeriodicTable. */
+     *  \throw std::invalid_argument If the requested atomic number does not
+     * exist within the PeriodicTable. */
     Element GetElement(const int32_t z) const;
-    
+
     /*! \brief Get the element with the given name or symbol.
      *  \details Name based matches are made ignoring case. Symbol matches are
      *  made checking case as well.
@@ -167,13 +165,15 @@ namespace indigox {
      *  \throw std::invalid_argument If the requested name or symbol does not
      *  exist within the PeriodicTable. */
     Element GetElement(const std::string name) const;
-    
+
     /*! \brief Get the element with the given atomic number.
      *  \param z the atomic number of the element to get.
      *  \return the requested element.
      *  \see IXPeriodicTable::GetElement(const uint8_t) const */
-    Element operator[](const int32_t z) const { return GetElement(z); }
-    
+    Element operator[](const int32_t z) const {
+      return GetElement(z);
+    }
+
     /*! \brief Get the element with the given name or symbol.
      *  \param name the name or symbol of the element to get.
      *  \return the requested element.
@@ -181,42 +181,46 @@ namespace indigox {
     Element operator[](const std::string name) const {
       return GetElement(name);
     }
-    
+
     /*! \brief Get the element for use when an element is not defined.
      *  \details As there is not much point in an undefined element, this
      *  method is intended for internal use.
      *  \return the undefined Element. */
-    Element GetUndefined() const { return _elems.at(0); }
-    
+    Element GetUndefined() const {
+      return _elems.at(0);
+    }
+
     /*! \brief Number of elements in the PeriodicTable.
      *  \return the number of elements in the PeriodicTable. */
-    inline size_t NumElements() const { return _elems.size() - 1; }
-  
+    inline size_t NumElements() const {
+      return _elems.size() - 1;
+    }
+
   private:
     PeriodicTable();
-    
+
     /*! \brief Generate Elements.
      *  \details Currently, the first 118 elements are generated. These are
      *  hard coded into the implementation file. These are populated into both
      *  the _z_to and _name_to maps. */
     void GeneratePeriodicTable();
-  
+
   private:
     //! Map atomic numbers to elements.
     std::array<Element, INDIGOX_NUMBER_ELEMENTS> _elems;
     //! Map symbol and name to vector index.
     eastl::vector_map<std::string, size_t> _name_to_idx;
   };
-  
+
   /*! \brief Print a PeriodicTable to an output stream.
    *  \details Prints number of elements in the PeriodicTable.
    *  \param os output stream to print to.
    *  \param pt PeriodicTable to print.
    *  \return the output stream. */
-  std::ostream& operator<<(std::ostream& os, const PeriodicTable& pt);
-  
-  const PeriodicTable& GetPeriodicTable();
-  
+  std::ostream &operator<<(std::ostream &os, const PeriodicTable &pt);
+
+  const PeriodicTable &GetPeriodicTable();
+
 } // namespace indigox
 
 #endif /* INDIGOX_CLASSES_PERIODIC_TABLE_HPP */

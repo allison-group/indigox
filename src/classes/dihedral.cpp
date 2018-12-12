@@ -2,6 +2,7 @@
 #include <indigox/classes/dihedral.hpp>
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
+#include <indigox/classes/molecule_impl.hpp>
 #include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/utils/serialise.hpp>
 
@@ -20,26 +21,6 @@ namespace indigox {
 #endif
 
   test_suite_open("Dihedral");
-
-  // =======================================================================
-  // == IMPLEMENTATION =====================================================
-  // =======================================================================
-
-  struct Dihedral::Impl {
-    DihedralAtoms atoms;
-    Molecule molecule;
-    int64_t tag;
-    int64_t unique_id;
-    DihedralTypes forcefield_types;
-    int32_t priority;
-
-    template <typename Archive>
-    void serialise(Archive &archive, const uint32_t version);
-
-    Impl() = default;
-    Impl(const Atom &a, const Atom &b, const Atom &c, const Atom &d,
-         const Molecule &molecule);
-  };
 
   // =======================================================================
   // == SERIALISATION ======================================================
@@ -92,6 +73,15 @@ namespace indigox {
   Dihedral::Dihedral(const Atom &a, const Atom &b, const Atom &c, const Atom &d,
                      const Molecule &mol)
       : m_data(std::make_shared<Impl>(a, b, c, d, mol)) {
+  }
+
+  void Dihedral::Reset() {
+    m_data->atoms.fill(Atom());
+    m_data->molecule = Molecule();
+    m_data->tag = INT64_MIN;
+    m_data->unique_id = INT64_MIN;
+    m_data->forcefield_types.clear();
+    m_data->priority = INT32_MIN;
   }
 
   // =======================================================================
@@ -185,8 +175,10 @@ namespace indigox {
 
   void Dihedral::RemoveType(const FFDihedral &type) {
     _sanity_check_(*this);
-    auto pos = std::find(m_data->forcefield_types.begin(), m_data->forcefield_types.end(), type);
-    if (pos != m_data->forcefield_types.end()) m_data->forcefield_types.erase(pos);
+    auto pos = std::find(m_data->forcefield_types.begin(),
+                         m_data->forcefield_types.end(), type);
+    if (pos != m_data->forcefield_types.end())
+      m_data->forcefield_types.erase(pos);
   }
 
   // =======================================================================
@@ -323,6 +315,5 @@ namespace indigox {
     }
    */
 
-  
   test_suite_close();
 } // namespace indigox

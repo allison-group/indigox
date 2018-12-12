@@ -96,6 +96,9 @@ namespace indigox {
     int32_t GetPriority() const;
 
   private:
+    void Reset();
+
+  private:
     struct Impl;
     std::shared_ptr<Impl> m_data;
   };
