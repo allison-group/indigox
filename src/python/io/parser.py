@@ -1,5 +1,6 @@
 ## \file parser.py
 from pathlib import Path
+from collections import defaultdict
 import indigox as ix
 
 __all__ = ["LoadIFPFile", "LoadPDBFile", "LoadMTBFile", "LoadIXDFile",
@@ -143,6 +144,8 @@ def LoadPDBFile(path, details = None):
   return mol
 
 def LoadIXDFile(path, mol):
+  orders = defaultdict(float)
+  set_implicits = []
   for line in ix.LoadFile(path.expanduser()):
     line = line.split()
     l = list(map(int, line[1:]))
@@ -150,24 +153,52 @@ def LoadIXDFile(path, mol):
       atom = mol.GetAtomTag(l[0])
       atom.SetFormalCharge(l[1])
       atom.SetImplicitCount(l[2])
+      set_implicits.append(l[0])
     elif line[0] == "BOND":
       bond = mol.GetBond(mol.GetAtomTag(l[0]), mol.GetAtomTag(l[1]))
       if l[2] == 1:
         bond.SetOrder(ix.BondOrder.SINGLE)
+        orders[l[0]] += 0
+        orders[l[1]] += 0
       elif l[2] == 2:
         bond.SetOrder(ix.BondOrder.DOUBLE)
+        orders[l[0]] += 1
+        orders[l[1]] += 1
       elif l[2] == 3:
         bond.SetOrder(ix.BondOrder.TRIPLE)
+        orders[l[0]] += 2
+        orders[l[1]] += 2
       elif l[2] == 4:
         bond.SetOrder(ix.BondOrder.QUADRUPLE)
+        orders[l[0]] += 3
+        orders[l[1]] += 3
       elif l[2] == 5:
         bond.SetOrder(ix.BondOrder.AROMATIC)
+        orders[l[0]] += 0.5
+        orders[l[1]] += 0.5
       elif l[2] == 6:
         bond.SetOrder(ix.BondOrder.ONEANDAHALF)
+        orders[l[0]] += 0.5
+        orders[l[1]] += 0.5
       elif l[2] == 7:
         bond.SetOrder(ix.BondOrder.TWOANDAHALF)
+        orders[l[0]] += 1.5
+        orders[l[1]] += 1.5
     elif line[0] == "MOLECULE":
       mol.SetMolecularCharge(l[0])
+      
+  set_implicits = set(set_implicits)
+  for atom in mol.GetAtoms():
+    if atom.GetElement() != "C":
+      continue
+    if atom.GetTag() in set_implicits:
+      continue
+    if (((orders[atom.GetTag()] - int(orders[atom.GetTag()])) != 0)
+       or (atom.NumBonds() + int(orders[atom.GetTag()])) > 4):
+      raise InputError("Atom tag {} has weird valence state.".format(atom.GetTag()))
+    atom.SetImplicitCount(4 - atom.NumBonds() - int(orders[atom.GetTag()]))
+
+
   tot_charge = sum(atm.GetFormalCharge() for atm in mol.GetAtoms())
   if tot_charge != mol.GetMolecularCharge():
     raise InputError("Sum of atom formal charges does not match molecular charge")
