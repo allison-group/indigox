@@ -174,10 +174,10 @@ namespace indigox::algorithm {
   
   template
   int64_t ConnectedSubgraphs(CondensedMolecularGraph::graph_type&,
-                             std::vector<sCondensedMolecularGraph>&,
+                             std::vector<CondensedMolecularGraph>&,
                              size_t, size_t);
   template
   int64_t ConnectedSubgraphs(MolecularGraph::graph_type&,
-                             std::vector<sMolecularGraph>&, size_t, size_t);
+                             std::vector<MolecularGraph>&, size_t, size_t);
   
 }

@@ -1,8 +1,6 @@
 #include <EASTL/vector_map.h>
 
 #include "../../utils/fwd_declares.hpp"
-#include "../../classes/parameterised.hpp"
-#include "../../classes/athenaeum.hpp"
 
 #ifndef INDIGOX_ALGORITHM_GRAPH_ISOMORPHISM_HPP
 #define INDIGOX_ALGORITHM_GRAPH_ISOMORPHISM_HPP
@@ -20,12 +18,12 @@ namespace indigox::algorithm {
   };
   
   struct CMGCallback
-  : public MappingCallback<graph::CMGVertex, graph::CMGEdge, graph::sCondensedMolecularGraph,
+  : public MappingCallback<graph::CMGVertex, graph::CMGEdge, graph::CondensedMolecularGraph,
   graph::Undirected, graph::GraphLabel, graph::GraphLabel>
   { };
   
   struct MGCallback
-  : public MappingCallback<graph::MGVertex, graph::MGEdge, graph::sMolecularGraph,
+  : public MappingCallback<graph::MGVertex, graph::MGEdge, graph::MolecularGraph,
   graph::Undirected, graph::GraphLabel, graph::GraphLabel>
   { };
   
@@ -39,12 +37,7 @@ namespace indigox::algorithm {
   struct MGPrintCallback : public MGCallback {
     int count;
     MGPrintCallback() : count(0) { }
-    bool operator()(const CorrespondenceMap& cmap) override {
-      std::cout << "Mapping instance " << ++count << ":\n";
-      for (auto& ab : cmap) std::cout << ab.first << " -- " << ab.second << "\n";
-      std::cout << "\n";
-      return true;
-    }
+    bool operator()(const CorrespondenceMap& cmap) override;
   };
 
   void SubgraphIsomorphisms(graph::CondensedMolecularGraph& G1,
