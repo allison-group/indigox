@@ -38,7 +38,6 @@ namespace indigox {
      *  \details A molecule takes ownership of all dihedrals it contains. */
     using MoleculeDihedrals = std::vector<Dihedral>;
 
-    using State = uint32_t;
 
   private:
     template <typename Archive>
@@ -260,7 +259,7 @@ namespace indigox {
 
     /*! \brief Get the molecular graph for this molecule.
      *  \return the molecular graph of this molecule. */
-    graph::MolecularGraph &GetGraph() const;
+    const graph::MolecularGraph &GetGraph() const;
 
     /*! \brief Get the name of the molecule.
      *  \return the name of the molecule. */

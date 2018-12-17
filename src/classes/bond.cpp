@@ -3,7 +3,6 @@
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/molecule_impl.hpp>
-#include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/utils/serialise.hpp>
 
 #include <array>
@@ -19,8 +18,6 @@
 #endif
 
 namespace indigox {
-
-  test_suite_open("Bond");
 
   // =======================================================================
   // == SERIALISATION ======================================================
@@ -189,7 +186,5 @@ namespace indigox {
     }
     return os;
   }
-
-  test_suite_close();
 
 } // namespace indigox

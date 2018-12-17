@@ -7,6 +7,7 @@
 #include "bond.hpp"
 #include "dihedral.hpp"
 #include "molecule.hpp"
+#include "../graph/molecular.hpp"
 
 namespace indigox {
 
@@ -109,7 +110,7 @@ namespace indigox {
     MoleculeAngles angles;
     MoleculeDihedrals dihedrals;
     Forcefield forcefield;
-    graph::sMolecularGraph molecular_graph;
+    graph::MolecularGraph molecular_graph;
     State modification_state;
     bool frozen;
 

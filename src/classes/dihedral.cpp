@@ -3,13 +3,10 @@
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/molecule_impl.hpp>
-#include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/utils/serialise.hpp>
 
 #include <memory>
 #include <vector>
-
-namespace indigox {
 
 #ifndef INDIGOX_DISABLE_SANITY_CHECKS
 #define _sanity_check_(x)                                                      \
@@ -20,7 +17,7 @@ namespace indigox {
 #define _sanity_check_(x)
 #endif
 
-  test_suite_open("Dihedral");
+namespace indigox {
 
   // =======================================================================
   // == SERIALISATION ======================================================
@@ -185,102 +182,6 @@ namespace indigox {
   // == OUTPUTTING =========================================================
   // =======================================================================
 
-  /*  DOCTEST_TEST_CASE_TEMPLATE_DEFINE("IXDihedral serialisation", T,
-    ixdihed_serial) { using In = typename T::t1; using Out = typename
-    cereal::traits::detail::get_output_from_input<In>::type;
-      test::DihedralTestFixture fixture;
-      Dihedral saved = fixture.dhd.imp;
-
-      saved->SetTag(45);
-      saved->SetType(fixture.fftype);
-      std::ostringstream os;
-      {
-        Out oar(os);
-        check_nothrow(oar(saved, saved->GetAtoms(), saved->GetMolecule(),
-                          fixture.fftype));
-      }
-
-      Dihedral loaded;
-      test::TestDihedral::Atoms atoms;
-      Molecule mol;
-      FFDihedral ff_loaded;
-      std::istringstream is(os.str());
-      {
-        In iar(is);
-        check_nothrow(iar(loaded, atoms, mol, ff_loaded));
-      }
-      fixture.dhd.imp = loaded;
-      check(!fixture.dhd.get_atms()[0].expired());
-      check(!fixture.dhd.get_atms()[1].expired());
-      check(!fixture.dhd.get_atms()[2].expired());
-      check(!fixture.dhd.get_atms()[3].expired());
-      check(!fixture.dhd.get_mol().expired());
-      check_eq(saved->GetTag(), loaded->GetTag());
-      check_eq(atoms.first->GetTag(), saved->GetAtoms().first->GetTag());
-      check_eq(atoms.second->GetTag(), saved->GetAtoms().second->GetTag());
-      check_eq(atoms.third->GetTag(), saved->GetAtoms().third->GetTag());
-      check_eq(atoms.fourth->GetTag(), saved->GetAtoms().fourth->GetTag());
-      check_eq(atoms, loaded->GetAtoms());
-      check_eq(ff_loaded, loaded->GetType());
-    }
-    DOCTEST_TEST_CASE_TEMPLATE_INSTANTIATE(ixdihed_serial,
-    ixserial<IXDihedral>);
-   */
-
-  /*  test_case_fixture(test::DihedralTestFixture, "IXDihedral construction") {
-      check_nothrow(test::TestDihedral tdhd(a,b,c,d,mol));
-      test::TestDihedral tdhd(a,b,c,d,mol);
-      check_eq(mol, tdhd.get_mol().lock());
-      check_eq(0, tdhd.get_tag());
-      check_eq(a, tdhd.get_atms()[0].lock());
-      check_eq(b, tdhd.get_atms()[1].lock());
-      check_eq(c, tdhd.get_atms()[2].lock());
-      check_eq(d, tdhd.get_atms()[3].lock());
-      check_eq(FFDihedral(), tdhd.get_type());
-
-      // Check unique IDs correctly update
-      test::TestDihedral dhd1(a,b,c,d,mol);
-      test::TestDihedral dhd2(a,b,c,d,mol);
-      check_ne(dhd1.GetUniqueID(), dhd2.GetUniqueID());
-      check_eq(dhd1.GetUniqueID() + 1, dhd2.GetUniqueID());
-    }
-   */
-
-  /*  test_case_fixture(test::DihedralTestFixture, "IXDihedral getting and
-    setting") {
-      // check no throwing
-      check_nothrow(dhd.GetTag());
-      check_nothrow(dhd.SetTag(72));
-      check_nothrow(dhd.GetMolecule());
-      check_nothrow(dhd.GetAtoms());
-      check_nothrow(dhd.SwapOrder());
-      check_nothrow(dhd.NumAtoms());
-      check_nothrow(dhd.SetType(fftype));
-
-      // Check correctness of gets
-      check_eq(72, dhd.GetTag());
-      check_eq(72, dhd.get_tag());
-      check_eq(mol, dhd.GetMolecule());
-      check_eq(mol, dhd.get_mol().lock());
-      check_eq(stdx::make_quad(d, c, b, a), dhd.GetAtoms());
-      check_eq(dhd.GetTag(), dhd.GetIndex());
-      check_eq(fftype, dhd.GetType());
-
-      // Check correct no owning of molecule
-      mol.reset();
-      check(dhd.get_mol().expired());
-      check_eq(Molecule(), dhd.GetMolecule());
-
-      // Check still gets tag when mol is dead
-      check_eq(dhd.GetTag(), dhd.GetIndex());
-
-      // Check num atoms doesn't depend on being active
-      check_eq(4, dhd.NumAtoms());
-      a.reset(); b.reset(); c.reset(); d.reset();
-      check_eq(4, dhd.NumAtoms());
-    }
-   */
-
   std::ostream &operator<<(std::ostream &os, const Dihedral &dhd) {
     _sanity_check_(dhd);
     os << "Dihedral(" << dhd.m_data->atoms[0] + 1 << ", "
@@ -288,32 +189,4 @@ namespace indigox {
        << dhd.m_data->atoms[3] + 1 << ")";
     return os;
   }
-
-  /*  test_case_fixture(test::DihedralTestFixture, "IXDihedral printing
-    methods") {
-      // Check ordering is correct
-      std::stringstream ss; ss << dhd.imp;
-      check_eq("Dihedral(Atom(0, C), Atom(1, O), Atom(2, F), Atom(3, N))",
-               dhd.ToString());
-      check_eq("Dihedral(0, 1, 2, 3)", ss.str());
-      dhd.SwapOrder();
-      ss.str(""); ss << dhd.imp;
-      check_eq("Dihedral(Atom(3, N), Atom(2, F), Atom(1, O), Atom(0, C))",
-               dhd.ToString());
-      check_eq("Dihedral(3, 2, 1, 0)", ss.str());
-
-      // Check having bad atoms is handled correctly
-      a.reset(); d.reset();
-      ss.str(""); ss << dhd.imp;
-      check_eq("Dihedral(MALFORMED)", dhd.ToString());
-      check_eq("Dihedral(, 2, 1, )", ss.str());
-
-      // Check empty dihedral to ostream does nothing
-      ss.str("");
-      check_nothrow(ss << Dihedral());
-      check_eq("", ss.str());
-    }
-   */
-
-  test_suite_close();
 } // namespace indigox

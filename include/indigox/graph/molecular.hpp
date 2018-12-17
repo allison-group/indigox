@@ -2,21 +2,18 @@
 #ifndef INDIGOX_GRAPH_MOLECULAR_HPP
 #define INDIGOX_GRAPH_MOLECULAR_HPP
 
+#include "../algorithm/graph/cycles.hpp"
+#include "../utils/fwd_declares.hpp"
+#include "../utils/modifable_object.hpp"
+#include "base_graph.hpp"
+
+#include <EASTL/vector_map.h>
 #include <iterator>
 #include <map>
 #include <memory>
 #include <set>
 #include <stdexcept>
 #include <vector>
-
-#include <EASTL/vector_map.h>
-
-#include "base_graph.hpp"
-#include "../algorithm/graph/cycles.hpp"
-#include "../utils/common.hpp"
-#include "../utils/counter.hpp"
-#include "../utils/fwd_declares.hpp"
-#include "../utils/modifable_object.hpp"
 
 // Local declarations
 namespace indigox::graph {
@@ -26,115 +23,85 @@ namespace indigox::graph {
     friend class MolecularGraph;
     //! \brief Friendship allows for serialisation
     friend class cereal::access;
-    //! \brief Friendship allows for testing
-    friend struct indigox::test::TestMolecularVertex;
-    
-    struct MGVertexData;
-    
+
   public:
     /*! \brief Get the atom associated with this vertex.
      *  \return the atom associated with this vertex, if it is still alive. */
-    Atom& GetAtom() const;
-    
+    const Atom &GetAtom() const;
+
     /*! \brief Get the graph this vertex is part of.
      *  \return the owning graph. */
-    MolecularGraph& GetGraph() const;
-    
+    const MolecularGraph &GetGraph() const;
+
   public:
-    MGVertex();
-    MGVertex(const MGVertex& v);
-    MGVertex(MGVertex&& v) noexcept;
-    MGVertex& operator=(const MGVertex& v);
-    MGVertex& operator=(MGVertex&& v);
-    
+    INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(MGVertex);
+    INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(MGVertex, v);
+
   private:
     /*! \brief Construct a vertex from an atom.
      *  \details Private constructor ensures that only MolecularGraph can
      *  create valid MGVertex instances.
      *  \param a the atom to associate with this vertex. */
-    MGVertex(Atom& a, MolecularGraph& graph);
-    
+    MGVertex(const Atom &a, const MolecularGraph &graph);
+
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t version);
-    
-  public:
-    friend bool operator==(const MGVertex& l, const MGVertex& r) {
-      return l._dat == r._dat; }
-    friend bool operator<(const MGVertex& l, const MGVertex& r) {
-      return l._dat < r._dat; }
-    operator bool() const { return bool(_dat); }
-    
+
   private:
-    std::shared_ptr<MGVertexData> _dat;
+    struct MGVertexData;
+    std::shared_ptr<MGVertexData> m_data;
   };
-  
+
   /*! \brief Class for the edges of a IXMolecularGraph. */
   class MGEdge {
     //! \brief Friendship allows IXMolecularGraph to add edges.
     friend class MolecularGraph;
     //! \brief Friendship allows for serialisation
     friend class cereal::access;
-    //! \brief Friendship allows for testing
-    friend struct indigox::test::TestMolecularEdge;
-    
-    struct MGEdgeData;
-    
+
   public:
     /*! \brief Get the bond associated with this edge.
      *  \return the bond associated with this edge, if it is still alive. */
-    Bond& GetBond() const;
-    
+    const Bond& GetBond() const;
+
     /*! \brief Get the graph this edge is part of.
      *  \return the owning graph. */
-    MolecularGraph& GetGraph() const;
-    
+    const MolecularGraph &GetGraph() const;
+
   public:
-    MGEdge();
-    MGEdge(const MGEdge& e);
-    MGEdge(MGEdge&& e) noexcept;
-    MGEdge& operator=(const MGEdge& e);
-    MGEdge& operator=(MGEdge&& e);
-    
+    INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(MGEdge);
+    INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(MGEdge, e);
+
   private:
     /*! \brief Construct an edge from a bond.
      *  \details Private constructor ensures that only IXMolecularGraph can
      *  create IXMGEdge instances.
      *  \param b the bond to associate with this edge. */
-    MGEdge(Bond& b, MolecularGraph& graph);
-    
+    MGEdge(const Bond &b, const MolecularGraph &graph);
+
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t version);
-    
-  public:
-    friend bool operator==(const MGEdge& l, const MGEdge& r) {
-      return l._dat == r._dat; }
-    friend bool operator<(const MGEdge& l, const MGEdge& r) {
-      return l._dat < r._dat; }
-    operator bool() const { return bool(_dat); }
-    
+
   private:
-    std::shared_ptr<MGEdgeData> _dat;
+    struct MGEdgeData;
+    std::shared_ptr<MGEdgeData> m_data;
   };
-  
+
   /*! \brief Class containing a graph representation of a molecule.
    *  \details The IXMolecularGraph is designed to be maintained by the
    *  IXMolecule instance owning it. To that end, all the modifying methods
    *  assume that the parameters feed to them are valid. However, all the
    *  accessing methods do not make this assumption and so perform sanity
    *  checks. */
-  class MolecularGraph :
-  public BaseGraph<MGVertex, MGEdge, sMolecularGraph>,
-  public std::enable_shared_from_this<MolecularGraph> {
+  class MolecularGraph : public BaseGraph<MGVertex, MGEdge, MolecularGraph>{
   public:
     //! \brief Friendship allows an Molecule to own a graph.
     friend class indigox::Molecule;
-    //! \brief Friendship allows IXMolecularGraph to be tested.
-    friend struct indigox::test::TestMolecularGraph;
     //! \brief Friendship allows serialisation
     friend class cereal::access;
-    
+
     //! \brief Type of the underlying IXGraphBase
-    using graph_type = BaseGraph<MGVertex, MGEdge, sMolecularGraph>;
+    using graph_type = BaseGraph<MGVertex, MGEdge, MolecularGraph>;
     //! \brief Container for vertices
     using VertContain = std::vector<MGVertex>;
     //! \brief Container for edges
@@ -142,10 +109,10 @@ namespace indigox::graph {
     //! \brief Container for neighbours of vertices
     using NbrsContain = std::map<MGVertex, VertContain>;
     //! \brief Container for mapping atoms to vertices
-    using AtomMap = eastl::vector_map<sAtom, MGVertex>;
+    using AtomMap = eastl::vector_map<Atom, MGVertex>;
     //! \brief Container for mapping bonds to edges
-    using BondMap = eastl::vector_map<sBond, MGEdge>;
-    
+    using BondMap = eastl::vector_map<Bond, MGEdge>;
+
   public:
     //! \brief Type of the iterator returned by GetEdges() method.
     using EdgeIter = EdgeContain::const_iterator;
@@ -157,24 +124,20 @@ namespace indigox::graph {
     using VertexType = MGVertex;
     //! \brief Type used for edges
     using EdgeType = MGEdge;
-    
+
   public:
     /*! \brief Construct with a molecule.
      *  \param mol the molecule to reference to. */
-    MolecularGraph() = default;
-    MolecularGraph(const MolecularGraph&) = delete;
-    MolecularGraph& operator=(const MolecularGraph&) = delete;
-    
-  private:
-    MolecularGraph(Molecule& mol);
+    INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(MolecularGraph);
+    INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(MolecularGraph, g);
+
+  public:
+    MolecularGraph(const Molecule &mol);
 
   private:
     template <typename Archive>
-    void save(Archive& archive, const uint32_t version) const;
+    void serialise(Archive &archive, const uint32_t version);
 
-    template <typename Archive>
-    void load(Archive& archive, const uint32_t version);
-    
     // modifcation methods are private so that the structure of the graph can
     // be controlled only by the molecule owning it.
     /*! \brief Add an edge to the graph.
@@ -183,34 +146,32 @@ namespace indigox::graph {
      *  bond is not already associated with another edge.
      *  \param bnd the bond the new edge is associated with.
      *  \return shared_ptr to the newly added edge. */
-    MGEdge AddEdge(Bond& bnd);
-    
+    MGEdge AddEdge(const Bond &bnd);
+
     /*! \brief Add a vertex to the graph.
      *  \details It is assumed that the provided atom is not already
      *  associated with another vertex.
      *  \param atm the atom the new vertex is associated with.
      *  \return shared_ptr to the newly added vertex. */
-    MGVertex AddVertex(Atom& atm);
-    
+    MGVertex AddVertex(const Atom &atm);
+
     /*! \brief Remove an edge from the graph.
      *  \details It is assumed that the provided edge is a part of the graph.
      *  \param e the edge to remove. */
-    void RemoveEdge(MGEdge& e);
-    
+    void RemoveEdge(const MGEdge &e);
+
     /*! \brief Remove an edge from between two vertices.
      *  \details It is assumed that there is an edge between the provided
      *  vertices.
      *  \param u, v the vertices to remove the edge from between. */
-    void RemoveEdge(MGVertex& u, MGVertex& v);
-    
+    void RemoveEdge(const MGVertex &u, const MGVertex &v);
+
     /*! \brief Remove a vertex from the graph.
      *  \details Removing a vertex also removes all edges it is involved in.
      *  It is assumed that the provided vertex is part of the graph.
      *  \param v the vertex to remove. */
-    void RemoveVertex(MGVertex& v);
-    
-    void Clear();
-    
+    void RemoveVertex(const MGVertex &v);
+
   public:
     /*! \brief Induce a subgraph from the range of vertices.
      *  \details Induced subgraph has the same vertices and edges as its parent
@@ -220,61 +181,66 @@ namespace indigox::graph {
      *  \tparam InputIt type of the iterator range provided.
      *  \param begin,end marking the range of vertices to induce subgraph on.
      *  \return a new MolecularGraph. */
-    sMolecularGraph Subgraph(std::vector<MGVertex>& vertices);
-    
-    sMolecularGraph Subgraph(std::vector<MGVertex>& vertices,
-                             std::vector<MGEdge>& edges);
-    
-    bool IsSubgraph() const { return !_subg.expired(); }
-    
+    MolecularGraph Subgraph(std::vector<MGVertex> &vertices);
+
+    MolecularGraph Subgraph(std::vector<MGVertex> &vertices,
+                             std::vector<MGEdge> &edges);
+
+    bool IsSubgraph() const;
+//    {
+//      return !_subg.expired();
+//    }
+
     using graph_type::GetEdge;
-    using graph_type::HasVertex;
     using graph_type::HasEdge;
-    
+    using graph_type::HasVertex;
+
     /*! \brief Get the edge associated with a bond.
      *  \details If the bond is not associated with an edge on this graph, the
      *  returned edge is null.
      *  \param bnd the bond to get the associated edge of.
      *  \return the associated edge. */
-    MGEdge GetEdge(Bond& bnd) const;
-    
+    const MGEdge& GetEdge(const Bond &bnd) const;
+
     /*! \brief Get the vertex associated with an atom.
      *  \details If the atom is not associated with a vertex of this graph,
      *  the returned vertex is null.
      *  \param atm the atom to get the assocaited vertex of.
      *  \return the associated vertex. */
-    MGVertex GetVertex(Atom& atm) const;
-    
+    const MGVertex& GetVertex(const Atom &atm) const;
+
     /*! \brief Check if the graph has a vertex associated with an atom.
      *  \param v that atom to check for.
      *  \return if the atom is associated with the graph or not. */
-    bool HasVertex(Atom& v) const;
-    
+    bool HasVertex(const Atom &v) const;
+
     /*! \brief Check if the graph has an edge associated with a bond.
      *  \param e the bond to check for.
      *  \return if the bond is associated with the graph or not. */
-    bool HasEdge(Bond& e) const; 
-    
-    Molecule& GetMolecule() const;
-    
-    MolecularGraph& GetSuperGraph() const;
-    
+    bool HasEdge(const Bond &e) const;
+
+    const Molecule &GetMolecule() const;
+
+    const MolecularGraph &GetSuperGraph() const;
+
     // Can only generate/get the condensed graph when molecule is frozen
-    CondensedMolecularGraph& GetCondensedGraph();
-    
+    const CondensedMolecularGraph &GetCondensedGraph();
+
   private:
-    //! \brief Map Atoms to their corresponding MGVertex
-    AtomMap _at2v;
-    //! \brief Map Bonds to their corresponding MGEdge
-    BondMap _bn2e;
-    //! \brief Source molecule
-    wMolecule _mol;
-    //! \brief Condensed version of graph
-    sCondensedMolecularGraph _cond;
-    //! \brief If is subgraph
-    wMolecularGraph _subg;
+    struct Impl;
+    std::shared_ptr<Impl> m_data;
     
+//    //! \brief Map Atoms to their corresponding MGVertex
+//    AtomMap _at2v;
+//    //! \brief Map Bonds to their corresponding MGEdge
+//    BondMap _bn2e;
+//    //! \brief Source molecule
+//    Molecule _mol;
+//    //! \brief Condensed version of graph
+//    sCondensedMolecularGraph _cond;
+//    //! \brief If is subgraph
+//    wMolecularGraph _subg;
   };
-}  // namespace indigox::graph
+} // namespace indigox::graph
 
 #endif /* INDIGOX_GRAPH_MOLECULAR_HPP */

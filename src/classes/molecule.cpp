@@ -84,7 +84,7 @@ namespace indigox {
 
   Molecule::Impl::Impl(std::string n, const Molecule &mol)
       : name(n), molecular_charge(0),
-        molecular_graph(std::make_shared<graph::MolecularGraph>(mol)),
+        molecular_graph(mol),
         modification_state(0), frozen(false), cached_formula_state(0),
         angle_percieved_state(0), dihedral_percieved_state(0) {
   }
@@ -375,9 +375,9 @@ namespace indigox {
     return m_data->cached_formula;
   }
 
-  graph::MolecularGraph &Molecule::GetGraph() const {
+  const graph::MolecularGraph &Molecule::GetGraph() const {
     _sanity_check_(*this);
-    return *m_data->molecular_graph;
+    return m_data->molecular_graph;
   }
 
   const std::string &Molecule::GetName() const {
@@ -417,7 +417,7 @@ namespace indigox {
     return m_data->forcefield;
   }
 
-  Molecule::State Molecule::GetCurrentState() const {
+  State Molecule::GetCurrentState() const {
     _sanity_check_(*this);
     return m_data->modification_state;
   }
@@ -440,7 +440,7 @@ namespace indigox {
     Atom atom = Atom(*this, element, x, y, z, "");
     atom.m_data->unique_id = m_data->next_unique_id++;
     m_data->atoms.emplace_back(atom);
-    m_data->molecular_graph->AddVertex(atom);
+    m_data->molecular_graph.AddVertex(atom);
     return atom;
   }
 
@@ -458,7 +458,7 @@ namespace indigox {
         bnd.m_data->unique_id = m_data->next_unique_id++;
         bnd.m_data->atoms[0].AddBond(bnd);
         bnd.m_data->atoms[1].AddBond(bnd);
-        m_data->molecular_graph->AddEdge(bnd);
+        m_data->molecular_graph.AddEdge(bnd);
       }
     }
 
@@ -572,8 +572,8 @@ namespace indigox {
 
     // Remove the atom from the molecule
     Atom atm = atom;
-    graph::MGVertex v = m_data->molecular_graph->GetVertex(atm);
-    m_data->molecular_graph->RemoveVertex(v);
+    graph::MGVertex v = m_data->molecular_graph.GetVertex(atm);
+    m_data->molecular_graph.RemoveVertex(v);
     m_data->atoms.erase(
         std::find(m_data->atoms.begin(), m_data->atoms.end(), atm));
     atm.Reset();
@@ -639,8 +639,8 @@ namespace indigox {
 
     // Remove the bond from the molecule
     Bond bnd = bond;
-    graph::MGEdge e = m_data->molecular_graph->GetEdge(bnd);
-    m_data->molecular_graph->RemoveEdge(e);
+    graph::MGEdge e = m_data->molecular_graph.GetEdge(bnd);
+    m_data->molecular_graph.RemoveEdge(e);
     m_data->bonds.erase(
         std::find(m_data->bonds.begin(), m_data->bonds.end(), bond));
     bnd.Reset();
@@ -814,7 +814,6 @@ namespace indigox {
     PerceiveAngles();
     PerceiveDihedrals();
     m_data->frozen = true;
-    m_data->molecular_graph->FreezeModifications();
   }
 
   // =======================================================================
