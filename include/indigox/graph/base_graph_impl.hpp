@@ -404,7 +404,7 @@ BASEGRAPH(struct)::BaseImpl {
 
   BASEGRAPH(int64_t)::NumCycles() {
     GetCycles();
-    return m_basedata->cached_cycles;
+    return m_basedata->cached_cycles.size();
   }
 
   // Isomorphism

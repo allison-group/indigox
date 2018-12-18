@@ -125,9 +125,6 @@ namespace indigox {
      *  \details If GetImplicitCount() == 0, no hydrogen is removed.
      *  \return the new number of implicit hydrogens in the atom. */
     int32_t RemoveImplicitHydrogen();
-    //    {
-    //      return _implicitH ? --_implicitH : _implicitH;
-    //    }
 
     /*! \brief Set the element of this atom.
      *  \param e the element to set to. */
@@ -136,16 +133,10 @@ namespace indigox {
     /*! \brief Set the element of this atom.
      *  \param e the name or atomic symbol of the element to set. */
     void SetElement(std::string e);
-    //    {
-    //      SetElement(GetPeriodicTable().GetElement(e));
-    //    }
 
     /*! \brief Set the element of this atom.
      *  \param e the atomic number of the element to set. */
     void SetElement(int32_t e);
-    //    {
-    //      SetElement(GetPeriodicTable().GetElement(e));
-    //    }
 
     /*! \brief Set the formal charge of this atom.
      *  \param q the formal charge value to set. */

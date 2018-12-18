@@ -6,6 +6,7 @@
 
 #include <indigox/classes/athenaeum.hpp>
 #include <indigox/classes/forcefield.hpp>
+#include <indigox/classes/molecule.hpp>
 #include <indigox/graph/condensed.hpp>
 #include <indigox/graph/molecular.hpp>
 
@@ -15,7 +16,6 @@ namespace py = pybind11;
 void GeneratePyAthenaeum(py::module& m) {
   using namespace indigox;
   using namespace indigox::graph;
-  py::return_value_policy Ref = py::return_value_policy::reference;
   // ===========================================================================
   // == Enum type bindings =====================================================
   // ===========================================================================
@@ -29,8 +29,7 @@ void GeneratePyAthenaeum(py::module& m) {
   py::class_<Fragment>(m, "Fragment")
   .def(py::init<>())
   .def(py::init<MolecularGraph&, std::vector<MGVertex>&, std::vector<MGVertex>&>())
-  .def(py::init<const Fragment&>())
-  .def("GetGraph", &Fragment::GetGraph, Ref)
+  .def("GetGraph", &Fragment::GetGraph)
   .def("GetFragment", &Fragment::GetFragment)
   .def("Size", &Fragment::Size)
   .def("GetOverlap", &Fragment::GetOverlap)
@@ -46,19 +45,21 @@ void GeneratePyAthenaeum(py::module& m) {
   .def(py::self > py::self)
   .def(py::self <= py::self)
   .def(py::self >= py::self)
+  .def("__bool__", &Fragment::operator bool)
   ;
   
   // ===========================================================================
   // == Athenaeum class bindings ===============================================
   // ===========================================================================
-  py::class_<Athenaeum, std::unique_ptr<Athenaeum>> PyAthenaeum(m, "Athenaeum");
-  PyAthenaeum.def(py::init<Forcefield&>())
+  py::class_<Athenaeum> PyAthenaeum(m, "Athenaeum");
+  PyAthenaeum.def(py::init<>())
+  .def(py::init<Forcefield&>())
   .def(py::init<Forcefield&, uint32_t>())
   .def(py::init<Forcefield&, uint32_t, uint32_t>())
   .def("NumFragments", py::overload_cast<>(&Athenaeum::NumFragments, py::const_))
-  .def("NumFragments", py::overload_cast<Molecule&>(&Athenaeum::NumFragments, py::const_))
-  .def("GetFragments", py::overload_cast<>(&Athenaeum::GetFragments, py::const_), Ref)
-  .def("GetFragments", py::overload_cast<Molecule&>(&Athenaeum::GetFragments, py::const_), Ref)
+  .def("NumFragments", py::overload_cast<const Molecule&>(&Athenaeum::NumFragments, py::const_))
+  .def("GetFragments", py::overload_cast<>(&Athenaeum::GetFragments, py::const_))
+  .def("GetFragments", py::overload_cast<const Molecule&>(&Athenaeum::GetFragments, py::const_))
   .def("HasFragments", &Athenaeum::HasFragments)
   .def("GetForcefield", &Athenaeum::GetForcefield)
   .def("IsSelfConsistent", &Athenaeum::IsSelfConsistent)
@@ -71,6 +72,7 @@ void GeneratePyAthenaeum(py::module& m) {
   .def(py::self > py::self)
   .def(py::self <= py::self)
   .def(py::self >= py::self)
+  .def("__bool__", &Athenaeum::operator bool)
   ;
   
   // ===========================================================================

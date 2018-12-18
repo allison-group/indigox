@@ -13,39 +13,40 @@
 #include <indigox/classes/athenaeum.hpp>
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/parameterised.hpp>
+#include <indigox/classes/molecule.hpp>
 
 namespace py = pybind11;
 
-PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::ComponentContain);
-PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::CycleEdgeContain);
-PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::ComponentContain);
-PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::CycleEdgeContain);
-PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sCondensedMolecularGraph>);
-PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sMolecularGraph>);
-PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGVertex>);
-PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGEdge>);
-PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGVertex>);
-PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGEdge>);
+//PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::ComponentContain);
+//PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::CycleEdgeContain);
+//PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::ComponentContain);
+//PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::CycleEdgeContain);
+//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sCondensedMolecularGraph>);
+//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sMolecularGraph>);
+//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGVertex>);
+//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGEdge>);
+//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGVertex>);
+//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGEdge>);
 
 void GeneratePyGraphAlgorithms(pybind11::module& m) {
   using namespace indigox;
   using namespace indigox::algorithm;
   using namespace indigox::graph;
   using MG = MolecularGraph;
-  using MGS = sMolecularGraph;
+  using MGS = MolecularGraph;
   using MGV = MGVertex;
   using MGE = MGEdge;
-  using VMG = std::vector<sMolecularGraph>;
+  using VMG = std::vector<MolecularGraph>;
   using VMGV = MolecularGraph::VertContain;
   using VMGE = MolecularGraph::EdgeContain;
   using VVMGV = MolecularGraph::ComponentContain;
   using VVMGE = MolecularGraph::CycleEdgeContain;
   
   using CMG = CondensedMolecularGraph;
-  using CMGS = sCondensedMolecularGraph;
+  using CMGS = CondensedMolecularGraph;
   using CMGV = CMGVertex;
   using CMGE = CMGEdge;
-  using VCMG = std::vector<sCondensedMolecularGraph>;
+  using VCMG = std::vector<CondensedMolecularGraph>;
   using VCMGV = CondensedMolecularGraph::VertContain;
   using VCMGE = CondensedMolecularGraph::EdgeContain;
   using VVCMGV = CondensedMolecularGraph::ComponentContain;

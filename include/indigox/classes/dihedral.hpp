@@ -85,10 +85,6 @@ namespace indigox {
     const DihedralTypes &GetTypes() const;
     bool HasType() const;
     void SetTypes(const DihedralTypes &types);
-    //    {
-    //      _types.clear();
-    //      _types.assign(types.begin(), types.end());
-    //    }
     /*! \brief Set the type of the dihedral.
      *  \param type the type of dihedral to set. */
     void AddType(const FFDihedral &type);

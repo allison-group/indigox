@@ -14,7 +14,6 @@ void GeneratePyPeriodicTable(py::module& m) {
   // ===========================================================================
   py::class_<Element>(m, "Element")
   .def(py::init<>())
-  .def(py::init<const Element&>())
   .def("GetAtomicMass", &Element::GetAtomicMass)
   .def("GetAtomicNumber", &Element::GetAtomicNumber)
   .def("GetAtomicRadius", &Element::GetAtomicRadius)

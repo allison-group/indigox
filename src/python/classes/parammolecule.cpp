@@ -6,14 +6,15 @@
 #include <indigox/classes/dihedral.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/parameterised.hpp>
+#include <indigox/classes/forcefield.hpp>
 
 namespace py = pybind11;
 
-PYBIND11_MAKE_OPAQUE(indigox::ParamAtom::TypeCounts);
-PYBIND11_MAKE_OPAQUE(indigox::ParamBond::TypeCounts);
-PYBIND11_MAKE_OPAQUE(indigox::ParamAngle::TypeCounts);
-PYBIND11_MAKE_OPAQUE(indigox::ParamDihedral::TypeGroup);
-PYBIND11_MAKE_OPAQUE(indigox::ParamDihedral::TypeCounts);
+//PYBIND11_MAKE_OPAQUE(indigox::ParamAtom::TypeCounts);
+//PYBIND11_MAKE_OPAQUE(indigox::ParamBond::TypeCounts);
+//PYBIND11_MAKE_OPAQUE(indigox::ParamAngle::TypeCounts);
+//PYBIND11_MAKE_OPAQUE(indigox::ParamDihedral::TypeGroup);
+//PYBIND11_MAKE_OPAQUE(indigox::ParamDihedral::TypeCounts);
 
 void GeneratePyParameterisedMolecule(pybind11::module& m) {
   using namespace indigox;
@@ -24,7 +25,6 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   // ===========================================================================
   py::class_<ParamAtom>(m, "ParamAtom")
   .def(py::init<>())
-  .def(py::init<const ParamAtom&>())
   .def("MappedWith", &ParamAtom::MappedWith)
   .def("ApplyParameterisation", &ParamAtom::ApplyParameterisation)
   .def("NumSourceAtoms", &ParamAtom::NumSourceAtoms)
@@ -52,7 +52,6 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   // ===========================================================================
   py::class_<ParamBond>(m, "ParamBond")
   .def(py::init<>())
-  .def(py::init<const ParamBond&>())
   .def("MappedWith", &ParamBond::MappedWith)
   .def("ApplyParameterisation", &ParamBond::ApplyParameterisation)
   .def("NumSourceBonds", &ParamBond::NumSourceBonds)
@@ -106,8 +105,8 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def("MappedWith", &ParamDihedral::MappedWith)
   .def("ApplyParameterisation", &ParamDihedral::ApplyParameterisation)
   .def("NumSourceDihedrals", &ParamDihedral::NumSourceDihedral)
-  .def("GetParameterisedAtoms", &ParamDihedral::GetParameterisedAtoms, Ref)
-  .def("GetDihedral", &ParamDihedral::GetDihedral, Ref)
+  .def("GetAtoms", &ParamDihedral::GetAtoms)
+  .def("GetDihedral", &ParamDihedral::GetDihedral)
   .def("GetMostCommonType", &ParamDihedral::GetMostCommonType)
   .def("GetMappedTypeCounts", &ParamDihedral::GetMappedTypeCounts, Ref)
   .def(py::self == py::self)
@@ -127,16 +126,15 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   // ===========================================================================
   py::class_<ParamMolecule>(m, "ParamMolecule")
   .def(py::init<>())
-  .def(py::init<const ParamMolecule&>())
   .def(py::init<Molecule&>())
   .def("ApplyParameterisation", &ParamMolecule::ApplyParameteristion)
   .def("GetAtom", &ParamMolecule::GetAtom)
-  .def("GetBond", py::overload_cast<Bond&>(&ParamMolecule::GetBond, py::const_))
-  .def("GetBond", py::overload_cast<ParamMolecule::PBond>(&ParamMolecule::GetBond, py::const_))
-  .def("GetAngle", py::overload_cast<Angle&>(&ParamMolecule::GetAngle, py::const_))
-  .def("GetAngle", py::overload_cast<ParamMolecule::PAngle>(&ParamMolecule::GetAngle, py::const_))
-  .def("GetDihedral", py::overload_cast<Dihedral&>(&ParamMolecule::GetDihedral))
-  .def("GetDihedral", py::overload_cast<ParamMolecule::PDihedral>(&ParamMolecule::GetDihedral))
+  .def("GetBond", py::overload_cast<const Bond&>(&ParamMolecule::GetBond, py::const_))
+  .def("GetBond", py::overload_cast<const Atom&, const Atom&>(&ParamMolecule::GetBond, py::const_))
+  .def("GetAngle", py::overload_cast<const Angle&>(&ParamMolecule::GetAngle, py::const_))
+  .def("GetAngle", py::overload_cast<const Atom&, const Atom&, const Atom&>(&ParamMolecule::GetAngle, py::const_))
+  .def("GetDihedral", py::overload_cast<const Dihedral&>(&ParamMolecule::GetDihedral))
+  .def("GetDihedral", py::overload_cast<const Atom&, const Atom&, const Atom&, const Atom&>(&ParamMolecule::GetDihedral))
   .def("GetAtoms", &ParamMolecule::GetAtoms)
   .def("GetBonds", &ParamMolecule::GetBonds)
   .def("GetAngles", &ParamMolecule::GetAngles)
@@ -144,10 +142,10 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   ;
   
   // container bindings
-  py::bind_map<ParamAtom::TypeCounts>(m, "VecMapFFAtomInt");
-  py::bind_map<ParamBond::TypeCounts>(m, "VecMapFFBondInt");
-  py::bind_map<ParamAngle::TypeCounts>(m, "VecMapFFAngleInt");
-  py::bind_vector<ParamDihedral::TypeGroup>(m, "VectorFFDihedral");
-  py::bind_map<ParamDihedral::TypeCounts>(m, "VecMapVectorFFDihedralInt");
+//  py::bind_map<ParamAtom::TypeCounts>(m, "VecMapFFAtomInt");
+//  py::bind_map<ParamBond::TypeCounts>(m, "VecMapFFBondInt");
+//  py::bind_map<ParamAngle::TypeCounts>(m, "VecMapFFAngleInt");
+//  py::bind_vector<ParamDihedral::TypeGroup>(m, "VectorFFDihedral");
+//  py::bind_map<ParamDihedral::TypeCounts>(m, "VecMapVectorFFDihedralInt");
   
 }
