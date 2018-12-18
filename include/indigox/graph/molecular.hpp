@@ -4,7 +4,6 @@
 
 #include "../algorithm/graph/cycles.hpp"
 #include "../utils/fwd_declares.hpp"
-#include "../utils/modifable_object.hpp"
 #include "base_graph.hpp"
 
 #include <EASTL/vector_map.h>

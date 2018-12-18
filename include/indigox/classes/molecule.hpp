@@ -5,15 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-//#include "angle.hpp"
-//#include "atom.hpp"
-//#include "bond.hpp"
-//#include "dihedral.hpp"
-//#include "forcefield.hpp"
-//#include "periodictable.hpp"
-//#include "../graph/molecular.hpp"
 #include "../utils/fwd_declares.hpp"
-#include "../utils/modifable_object.hpp"
 
 #ifndef INDIGOX_CLASSES_MOLECULE_HPP
 #define INDIGOX_CLASSES_MOLECULE_HPP

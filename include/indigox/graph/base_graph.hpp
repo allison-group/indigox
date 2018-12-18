@@ -3,7 +3,6 @@
 #define INDIGOX_GRAPH_BASE_HPP
 
 #include "../utils/fwd_declares.hpp"
-#include "../utils/modifable_object.hpp"
 #include "../utils/simple_bimap.hpp"
 #include <boost/graph/adjacency_list.hpp>
 

@@ -219,11 +219,6 @@ namespace indigox::graph {
     return m_data->condensed;
   }
 
-  std::ostream &operator<<(std::ostream &os, const CMGVertex &v) {
-    if (v)
-      os << "CMGVertex(" << v.GetSource().GetAtom().GetTag() << ")";
-    return os;
-  }
 
   // =======================================================================
   // == CMGEdge CONSTRUCTION ===============================================
@@ -413,6 +408,10 @@ namespace indigox::graph {
              return u.IsContractedHere(v);
            }) != m_basedata->vertices.end();
   }
+  
+  bool CondensedMolecularGraph::IsSubgraph() const {
+    return bool(m_data->super_graph);
+  }
 
   // =======================================================================
   // == CondensedMolecularGraph Subgraph generation ========================
@@ -466,6 +465,61 @@ namespace indigox::graph {
       G.graph_type::AddEdge(u, v, e);
     }
     return G;
+  }
+  
+  
+  // =======================================================================
+  // == Operators ==========================================================
+  // =======================================================================
+  
+  bool CMGVertex::operator==(const CMGVertex &v) const {
+    return m_data->source == v.m_data->source;
+  }
+
+  bool CMGVertex::operator<(const CMGVertex &v) const {
+    return m_data->source < v.m_data->source;
+  }
+
+  bool CMGVertex::operator>(const CMGVertex &v) const {
+    return m_data->source > v.m_data->source;
+  }
+  
+  std::ostream& operator<<(std::ostream& os, const CMGVertex& v) {
+    if (v) {
+      os << "CMGVertex(" << v.GetSource().GetAtom().GetIndex() + 1 << ")";
+    }
+    return os;
+  }
+  
+  bool CMGEdge::operator==(const CMGEdge &v) const {
+    return m_data->source == v.m_data->source;
+  }
+
+  bool CMGEdge::operator<(const CMGEdge &v) const {
+    return m_data->source < v.m_data->source;
+  }
+
+  bool CMGEdge::operator>(const CMGEdge &v) const {
+    return m_data->source > v.m_data->source;
+  }
+  
+  std::ostream& operator<<(std::ostream& os, const CMGEdge& e) {
+    if (e) {
+      os << "CMGEdge(" << e.GetSource().GetBond().GetIndex() + 1 << ")";
+    }
+    return os;
+  }
+
+  bool CondensedMolecularGraph::operator==(const CondensedMolecularGraph &g) const {
+    return m_data == g.m_data;
+  }
+  
+  bool CondensedMolecularGraph::operator<(const CondensedMolecularGraph &g) const {
+    return m_data < g.m_data;
+  }
+  
+  bool CondensedMolecularGraph::operator>(const CondensedMolecularGraph &g) const {
+    return m_data > g.m_data;
   }
 
 } // namespace indigox::graph

@@ -12,31 +12,30 @@
 #include <string>
 #include <vector>
 
-namespace indigox {
-  namespace utils {
-    
-    /** @class FileReader filereader.hpp
-     *  @brief Class for reading simple text file from disk.
-     *  @details Loads a simple text file from disk.
-     *  @since 0.1
-     */
-    class FileReader {
-      
-    public:
-      FileReader() = delete;  // No default constructor
-      /// @brief Normal constructor.
-      FileReader(const std::string&);
-      
-      /// @brief Reads the file from disk.
-      void GetAllLines(std::vector<std::string>&);
-      inline void SetFilePath(const std::string& p) { path_ = p; }
-      
-    private:
-      std::string path_;
-      
-    };
-    
-  }
-}
+namespace indigox { namespace utils {
+
+  /** @class FileReader filereader.hpp
+   *  @brief Class for reading simple text file from disk.
+   *  @details Loads a simple text file from disk.
+   *  @since 0.1
+   */
+  class FileReader {
+
+  public:
+    FileReader() = delete; // No default constructor
+    /// @brief Normal constructor.
+    FileReader(const std::string &);
+
+    /// @brief Reads the file from disk.
+    void GetAllLines(std::vector<std::string> &);
+    inline void SetFilePath(const std::string &p) {
+      path_ = p;
+    }
+
+  private:
+    std::string path_;
+  };
+
+}} // namespace indigox::utils
 
 #endif /* INDIGOX_UTILS_FILEREADER_HPP */

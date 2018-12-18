@@ -39,6 +39,7 @@ ENDIF()
 # Setup install directories
 INCLUDE(GNUInstallDirs)
 ADD_DEFINITIONS(-DIX_DATA_DIRECTORY="${CMAKE_INSTALL_FULL_DATAROOTDIR}")
+ADD_DEFINITIONS(-DINDIGOX_DISABLE_SANITY_CHECKS=1)
 ADD_DEFINITIONS(-DINDIGOX_DISABLE_TESTS=1)
 
 # List all the files to compile into the indigox library
@@ -60,7 +61,6 @@ SET(INDIGOX_LIB_SRCS
     src/graph/condensed.cpp
     src/graph/molecular.cpp
     src/utils/common.cpp
-    src/utils/modifable_object.cpp
 )
 
 # Build the library

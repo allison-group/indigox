@@ -140,6 +140,10 @@ namespace indigox::graph {
       throw std::runtime_error("Cannot get supergraph as not a subgraph");
     return m_data->super_graph;
   }
+  
+  bool MolecularGraph::IsSubgraph() const {
+    return bool(m_data->super_graph);
+  }
 
   // ===================================================================
   // == Subgraph Generation ============================================
@@ -250,6 +254,60 @@ namespace indigox::graph {
     if (!m_data->condensed_graph)
       m_data->condensed_graph = Condense(*this);
     return m_data->condensed_graph;
+  }
+
+  // =====================================================================
+  // == OPERATORS ========================================================
+  // =====================================================================
+
+  bool MGVertex::operator==(const MGVertex &v) const {
+    return m_data->atom == v.m_data->atom;
+  }
+
+  bool MGVertex::operator<(const MGVertex &v) const {
+    return m_data->atom < v.m_data->atom;
+  }
+
+  bool MGVertex::operator>(const MGVertex &v) const {
+    return m_data->atom > v.m_data->atom;
+  }
+  
+  std::ostream& operator<<(std::ostream& os, const MGVertex& v) {
+    if (v) {
+      os << "MGVertex(" << v.GetAtom().GetIndex() + 1 << ")";
+    }
+    return os;
+  }
+  
+  bool MGEdge::operator==(const MGEdge &v) const {
+    return m_data->bond == v.m_data->bond;
+  }
+
+  bool MGEdge::operator<(const MGEdge &v) const {
+    return m_data->bond < v.m_data->bond;
+  }
+
+  bool MGEdge::operator>(const MGEdge &v) const {
+    return m_data->bond > v.m_data->bond;
+  }
+  
+  std::ostream& operator<<(std::ostream& os, const MGEdge& e) {
+    if (e) {
+      os << "MGEdge(" << e.GetBond().GetIndex() + 1 << ")";
+    }
+    return os;
+  }
+
+  bool MolecularGraph::operator==(const MolecularGraph &g) const {
+    return m_data == g.m_data;
+  }
+  
+  bool MolecularGraph::operator<(const MolecularGraph &g) const {
+    return m_data < g.m_data;
+  }
+  
+  bool MolecularGraph::operator>(const MolecularGraph &g) const {
+    return m_data > g.m_data;
   }
 
 } // namespace indigox::graph
