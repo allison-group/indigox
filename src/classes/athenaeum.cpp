@@ -99,6 +99,7 @@ namespace indigox {
       : m_data(std::make_shared<FragmentData>()) {
     if (frag.empty())
       throw std::runtime_error("A fragment needs vertices");
+    
     // Induce a new subgraph
     graph::MolecularGraph g = G;
     graph::CondensedMolecularGraph CG = g.GetCondensedGraph();

@@ -419,6 +419,7 @@ namespace indigox::graph {
   CondensedMolecularGraph
   CondensedMolecularGraph::Subgraph(std::vector<CMGVertex> &verts) {
     CondensedMolecularGraph G;
+    G.m_data = std::make_shared<Impl>();
     G.m_data->super_graph = *this;
     
     for (const CMGVertex &v : verts) {
@@ -444,6 +445,7 @@ namespace indigox::graph {
   CondensedMolecularGraph::Subgraph(std::vector<CMGVertex> &verts,
                                     std::vector<CMGEdge> &edges) {
     CondensedMolecularGraph G;
+    G.m_data = std::make_shared<Impl>();
     G.m_data->super_graph = *this;
     
     for (const CMGVertex &v : verts) {
