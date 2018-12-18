@@ -82,14 +82,14 @@ namespace indigox {
   // == CONSTRUCTION =======================================================
   // =======================================================================
 
-  Molecule::Impl::Impl(std::string n, const Molecule &mol)
+  Molecule::Impl::Impl(std::string n)
       : name(n), molecular_charge(0),
-        molecular_graph(mol),
         modification_state(0), frozen(false), cached_formula_state(0),
         angle_percieved_state(0), dihedral_percieved_state(0) {
   }
 
-  Molecule::Molecule(std::string n) : m_data(std::make_shared<Impl>(n, *this)) {
+  Molecule::Molecule(std::string n) : m_data(std::make_shared<Impl>(n)) {
+        m_data->molecular_graph = graph::MolecularGraph(*this);
   }
 
   // =======================================================================
@@ -459,6 +459,7 @@ namespace indigox {
         bnd.m_data->atoms[0].AddBond(bnd);
         bnd.m_data->atoms[1].AddBond(bnd);
         m_data->molecular_graph.AddEdge(bnd);
+        m_data->bonds.emplace_back(bnd);
       }
     }
 
@@ -645,6 +646,10 @@ namespace indigox {
         std::find(m_data->bonds.begin(), m_data->bonds.end(), bond));
     bnd.Reset();
     return true;
+  }
+  
+  bool Molecule::RemoveBond(const Atom &a, const Atom &b) {
+    return RemoveBond(GetBond(a, b));
   }
 
   int64_t Molecule::PerceiveAngles() {

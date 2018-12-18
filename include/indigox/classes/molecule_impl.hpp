@@ -124,7 +124,7 @@ namespace indigox {
     void serialise(Archive &archive, const uint32_t);
 
     Impl() = default;
-    Impl(std::string n, const Molecule &mol);
+    Impl(std::string n);
   };
 } // namespace indigox
 

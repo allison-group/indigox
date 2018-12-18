@@ -328,8 +328,7 @@ namespace indigox {
     /*! \brief Remove a bond between two atoms.
      *  \param a,b the atoms to remove a bond between.
      *  \return if removal occured. */
-    bool RemoveBond(const Atom &a,
-                    const Atom &b); // { return RemoveBond(GetBond(a,b)); }
+    bool RemoveBond(const Atom &a, const Atom &b);
 
   public:
     /*! \brief Determine angles in the molecule.
@@ -384,11 +383,6 @@ namespace indigox {
     // State
     State GetCurrentState() const;
     void ModificationMade();
-    //     {
-    //      if (_frozen)
-    //        throw std::runtime_error("Attempting to modify frozen object");
-    //      ++_state;
-    //    }
 
     void FreezeModifications();
 
