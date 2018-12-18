@@ -141,7 +141,7 @@ namespace indigox {
 
   int32_t Atom::GetFormalCharge() const {
     _sanity_check_(*this);
-    return m_data->element;
+    return m_data->formal_charge;
   }
 
   double Atom::GetPartialCharge() const {
