@@ -284,11 +284,13 @@ namespace indigox {
 
   Angle Molecule::GetAngle(uint32_t pos) {
     _sanity_check_(*this);
+    PerceiveAngles();
     return (pos < NumAngles()) ? m_data->angles[pos] : Angle();
   }
 
   Angle Molecule::GetAngle(const Atom &a, const Atom &b, const Atom &c) {
     _sanity_check_(*this);
+    PerceiveAngles();
     int64_t pos = FindAngle(a, b, c);
     return (HasAtom(b) && pos != -1) ? b.GetAngles()[pos] : Angle();
   }
@@ -315,12 +317,14 @@ namespace indigox {
 
   Dihedral Molecule::GetDihedral(uint32_t pos) {
     _sanity_check_(*this);
+    PerceiveDihedrals();
     return (pos < NumDihedrals()) ? m_data->dihedrals[pos] : Dihedral();
   }
 
   Dihedral Molecule::GetDihedral(const Atom &a, const Atom &b, const Atom &c,
                                  const Atom &d) {
     _sanity_check_(*this);
+    PerceiveDihedrals();
     int64_t pos = FindDihedral(a, b, c, d);
     return (HasAtom(a) && pos != -1) ? a.GetDihedrals()[pos] : Dihedral();
   }
