@@ -37,6 +37,7 @@ namespace indigox {
   void Dihedral::serialise(Archive &archive, const uint32_t) {
     archive(INDIGOX_SERIAL_NVP("data", m_data));
   }
+  INDIGOX_SERIALISE(Dihedral);
 
   // =======================================================================
   // == OPERATORS ==========================================================

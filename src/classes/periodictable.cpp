@@ -1,5 +1,4 @@
 #include <indigox/classes/periodictable.hpp>
-#include <indigox/test/periodictable_test.hpp>
 #include <indigox/utils/common.hpp>
 #include <indigox/utils/doctest_proxy.hpp>
 

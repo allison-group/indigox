@@ -4,13 +4,12 @@
 #define INDIGOX_UTILS_SIMPLE_BIMAP_HPP
 
 namespace indigox::utils {
-  template <class L, class R>
-  struct SimpleBiMap {
+  template <class L, class R> struct SimpleBiMap {
     using LeftType = eastl::vector_map<L, R>;
     using RightType = eastl::vector_map<R, L>;
     LeftType left;
     RightType right;
-    
+
     inline void insert(L l, R r) {
       left.emplace(l, r);
       right.emplace(r, l);
@@ -28,6 +27,6 @@ namespace indigox::utils {
       right.clear();
     }
   };
-}
+} // namespace indigox::utils
 
 #endif /* INDIGOX_UTILS_SIMPLE_BIMAP_HPP */

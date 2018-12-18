@@ -1,45 +1,39 @@
-#include <array>
-#include <vector>
-
-#include <EASTL/vector_map.h>
-
 #include "../utils/fwd_declares.hpp"
 #include "../utils/numerics.hpp"
-#include "../utils/triple.hpp"
 #include "../utils/quad.hpp"
+#include "../utils/triple.hpp"
+
+#include <EASTL/vector_map.h>
+#include <array>
+#include <vector>
 
 #ifndef INDIGOX_CLASSES_PARAMETERISED_HPP
 #define INDIGOX_CLASSES_PARAMETERISED_HPP
 
 namespace indigox {
-  
+
   class ParamAtom {
   public:
     //! \brief Type giving counts of each mapped atom type
     using TypeCounts = eastl::vector_map<FFAtom, size_t>;
     //! \brief Type giving all mapped charges
     using MappedCharge = std::vector<double>;
-    //! \brief Type giving all the mapped atoms
-    using MappedAtoms = std::vector<wAtom>;
     friend class ParamMolecule;
-    
+
   public:
-    ParamAtom();
-    ParamAtom(const ParamAtom& atm);
-    ParamAtom(ParamAtom&& atm);
-    ParamAtom& operator=(const ParamAtom& atm);
-    ParamAtom& operator=(ParamAtom&& atm);
-    
-  private:
+    INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(ParamAtom);
+    INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(ParamAtom, atm);
+
+  public:
     /*! \brief Normal constructor
      *  \param atm the Atom this is parameterising. */
-    ParamAtom(Atom& atm);
-    
+    ParamAtom(const Atom &atm);
+
   public:
     /*! \brief Obtain details from mapped atom
      *  \param mapped the atom matched. */
-    void MappedWith(Atom& mapped);
-    
+    void MappedWith(const Atom &mapped);
+
     /*! \brief Apply the parameterisation.
      *  \details Applies the parameteristion. Doing so sets the partial charge
      *  on the atom to the mean of the charge, and the atom type to the most
@@ -51,77 +45,62 @@ namespace indigox {
      *  \param self_consistent if the parameterisation needs to be self
      *  consistent. */
     bool ApplyParameterisation(bool self_consistent);
-    
+
   public:
     /*! \brief Calculates the number of mapped atoms
      *  \return the number of atoms which have currently been mapped to me. */
     int64_t NumSourceAtoms() const;
-    
+
     /*! \brief Get the atom this parameterises.
      *  \return the atom this parameterises. */
-    Atom& GetAtom() const;
-    
+    const Atom &GetAtom() const;
+
     /*! \brief Get the mean of the charges
      *  \return the mean of the charges. */
     double MeanCharge() const;
-    
+
     /*! \brief Get the median of the charges.
      *  \return the median of the charges. */
     double MeadianCharge();
-    
+
     /*! \brief Get the standard deviation of the charges.
      *  \return the standard deviation of the charges. */
     double StandardDeviationCharge() const;
-    
+
     /*! \brief Get the mode of mapped atom types.
      *  \return the most commonly mapped atom type. */
-    FFAtom GetMostCommonType() const;
-    
-    const TypeCounts& GetMappedTypeCounts() const;
-    const MappedCharge& GetMappedCharges() const;
-    
-  public:
-    bool operator==(const ParamAtom& atm) const;
-    bool operator!=(const ParamAtom& atm) const;
-    bool operator<(const ParamAtom& atm) const;
-    bool operator>(const ParamAtom& atm) const;
-    bool operator<=(const ParamAtom& atm) const;
-    bool operator>=(const ParamAtom& atm) const;
-    operator bool() const;
-    
+    const FFAtom& GetMostCommonType() const;
+
+    const TypeCounts &GetMappedTypeCounts() const;
+    const MappedCharge &GetMappedCharges() const;
+
   private:
     struct ParamAtomImpl;
-    std::shared_ptr<ParamAtomImpl> m_patmdat;
+    std::shared_ptr<ParamAtomImpl> m_data;
   };
-  std::ostream& operator<<(std::ostream& os, const ParamAtom& atm);
-  
+
   class ParamBond {
   public:
     //! \brief Type giving counts of each mapped bond type
     using TypeCounts = eastl::vector_map<FFBond, size_t>;
-    //! \brief Type giving all the mapped bonds
-    using MappedBonds = std::vector<wBond>;
     //! \brief Type giving the atoms this parameterised bond is between
-    using BondAtoms = std::pair<wAtom, wAtom>;
+    using BondAtoms = std::pair<Atom, Atom>;
     friend class ParamMolecule;
-    
+
   public:
-    ParamBond();
-    ParamBond(const ParamBond& bnd);
-    ParamBond(ParamBond&& bnd);
-    ParamBond& operator=(const ParamBond& bnd);
-    ParamBond& operator=(ParamBond&& bnd);
-    
-  private:
+    INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(ParamBond);
+    INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(ParamBond, bnd);
+
+  public:
     /*! \brief Normal constructor
      *  \param a,b the atoms which mark the bond this is parameterising. */
-    ParamBond(std::pair<Atom&, Atom&> atms, Bond& bnd);
-    
+    ParamBond(BondAtoms atms, const Bond &bnd);
+
   public:
     /*! \brief Obtain details from mapped bonds.
      *  \param mapped the bond matched. */
-    void MappedWith(Bond& mapped);
-    
+    void MappedWith(const Bond &mapped);
+
     /*! \brief Apply the parameterisation.
      *  \details Applies the parameteristion. Doing so sets the bond type to the
      *  most common type. Additionally, doing so will mean that no more bonds
@@ -132,68 +111,53 @@ namespace indigox {
      *  \param self_consistent if the parameterisation needs to be self
      *  consistent. */
     bool ApplyParameterisation(bool self_consistent);
-    
+
   public:
     /*! \brief Calculates the number of mapped bonds.
      *  \return the number of bonds which have currently been mapped. */
     int64_t NumSourceBonds() const;
-    
+
     /*! \brief Get the atoms this parameterises the bond between.
      *  \return the two atoms defining the bond this parameterises. */
-    std::pair<Atom&, Atom&> GetAtoms() const;
-    
+    const BondAtoms& GetAtoms() const;
+
     /*! \brief Get the bond that is parameterised.
      *  \return the parameterised bond. */
-    Bond& GetBond() const;
-    
+    const Bond &GetBond() const;
+
     /*! \brief Get the mode of mapped bond types.
      *  \return the most commonly mapped bond type. */
-    FFBond GetMostCommonType() const;
-    
-    const TypeCounts& GetMappedTypeCounts() const;
-    
-  public:
-    bool operator==(const ParamBond& bnd) const;
-    bool operator!=(const ParamBond& bnd) const;
-    bool operator<(const  ParamBond& bnd) const;
-    bool operator>(const  ParamBond& bnd) const;
-    bool operator<=(const ParamBond& bnd) const;
-    bool operator>=(const ParamBond& bnd) const;
-    operator bool() const;
-    
+    const FFBond& GetMostCommonType() const;
+
+    const TypeCounts &GetMappedTypeCounts() const;
+
   private:
     struct ParamBondImpl;
-    std::shared_ptr<ParamBondImpl> m_pbnddat;
+    std::shared_ptr<ParamBondImpl> m_data;
   };
-  std::ostream& operator<<(std::ostream& os, const ParamBond& bnd);
-  
+
   class ParamAngle {
   public:
     //! \brief Type giving counts of each mapped angle type
     using TypeCounts = eastl::vector_map<FFAngle, size_t>;
-    //! \brief Type giving all the mapped angles
-    using MappedAngles = std::vector<wAngle>;
     //! \brief Type giving the atoms this parameterised angle is between
-    using AngleAtoms = stdx::triple<wAtom>;
+    using AngleAtoms = stdx::triple<Atom>;
     friend class ParamMolecule;
-    
+
   public:
-    ParamAngle();
-    ParamAngle(const ParamAngle& ang);
-    ParamAngle(ParamAngle&& ang);
-    ParamAngle& operator=(const ParamAngle& ang);
-    ParamAngle& operator=(ParamAngle& ang);
-    
-  private:
+    INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(ParamAngle);
+    INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(ParamAngle, ang);
+
+  public:
     /*! \brief Normal constructor.
      *  \param a,b,c the atoms which mark the parameterised angle. */
-    ParamAngle(stdx::triple<Atom&> atms, Angle& ang);
-    
+    ParamAngle(AngleAtoms atms, const Angle &ang);
+
   public:
     /*! \brief Obtain details from mapped angles.
      *  \param mapped the angle matched. */
-    void MappedWith(Angle& mapped);
-    
+    void MappedWith(const Angle &mapped);
+
     /*! \brief Apply the parameterisation.
      *  \details Applies the parameteristion. Doing so sets the angle type to
      *  the most common type. Additionally, doing so will mean that no more
@@ -204,70 +168,55 @@ namespace indigox {
      *  \param self_consistent if the parameterisation needs to be self
      *  consistent. */
     bool ApplyParameterisation(bool self_consistent);
-    
+
   public:
     /*! \brief Calculate the number of mapped angles.
      *  \return the number of angles which have currently been mapped. */
     int64_t NumSourceAngles() const;
-    
+
     /*! \brief Get the atoms this parameterises the angle between.
      *  \return the three atoms defining the angle this parameterises. */
-    stdx::triple<Atom&> GetAtoms() const;
-    
+    const AngleAtoms& GetAtoms() const;
+
     /*! \brief Get the angle that is parameterised.
      *  \return the parameterised bond. */
-    Angle& GetAngle() const;
-    
+    const Angle &GetAngle() const;
+
     /*! \brief Get the mode of mapped bond types.
      *  \return the most commonly mapped bond type. */
-    FFAngle GetMostCommonType() const;
-    
-    const TypeCounts& GetMappedTypeCounts() const;
-    
-  public:
-    bool operator==(const ParamAngle& ang) const;
-    bool operator!=(const ParamAngle& ang) const;
-    bool operator<(const  ParamAngle& ang) const;
-    bool operator>(const  ParamAngle& ang) const;
-    bool operator<=(const ParamAngle& ang) const;
-    bool operator>=(const ParamAngle& ang) const;
-    operator bool() const;
-    
+    const FFAngle& GetMostCommonType() const;
+
+    const TypeCounts &GetMappedTypeCounts() const;
+
   private:
     struct ParamAngleImpl;
-    std::shared_ptr<ParamAngleImpl> m_pangdat;
+    std::shared_ptr<ParamAngleImpl> m_data;
   };
-  std::ostream& operator<<(std::ostream& os, const ParamAngle& ang);
-  
+
   class ParamDihedral {
   public:
     //! \brief Type giving counts of each mapped dihedral type
     using TypeGroup = std::vector<FFDihedral>;
     using TypeCounts = eastl::vector_map<TypeGroup, size_t>;
-    //! \brief Type giving all the mapped dihedrals
-    using MappedDihedrals = std::vector<wDihedral>;
     //! \brief Type giving the atoms this parameterised dihedral is between
-    using DihedralAtoms = stdx::quad<wAtom>;
-    
+    using DihedralAtoms = stdx::quad<Atom>;
+
     friend class ParamMolecule;
-    
+
   public:
-    ParamDihedral();
-    ParamDihedral(const ParamDihedral& dhd);
-    ParamDihedral(ParamDihedral&& dhd);
-    ParamDihedral& operator=(const ParamDihedral& dhd);
-    ParamDihedral& operator=(ParamDihedral&& dhd);
-    
-  private:
+    INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(ParamDihedral);
+    INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(ParamDihedral, dhd);
+
+  public:
     /*! \brief Normal constructor.
      *  \param a,b,c,d the atoms which mark the parameterised dihedral. */
-    ParamDihedral(stdx::quad<Atom&> atms, Dihedral& dhd);
-    
+    ParamDihedral(DihedralAtoms atms, const Dihedral &dhd);
+
   public:
     /*! \brief Obtain details from mapped dihedral.
      *  \param mapped the dihedral matched. */
-    void MappedWith(Dihedral& mapped);
-    
+    void MappedWith(const Dihedral &mapped);
+
     /*! \brief Apply the parameterisation.
      *  \details Applies the parameteristion. Doing so sets the dihedral type to
      *  the most common type. Additionally, doing so will mean that no more
@@ -278,105 +227,94 @@ namespace indigox {
      *  \param self_consistent if the parameterisation needs to be self
      *  consistent. */
     bool ApplyParameterisation(bool self_consistent);
-    
+
   public:
     /*! \brief Calculate the number of mapped dihedrals.
      *  \return the number of dihedrals which have currently been mapped. */
     int64_t NumSourceDihedral() const;
-    
+
     /*! \brief Get the atoms this parameterises the angle between.
      *  \return the three atoms defining the angle this parameterises. */
-    stdx::quad<Atom&> GetParameterisedAtoms() const;
-    
+    const DihedralAtoms& GetAtoms() const;
+
     /*! \brief Get the dihedral that is parameterised.
      *  \return the parameterised dihedral. */
-    Dihedral& GetDihedral() const;
-    
+    const Dihedral &GetDihedral() const;
+
     /*! \brief Get the mode of mapped bond types.
      *  \return the most commonly mapped bond type. */
-    TypeGroup GetMostCommonType() const;
-    
-    const TypeCounts& GetMappedTypeCounts() const;
-    
-  public:
-    bool operator==(const ParamDihedral& dhd) const;
-    bool operator!=(const ParamDihedral& dhd) const;
-    bool operator<(const  ParamDihedral& dhd) const;
-    bool operator>(const  ParamDihedral& dhd) const;
-    bool operator<=(const ParamDihedral& dhd) const;
-    bool operator>=(const ParamDihedral& dhd) const;
-    operator bool() const;
-    
+    const TypeGroup& GetMostCommonType() const;
+
+    const TypeCounts &GetMappedTypeCounts() const;
+
   private:
     struct ParamDihedralImpl;
-    std::shared_ptr<ParamDihedralImpl> m_pdhddat;
+    std::shared_ptr<ParamDihedralImpl> m_data;
   };
-  std::ostream& operator<<(std::ostream& os, const ParamDihedral& dhd);
-  
+
   class ParamMolecule {
   public:
     //! \brief Container type to hold parameterised atoms
-    using ParamAtoms = eastl::vector_map<sAtom, ParamAtom>;
+    using ParamAtoms = eastl::vector_map<Atom, uint32_t>;
     //! \brief Type defining bonds
-    using PBond = std::pair<sAtom, sAtom>;
+    using PBond = std::pair<Atom, Atom>;
     //! \brief Container type to hold parameterised bonds
-    using ParamBonds = eastl::vector_map<PBond, ParamBond>;
+    using ParamBonds = eastl::vector_map<PBond, uint32_t>;
     //! \brief Type defining angles
-    using PAngle = stdx::triple<sAtom>;
+    using PAngle = stdx::triple<Atom>;
     //! \brief Container type to hold parameterised angles
-    using ParamAngles = eastl::vector_map<PAngle, ParamAngle>;
+    using ParamAngles = eastl::vector_map<PAngle, uint32_t>;
     //! \brief Type defining dihedrals
-    using PDihedral = stdx::quad<sAtom>;
+    using PDihedral = stdx::quad<Atom>;
     //! \brief Container type to hold parameterised dihedrals
-    using ParamDihedrals = eastl::vector_map<PDihedral, ParamDihedral>;
+    using ParamDihedrals = eastl::vector_map<PDihedral, uint32_t>;
+
   public:
-    ParamMolecule();
-    ParamMolecule(const ParamMolecule& mol);
-    ParamMolecule(ParamMolecule&& mol);
-    ParamMolecule& operator=(const ParamMolecule& mol);
-    ParamMolecule& operator=(ParamMolecule&& mol);
+    INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(ParamMolecule);
+    INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(ParamMolecule, mol);
+    
     /*! \brief Normal constructor
      *  \param mol the molecule to parameterise. */
-    ParamMolecule(Molecule& mol);
-    
+    ParamMolecule(const Molecule &mol);
+
   public:
     /*! \brief Applies the current parameterisation state.
      *  \details Goes through all parameterised parts and calls the apply
      *  parameterisation method on each of them.
      *  \param self_consistent apply parapmeterisation self consistently. */
     void ApplyParameteristion(bool self_consistent);
-    
+
   public:
     /*! \brief Get the parameterisation of an atom
      *  \param atm the atom to get
      *  \return the parameterisation atom. */
-    ParamAtom GetAtom(Atom& atm) const;
-    
+    const ParamAtom& GetAtom(const Atom &atm) const;
+
     /*! \brief Get the parameterisation of a bond
      *  \param bnd the bond to get
      *  \return the parameterisation bond. */
-    ParamBond GetBond(Bond& bnd) const;
-    
+    const ParamBond& GetBond(const Bond &bnd) const;
+
     /*! \brief Get the parameterisation of a bond
      *  \param atms the pair of atoms the bond is between
      *  \return the parameterisation bond. */
-    ParamBond GetBond(PBond atms) const;
-    
+    const ParamBond& GetBond(const Atom& a, const Atom& b) const;
+
     /*! \brief Get the parameterisation of an angle.
      *  \param ang the angle to get.
      *  \return the parameterisation angle. */
-    ParamAngle GetAngle(Angle& ang) const;
-    
+    const ParamAngle& GetAngle(const Angle &ang) const;
+
     /*! \brief Get the parameterisation of an angle.
      *  \param atms the triple of atoms the angle is between.
      *  \return the parameterisation angle. */
-    ParamAngle GetAngle(PAngle atms) const;
-    
+    const ParamAngle& GetAngle(const Atom& a, const Atom& b, const Atom& c) const;
+
     /*! \brief Get the parameterisation of a dihedral.
      *  \param dhd the dihedral to get.
      *  \return the parameterisation dihedral. */
-    ParamDihedral GetDihedral(Dihedral& dhd);
-    
+    const ParamDihedral& GetDihedral(const Dihedral &dhd);
+
     /*! \brief Get the parameterisation of a dihedral.
      *  \details To allow for the parameterisation of dihedrals, such as
      *  impropers used to keep chirality, which are not percieved within the
@@ -384,18 +322,18 @@ namespace indigox {
      *  created.
      *  \param atms the quad of atoms the dihedral is between.
      *  \return the parameterisation dihedral. */
-    ParamDihedral GetDihedral(PDihedral atms);
-    
-    std::vector<ParamAtom> GetAtoms() const;
-    std::vector<ParamBond> GetBonds() const;
-    std::vector<ParamAngle> GetAngles() const;
-    std::vector<ParamDihedral> GetDihedrals() const;
-    
+    const ParamDihedral& GetDihedral(const Atom& a, const Atom& b, const Atom& c, const Atom& d);
+
+    const std::vector<ParamAtom>& GetAtoms() const;
+    const std::vector<ParamBond>& GetBonds() const;
+    const std::vector<ParamAngle>& GetAngles() const;
+    const std::vector<ParamDihedral>& GetDihedrals() const;
+
   private:
     struct ParamMoleculeImpl;
-    std::shared_ptr<ParamMoleculeImpl> m_pmoldat;
+    std::shared_ptr<ParamMoleculeImpl> m_data;
   };
-  
-}
+
+} // namespace indigox
 
 #endif /* INDIGOX_CLASSES_PARAMETERISED_HPP */
