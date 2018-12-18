@@ -589,7 +589,7 @@ public:
         \param type Type of the value.
         \note Default content for number is zero.
     */
-    explicit GenericValue(Type type) CEREAL_RAPIDJSON_NOEXCEPT : data_() {
+    explicit GenericValue(Type type) : data_() {
         static const uint16_t defaultFlags[7] = {
             kNullFlag, kFalseFlag, kTrueFlag, kObjectFlag, kArrayFlag, kShortStringFlag,
             kNumberAnyFlag

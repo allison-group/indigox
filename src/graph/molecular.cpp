@@ -250,7 +250,7 @@ namespace indigox::graph {
 
   const CondensedMolecularGraph &MolecularGraph::GetCondensedGraph() {
     if (!m_data->molecule.IsFrozen())
-      throw std::runtime_error("Can only condense a frozen graph");
+      throw std::runtime_error("Can only condense a frozen molecule");
     if (!m_data->condensed_graph)
       m_data->condensed_graph = Condense(*this);
     return m_data->condensed_graph;

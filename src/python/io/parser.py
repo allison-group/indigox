@@ -73,9 +73,8 @@ def LoadIFPFile(path):
 ## \brief Loads the given PDB file into a Molecule
 #  \return the loaded molecule
 def LoadPDBFile(path, details = None):
-  mol = ix.CreateMolecule()
+  mol = ix.Molecule(path.stem)
   got_atoms = False
-  
   for line in ix.LoadFile(path.expanduser()):
     record_type = line[0:6]
     if record_type in ["HETATM", "ATOM  "] and not got_atoms:
@@ -140,11 +139,9 @@ def LoadPDBFile(path, details = None):
 
   if details is not None:
     LoadIXDFile(details, mol)
-  
   return mol
 
 def LoadIXDFile(path, mol):
-  orders = defaultdict(float)
   set_implicits = []
   for line in ix.LoadFile(path.expanduser()):
     line = line.split()
@@ -157,51 +154,57 @@ def LoadIXDFile(path, mol):
     elif line[0] == "BOND":
       bond = mol.GetBond(mol.GetAtomTag(l[0]), mol.GetAtomTag(l[1]))
       if l[2] == 1:
-        bond.SetOrder(ix.BondOrder.SINGLE)
-        orders[l[0]] += 0
-        orders[l[1]] += 0
+        bond.SetOrder(ix.BondOrder.Single)
       elif l[2] == 2:
-        bond.SetOrder(ix.BondOrder.DOUBLE)
-        orders[l[0]] += 1
-        orders[l[1]] += 1
+        bond.SetOrder(ix.BondOrder.Double)
       elif l[2] == 3:
-        bond.SetOrder(ix.BondOrder.TRIPLE)
-        orders[l[0]] += 2
-        orders[l[1]] += 2
+        bond.SetOrder(ix.BondOrder.Triple)
       elif l[2] == 4:
-        bond.SetOrder(ix.BondOrder.QUADRUPLE)
-        orders[l[0]] += 3
-        orders[l[1]] += 3
+        bond.SetOrder(ix.BondOrder.Quadruple)
       elif l[2] == 5:
-        bond.SetOrder(ix.BondOrder.AROMATIC)
-        orders[l[0]] += 0.5
-        orders[l[1]] += 0.5
+        bond.SetOrder(ix.BondOrder.Aromatic)
       elif l[2] == 6:
-        bond.SetOrder(ix.BondOrder.ONEANDAHALF)
-        orders[l[0]] += 0.5
-        orders[l[1]] += 0.5
+        bond.SetOrder(ix.BondOrder.OneAndAHalf)
       elif l[2] == 7:
-        bond.SetOrder(ix.BondOrder.TWOANDAHALF)
-        orders[l[0]] += 1.5
-        orders[l[1]] += 1.5
+        bond.SetOrder(ix.BondOrder.TwoAndAHalf)
     elif line[0] == "MOLECULE":
       mol.SetMolecularCharge(l[0])
-      
+
   set_implicits = set(set_implicits)
   for atom in mol.GetAtoms():
     if atom.GetElement() != "C":
       continue
     if atom.GetTag() in set_implicits:
       continue
-    if (((orders[atom.GetTag()] - int(orders[atom.GetTag()])) != 0)
-       or (atom.NumBonds() + int(orders[atom.GetTag()])) > 4):
-      raise InputError("Atom tag {} has weird valence state.".format(atom.GetTag()))
-    atom.SetImplicitCount(4 - atom.NumBonds() - int(orders[atom.GetTag()]))
 
+    bonded_count = 0
+    aromatic_bonds = False
+    for bond in atom.GetBonds():
+      if bond.GetOrder() == ix.BondOrder.Single:
+        bonded_count += 1
+      elif bond.GetOrder() == ix.BondOrder.Double:
+        bonded_count += 2
+      elif bond.GetOrder() == ix.BondOrder.Triple:
+        bonded_count += 3
+      elif bond.GetOrder() == ix.BondOrder.Quadruple:
+        bonded_count += 4
+      elif bond.GetOrder() == ix.BondOrder.Aromatic:
+        if not aromatic_bonds:
+          bonded_count += 1
+          aromatic_bonds = True
+        bonded_count += 1
+      elif bond.GetOrder() == ix.BondOrder.OneAndAHalf:
+        bonded_count += 1.5
+      elif bond.GetOrder() == ix.BondOrder.TwoAndAHalf:
+        bonded_count += 2.5
+
+    if (((bonded_count - int(bonded_count)) != 0) or bonded_count > 4):
+      raise ValueError("Atom tag {} has weird valence state.".format(atom.GetTag()))
+    atom.SetImplicitCount(4 - bonded_count)
 
   tot_charge = sum(atm.GetFormalCharge() for atm in mol.GetAtoms())
   if tot_charge != mol.GetMolecularCharge():
-    raise InputError("Sum of atom formal charges does not match molecular charge")
+    raise ValueError("Sum of atom formal charges does not match molecular charge")
 
 def LoadMTBFile(path, ff, details=None):
   file = list(ix.LoadFile(path.expanduser()))
@@ -211,7 +214,7 @@ def LoadMTBFile(path, ff, details=None):
     if file[i] == "END" and len(file[i+1]):
       blocks.append(file[i+1])
     
-  mol = ix.CreateMolecule()
+  mol = ix.Molecule(path.stem)
   bondtype = ix.BondType.Quartic
   angletype = ix.AngleType.CosineHarmonic
   impropertype = ix.DihedralType.Improper
@@ -289,13 +292,11 @@ def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
     raise TypeError("Input files have mismatch atom counts")
   for atom in mol_params.GetAtoms():
     c_atom = mol_coords.GetAtomTag(atom.GetTag())
-    atom.SetX(c_atom.GetX())
-    atom.SetY(c_atom.GetY())
-    atom.SetZ(c_atom.GetZ())
+    atom.SetPosition(c_atom.GetX(), c_atom.GetY(), c_atom.GetZ())
   return mol_params
 
 def LoadITPFile(path, ff, details=None):
-  mol = ix.CreateMolecule()
+  mol = ix.Molecule(path.stem)
   
   bondtype = ix.BondType.Harmonic
   angletype = ix.AngleType.Harmonic
@@ -325,11 +326,15 @@ def LoadITPFile(path, ff, details=None):
         bond.SetType(ff.GetBondType(bondtype, int(data[-1].split("_")[1])))
     elif current_block == "angles":
       data = line.split()
+      a1 = mol.GetAtomTag(int(data[0]))
+      a2 = mol.GetAtomTag(int(data[1]))
+      a3 = mol.GetAtomTag(int(data[2]))
       angle = mol.GetAngle(mol.GetAtomTag(int(data[0])),
                            mol.GetAtomTag(int(data[1])),
                            mol.GetAtomTag(int(data[2])))
       if data[-1].startswith("ga"):
-        angle.SetType(ff.GetAngleType(angletype, int(data[-1].split("_")[1])))
+        ty = ff.GetAngleType(angletype, int(data[-1].split("_")[1]))
+        angle.SetType(ty)
     elif current_block == "dihedrals":
       data = line.split()
       a = mol.GetAtomTag(int(data[0]))
@@ -363,6 +368,7 @@ def LoadFragmentFile(path, ff):
   coord_path = path.parent / file_data[1].strip()
   param_path = path.parent / file_data[2].strip()
   detail_path = path.parent / file_data[3].strip()
+  
   mol = LoadParameterisedMolecule(coord_path, param_path, ff, detail_path)
   mol.FreezeModifications()
   g = mol.GetGraph()
