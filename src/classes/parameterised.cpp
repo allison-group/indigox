@@ -557,7 +557,7 @@ namespace indigox {
   }
 
   const ParamAngle& ParamMolecule::GetAngle(const Atom& a, const Atom& b, const Atom& c) const {
-    PAngle dat = (a > b) ? stdx::make_triple(c, b, a) : stdx::make_triple(a, b, c);
+    PAngle dat = (a > c) ? stdx::make_triple(c, b, a) : stdx::make_triple(a, b, c);
     return m_data->angles[m_data->angle_indices.find(dat)->second];
   }
 

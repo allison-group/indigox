@@ -159,12 +159,9 @@ namespace indigox::algorithm {
           auto p1 = std::find(frag_v.begin(), frag_v.end(), v1);
           auto p2 = std::find(frag_v.begin(), frag_v.end(), v2);
           auto p3 = std::find(frag_v.begin(), frag_v.end(), v3);
-          Atom t1 = target_v[std::distance(frag_v.begin(), p1)]
-                         .GetAtom();
-          Atom t2 = target_v[std::distance(frag_v.begin(), p2)]
-                         .GetAtom();
-          Atom t3 = target_v[std::distance(frag_v.begin(), p3)]
-                         .GetAtom();
+          Atom t1 = target_v[std::distance(frag_v.begin(), p1)].GetAtom();
+          Atom t2 = target_v[std::distance(frag_v.begin(), p2)].GetAtom();
+          Atom t3 = target_v[std::distance(frag_v.begin(), p3)].GetAtom();
           ParamAngle pang = pmol.GetAngle(t1, t2, t3);
           pang.MappedWith(
               fragMol.GetAngle(v1.GetAtom(), v2.GetAtom(), v3.GetAtom()));
@@ -268,7 +265,7 @@ namespace indigox::algorithm {
         // Initially all fragments are to be searched
         boost::dynamic_bitset<> fragments(g_frag.second.size());
         fragments.set();
-
+        
         for (size_t pos = 0; pos < fragments.size();
              pos = fragments.find_next(pos)) {
           Fragment frag = g_frag.second[pos];
@@ -283,8 +280,9 @@ namespace indigox::algorithm {
                                         vertmask, edgemask);
           graph::CondensedMolecularGraph FG = frag.GetGraph();
           SubgraphIsomorphisms(FG, CMG, callback);
-          if (!callback.has_mapping)
+          if (!callback.has_mapping) {
             fragments -= frag.GetSupersets();
+            }
         }
       }
       pmol.ApplyParameteristion(lib.IsSelfConsistent());
