@@ -744,7 +744,7 @@ namespace indigox {
         }
       }
       for (Bond bn : C.GetBonds()) {
-        if (bn.GetAtoms()[0] == B) {
+        if (bn.GetAtoms()[0] == C) {
           C_nbrs.emplace_back(bn.GetAtoms()[1]);
         } else {
           C_nbrs.emplace_back(bn.GetAtoms()[0]);

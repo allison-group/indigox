@@ -575,8 +575,9 @@ namespace indigox {
           pos.first->second.end())
         pos.first->second.emplace_back(f);
     }
-    if (pos.first->second.size() != initial_count)
+    if (pos.first->second.size() != initial_count) {
       SortAndMask(mol);
+    }
     return pos.first->second.size() - initial_count;
   }
 

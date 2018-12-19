@@ -185,9 +185,9 @@ namespace indigox {
 
   std::ostream &operator<<(std::ostream &os, const Dihedral &dhd) {
     _sanity_check_(dhd);
-    os << "Dihedral(" << dhd.m_data->atoms[0] + 1 << ", "
-       << dhd.m_data->atoms[1] + 1 << ", " << dhd.m_data->atoms[2] + 1 << ", "
-       << dhd.m_data->atoms[3] + 1 << ")";
+    os << "Dihedral(" << dhd.m_data->atoms[0].GetIndex() + 1 << ", "
+       << dhd.m_data->atoms[1].GetIndex() + 1 << ", " << dhd.m_data->atoms[2].GetIndex() + 1 << ", "
+       << dhd.m_data->atoms[3].GetIndex() + 1 << ")";
     return os;
   }
 } // namespace indigox
