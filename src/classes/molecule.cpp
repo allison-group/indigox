@@ -7,8 +7,6 @@
 #include <indigox/classes/molecule_impl.hpp>
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/graph/molecular.hpp>
-#include <indigox/utils/counter.hpp>
-#include <indigox/utils/doctest_proxy.hpp>
 #include <indigox/utils/serialise.hpp>
 
 #include <algorithm>
@@ -29,8 +27,6 @@
 #endif
 
 namespace indigox {
-  test_suite_open("Molecule");
-
   // =======================================================================
   // == SERIALISATION ======================================================
   // =======================================================================
@@ -882,5 +878,4 @@ namespace indigox {
     return mol;
   }
 
-  test_suite_close();
 } // namespace indigox

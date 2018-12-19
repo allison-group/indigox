@@ -1,5 +1,4 @@
 /*! \file dihedral.hpp */
-#include "../utils/counter.hpp"
 #include "../utils/fwd_declares.hpp"
 #include "../utils/quad.hpp"
 

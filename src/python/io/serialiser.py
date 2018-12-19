@@ -40,7 +40,7 @@ TEST   3
         eta = patom.MedianCharge()
         sigma = patom.StandardDeviationCharge()
         if round(mu, 5) != round(eta, 5) or round(sigma, 5) != 0.0:
-          extra_info += "mean: {:.5f}, median: {:.5f}, stdev: {:.5f}".format(mu, eta, sigma)
+          extra_info += " mean: {:.5f}, median: {:.5f}, stdev: {:.5f}".format(mu, eta, sigma)
       if extra_info == ";":
         atm_dat["extra"] = ""
       else:
@@ -51,8 +51,8 @@ TEST   3
   print("\n[ bonds ]", file=file)
   bnd_fmt_str = "{atoma:>5} {atomb:>5} {typecode:>5}    gb_{typeid}   {extra}"
   for bond in sorted(mol.GetBonds(), key=lambda x: x.HasType()):
-    bnd_dat = {"atoma" : bond.GetSourceAtom().GetIndex() + 1,
-               "atomb" : bond.GetTargetAtom().GetIndex() + 1,
+    bnd_dat = {"atoma" : bond.GetAtoms()[0].GetIndex() + 1,
+               "atomb" : bond.GetAtoms()[1].GetIndex() + 1,
                "typecode" : 2,
                "typeid" : bond.GetType().GetID() if bond.HasType() else "UNMAPPED"
               }
