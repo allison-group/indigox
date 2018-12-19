@@ -28,7 +28,7 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def("MappedWith", &ParamAtom::MappedWith)
   .def("ApplyParameterisation", &ParamAtom::ApplyParameterisation)
   .def("NumSourceAtoms", &ParamAtom::NumSourceAtoms)
-  .def("GetAtom", &ParamAtom::GetAtom, Ref)
+  .def("GetAtom", &ParamAtom::GetAtom)
   .def("MeanCharge", &ParamAtom::MeanCharge)
   .def("MedianCharge", &ParamAtom::MeadianCharge)
   .def("StandardDeviationCharge", &ParamAtom::StandardDeviationCharge)
@@ -55,8 +55,8 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def("MappedWith", &ParamBond::MappedWith)
   .def("ApplyParameterisation", &ParamBond::ApplyParameterisation)
   .def("NumSourceBonds", &ParamBond::NumSourceBonds)
-  .def("GetAtoms", &ParamBond::GetAtoms, Ref)
-  .def("GetBond", &ParamBond::GetBond, Ref)
+  .def("GetAtoms", &ParamBond::GetAtoms)
+  .def("GetBond", &ParamBond::GetBond)
   .def("GetMostCommonType", &ParamBond::GetMostCommonType)
   .def("GetMappedTypeCounts", &ParamBond::GetMappedTypeCounts, Ref)
   .def(py::self == py::self)
@@ -80,8 +80,8 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def("MappedWith", &ParamAngle::MappedWith)
   .def("ApplyParameterisation", &ParamAngle::ApplyParameterisation)
   .def("NumSourceAngles", &ParamAngle::NumSourceAngles)
-  .def("GetAtoms", &ParamAngle::GetAtoms, Ref)
-  .def("GetAngle", &ParamAngle::GetAngle, Ref)
+  .def("GetAtoms", &ParamAngle::GetAtoms)
+  .def("GetAngle", &ParamAngle::GetAngle)
   .def("GetMostCommonType", &ParamAngle::GetMostCommonType)
   .def("GetMappedTypeCounts", &ParamAngle::GetMappedTypeCounts, Ref)
   .def(py::self == py::self)
@@ -135,17 +135,22 @@ void GeneratePyParameterisedMolecule(pybind11::module& m) {
   .def("GetAngle", py::overload_cast<const Atom&, const Atom&, const Atom&>(&ParamMolecule::GetAngle, py::const_))
   .def("GetDihedral", py::overload_cast<const Dihedral&>(&ParamMolecule::GetDihedral))
   .def("GetDihedral", py::overload_cast<const Atom&, const Atom&, const Atom&, const Atom&>(&ParamMolecule::GetDihedral))
-  .def("GetAtoms", &ParamMolecule::GetAtoms)
-  .def("GetBonds", &ParamMolecule::GetBonds)
-  .def("GetAngles", &ParamMolecule::GetAngles)
-  .def("GetDihedrals", &ParamMolecule::GetDihedrals)
+  .def("GetAtoms", &ParamMolecule::GetAtoms, Ref)
+  .def("GetBonds", &ParamMolecule::GetBonds, Ref)
+  .def("GetAngles", &ParamMolecule::GetAngles, Ref)
+  .def("GetDihedrals", &ParamMolecule::GetDihedrals, Ref)
   ;
   
   // container bindings
-//  py::bind_map<ParamAtom::TypeCounts>(m, "VecMapFFAtomInt");
-//  py::bind_map<ParamBond::TypeCounts>(m, "VecMapFFBondInt");
-//  py::bind_map<ParamAngle::TypeCounts>(m, "VecMapFFAngleInt");
-//  py::bind_vector<ParamDihedral::TypeGroup>(m, "VectorFFDihedral");
-//  py::bind_map<ParamDihedral::TypeCounts>(m, "VecMapVectorFFDihedralInt");
+  py::bind_vector<std::vector<ParamAtom>>(m, "VecParamAtom");
+  py::bind_vector<std::vector<ParamBond>>(m, "VecParamBond");
+  py::bind_vector<std::vector<ParamAngle>>(m, "VecParamAngle");
+  py::bind_vector<std::vector<ParamDihedral>>(m, "VecParamDihedral");
+
+  py::bind_map<eastl::vector_map<indigox::FFAtom, size_t>>(m, "MapFFAtomUInt");
+  py::bind_map<eastl::vector_map<indigox::FFBond, size_t>>(m, "MapFFBondUInt");
+  py::bind_map<eastl::vector_map<indigox::FFAngle, size_t>>(m, "MapFFAngleUInt");
+  py::bind_vector<std::vector<FFDihedral>>(m, "VecFFDihedral");
+  py::bind_map<eastl::vector_map<std::vector<indigox::FFDihedral>, size_t>>(m, "MapVecFFDihedralUInt");
   
 }

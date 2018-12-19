@@ -272,15 +272,6 @@ namespace indigox::graph {
   private:
     struct Impl;
     std::shared_ptr<Impl> m_data;
-    
-//    //! \brief Map MGVertex to their corresponding CMGVertex
-//    VertMap _vmap;
-//    //! \brief Map MGEdge to their corresponding CMGEdge
-//    EdgeMap _emap;
-//    //! \brief Snapshot of the molecular graph source.
-//    MolecularGraph _source;
-//
-//    CondensedMolecularGraph& _subg;
   };
 
   CondensedMolecularGraph Condense(const MolecularGraph &G);

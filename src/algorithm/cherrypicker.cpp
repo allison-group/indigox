@@ -25,6 +25,7 @@ namespace indigox::algorithm {
   bool CPSet::AllowDanglingBonds = true;
   bool CPSet::AllowDanglingAngles = true;
   bool CPSet::AllowDanglingDihedrals = true;
+  bool CPSet::ParameteriseFromAllPermutations = false;
   VParam CPSet::VertexMapping = (VParam::ElementType | VParam::FormalCharge |
                                  VParam::CondensedVertices | VParam::Degree);
   EParam CPSet::EdgeMapping = (EParam::BondOrder | EParam::Degree);
@@ -192,6 +193,9 @@ namespace indigox::algorithm {
           ParamDihedral pdhd = pmol.GetDihedral(t1, t2, t3, t4);
           pdhd.MappedWith(fragMol.GetDihedral(v1.GetAtom(), v2.GetAtom(),
                                               v3.GetAtom(), v4.GetAtom()));
+        }
+        if (!CPSet::ParameteriseFromAllPermutations) {
+          break;
         }
       }
       return true;

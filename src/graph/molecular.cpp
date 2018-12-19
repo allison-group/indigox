@@ -309,5 +309,12 @@ namespace indigox::graph {
   bool MolecularGraph::operator>(const MolecularGraph &g) const {
     return m_data > g.m_data;
   }
+  
+  std::ostream& operator<<(std::ostream& os, const MolecularGraph& G) {
+    if (G) {
+      os << "MolecularGraph("  << G.NumVertices() << " vertices, " << G.NumEdges() << " edges)";
+    }
+    return os;
+  }
 
 } // namespace indigox::graph

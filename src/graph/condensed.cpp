@@ -523,5 +523,12 @@ namespace indigox::graph {
   bool CondensedMolecularGraph::operator>(const CondensedMolecularGraph &g) const {
     return m_data > g.m_data;
   }
+  
+  std::ostream& operator<<(std::ostream& os, const CondensedMolecularGraph& G) {
+    if (G) {
+      os << "CondensedMolecularGraph("  << G.NumVertices() << " vertices, " << G.NumEdges() << " edges)";
+    }
+    return os;
+  }
 
 } // namespace indigox::graph

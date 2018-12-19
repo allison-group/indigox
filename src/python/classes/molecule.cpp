@@ -78,9 +78,9 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("SetName", &Atom::SetName)
   .def("SetPosition", &Atom::SetPosition)
   .def("SetStereochemistry", &Atom::SetStereochemistry)
-  .def("GetBonds", &Atom::GetBonds)
-  .def("GetAngles", &Atom::GetAngles)
-  .def("GetDihedrals", &Atom::GetDihedrals)
+  .def("GetBonds", &Atom::GetBonds, Ref)
+  .def("GetAngles", &Atom::GetAngles, Ref)
+  .def("GetDihedrals", &Atom::GetDihedrals, Ref)
   .def("GetIndex", &Atom::GetIndex)
   .def("GetType", &Atom::GetType)
   .def("SetType", &Atom::SetType)
@@ -164,7 +164,7 @@ void GeneratePyMolecule(pybind11::module& m) {
   .def("SetTag", &Dihedral::SetTag)
   .def("GetIndex", &Dihedral::GetIndex)
   .def("NumTypes", &Dihedral::NumTypes)
-  .def("GetTypes", &Dihedral::GetTypes)
+  .def("GetTypes", &Dihedral::GetTypes, Ref)
   .def("HasType", &Dihedral::HasType)
   .def("SetTypes", &Dihedral::SetTypes)
   .def("AddType", &Dihedral::AddType)
@@ -280,4 +280,11 @@ void GeneratePyMolecule(pybind11::module& m) {
     mol.FreezeModifications();
     return mol;
   });
+  
+  // Container bindings
+  py::bind_vector<std::vector<Atom>>(m, "VecAtom");
+  py::bind_vector<std::vector<Bond>>(m, "VecBond");
+  py::bind_vector<std::vector<Angle>>(m, "VecAngle");
+  py::bind_vector<std::vector<Dihedral>>(m, "VecDihedral");
+
 }

@@ -380,9 +380,13 @@ def LoadFragmentFile(path, ff):
   for line in file_data:
     if line == "END":
       if current_block == "OVERLAP":
-        frag = [g.GetVertex(a) for a in frag]
-        overlap = [g.GetVertex(a) for a in overlap]
-        fragments.append(ix.Fragment(g, frag, overlap))
+        frag_v = ix.graph.VecMGVertex()
+        for a in frag:
+          frag_v.append(g.GetVertex(a))
+        overlap_v = ix.graph.VecMGVertex()
+        for a in overlap:
+          overlap_v.append(g.GetVertex(a))
+        fragments.append(ix.Fragment(g, frag_v, overlap_v))
         frag = []
         overlap = []
       current_block = None

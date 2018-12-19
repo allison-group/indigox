@@ -78,9 +78,9 @@ TEST   3
     if not mol.HasBond(atoms[2], atoms[3]):
       continue
 
-    if ((mol.GetBond(atoms[0], atoms[1]).GetOrder() == ix.BondOrder.AROMATIC)
-        and (mol.GetBond(atoms[1], atoms[2]).GetOrder() == ix.BondOrder.AROMATIC)
-        and (mol.GetBond(atoms[2], atoms[3]).GetOrder() == ix.BondOrder.AROMATIC)):
+    if ((mol.GetBond(atoms[0], atoms[1]).GetOrder() == ix.BondOrder.Aromatic)
+        and (mol.GetBond(atoms[1], atoms[2]).GetOrder() == ix.BondOrder.Aromatic)
+        and (mol.GetBond(atoms[2], atoms[3]).GetOrder() == ix.BondOrder.Aromatic)):
         continue
 
     if atoms[0].GetIndex() > atoms[3].GetIndex():

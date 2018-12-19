@@ -617,5 +617,12 @@ namespace indigox {
   bool Athenaeum::operator>(const Athenaeum &ath) const {
     return m_data > ath.m_data;
   }
+  
+  std::ostream& operator<<(std::ostream& os, const Fragment& frag) {
+    if (frag) {
+      os << "Fragment(" << frag.m_data->frag.size() << " core, " << frag.m_data->overlap.size() << " overlap)";
+    }
+    return os;
+  }
 
 } // namespace indigox

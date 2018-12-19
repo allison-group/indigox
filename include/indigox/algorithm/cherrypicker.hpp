@@ -55,6 +55,7 @@ namespace indigox::algorithm {
        *  atoms. This only applies to dihedrals where the two atoms that are in
        *  the fragment and not the overlap are adjacent to one another. */
       static bool AllowDanglingDihedrals;
+      static bool ParameteriseFromAllPermutations;
 
       static VertexParameters VertexMapping;
       static EdgeParameters EdgeMapping;

@@ -9,6 +9,7 @@
 #define INDIGOX_PYTHON_INTERFACE_HPP
 
 #include "../utils/fwd_declares.hpp"
+#include "opaquecontainers.hpp"
 
 void GeneratePyMolecule(pybind11::module &m);
 void GeneratePyPeriodicTable(pybind11::module &m);

@@ -17,17 +17,6 @@
 
 namespace py = pybind11;
 
-//PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::ComponentContain);
-//PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::CycleEdgeContain);
-//PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::ComponentContain);
-//PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::CycleEdgeContain);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sCondensedMolecularGraph>);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sMolecularGraph>);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGVertex>);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGEdge>);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGVertex>);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGEdge>);
-
 void GeneratePyGraphAlgorithms(pybind11::module& m) {
   using namespace indigox;
   using namespace indigox::algorithm;
@@ -127,6 +116,7 @@ void GeneratePyGraphAlgorithms(pybind11::module& m) {
   .def_readwrite_static("EdgeMapping", &CPSet::EdgeMapping)
   .def_readwrite_static("MinimumFragmentSize", &CPSet::MinimumFragmentSize)
   .def_readwrite_static("MaximumFragmentSize", &CPSet::MaximumFragmentSize)
+  .def_readwrite_static("ParameteriseFromAllPermutations", &CPSet::ParameteriseFromAllPermutations)
   ;
   
   cp.def(py::init<const Forcefield&>())

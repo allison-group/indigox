@@ -11,17 +11,6 @@
 
 namespace py = pybind11;
 
-//PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::ComponentContain);
-//PYBIND11_MAKE_OPAQUE(indigox::graph::CondensedMolecularGraph::CycleEdgeContain);
-//PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::ComponentContain);
-//PYBIND11_MAKE_OPAQUE(indigox::graph::MolecularGraph::CycleEdgeContain);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sCondensedMolecularGraph>);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::sMolecularGraph>);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGVertex>);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::CMGEdge>);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGVertex>);
-//PYBIND11_MAKE_OPAQUE(std::vector<indigox::graph::MGEdge>);
-
 void GeneratePyGraphs(py::module& m) {
   using namespace indigox;
   using namespace indigox::graph;
@@ -86,21 +75,21 @@ void GeneratePyGraphs(py::module& m) {
   .def("NumEdges", &MG::NumEdges)
   .def("Degree", &MG::Degree)
   .def("InDegree", py::overload_cast<const MGV&>(&MG::InDegree, py::const_))
-  .def("GetNeighbours", &MG::GetNeighbours)
+  .def("GetNeighbours", &MG::GetNeighbours, Ref)
   .def("GetVertices", py::overload_cast<const MGE&>(&MG::GetVertices, py::const_))
-  .def("GetVertices", py::overload_cast<>(&MG::GetVertices, py::const_))
-  .def("GetEdges", py::overload_cast<>(&MG::GetEdges, py::const_))
+  .def("GetVertices", py::overload_cast<>(&MG::GetVertices, py::const_), Ref)
+  .def("GetEdges", py::overload_cast<>(&MG::GetEdges, py::const_), Ref)
   .def("GetEdge", py::overload_cast<const MGV&, const MGV&>(&MG::GetEdge, py::const_))
   .def("GetSourceVertex", &MG::GetSourceVertex)
   .def("GetTargetVertex", &MG::GetTargetVertex)
   .def("IsConnected", &MG::IsConnected)
   .def("NumConnectedComponents", &MG::NumConnectedComponents)
-  .def("GetConnectedComponents", &MG::GetConnectedComponents)
+  .def("GetConnectedComponents", &MG::GetConnectedComponents, Ref)
   .def("IsCyclic", py::overload_cast<const MGV&>(&MG::IsCyclic))
   .def("IsCyclic", py::overload_cast<const MGV&, uint32_t>(&MG::IsCyclic))
   .def("IsCyclic", py::overload_cast<const MGE&>(&MG::IsCyclic))
   .def("IsCyclic", py::overload_cast<const MGE&, uint32_t>(&MG::IsCyclic))
-  .def("GetCycles", &MG::GetCycles)
+  .def("GetCycles", &MG::GetCycles, Ref)
   .def("NumCycles", &MG::NumCycles)
   ;
   
@@ -161,10 +150,10 @@ void GeneratePyGraphs(py::module& m) {
   .def("NumEdges", &CMG::NumEdges)
   .def("Degree", &CMG::Degree)
   .def("InDegree", py::overload_cast<const CMGV&>(&CMG::InDegree, py::const_))
-  .def("GetNeighbours", &CMG::GetNeighbours)
+  .def("GetNeighbours", &CMG::GetNeighbours, Ref)
   .def("GetVertices", py::overload_cast<const CMGE&>(&CMG::GetVertices, py::const_))
-  .def("GetVertices", py::overload_cast<>(&CMG::GetVertices, py::const_))
-  .def("GetEdges", py::overload_cast<>(&CMG::GetEdges, py::const_))
+  .def("GetVertices", py::overload_cast<>(&CMG::GetVertices, py::const_), Ref)
+  .def("GetEdges", py::overload_cast<>(&CMG::GetEdges, py::const_), Ref)
   .def("GetEdge", py::overload_cast<const CMGV&, const CMGV&>(&CMG::GetEdge, py::const_))
   .def("GetSourceVertex", &CMG::GetSourceVertex)
   .def("GetTargetVertex", &CMG::GetTargetVertex)
@@ -175,20 +164,20 @@ void GeneratePyGraphs(py::module& m) {
   .def("IsCyclic", py::overload_cast<const CMGV&, uint32_t>(&CMG::IsCyclic))
   .def("IsCyclic", py::overload_cast<const CMGE&>(&CMG::IsCyclic))
   .def("IsCyclic", py::overload_cast<const CMGE&, uint32_t>(&CMG::IsCyclic))
-  .def("GetCycles", &CMG::GetCycles)
+  .def("GetCycles", &CMG::GetCycles, Ref)
   .def("NumCycles", &CMG::NumCycles)
   ;
   
-//  py::bind_vector<CondensedMolecularGraph::VertContain>(m, "VectorCMGVertex");
-//  py::bind_vector<CondensedMolecularGraph::EdgeContain>(m, "VectorCMGEdge");
-//  py::bind_vector<MolecularGraph::VertContain>(m, "VectorMGVertex");
-//  py::bind_vector<MolecularGraph::EdgeContain>(m, "VectorMGEdge");
-//  py::bind_vector<CondensedMolecularGraph::ComponentContain>(m, "VectorVectorCMGVertex");
-//  py::bind_vector<CondensedMolecularGraph::CycleEdgeContain>(m, "VectorVectorCMGEdge");
-//  py::bind_vector<MolecularGraph::ComponentContain>(m, "VectorVectorMGVertex");
-//  py::bind_vector<MolecularGraph::CycleEdgeContain>(m, "VectorVectorMGEdge");
-//  py::bind_vector<std::vector<sCondensedMolecularGraph>>(m, "VectorCondensedMolecularGraph");
-//  py::bind_vector<std::vector<sMolecularGraph>>(m, "VectorMolecularGraph");
-  
+  // container bindings
+  py::bind_vector<std::vector<graph::CMGVertex>>(m, "VecCMGVertex");
+  py::bind_vector<std::vector<graph::CMGEdge>>(m, "VecCMGEdge");
+  py::bind_vector<std::vector<graph::MGVertex>>(m, "VecMGVertex");
+  py::bind_vector<std::vector<graph::MGEdge>>(m, "VecMGEdge");
+  py::bind_vector<std::vector<std::vector<graph::MGEdge>>>(m, "VecVecMGEdge");
+  py::bind_vector<std::vector<std::vector<graph::MGVertex>>>(m, "VecVecMGVertex");
+  py::bind_vector<std::vector<std::vector<graph::CMGEdge>>>(m, "VecVecCMGEdge");
+  py::bind_vector<std::vector<std::vector<graph::CMGVertex>>>(m, "VecVecCMGVertex");
+  py::bind_vector<std::vector<graph::CondensedMolecularGraph>>(m, "VecCondensedMolecularGraph");
+  py::bind_vector<std::vector<graph::MolecularGraph>>(m, "VecMolecularGraph");  
 }
 
