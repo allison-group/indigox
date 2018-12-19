@@ -39,3 +39,6 @@ test/coverage
 
 # Xcode file
 indigox.xcodeproj
+# Athenauem and molecule save files
+*.ath
+*.mol

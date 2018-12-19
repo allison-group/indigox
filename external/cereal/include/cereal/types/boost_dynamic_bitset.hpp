@@ -19,7 +19,8 @@ namespace cereal
     using block = Bitset_t::block_type;
     std::vector<block> blocks; blocks.reserve(bits.num_blocks());
     boost::to_block_range(bits, std::back_inserter(blocks));
-    ar(CEREAL_NVP_("blocks", blocks));
+    ar(CEREAL_NVP_("blocks", blocks),
+       CEREAL_NVP_("size", bits.size()));
   }
   
   //! Serializing (load) for boost::dynamic_bitset
@@ -29,9 +30,12 @@ namespace cereal
     using Bitset_t = boost::dynamic_bitset<>;
     using block = Bitset_t::block_type;
     std::vector<block> blocks;
-    ar(CEREAL_NVP_("blocks", blocks));
-    bits.reserve(blocks.size() * Bitset_t::bits_per_block);
+    Bitset_t::size_type size;
+    ar(CEREAL_NVP_("blocks", blocks),
+       CEREAL_NVP_("size", size));
+    bits.resize(size);
     boost::from_block_range(blocks.begin(), blocks.end(), bits);
+    
   }
 } // namespace cereal
 
