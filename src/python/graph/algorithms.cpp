@@ -33,27 +33,27 @@ void GeneratePyGraphAlgorithms(pybind11::module& m) {
   using namespace indigox::algorithm;
   using namespace indigox::graph;
   using MG = MolecularGraph;
-  using MGS = MolecularGraph;
+//  using MGS = MolecularGraph;
   using MGV = MGVertex;
-  using MGE = MGEdge;
+//  using MGE = MGEdge;
   using VMG = std::vector<MolecularGraph>;
-  using VMGV = MolecularGraph::VertContain;
-  using VMGE = MolecularGraph::EdgeContain;
+//  using VMGV = MolecularGraph::VertContain;
+//  using VMGE = MolecularGraph::EdgeContain;
   using VVMGV = MolecularGraph::ComponentContain;
   using VVMGE = MolecularGraph::CycleEdgeContain;
   
   using CMG = CondensedMolecularGraph;
-  using CMGS = CondensedMolecularGraph;
+//  using CMGS = CondensedMolecularGraph;
   using CMGV = CMGVertex;
-  using CMGE = CMGEdge;
+//  using CMGE = CMGEdge;
   using VCMG = std::vector<CondensedMolecularGraph>;
-  using VCMGV = CondensedMolecularGraph::VertContain;
-  using VCMGE = CondensedMolecularGraph::EdgeContain;
+//  using VCMGV = CondensedMolecularGraph::VertContain;
+//  using VCMGE = CondensedMolecularGraph::EdgeContain;
   using VVCMGV = CondensedMolecularGraph::ComponentContain;
   using VVCMGE = CondensedMolecularGraph::CycleEdgeContain;
   
-  using D = Directed;
-  using GL = GraphLabel;
+//  using D = Directed;
+//  using GL = GraphLabel;
   
   m.def("ShortestPath", [](MG& g, MGV u, MGV v) { return ShortestPath(g, u, v); });
   m.def("ShortestPath", [](CMG& g, CMGV u, CMGV v) { return ShortestPath(g, u, v); });
