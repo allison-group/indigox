@@ -238,12 +238,15 @@ namespace indigox::graph {
     Bond bnd = e.GetBond();
     Atom a = bnd.GetAtoms()[0];
     Atom b = bnd.GetAtoms()[1];
-    degree_small.from_uint32(a.NumBonds());
+    if (a.NumBonds() > b.NumBonds()) {
+      degree_small.from_uint32(b.NumBonds());
+      degree_large.from_uint32(a.NumBonds());
+      } else {
+      degree_small.from_uint32(a.NumBonds());
+      degree_large.from_uint32(b.NumBonds());
+      }
     degree_small <<= 8;
-    degree_large.from_uint32(b.NumBonds());
     degree_large <<= 11;
-    if (a.NumBonds() > b.NumBonds())
-      std::swap(degree_small, degree_large);
     mask.from_uint32(static_cast<uint32_t>(bnd.GetOrder()));
     mask |= degree_small | degree_large;
     if (bnd.GetStereochemistry() == BondStereo::E)
