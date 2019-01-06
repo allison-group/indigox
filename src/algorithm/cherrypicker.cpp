@@ -229,8 +229,11 @@ namespace indigox::algorithm {
       vertmask |= graph::VertexIsoMask(0x7F);
     if ((CPSet::VertexMapping & VParam::FormalCharge) != VParam::None)
       vertmask |= graph::VertexIsoMask(0x780);
-    if ((CPSet::VertexMapping & VParam::CondensedVertices) != VParam::None)
-      vertmask |= graph::VertexIsoMask(0x3FFF800);
+    if ((CPSet::VertexMapping & VParam::CondensedVertices) != VParam::None) {
+      graph::VertexIsoMask tmp;
+      tmp.from_uint64(0x1C03FFF800);
+      vertmask |= tmp;
+    }
     if ((CPSet::VertexMapping & VParam::CyclicNature) != VParam::None)
       vertmask |= graph::VertexIsoMask(0xC000000);
     if ((CPSet::VertexMapping & VParam::Stereochemistry) != VParam::None)

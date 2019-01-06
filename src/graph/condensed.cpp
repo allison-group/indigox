@@ -126,17 +126,18 @@ namespace indigox::graph {
     // Num condensed Cl (3 bits)
     // Num condensed Br (3 bits)
     // Num condensed I (3 bits)
-    // Is in any cycle (1 bit)
+    // Is in any cycle (1 bit)          // removed
     // Is in small cycle (<= 8)(1 bit)
     // Is R stereo (1 bit)
     // Is S stereo (1 bit)
-    // Is aromatic (1 bit)
+    // Is aromatic (1 bit)             // removed
+    // Num implicit H (3 bits)
     Atom atm = v.GetAtom();
-    VertexIsoMask atm_num, fc_mag, h, f, cl, br, i, mask, degree;
+    VertexIsoMask atm_num, fc_mag, h, f, cl, br, i, mask, degree, imp_h;
     atm_num.from_uint64(atm.GetElement().GetAtomicNumber());
     fc_mag.from_uint64(abs(atm.GetFormalCharge()));
     fc_mag <<= 7;
-    h.from_uint32(NumContracted(CS::Hydrogen) + atm.GetImplicitCount());
+    h.from_uint32(NumContracted(CS::Hydrogen));
     h <<= 11;
     f.from_uint32(NumContracted(CS::Fluorine));
     f <<= 14;
@@ -148,18 +149,18 @@ namespace indigox::graph {
     i <<= 23;
     degree.from_uint32(atm.NumBonds());
     degree <<= 31;
-    mask = atm_num | fc_mag | h | f | cl | br | i | degree;
+    imp_h.from_uint32(atm.GetImplicitCount());
+    imp_h <<= 34;
+    
+    mask = atm_num | fc_mag | h | f | cl | br | i | degree | imp_h;
     if (atm.GetFormalCharge() < 0)
       mask.set(10);
     if (MG.IsCyclic(v, 8))
       mask.set(26);
-    //    if (v->IsCyclic(8)) _iso_mask.set(27);
     if (atm.GetStereochemistry() == AtomStereo::R)
       mask.set(28);
     if (atm.GetStereochemistry() == AtomStereo::S)
       mask.set(29);
-//    if (atm.GetAromaticity())
-//      mask.set(30);
 
     m_data->mask = mask;
   }
