@@ -392,7 +392,7 @@ def LoadFragmentFile(path, ff):
       if current_block == "OVERLAP":
         frag = ix.VecMGVertex([g.GetVertex(a) for a in frag])
         overlap = ix.VecMGVertex([g.GetVertex(a) for a in overlap])
-        fragments.append(ix.Fragment(g, frag_v, overlap_v))
+        fragments.append(ix.Fragment(g, frag, overlap))
         frag = []
         overlap = []
       current_block = None
