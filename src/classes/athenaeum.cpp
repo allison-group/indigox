@@ -93,6 +93,24 @@ namespace indigox {
     return Fragment::OverlapType::GenericOverlap;
   }
 
+  Fragment::Fragment(const Molecule& mol, std::vector<Atom>& frag, std::vector<Atom>& overlap) {
+  
+    if (frag.empty()) {
+      throw std::runtime_error("A fragment requires atoms");
+    }
+    
+    graph::MolecularGraph G = mol.GetGraph();
+    std::vector<graph::MGVertex> frag_v, overlap_v;
+    frag_v.reserve(frag.size());
+    overlap_v.reserve(overlap.size());
+    
+    for (Atom atm : frag) frag_v.push_back(G.GetVertex(atm));
+    for (Atom atm : overlap) overlap_v.push_back(G.GetVertex(atm));
+    
+    Fragment tmp(G, frag_v, overlap_v);
+    m_data = tmp.m_data;
+  }
+
   Fragment::Fragment(const graph::MolecularGraph &G,
                      std::vector<graph::MGVertex> &frag,
                      std::vector<graph::MGVertex> &overlap)

@@ -381,7 +381,6 @@ def LoadFragmentFile(path, ff):
   
   mol = LoadParameterisedMolecule(coord_path, param_path, ff, detail_path)
   mol.FreezeModifications()
-  g = mol.GetGraph()
 
   fragments = []
   current_block = None
@@ -390,9 +389,9 @@ def LoadFragmentFile(path, ff):
   for line in file_data:
     if line == "END":
       if current_block == "OVERLAP":
-        frag = ix.VecMGVertex([g.GetVertex(a) for a in frag])
-        overlap = ix.VecMGVertex([g.GetVertex(a) for a in overlap])
-        fragments.append(ix.Fragment(g, frag, overlap))
+        frag = ix.VecAtom(frag)
+        overlap = ix.VecAtom(overlap)
+        fragments.append(ix.Fragment(mol, frag, overlap))
         frag = []
         overlap = []
       current_block = None

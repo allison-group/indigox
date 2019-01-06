@@ -30,6 +30,7 @@ void GeneratePyAthenaeum(py::module& m) {
   py::class_<Fragment>(m, "Fragment")
   .def(py::init<>())
   .def(py::init<const MolecularGraph&, std::vector<MGVertex>&, std::vector<MGVertex>&>())
+  .def(py::init<const Molecule&, std::vector<Atom>&, std::vector<Atom>&>())
   .def("GetGraph", &Fragment::GetGraph)
   .def("GetFragment", &Fragment::GetFragment, Ref)
   .def("Size", &Fragment::Size)

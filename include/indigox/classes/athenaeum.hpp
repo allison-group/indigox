@@ -46,8 +46,8 @@ namespace indigox {
      *  \param overlap the vertices of G that are part of the overlap region. */
     Fragment(const graph::MolecularGraph &G, std::vector<graph::MGVertex> &frag,
              std::vector<graph::MGVertex> &overlap);
-    /// \todo Add fragment generation directly from molecule.
-    ///       Needs shared_ptr impl of mol/atom etc data.
+    
+    Fragment(const Molecule& mol, std::vector<Atom>& frag, std::vector<Atom>& overlap);
 
     const graph::CondensedMolecularGraph &GetGraph() const;
     const std::vector<graph::CMGVertex> &GetFragment() const;
