@@ -148,11 +148,15 @@ def LoadIXDFile(path, mol):
     l = list(map(int, line[1:]))
     if line[0] == "ATOM":
       atom = mol.GetAtomTag(l[0])
+      if not atom:
+        raise IndexError("Unknown atom tag: {}".format(l[0]))
       atom.SetFormalCharge(l[1])
       atom.SetImplicitCount(l[2])
       set_implicits.append(l[0])
     elif line[0] == "BOND":
       bond = mol.GetBond(mol.GetAtomTag(l[0]), mol.GetAtomTag(l[1]))
+      if not bond:
+        raise IndexError("Unknown bond: {}-{}".format(l[0], l[1]))
       if l[2] == 1:
         bond.SetOrder(ix.BondOrder.Single)
       elif l[2] == 2:
@@ -250,6 +254,8 @@ def LoadMTBFile(path, ff, details=None):
           angle = mol.GetAngle(mol.GetAtomTag(int(dat[0])),
                                mol.GetAtomTag(int(dat[1])),
                                mol.GetAtomTag(int(dat[2])));
+          if not angle:
+            raise IndexError("No angle found: {}-{}-{}".format(*dat[:3]))
           angle.SetType(ff.GetAngleType(angletype, int(dat[3])))
         elif i < start_line[3] + counts[3]:  # Improper dihedrals
           a = mol.GetAtomTag(int(dat[0]))
@@ -267,6 +273,8 @@ def LoadMTBFile(path, ff, details=None):
           c = mol.GetAtomTag(int(dat[2]))
           d = mol.GetAtomTag(int(dat[3]))
           dihedral = mol.GetDihedral(a, b, c, d)
+          if not dihedral:
+            raise IndexError("No dihedral found: {}-{}-{}-{}".format(*dat[:4]))
           dihedral.AddType(ff.GetDihedralType(propertype, int(dat[4])))
   
   if details is not None:
@@ -332,6 +340,8 @@ def LoadITPFile(path, ff, details=None):
       angle = mol.GetAngle(mol.GetAtomTag(int(data[0])),
                            mol.GetAtomTag(int(data[1])),
                            mol.GetAtomTag(int(data[2])))
+      if not angle:
+        raise IndexError("No angle found: {}-{}-{}".format(*data[:3]))
       if data[-1].startswith("ga"):
         ty = ff.GetAngleType(angletype, int(data[-1].split("_")[1]))
         angle.SetType(ty)
@@ -380,12 +390,8 @@ def LoadFragmentFile(path, ff):
   for line in file_data:
     if line == "END":
       if current_block == "OVERLAP":
-        frag_v = ix.graph.VecMGVertex()
-        for a in frag:
-          frag_v.append(g.GetVertex(a))
-        overlap_v = ix.graph.VecMGVertex()
-        for a in overlap:
-          overlap_v.append(g.GetVertex(a))
+        frag = ix.VecMGVertex([g.GetVertex(a) for a in frag])
+        overlap = ix.VecMGVertex([g.GetVertex(a) for a in overlap])
         fragments.append(ix.Fragment(g, frag_v, overlap_v))
         frag = []
         overlap = []

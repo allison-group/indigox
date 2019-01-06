@@ -1,4 +1,6 @@
 from .pyindigox import *
-#import indigox.io
+# import everything into the indigox namespace
+from .pyindigox.algorithm import *
+from .pyindigox.graph import *
 from indigox.io import *
 
