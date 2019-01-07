@@ -1,6 +1,6 @@
 #include "../utils/fwd_declares.hpp"
-#include "../utils/triple.hpp"
 #include "../utils/quad.hpp"
+#include "../utils/triple.hpp"
 #include <boost/dynamic_bitset_fwd.hpp>
 
 #include <algorithm>
@@ -46,8 +46,9 @@ namespace indigox {
      *  \param overlap the vertices of G that are part of the overlap region. */
     Fragment(const graph::MolecularGraph &G, std::vector<graph::MGVertex> &frag,
              std::vector<graph::MGVertex> &overlap);
-    
-    Fragment(const Molecule& mol, std::vector<Atom>& frag, std::vector<Atom>& overlap);
+
+    Fragment(const Molecule &mol, std::vector<Atom> &frag,
+             std::vector<Atom> &overlap);
 
     const graph::CondensedMolecularGraph &GetGraph() const;
     const std::vector<graph::CMGVertex> &GetFragment() const;
@@ -93,7 +94,7 @@ namespace indigox {
   public:
     INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(Athenaeum);
     INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(Athenaeum, ath);
-    
+
     Athenaeum(const Forcefield &ff);
     Athenaeum(const Forcefield &ff, uint32_t overlap);
     Athenaeum(const Forcefield &ff, uint32_t overlap, uint32_t ring_overlap);

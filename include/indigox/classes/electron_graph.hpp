@@ -9,17 +9,16 @@
 #ifndef ELECTRON_GRAPH_HPP
 #define ELECTRON_GRAPH_HPP
 
+#include "../utils/graph.hpp"
+#include "molecular_graph.hpp"
+
 #include <cstdint>
 #include <iostream>
 
-#include "molecular_graph.hpp"
-#include "../utils/graph.hpp"
-
-
 namespace indigox {
-  
+
   enum class SortOrder;
-  
+
   struct ElnVertProp {
     MolVertPair id;
     float electronegativity;
@@ -32,29 +31,27 @@ namespace indigox {
     int8_t formal_charge;
     SortOrder sort_score;
   };
-  
+
   typedef utils::Graph<ElnVertProp> _ElnGraph;
   typedef _ElnGraph::VertType ElnVertex;
   typedef _ElnGraph::VertIter ElnVertexIter;
   typedef _ElnGraph::EdgeType ElnEdge;
   typedef _ElnGraph::EdgeIter ElnEdgeIter;
   typedef _ElnGraph::NbrsIter ElnNeighboursIter;
-  
+
   typedef _ElnGraph::VertIterPair ElnVertIterPair;
   typedef _ElnGraph::EdgeIterPair ElnEdgeIterPair;
   typedef _ElnGraph::NbrsIterPair ElnNbrsIterPair;
-  
-  
-  class _ElectronGraph : public _ElnGraph
-  {
-    
+
+  class _ElectronGraph : public _ElnGraph {
+
   public:
-    _ElectronGraph();// = default;
+    _ElectronGraph(); // = default;
     _ElectronGraph(const _MolecularGraph &G);
-    
+
     ElnVertex GetVertex(MolVertPair id) const;
   };
   typedef std::shared_ptr<_ElectronGraph> ElectronGraph;
-}
+} // namespace indigox
 
 #endif /* ELECTRON_GRAPH_HPP */

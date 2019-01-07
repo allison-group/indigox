@@ -15,7 +15,7 @@ namespace indigox::graph {
     MolecularGraph graph;
 
     MGVertexData() = default;
-    MGVertexData(const Atom& a, const MolecularGraph& g) : atom(a), graph(g) {
+    MGVertexData(const Atom &a, const MolecularGraph &g) : atom(a), graph(g) {
     }
 
     template <typename Archive>
@@ -30,7 +30,7 @@ namespace indigox::graph {
     MolecularGraph graph;
 
     MGEdgeData() = default;
-    MGEdgeData(const Bond& b, const MolecularGraph& g) : bond(b), graph(g) {
+    MGEdgeData(const Bond &b, const MolecularGraph &g) : bond(b), graph(g) {
     }
 
     template <typename Archive>
@@ -39,24 +39,25 @@ namespace indigox::graph {
               INDIGOX_SERIAL_NVP("graph", graph));
     }
   };
-  
+
   struct MolecularGraph::Impl {
     AtomMap atom_vertices;
     BondMap bond_edges;
     Molecule molecule;
     CondensedMolecularGraph condensed_graph;
     MolecularGraph super_graph;
-    
+
     Impl() = default;
-    Impl(const Molecule& mol) : molecule(mol) { }
-    
+    Impl(const Molecule &mol) : molecule(mol) {
+    }
+
     template <typename Archive>
-    void serialise(Archive& archive, const uint32_t) {
+    void serialise(Archive &archive, const uint32_t) {
       archive(INDIGOX_SERIAL_NVP("atom_map", atom_vertices),
-      INDIGOX_SERIAL_NVP("bond_map", bond_edges),
-      INDIGOX_SERIAL_NVP("molecule", molecule),
-      INDIGOX_SERIAL_NVP("condensed_graph", condensed_graph),
-      INDIGOX_SERIAL_NVP("supergraph", super_graph));
+              INDIGOX_SERIAL_NVP("bond_map", bond_edges),
+              INDIGOX_SERIAL_NVP("molecule", molecule),
+              INDIGOX_SERIAL_NVP("condensed_graph", condensed_graph),
+              INDIGOX_SERIAL_NVP("supergraph", super_graph));
     }
   };
 
@@ -78,8 +79,9 @@ namespace indigox::graph {
 
   template <typename Archive>
   void MolecularGraph::serialise(Archive &archive, const uint32_t) {
-    archive(INDIGOX_SERIAL_NVP("base_graph", cereal::base_class<graph_type>(this)),
-            INDIGOX_SERIAL_NVP("data", m_data));
+    archive(
+        INDIGOX_SERIAL_NVP("base_graph", cereal::base_class<graph_type>(this)),
+        INDIGOX_SERIAL_NVP("data", m_data));
   }
   INDIGOX_SERIALISE(MolecularGraph);
 
@@ -96,9 +98,10 @@ namespace indigox::graph {
   }
 
   MolecularGraph::MolecularGraph(const Molecule &mol)
-      : BaseGraph<MGVertex, MGEdge, MolecularGraph>(), m_data(std::make_shared<Impl>(mol)) {
+      : BaseGraph<MGVertex, MGEdge, MolecularGraph>(),
+        m_data(std::make_shared<Impl>(mol)) {
   }
-  
+
   // =====================================================================
   // == GETTING ==========================================================
   // =====================================================================
@@ -117,13 +120,13 @@ namespace indigox::graph {
     return m_data->graph;
   }
 
-  const MGEdge& MolecularGraph::GetEdge(const Bond &bnd) const {
+  const MGEdge &MolecularGraph::GetEdge(const Bond &bnd) const {
     if (!HasEdge(bnd))
       throw std::out_of_range("No such edge");
     return m_data->bond_edges.at(bnd);
   }
 
-  const MGVertex& MolecularGraph::GetVertex(const Atom &atm) const {
+  const MGVertex &MolecularGraph::GetVertex(const Atom &atm) const {
     if (!HasVertex(atm))
       throw std::out_of_range("No such vertex");
     return m_data->atom_vertices.at(atm);
@@ -140,7 +143,7 @@ namespace indigox::graph {
       throw std::runtime_error("Cannot get supergraph as not a subgraph");
     return m_data->super_graph;
   }
-  
+
   bool MolecularGraph::IsSubgraph() const {
     return bool(m_data->super_graph);
   }
@@ -165,7 +168,7 @@ namespace indigox::graph {
       MGVertex v = GetTargetVertex(e);
       if (!G.HasVertex(u) || !G.HasVertex(v)) {
         continue;
-        }
+      }
       G.m_data->bond_edges.emplace(e.GetBond(), e);
       G.graph_type::AddEdge(u, v, e);
     }
@@ -173,7 +176,7 @@ namespace indigox::graph {
   }
 
   MolecularGraph MolecularGraph::Subgraph(std::vector<MGVertex> &verts,
-                                           std::vector<MGEdge> &edges) {
+                                          std::vector<MGEdge> &edges) {
     MolecularGraph G;
     G.m_data = std::make_shared<Impl>();
     G.m_data->super_graph = *this;
@@ -247,7 +250,6 @@ namespace indigox::graph {
     return m_data->bond_edges.find(e) != m_data->bond_edges.end();
   }
 
-
   const CondensedMolecularGraph &MolecularGraph::GetCondensedGraph() {
     if (!m_data->molecule.IsFrozen())
       throw std::runtime_error("Can only condense a frozen molecule");
@@ -271,14 +273,14 @@ namespace indigox::graph {
   bool MGVertex::operator>(const MGVertex &v) const {
     return m_data->atom > v.m_data->atom;
   }
-  
-  std::ostream& operator<<(std::ostream& os, const MGVertex& v) {
+
+  std::ostream &operator<<(std::ostream &os, const MGVertex &v) {
     if (v) {
       os << "MGVertex(" << v.GetAtom().GetIndex() + 1 << ")";
     }
     return os;
   }
-  
+
   bool MGEdge::operator==(const MGEdge &v) const {
     return m_data->bond == v.m_data->bond;
   }
@@ -290,8 +292,8 @@ namespace indigox::graph {
   bool MGEdge::operator>(const MGEdge &v) const {
     return m_data->bond > v.m_data->bond;
   }
-  
-  std::ostream& operator<<(std::ostream& os, const MGEdge& e) {
+
+  std::ostream &operator<<(std::ostream &os, const MGEdge &e) {
     if (e) {
       os << "MGEdge(" << e.GetBond().GetIndex() + 1 << ")";
     }
@@ -301,18 +303,19 @@ namespace indigox::graph {
   bool MolecularGraph::operator==(const MolecularGraph &g) const {
     return m_data == g.m_data;
   }
-  
+
   bool MolecularGraph::operator<(const MolecularGraph &g) const {
     return m_data < g.m_data;
   }
-  
+
   bool MolecularGraph::operator>(const MolecularGraph &g) const {
     return m_data > g.m_data;
   }
-  
-  std::ostream& operator<<(std::ostream& os, const MolecularGraph& G) {
+
+  std::ostream &operator<<(std::ostream &os, const MolecularGraph &G) {
     if (G) {
-      os << "MolecularGraph("  << G.NumVertices() << " vertices, " << G.NumEdges() << " edges)";
+      os << "MolecularGraph(" << G.NumVertices() << " vertices, "
+         << G.NumEdges() << " edges)";
     }
     return os;
   }

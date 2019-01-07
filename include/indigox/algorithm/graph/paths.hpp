@@ -1,12 +1,12 @@
-#include <vector>
-
 #include "../../utils/fwd_declares.hpp"
+
+#include <vector>
 
 #ifndef INDIGOX_ALGORITHM_GRAPH_PATHS_HPP
 #define INDIGOX_ALGORITHM_GRAPH_PATHS_HPP
 
 namespace indigox::algorithm {
-  
+
   /*! \brief Find the shortest path between two vertices.
    *  \details Determines the shortest path between two vertices, using a
    *  bi-directional breadth-first search method. If there is no path between
@@ -21,9 +21,9 @@ namespace indigox::algorithm {
    *  \throws std::runtime_error if source and target are the same vertex or
    *  either of them is not part of the graph. */
   template <class V, class E, class S, class D, class VP, class EP>
-  std::vector<E> ShortestPath(graph::BaseGraph<V,E,S,D,VP,EP>& G,
-                              V source, V target);
-  
+  std::vector<E> ShortestPath(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source,
+                              V target);
+
   /*! \brief Find all the simple paths between two vertices.
    *  \details Determines all the paths between two vertices, using a modified
    *  depth-first search method. The order of the found paths is arbitary,
@@ -35,8 +35,9 @@ namespace indigox::algorithm {
    *  \param limit the maximum length path to return.
    *  \throws std::runtime_error if you try something stupid. */
   template <class V, class E, class S, class D, class VP, class EP>
-  void AllSimplePaths(graph::BaseGraph<V,E,S,D,VP,EP>& G, V source, V target,
-                      std::vector<std::vector<E>>& paths, int64_t limit = -1);
-}
+  void AllSimplePaths(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source,
+                      V target, std::vector<std::vector<E>> &paths,
+                      int64_t limit = -1);
+} // namespace indigox::algorithm
 
 #endif /* INDIGOX_ALGORITHM_GRAPH_PATHS_HPP */

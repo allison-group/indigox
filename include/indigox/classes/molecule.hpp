@@ -1,11 +1,11 @@
 /*! \file molecule.hpp */
+#include "../utils/fwd_declares.hpp"
+
 #include <bitset>
 #include <cstdint>
 #include <map>
 #include <unordered_map>
 #include <vector>
-
-#include "../utils/fwd_declares.hpp"
 
 #ifndef INDIGOX_CLASSES_MOLECULE_HPP
 #define INDIGOX_CLASSES_MOLECULE_HPP
@@ -29,7 +29,6 @@ namespace indigox {
     /*! \brief Container for storing IXDihedral instances.
      *  \details A molecule takes ownership of all dihedrals it contains. */
     using MoleculeDihedrals = std::vector<Dihedral>;
-
 
   private:
     template <typename Archive>

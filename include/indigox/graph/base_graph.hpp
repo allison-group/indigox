@@ -103,35 +103,36 @@ namespace indigox::graph {
   protected:
     struct BaseImpl;
     std::shared_ptr<BaseImpl> m_basedata;
-    
-//    //! \brief Underlying boost graph.
-//    graph_type _g;
-//    //! \brief Map vertices to their descriptors.
-//    VertMap _vm;
-//    //! \brief Map edges to their descriptors.
-//    EdgeMap _em;
-//    //! \brief Container for giving access to all vertices
-//    VertContain _v;
-//    //! \brief Container for giving access to all edges
-//    EdgeContain _e;
-//    //! \brief Container for predecessors of a vertex (v such that edge u->v
-//    //! exists)
-//    NbrsContain _pre;
-//    //! \brief Container for successors of a vertex. Only used in directed
-//    //! graphs
-//    NbrsContain _suc;
-//    //! \brief Components container
-//    ComponentContain _comp_cache;
-//    //! \brief State when components were last calculated
-//    utils::ModifiableObject::State _comp_state;
-//    //! \brief Cyclic vertices container
-//    VertContain _vcyclic_cache;
-//    //! \brief Cyclic edges container
-//    EdgeContain _ecyclic_cache;
-//    //! \brief Cycles container
-//    CycleEdgeContain _cycles_cache;
-//    //! \brief State when cycles were last calculated
-//    utils::ModifiableObject::State _cycle_state;
+
+    //    //! \brief Underlying boost graph.
+    //    graph_type _g;
+    //    //! \brief Map vertices to their descriptors.
+    //    VertMap _vm;
+    //    //! \brief Map edges to their descriptors.
+    //    EdgeMap _em;
+    //    //! \brief Container for giving access to all vertices
+    //    VertContain _v;
+    //    //! \brief Container for giving access to all edges
+    //    EdgeContain _e;
+    //    //! \brief Container for predecessors of a vertex (v such that edge
+    //    u->v
+    //    //! exists)
+    //    NbrsContain _pre;
+    //    //! \brief Container for successors of a vertex. Only used in directed
+    //    //! graphs
+    //    NbrsContain _suc;
+    //    //! \brief Components container
+    //    ComponentContain _comp_cache;
+    //    //! \brief State when components were last calculated
+    //    utils::ModifiableObject::State _comp_state;
+    //    //! \brief Cyclic vertices container
+    //    VertContain _vcyclic_cache;
+    //    //! \brief Cyclic edges container
+    //    EdgeContain _ecyclic_cache;
+    //    //! \brief Cycles container
+    //    CycleEdgeContain _cycles_cache;
+    //    //! \brief State when cycles were last calculated
+    //    utils::ModifiableObject::State _cycle_state;
 
   private:
     template <typename Archive>
@@ -139,14 +140,14 @@ namespace indigox::graph {
 
   public:
     //! \brief Default constructor
-    BaseGraph() : m_basedata(std::make_shared<BaseImpl>()) {};
+    BaseGraph() : m_basedata(std::make_shared<BaseImpl>()){};
 
     virtual ~BaseGraph() {
     }
 
   protected:
     // Modification methods protected.
-//    void Clear();
+    //    void Clear();
 
     /*! \brief Add a new vertex to the graph.
      *  \details It is the callers responsability to ensure that the vertex

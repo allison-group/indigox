@@ -1,10 +1,11 @@
 /*! \file forcefield.hpp */
 #include "../utils/fwd_declares.hpp"
 #include "periodictable.hpp"
-#include <memory>
-#include <map>
-#include <vector>
+
 #include <EASTL/bitset.h>
+#include <map>
+#include <memory>
+#include <vector>
 
 #ifndef INDIGOX_CLASSES_FORCEFIELD_HPP
 #define INDIGOX_CLASSES_FORCEFIELD_HPP
@@ -223,7 +224,6 @@ namespace indigox {
     FFAngle GetLinkedType() const;
 
     Forcefield GetForcefield() const;
-
 
   private:
     struct Impl;
@@ -459,7 +459,7 @@ namespace indigox {
      *  \param a,b,c the three parameter values.
      *  \return the newly created dihedral type. */
     FFDihedral NewDihedralType(DihedralType type, int32_t id, double a,
-                                double b, double c);
+                               double b, double c);
 
     /*! \brief Adds a new dihedral type to the forcefield with two parameters.
      *  \details This constructor should be used for DihedralType::Improper
@@ -470,7 +470,7 @@ namespace indigox {
      *  \param a,b the three parameter values.
      *  \return the newly created dihedral type. */
     FFDihedral NewDihedralType(DihedralType type, int32_t id, double a,
-                                double b);
+                               double b);
 
     /*! \brief Reserve space for dihedral types.
      *  \param type the type of dihedral to reserve space for.

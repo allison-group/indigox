@@ -1,8 +1,8 @@
 #include <indigox/algorithm/cherrypicker.hpp>
 #include <indigox/algorithm/graph/isomorphism.hpp>
+#include <indigox/classes/angle.hpp>
 #include <indigox/classes/athenaeum.hpp>
 #include <indigox/classes/atom.hpp>
-#include <indigox/classes/angle.hpp>
 #include <indigox/classes/bond.hpp>
 #include <indigox/classes/dihedral.hpp>
 #include <indigox/classes/molecule.hpp>
@@ -141,10 +141,8 @@ namespace indigox::algorithm {
             break;
           auto p1 = std::find(frag_v.begin(), frag_v.end(), v1);
           auto p2 = std::find(frag_v.begin(), frag_v.end(), v2);
-          Atom t1 = target_v[std::distance(frag_v.begin(), p1)]
-                         .GetAtom();
-          Atom t2 = target_v[std::distance(frag_v.begin(), p2)]
-                         .GetAtom();
+          Atom t1 = target_v[std::distance(frag_v.begin(), p1)].GetAtom();
+          Atom t2 = target_v[std::distance(frag_v.begin(), p2)].GetAtom();
           ParamBond pbnd = pmol.GetBond(t1, t2);
           pbnd.MappedWith(fragMol.GetBond(v1.GetAtom(), v2.GetAtom()));
         }
@@ -182,14 +180,10 @@ namespace indigox::algorithm {
           auto p2 = std::find(frag_v.begin(), frag_v.end(), v2);
           auto p3 = std::find(frag_v.begin(), frag_v.end(), v3);
           auto p4 = std::find(frag_v.begin(), frag_v.end(), v4);
-          Atom t1 = target_v[std::distance(frag_v.begin(), p1)]
-                         .GetAtom();
-          Atom t2 = target_v[std::distance(frag_v.begin(), p2)]
-                         .GetAtom();
-          Atom t3 = target_v[std::distance(frag_v.begin(), p3)]
-                         .GetAtom();
-          Atom t4 = target_v[std::distance(frag_v.begin(), p4)]
-                         .GetAtom();
+          Atom t1 = target_v[std::distance(frag_v.begin(), p1)].GetAtom();
+          Atom t2 = target_v[std::distance(frag_v.begin(), p2)].GetAtom();
+          Atom t3 = target_v[std::distance(frag_v.begin(), p3)].GetAtom();
+          Atom t4 = target_v[std::distance(frag_v.begin(), p4)].GetAtom();
           ParamDihedral pdhd = pmol.GetDihedral(t1, t2, t3, t4);
           pdhd.MappedWith(fragMol.GetDihedral(v1.GetAtom(), v2.GetAtom(),
                                               v3.GetAtom(), v4.GetAtom()));
@@ -272,7 +266,7 @@ namespace indigox::algorithm {
         // Initially all fragments are to be searched
         boost::dynamic_bitset<> fragments(g_frag.second.size());
         fragments.set();
-        
+
         for (size_t pos = 0; pos < fragments.size();
              pos = fragments.find_next(pos)) {
           Fragment frag = g_frag.second[pos];
@@ -289,7 +283,7 @@ namespace indigox::algorithm {
           SubgraphIsomorphisms(FG, CMG, callback);
           if (!callback.has_mapping) {
             fragments -= frag.GetSupersets();
-            }
+          }
         }
       }
       pmol.ApplyParameteristion(lib.IsSelfConsistent());

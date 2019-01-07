@@ -26,9 +26,11 @@ namespace stdx { // extended std namespace
       third_type C;
     };
 
-    triple(triple const & t) : A(t.A), B(t.B), C(t.C) {};
-    triple(triple && t) : A(std::move(t.A)), B(std::move(t.B)), C(std::move(t.C)) {};
-    ~triple() { }
+    triple(triple const &t) : A(t.A), B(t.B), C(t.C){};
+    triple(triple &&t)
+        : A(std::move(t.A)), B(std::move(t.B)), C(std::move(t.C)){};
+    ~triple() {
+    }
 
     inline constexpr triple() : first(), second(), third() {
     }

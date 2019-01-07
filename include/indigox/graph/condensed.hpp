@@ -13,9 +13,9 @@
 
 namespace indigox::graph {
   //! \brief type used to store the isomorphism testing mask for IXCMGVertex.
-  using VertexIsoMask = eastl::bitset<64, uint64_t>;
+  using VertexIsoMask = eastl::bitset<37, uint64_t>;
   //! \brief type used to store the isomorphism testing mask for IXCMGEdge.
-  using EdgeIsoMask = eastl::bitset<16, uint16_t>;
+  using EdgeIsoMask = eastl::bitset<14, uint16_t>;
 
   /*! \brief Class for the vertices of an IXCondensedMolecularGraph. */
   class CMGVertex {
@@ -52,11 +52,10 @@ namespace indigox::graph {
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t version);
 
-
   public:
     /*! \brief Get the MGVertex associated with this vertex.
      *  \return the associated MGVertex, if it is still alive. */
-    const MGVertex& GetSource() const;
+    const MGVertex &GetSource() const;
 
     /*! \brief Get the graph this vertex is part of.
      *  \return the owning graph. */
@@ -114,7 +113,7 @@ namespace indigox::graph {
   public:
     /*! \brief Get the MGEdge associated with this vertex.
      *  \return the associated MGEdge, if it is atill alive. */
-    const MGEdge& GetSource() const;
+    const MGEdge &GetSource() const;
 
     /*! \brief Get the graph this edge is part of.
      *  \return the owning graph. */
@@ -184,7 +183,7 @@ namespace indigox::graph {
      *  \return shared_ptr to the newly added vertex. */
     CMGVertex AddVertex(const MGVertex &v);
 
-//    void Clear();
+    //    void Clear();
 
   public:
     INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(CondensedMolecularGraph);
@@ -217,12 +216,12 @@ namespace indigox::graph {
      *  \param e_begin,e_end marking the range of edges to include in subgraph.
      *  \return a new CondensedMolecularGraph. */
     CondensedMolecularGraph Subgraph(std::vector<CMGVertex> &verts,
-                                      std::vector<CMGEdge> &edges);
+                                     std::vector<CMGEdge> &edges);
 
     bool IsSubgraph() const;
-//     {
-//      return bool(_subg);
-//    }
+    //     {
+    //      return bool(_subg);
+    //    }
 
     /*! \brief Get the source MolecularGraph.
      *  \return the molecular graph used to construt this. */
@@ -239,15 +238,15 @@ namespace indigox::graph {
      *  returned edge is null.
      *  \param e the edge to get the associated edge of.
      *  \return the associated edge. */
-    const CMGEdge& GetEdge(const MGEdge &e) const;
+    const CMGEdge &GetEdge(const MGEdge &e) const;
 
     /*! \brief Get the vertex associated with an MGVertex.
      *  \details If the vertex is not associated with a vertex of this graph,
      *  the returned vertex is null.
      *  \param v the MGVertex to get the assocaited vertex of.
      *  \return the associated vertex. */
-    const CMGVertex& GetVertex(const MGVertex &v) const;
-    const CMGVertex& GetCondensedVertex(const MGVertex &v) const;
+    const CMGVertex &GetVertex(const MGVertex &v) const;
+    const CMGVertex &GetCondensedVertex(const MGVertex &v) const;
 
     /*! \brief Check if the graph has a vertex directly associated with an
      *  MGVertex.

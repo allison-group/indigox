@@ -15,7 +15,6 @@ namespace indigox::graph {
       GetPeriodicTable().GetElement("Cl"), GetPeriodicTable().GetElement("Br"),
       GetPeriodicTable().GetElement("I")};
 
-
   struct CMGVertex::CMGVertexData {
     MGVertex source;
     CondensedMolecularGraph graph;
@@ -53,22 +52,23 @@ namespace indigox::graph {
               INDIGOX_SERIAL_NVP("mask", mask));
     }
   };
-  
+
   struct CondensedMolecularGraph::Impl {
     VertMap condensed_vertices;
     EdgeMap condensed_edges;
     MolecularGraph graph;
     CondensedMolecularGraph super_graph;
-    
+
     Impl() = default;
-    Impl(const MolecularGraph& g) : graph(g) { }
-    
+    Impl(const MolecularGraph &g) : graph(g) {
+    }
+
     template <typename Archive>
-    void serialise(Archive& archive, const uint32_t) {
+    void serialise(Archive &archive, const uint32_t) {
       archive(INDIGOX_SERIAL_NVP("vertices", condensed_vertices),
-        INDIGOX_SERIAL_NVP("edges", condensed_edges),
-        INDIGOX_SERIAL_NVP("molecular_graph", graph),
-        INDIGOX_SERIAL_NVP("supergraph", super_graph));
+              INDIGOX_SERIAL_NVP("edges", condensed_edges),
+              INDIGOX_SERIAL_NVP("molecular_graph", graph),
+              INDIGOX_SERIAL_NVP("supergraph", super_graph));
     }
   };
 
@@ -151,7 +151,7 @@ namespace indigox::graph {
     degree <<= 31;
     imp_h.from_uint32(atm.GetImplicitCount());
     imp_h <<= 34;
-    
+
     mask = atm_num | fc_mag | h | f | cl | br | i | degree | imp_h;
     if (atm.GetFormalCharge() < 0)
       mask.set(10);
@@ -177,7 +177,7 @@ namespace indigox::graph {
   // ====================================================================
   // == CMGVertex Methods ===============================================
   // ====================================================================
-  const MGVertex& CMGVertex::GetSource() const {
+  const MGVertex &CMGVertex::GetSource() const {
     return m_data->source;
   }
 
@@ -190,7 +190,8 @@ namespace indigox::graph {
   }
 
   size_t CMGVertex::NumContracted(ContractedSymmetry s) const {
-    return std::accumulate(m_data->condensed.begin(), m_data->condensed.end(), 0,
+    return std::accumulate(m_data->condensed.begin(), m_data->condensed.end(),
+                           0,
                            [&s](size_t a, const CondensedVertex &v) -> size_t {
                              return s == v.first ? ++a : a;
                            });
@@ -220,7 +221,6 @@ namespace indigox::graph {
     return m_data->condensed;
   }
 
-
   // =======================================================================
   // == CMGEdge CONSTRUCTION ===============================================
   // =======================================================================
@@ -242,10 +242,10 @@ namespace indigox::graph {
     if (a.NumBonds() > b.NumBonds()) {
       degree_small.from_uint32(b.NumBonds());
       degree_large.from_uint32(a.NumBonds());
-      } else {
+    } else {
       degree_small.from_uint32(a.NumBonds());
       degree_large.from_uint32(b.NumBonds());
-      }
+    }
     degree_small <<= 8;
     degree_large <<= 11;
     mask.from_uint32(static_cast<uint32_t>(bnd.GetOrder()));
@@ -257,8 +257,8 @@ namespace indigox::graph {
     if (G.IsCyclic(e, 8))
       mask.set(5);
     //    if (e->IsCyclic(8)) _iso_mask.set(6);
-//    if (bnd.GetAromaticity())
-//      mask.set(7);
+    //    if (bnd.GetAromaticity())
+    //      mask.set(7);
     m_data->mask = mask;
   }
 
@@ -275,7 +275,7 @@ namespace indigox::graph {
   // == CMGEdge Methods ===================================================
   // ======================================================================
 
-  const MGEdge& CMGEdge::GetSource() const {
+  const MGEdge &CMGEdge::GetSource() const {
     return m_data->source;
   }
   const CondensedMolecularGraph &CMGEdge::GetGraph() const {
@@ -291,8 +291,9 @@ namespace indigox::graph {
 
   template <typename Archive>
   void CondensedMolecularGraph::serialise(Archive &archive, const uint32_t) {
-    archive(INDIGOX_SERIAL_NVP("base_graph", cereal::base_class<graph_type>(this)),
-            INDIGOX_SERIAL_NVP("data", m_data));
+    archive(
+        INDIGOX_SERIAL_NVP("base_graph", cereal::base_class<graph_type>(this)),
+        INDIGOX_SERIAL_NVP("data", m_data));
   }
   INDIGOX_SERIALISE(CondensedMolecularGraph);
 
@@ -378,29 +379,31 @@ namespace indigox::graph {
     return m_data->graph;
   }
 
-  const CondensedMolecularGraph &CondensedMolecularGraph::GetSuperGraph() const {
+  const CondensedMolecularGraph &
+  CondensedMolecularGraph::GetSuperGraph() const {
     if (!IsSubgraph())
       throw std::runtime_error("Cannot get supergraph of non subgraph");
     return m_data->super_graph;
   }
 
-  const CMGEdge& CondensedMolecularGraph::GetEdge(const MGEdge &e) const {
+  const CMGEdge &CondensedMolecularGraph::GetEdge(const MGEdge &e) const {
     return m_data->condensed_edges.at(e);
   }
 
-  const CMGVertex& CondensedMolecularGraph::GetVertex(const MGVertex &v) const {
+  const CMGVertex &CondensedMolecularGraph::GetVertex(const MGVertex &v) const {
     return m_data->condensed_vertices.at(v);
   }
 
-  const CMGVertex&
+  const CMGVertex &
   CondensedMolecularGraph::GetCondensedVertex(const MGVertex &v) const {
-    return *std::find_if(m_basedata->vertices.begin(), m_basedata->vertices.end(), [&v](const CMGVertex &u) {
-      return u.IsContractedHere(v);
-    });
+    return *std::find_if(
+        m_basedata->vertices.begin(), m_basedata->vertices.end(),
+        [&v](const CMGVertex &u) { return u.IsContractedHere(v); });
   }
 
   bool CondensedMolecularGraph::HasVertex(const MGVertex &v) const {
-    return m_data->condensed_vertices.find(v) != m_data->condensed_vertices.end();
+    return m_data->condensed_vertices.find(v) !=
+           m_data->condensed_vertices.end();
   }
 
   bool CondensedMolecularGraph::HasEdge(const MGEdge &e) const {
@@ -408,11 +411,12 @@ namespace indigox::graph {
   }
 
   bool CondensedMolecularGraph::HasCondensedVertex(const MGVertex &v) const {
-    return std::find_if(m_basedata->vertices.begin(), m_basedata->vertices.end(), [&v](const CMGVertex &u) {
-             return u.IsContractedHere(v);
-           }) != m_basedata->vertices.end();
+    return std::find_if(m_basedata->vertices.begin(),
+                        m_basedata->vertices.end(), [&v](const CMGVertex &u) {
+                          return u.IsContractedHere(v);
+                        }) != m_basedata->vertices.end();
   }
-  
+
   bool CondensedMolecularGraph::IsSubgraph() const {
     return bool(m_data->super_graph);
   }
@@ -425,7 +429,7 @@ namespace indigox::graph {
     CondensedMolecularGraph G;
     G.m_data = std::make_shared<Impl>();
     G.m_data->super_graph = *this;
-    
+
     for (const CMGVertex &v : verts) {
       if (!HasVertex(v))
         throw std::runtime_error("Non-member vertex");
@@ -451,7 +455,7 @@ namespace indigox::graph {
     CondensedMolecularGraph G;
     G.m_data = std::make_shared<Impl>();
     G.m_data->super_graph = *this;
-    
+
     for (const CMGVertex &v : verts) {
       if (!HasVertex(v))
         throw std::runtime_error("Non-member vertex");
@@ -472,12 +476,11 @@ namespace indigox::graph {
     }
     return G;
   }
-  
-  
+
   // =======================================================================
   // == Operators ==========================================================
   // =======================================================================
-  
+
   bool CMGVertex::operator==(const CMGVertex &v) const {
     return m_data->source == v.m_data->source;
   }
@@ -489,14 +492,14 @@ namespace indigox::graph {
   bool CMGVertex::operator>(const CMGVertex &v) const {
     return m_data->source > v.m_data->source;
   }
-  
-  std::ostream& operator<<(std::ostream& os, const CMGVertex& v) {
+
+  std::ostream &operator<<(std::ostream &os, const CMGVertex &v) {
     if (v) {
       os << "CMGVertex(" << v.GetSource().GetAtom().GetIndex() + 1 << ")";
     }
     return os;
   }
-  
+
   bool CMGEdge::operator==(const CMGEdge &v) const {
     return m_data->source == v.m_data->source;
   }
@@ -508,29 +511,33 @@ namespace indigox::graph {
   bool CMGEdge::operator>(const CMGEdge &v) const {
     return m_data->source > v.m_data->source;
   }
-  
-  std::ostream& operator<<(std::ostream& os, const CMGEdge& e) {
+
+  std::ostream &operator<<(std::ostream &os, const CMGEdge &e) {
     if (e) {
       os << "CMGEdge(" << e.GetSource().GetBond().GetIndex() + 1 << ")";
     }
     return os;
   }
 
-  bool CondensedMolecularGraph::operator==(const CondensedMolecularGraph &g) const {
+  bool CondensedMolecularGraph::
+  operator==(const CondensedMolecularGraph &g) const {
     return m_data == g.m_data;
   }
-  
-  bool CondensedMolecularGraph::operator<(const CondensedMolecularGraph &g) const {
+
+  bool CondensedMolecularGraph::
+  operator<(const CondensedMolecularGraph &g) const {
     return m_data < g.m_data;
   }
-  
-  bool CondensedMolecularGraph::operator>(const CondensedMolecularGraph &g) const {
+
+  bool CondensedMolecularGraph::
+  operator>(const CondensedMolecularGraph &g) const {
     return m_data > g.m_data;
   }
-  
-  std::ostream& operator<<(std::ostream& os, const CondensedMolecularGraph& G) {
+
+  std::ostream &operator<<(std::ostream &os, const CondensedMolecularGraph &G) {
     if (G) {
-      os << "CondensedMolecularGraph("  << G.NumVertices() << " vertices, " << G.NumEdges() << " edges)";
+      os << "CondensedMolecularGraph(" << G.NumVertices() << " vertices, "
+         << G.NumEdges() << " edges)";
     }
     return os;
   }

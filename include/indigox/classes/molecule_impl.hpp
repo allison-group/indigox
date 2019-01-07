@@ -1,13 +1,13 @@
 #ifndef INDIGOX_CLASSES_MOLECULE_IMPL_HPP
 #define INDIGOX_CLASSES_MOLECULE_IMPL_HPP
 
+#include "../graph/molecular.hpp"
 #include "../utils/fwd_declares.hpp"
 #include "angle.hpp"
 #include "atom.hpp"
 #include "bond.hpp"
 #include "dihedral.hpp"
 #include "molecule.hpp"
-#include "../graph/molecular.hpp"
 
 namespace indigox {
 

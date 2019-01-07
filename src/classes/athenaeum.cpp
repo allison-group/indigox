@@ -93,20 +93,23 @@ namespace indigox {
     return Fragment::OverlapType::GenericOverlap;
   }
 
-  Fragment::Fragment(const Molecule& mol, std::vector<Atom>& frag, std::vector<Atom>& overlap) {
-  
+  Fragment::Fragment(const Molecule &mol, std::vector<Atom> &frag,
+                     std::vector<Atom> &overlap) {
+
     if (frag.empty()) {
       throw std::runtime_error("A fragment requires atoms");
     }
-    
+
     graph::MolecularGraph G = mol.GetGraph();
     std::vector<graph::MGVertex> frag_v, overlap_v;
     frag_v.reserve(frag.size());
     overlap_v.reserve(overlap.size());
-    
-    for (Atom atm : frag) frag_v.push_back(G.GetVertex(atm));
-    for (Atom atm : overlap) overlap_v.push_back(G.GetVertex(atm));
-    
+
+    for (Atom atm : frag)
+      frag_v.push_back(G.GetVertex(atm));
+    for (Atom atm : overlap)
+      overlap_v.push_back(G.GetVertex(atm));
+
     Fragment tmp(G, frag_v, overlap_v);
     m_data = tmp.m_data;
   }
@@ -117,7 +120,7 @@ namespace indigox {
       : m_data(std::make_shared<FragmentData>()) {
     if (frag.empty())
       throw std::runtime_error("A fragment needs vertices");
-    
+
     // Induce a new subgraph
     graph::MolecularGraph g = G;
     graph::CondensedMolecularGraph CG = g.GetCondensedGraph();
@@ -134,7 +137,8 @@ namespace indigox {
     m_data->atoms.assign(frag.begin(), frag.end());
     m_data->overlap.reserve(contracted_overlap.size());
     for (graph::CMGVertex &v : contracted_overlap)
-      m_data->overlap.emplace_back(_GetOverType(v, m_data->graph, m_data->frag), v);
+      m_data->overlap.emplace_back(_GetOverType(v, m_data->graph, m_data->frag),
+                                   v);
     std::sort(m_data->overlap.begin(), m_data->overlap.end());
 
     // Combine all MGVertices for checking purposes
@@ -366,7 +370,8 @@ namespace indigox {
       : Athenaeum(ff, overlap, Settings::DefaultCycleOverlap) {
   }
 
-  Athenaeum::Athenaeum(const Forcefield &ff, uint32_t overlap, uint32_t cycleoverlap)
+  Athenaeum::Athenaeum(const Forcefield &ff, uint32_t overlap,
+                       uint32_t cycleoverlap)
       : m_data(std::make_shared<AthenaeumData>(ff, overlap, cycleoverlap)) {
   }
 
@@ -393,7 +398,8 @@ namespace indigox {
     return m_data->fragments;
   }
 
-  const Athenaeum::FragContain &Athenaeum::GetFragments(const Molecule &mol) const {
+  const Athenaeum::FragContain &
+  Athenaeum::GetFragments(const Molecule &mol) const {
     auto pos = m_data->fragments.find(mol);
     if (pos == m_data->fragments.end())
       throw std::runtime_error("No fragmenst for molecule available");
@@ -429,7 +435,8 @@ namespace indigox {
       Fragment f = frags[i];
       f.m_data->supersets = boost::dynamic_bitset<>(frags.size());
       for (size_t j = i + 1; j < frags.size(); ++j) {
-        if (f.m_data->graph_mask.is_proper_subset_of(frags[j].m_data->graph_mask))
+        if (f.m_data->graph_mask.is_proper_subset_of(
+                frags[j].m_data->graph_mask))
           f.m_data->supersets.set(j);
       }
     }
@@ -635,10 +642,11 @@ namespace indigox {
   bool Athenaeum::operator>(const Athenaeum &ath) const {
     return m_data > ath.m_data;
   }
-  
-  std::ostream& operator<<(std::ostream& os, const Fragment& frag) {
+
+  std::ostream &operator<<(std::ostream &os, const Fragment &frag) {
     if (frag) {
-      os << "Fragment(" << frag.m_data->frag.size() << " core, " << frag.m_data->overlap.size() << " overlap)";
+      os << "Fragment(" << frag.m_data->frag.size() << " core, "
+         << frag.m_data->overlap.size() << " overlap)";
     }
     return os;
   }

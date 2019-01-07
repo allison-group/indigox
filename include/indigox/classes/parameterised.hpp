@@ -69,7 +69,7 @@ namespace indigox {
 
     /*! \brief Get the mode of mapped atom types.
      *  \return the most commonly mapped atom type. */
-    const FFAtom& GetMostCommonType() const;
+    const FFAtom &GetMostCommonType() const;
 
     const TypeCounts &GetMappedTypeCounts() const;
     const MappedCharge &GetMappedCharges() const;
@@ -119,7 +119,7 @@ namespace indigox {
 
     /*! \brief Get the atoms this parameterises the bond between.
      *  \return the two atoms defining the bond this parameterises. */
-    const BondAtoms& GetAtoms() const;
+    const BondAtoms &GetAtoms() const;
 
     /*! \brief Get the bond that is parameterised.
      *  \return the parameterised bond. */
@@ -127,7 +127,7 @@ namespace indigox {
 
     /*! \brief Get the mode of mapped bond types.
      *  \return the most commonly mapped bond type. */
-    const FFBond& GetMostCommonType() const;
+    const FFBond &GetMostCommonType() const;
 
     const TypeCounts &GetMappedTypeCounts() const;
 
@@ -176,7 +176,7 @@ namespace indigox {
 
     /*! \brief Get the atoms this parameterises the angle between.
      *  \return the three atoms defining the angle this parameterises. */
-    const AngleAtoms& GetAtoms() const;
+    const AngleAtoms &GetAtoms() const;
 
     /*! \brief Get the angle that is parameterised.
      *  \return the parameterised bond. */
@@ -184,7 +184,7 @@ namespace indigox {
 
     /*! \brief Get the mode of mapped bond types.
      *  \return the most commonly mapped bond type. */
-    const FFAngle& GetMostCommonType() const;
+    const FFAngle &GetMostCommonType() const;
 
     const TypeCounts &GetMappedTypeCounts() const;
 
@@ -235,7 +235,7 @@ namespace indigox {
 
     /*! \brief Get the atoms this parameterises the angle between.
      *  \return the three atoms defining the angle this parameterises. */
-    const DihedralAtoms& GetAtoms() const;
+    const DihedralAtoms &GetAtoms() const;
 
     /*! \brief Get the dihedral that is parameterised.
      *  \return the parameterised dihedral. */
@@ -243,7 +243,7 @@ namespace indigox {
 
     /*! \brief Get the mode of mapped bond types.
      *  \return the most commonly mapped bond type. */
-    const TypeGroup& GetMostCommonType() const;
+    const TypeGroup &GetMostCommonType() const;
 
     const TypeCounts &GetMappedTypeCounts() const;
 
@@ -272,7 +272,7 @@ namespace indigox {
   public:
     INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(ParamMolecule);
     INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(ParamMolecule, mol);
-    
+
     /*! \brief Normal constructor
      *  \param mol the molecule to parameterise. */
     ParamMolecule(const Molecule &mol);
@@ -288,32 +288,33 @@ namespace indigox {
     /*! \brief Get the parameterisation of an atom
      *  \param atm the atom to get
      *  \return the parameterisation atom. */
-    const ParamAtom& GetAtom(const Atom &atm) const;
+    const ParamAtom &GetAtom(const Atom &atm) const;
 
     /*! \brief Get the parameterisation of a bond
      *  \param bnd the bond to get
      *  \return the parameterisation bond. */
-    const ParamBond& GetBond(const Bond &bnd) const;
+    const ParamBond &GetBond(const Bond &bnd) const;
 
     /*! \brief Get the parameterisation of a bond
      *  \param atms the pair of atoms the bond is between
      *  \return the parameterisation bond. */
-    const ParamBond& GetBond(const Atom& a, const Atom& b) const;
+    const ParamBond &GetBond(const Atom &a, const Atom &b) const;
 
     /*! \brief Get the parameterisation of an angle.
      *  \param ang the angle to get.
      *  \return the parameterisation angle. */
-    const ParamAngle& GetAngle(const Angle &ang) const;
+    const ParamAngle &GetAngle(const Angle &ang) const;
 
     /*! \brief Get the parameterisation of an angle.
      *  \param atms the triple of atoms the angle is between.
      *  \return the parameterisation angle. */
-    const ParamAngle& GetAngle(const Atom& a, const Atom& b, const Atom& c) const;
+    const ParamAngle &GetAngle(const Atom &a, const Atom &b,
+                               const Atom &c) const;
 
     /*! \brief Get the parameterisation of a dihedral.
      *  \param dhd the dihedral to get.
      *  \return the parameterisation dihedral. */
-    const ParamDihedral& GetDihedral(const Dihedral &dhd);
+    const ParamDihedral &GetDihedral(const Dihedral &dhd);
 
     /*! \brief Get the parameterisation of a dihedral.
      *  \details To allow for the parameterisation of dihedrals, such as
@@ -322,12 +323,13 @@ namespace indigox {
      *  created.
      *  \param atms the quad of atoms the dihedral is between.
      *  \return the parameterisation dihedral. */
-    const ParamDihedral& GetDihedral(const Atom& a, const Atom& b, const Atom& c, const Atom& d);
+    const ParamDihedral &GetDihedral(const Atom &a, const Atom &b,
+                                     const Atom &c, const Atom &d);
 
-    const std::vector<ParamAtom>& GetAtoms() const;
-    const std::vector<ParamBond>& GetBonds() const;
-    const std::vector<ParamAngle>& GetAngles() const;
-    const std::vector<ParamDihedral>& GetDihedrals() const;
+    const std::vector<ParamAtom> &GetAtoms() const;
+    const std::vector<ParamBond> &GetBonds() const;
+    const std::vector<ParamAngle> &GetAngles() const;
+    const std::vector<ParamDihedral> &GetDihedrals() const;
 
   private:
     struct ParamMoleculeImpl;

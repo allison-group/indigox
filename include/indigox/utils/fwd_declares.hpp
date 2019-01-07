@@ -2,8 +2,8 @@
 // well as their shared_ptr and weak_ptr counterparts, as needed.
 #ifndef INDIGOX_UTILS_FWD_DECLARES_HPP
 #define INDIGOX_UTILS_FWD_DECLARES_HPP
-#include <memory>
 #include <cstdint>
+#include <memory>
 
 // Serialisation related stuff, using the cereal library
 namespace cereal {

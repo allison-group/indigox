@@ -5,17 +5,19 @@
 //  Created by Ivan Welsh on 13/01/18.
 //  Copyright © 2018 Hermes Productions. All rights reserved.
 //
-#include <map>
-#include <sstream>
+#include "indigox/classes/permutablegraph.hpp"
 
 #include "indigox/classes/molecular_graph.hpp"
-#include "indigox/classes/permutablegraph.hpp"
 #include "indigox/classes/treedecomp.hpp"
 #include "indigox/utils/graph.hpp"
 #include "indigox/utils/options.hpp"
 
+#include <map>
+#include <sstream>
+
 using namespace indigox;
-typedef Options::AssignElectrons::FPT fpt_;;
+typedef Options::AssignElectrons::FPT fpt_;
+;
 
 std::string _PermutableGraph::ToDGFString() {
   std::ostringstream dgf;
@@ -35,16 +37,19 @@ std::string _PermutableGraph::PGVToMGVTable() {
   PermVertIterPair verts = GetVertices();
   for (; verts.first != verts.second; ++verts.first) {
     ss << "PGV " << GetVertexIndex(*verts.first) << " --> MGV ";
-    PermVertProp* p = GetProperties(*verts.first);
+    PermVertProp *p = GetProperties(*verts.first);
     uid_t u = source_->GetVertexIndex(p->source.first);
     uid_t v = source_->GetVertexIndex(p->source.second);
-    if (u < v) ss << u << "," << v << std::endl;
-    else ss << v << "," << u << std::endl;
+    if (u < v)
+      ss << u << "," << v << std::endl;
+    else
+      ss << v << "," << u << std::endl;
   }
   return ss.str();
 }
 
-_PermutableGraph::_PermutableGraph() : _PermGraph() { }
+_PermutableGraph::_PermutableGraph() : _PermGraph() {
+}
 
 _PermutableGraph::_PermutableGraph(MolecularGraph G) : _PermGraph() {
   SetInput(G);
@@ -52,7 +57,7 @@ _PermutableGraph::_PermutableGraph(MolecularGraph G) : _PermGraph() {
 
 _PermutableGraph::_PermutableGraph(PermutableGraph G) : _PermGraph() {
   source_ = G->GetSourceGraph();
-  
+
   PermVertIterPair verts = G->GetVertices();
   std::map<PermVertex, PermVertex> originalToNew;
   while (verts.first != verts.second) {
@@ -63,10 +68,10 @@ _PermutableGraph::_PermutableGraph(PermutableGraph G) : _PermGraph() {
     ++verts.first;
   }
   vert_idxmap_.clear();
-  for (auto& o2n : originalToNew) {
+  for (auto &o2n : originalToNew) {
     vert_idxmap_.insert({o2n.second, G->GetVertexIndex(o2n.first)});
   }
-  
+
   PermEdgeIterPair edges = G->GetEdges();
   while (edges.first != edges.second) {
     PermVertex v1_p = G->GetSource(*edges.first);
@@ -79,39 +84,39 @@ _PermutableGraph::_PermutableGraph(PermutableGraph G) : _PermGraph() {
 void _PermutableGraph::SetInput(MolecularGraph G) {
   Clear();
   source_ = G;
-  
+
   MolEdgeIterPair edges = G->GetEdges();
   std::map<MolVertex, PermVertex> molToPerm;
-  
+
   while (edges.first != edges.second) {
     MolVertex u = G->GetSource(*edges.first);
     MolVertex v = G->GetTarget(*edges.first);
     ++edges.first;
-    
+
     PermVertProp p_u, p_v;
     PermVertex u_, v_;
     p_u.source = std::make_pair(u, u);
     p_v.source = std::make_pair(v, v);
-    
+
     if (molToPerm.find(u) == molToPerm.end()) {
       u_ = AddVertex(p_u);
       molToPerm.emplace(u, u_);
-    }
-    else {
+    } else {
       u_ = molToPerm.at(u);
     }
     if (molToPerm.find(v) == molToPerm.end()) {
       v_ = AddVertex(p_v);
       molToPerm.emplace(v, v_);
-    }
-    else {
+    } else {
       v_ = molToPerm.at(v);
     }
-    
+
     if (fpt_::ADD_EDGES_TO_TD) {
       PermVertProp p_w;
-      if (u < v) p_w.source = std::make_pair(u, v);
-      else p_w.source = std::make_pair(v, u);
+      if (u < v)
+        p_w.source = std::make_pair(u, v);
+      else
+        p_w.source = std::make_pair(v, u);
       PermVertex w_ = AddVertex(p_w);
       AddEdge(u_, w_);
       AddEdge(v_, w_);
@@ -126,7 +131,8 @@ void _PermutableGraph::EliminateVertex(PermVertex v) {
   while (outer.first != outer.second) {
     PermNbrsIterPair inner = GetNeighbours(v);
     while (inner.first != inner.second) {
-      if (*inner.first != *outer.first) AddEdge(*inner.first, *outer.first);
+      if (*inner.first != *outer.first)
+        AddEdge(*inner.first, *outer.first);
       ++inner.first;
     }
     ++outer.first;

@@ -61,7 +61,7 @@ namespace indigox::graph {
   public:
     /*! \brief Get the bond associated with this edge.
      *  \return the bond associated with this edge, if it is still alive. */
-    const Bond& GetBond() const;
+    const Bond &GetBond() const;
 
     /*! \brief Get the graph this edge is part of.
      *  \return the owning graph. */
@@ -92,7 +92,7 @@ namespace indigox::graph {
    *  assume that the parameters feed to them are valid. However, all the
    *  accessing methods do not make this assumption and so perform sanity
    *  checks. */
-  class MolecularGraph : public BaseGraph<MGVertex, MGEdge, MolecularGraph>{
+  class MolecularGraph : public BaseGraph<MGVertex, MGEdge, MolecularGraph> {
   public:
     //! \brief Friendship allows an Molecule to own a graph.
     friend class indigox::Molecule;
@@ -183,12 +183,12 @@ namespace indigox::graph {
     MolecularGraph Subgraph(std::vector<MGVertex> &vertices);
 
     MolecularGraph Subgraph(std::vector<MGVertex> &vertices,
-                             std::vector<MGEdge> &edges);
+                            std::vector<MGEdge> &edges);
 
     bool IsSubgraph() const;
-//    {
-//      return !_subg.expired();
-//    }
+    //    {
+    //      return !_subg.expired();
+    //    }
 
     using graph_type::GetEdge;
     using graph_type::HasEdge;
@@ -199,14 +199,14 @@ namespace indigox::graph {
      *  returned edge is null.
      *  \param bnd the bond to get the associated edge of.
      *  \return the associated edge. */
-    const MGEdge& GetEdge(const Bond &bnd) const;
+    const MGEdge &GetEdge(const Bond &bnd) const;
 
     /*! \brief Get the vertex associated with an atom.
      *  \details If the atom is not associated with a vertex of this graph,
      *  the returned vertex is null.
      *  \param atm the atom to get the assocaited vertex of.
      *  \return the associated vertex. */
-    const MGVertex& GetVertex(const Atom &atm) const;
+    const MGVertex &GetVertex(const Atom &atm) const;
 
     /*! \brief Check if the graph has a vertex associated with an atom.
      *  \param v that atom to check for.
@@ -228,17 +228,17 @@ namespace indigox::graph {
   private:
     struct Impl;
     std::shared_ptr<Impl> m_data;
-    
-//    //! \brief Map Atoms to their corresponding MGVertex
-//    AtomMap _at2v;
-//    //! \brief Map Bonds to their corresponding MGEdge
-//    BondMap _bn2e;
-//    //! \brief Source molecule
-//    Molecule _mol;
-//    //! \brief Condensed version of graph
-//    sCondensedMolecularGraph _cond;
-//    //! \brief If is subgraph
-//    wMolecularGraph _subg;
+
+    //    //! \brief Map Atoms to their corresponding MGVertex
+    //    AtomMap _at2v;
+    //    //! \brief Map Bonds to their corresponding MGEdge
+    //    BondMap _bn2e;
+    //    //! \brief Source molecule
+    //    Molecule _mol;
+    //    //! \brief Condensed version of graph
+    //    sCondensedMolecularGraph _cond;
+    //    //! \brief If is subgraph
+    //    wMolecularGraph _subg;
   };
 } // namespace indigox::graph
 

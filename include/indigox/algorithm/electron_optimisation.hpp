@@ -9,13 +9,13 @@
 #ifndef ELECTRON_OPTIMISATION_HPP
 #define ELECTRON_OPTIMISATION_HPP
 
-#include <cstdint>
-#include <string>
-#include <vector>
-#include <unordered_map>
-
 #include "../classes/electron_graph.hpp"
 #include "../classes/molecular_graph.hpp"
+
+#include <cstdint>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace indigox {
   namespace algorithm {
@@ -23,14 +23,14 @@ namespace indigox {
     class LocalOptimisation;
     class AStarOptimisation;
     class FPTOptimisation;
-  }
-  
+  } // namespace algorithm
+
   class ElectronOpt {
     friend class indigox::algorithm::ElectronOptimisationAlgorithm;
     friend class indigox::algorithm::LocalOptimisation;
     friend class indigox::algorithm::AStarOptimisation;
     friend class indigox::algorithm::FPTOptimisation;
-    
+
   public:
     uint32_t electronsToAdd_;
     std::vector<MolVertPair> possibleLocations_;
@@ -39,24 +39,25 @@ namespace indigox {
     std::unordered_map<uint32_t, FCSCORE> scores_;
     std::shared_ptr<algorithm::ElectronOptimisationAlgorithm> algo_;
     FCSCORE finalScore_;
-    
+
   public:
     ElectronOpt();
     ElectronOpt(MolecularGraph G);
-    
+
   public:
     void SetMolecularGraph(MolecularGraph G);
     size_t Run();
-    inline FCSCORE GetMinimisedEnergy() { return finalScore_; }
+    inline FCSCORE GetMinimisedEnergy() {
+      return finalScore_;
+    }
     bool ApplyElectronAssigment(size_t);
-    
+
   private:
     void DetermineElectronsToAdd();
     void DeterminePotentialElectronLocations();
     void LoadScores();
     void SortPotentialLocations();
-    
   };
-}
+} // namespace indigox
 
 #endif /* ELECTRON_OPTIMISATION_HPP */

@@ -79,13 +79,13 @@ namespace indigox {
   // =======================================================================
 
   Molecule::Impl::Impl(std::string n)
-      : name(n), molecular_charge(0),
-        modification_state(0), frozen(false), cached_formula_state(0),
-        angle_percieved_state(0), dihedral_percieved_state(0) {
+      : name(n), molecular_charge(0), modification_state(0), frozen(false),
+        cached_formula_state(0), angle_percieved_state(0),
+        dihedral_percieved_state(0) {
   }
 
   Molecule::Molecule(std::string n) : m_data(std::make_shared<Impl>(n)) {
-        m_data->molecular_graph = graph::MolecularGraph(*this);
+    m_data->molecular_graph = graph::MolecularGraph(*this);
   }
 
   // =======================================================================
@@ -647,7 +647,7 @@ namespace indigox {
     bnd.Reset();
     return true;
   }
-  
+
   bool Molecule::RemoveBond(const Atom &a, const Atom &b) {
     return RemoveBond(GetBond(a, b));
   }

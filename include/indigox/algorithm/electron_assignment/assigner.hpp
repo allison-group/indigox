@@ -1,6 +1,13 @@
 #ifndef INDIGOX_ALGORITHM_ELECTRON_OPTIMISER_HPP
 #define INDIGOX_ALGORITHM_ELECTRON_OPTIMISER_HPP
 
+#include "../../classes/periodictable.hpp"
+#include "../../graph/assignment.hpp"
+#include "../../utils/common.hpp"
+#include "../../utils/fwd_declares.hpp"
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
+
+#include <EASTL/vector_set.h>
 #include <bitset>
 #include <cstdint>
 #include <map>
@@ -8,17 +15,8 @@
 #include <string>
 #include <vector>
 
-#include <EASTL/vector_set.h>
-
-#include <boost/dynamic_bitset/dynamic_bitset.hpp>
-
-#include "../../classes/periodictable.hpp"
-#include "../../graph/assignment.hpp"
-#include "../../utils/common.hpp"
-#include "../../utils/fwd_declares.hpp"
-
 namespace indigox::algorithm {
-  
+
   //! Type of the score of an electron assignment.
   using score_t = uint64_t;
   //! Type of the mask used for assignments.
@@ -27,11 +25,11 @@ namespace indigox::algorithm {
   using key_t = uint32_t;
   //! Type of a score table
   using ScoreTable = std::map<key_t, score_t>;
-  
+
   class IXElectronAssigner {
     //! \brief Friendship allows creation of electron assigner instances
-    friend ElectronAssigner CreateElectronAssigner(const Molecule& m);
-    
+    friend ElectronAssigner CreateElectronAssigner(const Molecule &m);
+
   public:
     /*! \brief Base class for an electron assignment algorithm.
      *  \details An AssignAlgorithm is an algorithm for assigning electrons to
@@ -53,19 +51,20 @@ namespace indigox::algorithm {
         __initalised, //!< Algorithm initailised.
         __num_opts    //!< Number of options
       };
-      
+
     public:
-      AssignAlgorithm() = delete;   // no default constructor
-      
+      AssignAlgorithm() = delete; // no default constructor
+
       /*! \brief Normal constructor.
        *  \details Sets the algorithm options from how they are set at the time
        *  of construction.
        *  \param t reference to the score table for the algorithm to utilise. */
-      AssignAlgorithm(const ScoreTable& t);
-      
+      AssignAlgorithm(const ScoreTable &t);
+
       //! \brief Virtual destructor to avoid memory leaks.
-      virtual ~AssignAlgorithm() { }
-      
+      virtual ~AssignAlgorithm() {
+      }
+
       /*! \brief Initalise an assignment algorithm.
        *  \details Initalisation occurs in the following order. First an
        *  AssignmentGraph is generated from the molecule. The number of
@@ -74,28 +73,32 @@ namespace indigox::algorithm {
        *  electrons are determined. Throughout the initalisation process, sanity
        *  checks are performed to ensure that the initialised state is valid.
        *  \param m the molecule to assign electrons to. */
-      virtual void Initalise(const Molecule& m);
-      
+      virtual void Initalise(const Molecule &m);
+
       //! \brief Required method for algorithms to run.
       virtual void Run() = 0;
-      
+
       /*! \brief Obtain the AssignmentGraph in use by the algorithm.
        *  \details If the molecule assocaited with the assignment algorithm is
        *  no longer valid, or the algorithm has not been initalised, the
        *  returned shared_ptr is empty.
        *  \return the AssignmentGraph used by the algorithm. */
       graph::AssignmentGraph GetAssignmentGraph();
-      
+
       /*! \brief Get the optimised score.
        *  \details If the optimisation has not been run, returned score will be
        *  infinity.
        *  \return the score of the optimised electron assignment. */
-      inline score_t GetOptimisedScore() const { return _min_score; }
-      
+      inline score_t GetOptimisedScore() const {
+        return _min_score;
+      }
+
       /*! \brief Get the number of optimal assignments found.
        *  \return the number of optimal assignments found. */
-      inline size_t GetOptimalCount() const { return _results.size(); }
-      
+      inline size_t GetOptimalCount() const {
+        return _results.size();
+      }
+
       /*! \brief Apply an optimised assignment.
        *  \details Applies the optimised assignment at position \p idx to the
        *  Molecule. Application involves determining the bond order and formal
@@ -104,11 +107,13 @@ namespace indigox::algorithm {
        *  \param idx the index of the assignment to apply.
        *  \return if the application process was successful or not. */
       bool ApplyAssignment(size_t idx);
-      
+
       /*! \brief If the algorithm has been initalised or not.
        *  \return if the initalise method has been called. */
-      bool IsInitalised() const { return _opts[__initalised]; }
-      
+      bool IsInitalised() const {
+        return _opts[__initalised];
+      }
+
     protected:
       /*! \brief Calculates the upper score limit.
        *  \details The upper score limit can be used by an assignment algorithm
@@ -121,10 +126,11 @@ namespace indigox::algorithm {
        *  score the same as the upper limit. This method requires the algorithm
        *  to have been initialised.
        *  \return the assignment that generated the upper limit score.
-       *  \throws std::runtime_error if the method is called before initalistion.
+       *  \throws std::runtime_error if the method is called before
+       * initalistion.
        */
       AssignMask CalculateUpperLimit();
-      
+
       /*! \brief Calculate the score of a vertex.
        *  \details Determines the key of the vertex and returns the score of
        *  that key as present in the score table. There are three possibilities
@@ -143,10 +149,11 @@ namespace indigox::algorithm {
        *  been initialised.
        *  \param v the vertex to calculate the score of.
        *  \return the score of the vertex.
-       *  \throws std::runtime_error if the method is called before initalistion.
+       *  \throws std::runtime_error if the method is called before
+       * initalistion.
        */
-      score_t CalculateVertexScore(const graph::AGVertex& v) const;
-      
+      score_t CalculateVertexScore(const graph::AGVertex &v) const;
+
       /*! \brief Calculate the score of an assignment.
        *  \details Simply sets the assignment to that provided, and sums all
        *  the scores of the vertices in the AssignmentGraph. If any vertex is
@@ -155,10 +162,11 @@ namespace indigox::algorithm {
        *  algorithm to have been initialised.
        *  \param a the assignment to calculate the score of.
        *  \return the score of the assignment.
-       *  \throws std::runtime_error if the method is called before initalistion.
+       *  \throws std::runtime_error if the method is called before
+       * initalistion.
        */
-      score_t CalculateAssignmentScore(const AssignMask& a);
-      
+      score_t CalculateAssignmentScore(const AssignMask &a);
+
       /*! \brief Apply an assignment to the AssignmentGraph.
        *  \details Sets the assigned electron counts for all vertices in the
        *  AssignmentGraph given the provided mask. Only those assignments which
@@ -167,10 +175,11 @@ namespace indigox::algorithm {
        *  counts should only go through this method. This method requires the
        *  algorithm to have been initialised.
        *  \param a the assignment to set.
-       *  \throws std::runtime_error if the method is called before initalistion.
+       *  \throws std::runtime_error if the method is called before
+       * initalistion.
        */
-      void SetAssignment(const AssignMask& a);
-      
+      void SetAssignment(const AssignMask &a);
+
     protected:
       //! \brief Molecule working with
       _Molecule _mol;
@@ -191,7 +200,7 @@ namespace indigox::algorithm {
       //! \brief Optimised assignments
       std::vector<AssignMask> _results;
       //! \brief Reference to the score table
-      const ScoreTable& _table;
+      const ScoreTable &_table;
       //! \brief Maximum charge magnitude
       int16_t _max_charge;
       //! \brief Maximum number of results
@@ -199,30 +208,30 @@ namespace indigox::algorithm {
       //! \brief Previous assignment mask
       AssignMask _previous_mask;
     };
-    
+
     //! \brief Enum of the various electron assignment optimisation algorithms
     enum class AssignerAlgorithm {
       LocalOptimisation, //!< The local optimisation method.
-      AStar,              //!< An A* path finding method.
-      FPT                 //!< A dynamic programming method.
+      AStar,             //!< An A* path finding method.
+      FPT                //!< A dynamic programming method.
     };
-    
+
     struct Settings {
       /*! \brief Which algorithm to use to assign electrons.
        *  \details The default algorithm is the local optimisation method. */
       static AssignerAlgorithm Algorithm;
-      
+
       /*! \brief Assign electrons in pairs instead of singly.
        *  \details The default option (Auto) assigns pairs of electrons when
        *  there is an even number of electrons, and singly if there are an odd
        *  number of electrons. Valid options are Yes, No, Default and Auto. */
       static utils::Option ElectronPairs;
-      
+
       /*! \brief Allow carbons to have non zero formal charges.
        *  \details Default option is to allow. Valid options are Yes, No and
        *  Default. */
       static utils::Option ChargedCarbon;
-      
+
       /*! \brief Assign some electrons prior to performing optimisation.
        *  \details Default is to do so. Valid options are Yes, No and Default.
        *  Preassigned electrons are fixed and will not moving during the
@@ -235,32 +244,32 @@ namespace indigox::algorithm {
        *  - No electrons on all other types of atoms.
        *  - Two electrons on all bonds. */
       static utils::Option Preassign;
-      
+
       /*! \brief Path to the assignment score file.
        *  \details The assignment score file contains the scores to be assigned
        *  to the various formal charge and bond order states obtained through
        *  an electron assignment. The path should be either relative to the data
        *  directory, or an absolute path. */
       static std::string ScoreFile;
-      
+
       /*! \brief Value of an infinite score.
        *  \details Default value (which probably should not need to be changed)
        *  is std::numeric_limits<score_t>::max(). Any electron assignment
        *  with a final score of the infinite value is considered invalid. */
       static score_t Infinity;
-      
+
       /*! \brief Maximum bond order to assign.
        *  \details This limits the number of electrons which can be assigned
        *  to a bond to twice this value. Default value is 3.
        *  \todo Convert to using the BondOrder enum. */
       static uint8_t MaxBondOrder;
-      
+
       /*! \brief The maximum allowed charge magnitude on an atom.
        *  \details Any assignment which results in the formal charge of an atom
        *  being larger than this value will be given an infinte score. If this
        *  value is negative, there is no limit applied. Default value is -1. */
       static int16_t MaxChargeMagnitude;
-      
+
       /*! \brief Maximum number of degenerate score results to calculate.
        *  \details Optimisation algorithms are capable to returning multiple
        *  electron assignments with the same minimum score. This setting
@@ -270,7 +279,7 @@ namespace indigox::algorithm {
        *  and computational time being required. If set to 0, all results will
        *  be returned. Default value is 64. */
       static uint16_t MaxNumResults;
-      
+
       /*! \brief Set of elements for which scores are available.
        *  \details If a molecule contains elements not in this list, the
        *  assignment algorithms will not be able to execute and so an exception
@@ -280,35 +289,36 @@ namespace indigox::algorithm {
        *  Br. */
       static eastl::vector_set<Element> AllowedElements;
     };
-    
+
   public:
-    IXElectronAssigner() = delete;  // no default constructor
-   
+    IXElectronAssigner() = delete; // no default constructor
+
   private:
     /*! \brief Normal constructor. */
-    IXElectronAssigner(const Molecule& mol) : _mol(mol) { }
-    
+    IXElectronAssigner(const Molecule &mol) : _mol(mol) {
+    }
+
   public:
     /*! \brief Run the electron assignment.
      *  \details Initalises and runs the assignment algorithm based on the
-     *  current settings of both the IXElectronAssigner and the algorithm to run.
-     *  Before running, performs a sanity check to ensure that the molecule
+     *  current settings of both the IXElectronAssigner and the algorithm to
+     * run. Before running, performs a sanity check to ensure that the molecule
      *  meets the allowed elements rules.
      *  \return the number of electron assignments found. */
     size_t Run();
-    
+
     /*! \brief Get the AssignmentGraph used by the assignment algorithm.
      *  \return the AssignmentGraph used by the algorithm. */
     inline graph::AssignmentGraph GetAssignmentGraph() {
       return _algo->GetAssignmentGraph();
     }
-    
+
     /*! \brief Load the current score file.
      *  \details Loads the current set score file. First attempts to load a path
      *  relative to the data directory. If that fails, attempts to load an
      *  absolute path. */
     void LoadScoreTable();
-    
+
     /*! \brief Apply the given assignment.
      *  \details A number of situations will result in unsuscessful application
      *  of an assignment. If the requested index is outside the range of the
@@ -320,10 +330,14 @@ namespace indigox::algorithm {
     inline bool ApplyAssignment(size_t idx) {
       return _algo->ApplyAssignment(idx);
     }
-    
-    inline size_t GetOptimalCount() const { return _algo->GetOptimalCount(); }
-    inline score_t GetOptimisedScore() const { return _algo->GetOptimisedScore(); }
-    
+
+    inline size_t GetOptimalCount() const {
+      return _algo->GetOptimalCount();
+    }
+    inline score_t GetOptimisedScore() const {
+      return _algo->GetOptimisedScore();
+    }
+
   private:
     //! \brief Reference to the assigned molecule.
     _Molecule _mol;
@@ -334,16 +348,16 @@ namespace indigox::algorithm {
     //! \brief Currently loaded score file
     std::string _current_file;
   };
-  
+
   //! \brief Type for the enum of available assignment algorithms
   using AssignerAlgorithm = IXElectronAssigner::AssignerAlgorithm;
-  
+
   /*! \brief Create an ElectronAssigner.
    *  \param m the molecule this electron assigner is for.
    *  \return a new ElectronAssigner. */
-  inline ElectronAssigner CreateElectronAssigner(const Molecule& m) {
+  inline ElectronAssigner CreateElectronAssigner(const Molecule &m) {
     return ElectronAssigner(new IXElectronAssigner(m));
   }
-}
+} // namespace indigox::algorithm
 
 #endif /* INDIGOX_ALGORITHM_ELECTRON_OPTIMISER_HPP */

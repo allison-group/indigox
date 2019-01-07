@@ -5,6 +5,12 @@
 //  Created by Welsh, Ivan on 11/01/18.
 //  Copyright © 2017 Allison Group. All rights reserved.
 //
+#include "indigox/classes/treedecomp.hpp"
+
+#include "indigox/classes/molecular_graph.hpp"
+#include "indigox/classes/permutablegraph.hpp"
+#include "indigox/utils/options.hpp"
+
 #include <algorithm>
 #include <iostream>
 #include <limits>
@@ -14,29 +20,22 @@
 #include <string>
 #include <vector>
 
-
-#include "indigox/classes/molecular_graph.hpp"
-#include "indigox/classes/permutablegraph.hpp"
-#include "indigox/classes/treedecomp.hpp"
-
-#include "indigox/utils/options.hpp"
-
 #ifdef BUILD_JAVA
 #include "indigox/utils/java_interface.hpp"
 #endif
 
 namespace indigox {
-  
-  
+
   typedef Options::AssignElectrons::FPT fpt_;
-  
-  _TDecomp::_TDecomp() : _TDGraph() { }
-  
+
+  _TDecomp::_TDecomp() : _TDGraph() {
+  }
+
   _TDecomp::_TDecomp(PermutableGraph G, ElimOrder &order)
-  : _TDGraph(), originalG_(G) {
+      : _TDGraph(), originalG_(G) {
     SetInput(G, order);
   }
-  
+
   std::string _TDecomp::ToString() {
     std::ostringstream ss;
 
@@ -44,7 +43,7 @@ namespace indigox {
     TDVertIterPair bags = GetVertices();
     for (; bags.first != bags.second; ++bags.first) {
       ss << "    bag" << GetVertexIndex(*bags.first) << " : ";
-      TDVertProp* p = GetProperties(*bags.first);
+      TDVertProp *p = GetProperties(*bags.first);
       for (PermVertex v : p->bag) {
         ss << originalG_->GetVertexIndex(v) << " ";
       }
@@ -60,19 +59,20 @@ namespace indigox {
     }
     return ss.str();
   }
-  
+
   void _TDecomp::SetInput(PermutableGraph G, ElimOrder &order) {
     Clear();
     originalG_ = PermutableGraph(G);
     permG_ = PermutableGraph(new _PermutableGraph(G));
     uid_t eIdx = 0;
-    for (PermVertex v : order) elimiIndex_.emplace(v, eIdx++);
+    for (PermVertex v : order)
+      elimiIndex_.emplace(v, eIdx++);
     FromOrder(order, 0);
   }
-  
+
   void _TDecomp::FromOrder(ElimOrder &order, size_t index) {
     size_t s = permG_->NumVertices();
-    
+
     if (s == 0) { // shouldn't happen
       upperBound_ = 0;
     } else if (s == 1) {
@@ -93,7 +93,7 @@ namespace indigox {
       uid_t thisIdx = originalG_->GetVertexIndex(order[index]);
       PermVertex thisV = permG_->GetVertexByIndex(thisIdx).first;
       size_t numNbrs = permG_->Degree(thisV);
-      
+
       uid_t lowIdx = std::numeric_limits<uid_t>::max();
       PermVertex lowNbr = NULL;
       TDVertProp p;
@@ -109,15 +109,15 @@ namespace indigox {
           lowNbr = *nbrs.first;
         }
       }
-      
+
       permG_->EliminateVertex(thisV);
       FromOrder(order, index + 1);
-      
+
       upperBound_ = std::max(upperBound_, numNbrs);
       TDVertex v = AddVertex(p);
       bagMap_.emplace(thisV, v);
-      if (lowNbr != NULL) AddEdge(v, bagMap_.at(lowNbr));
+      if (lowNbr != NULL)
+        AddEdge(v, bagMap_.at(lowNbr));
     }
   }
-}
-
+} // namespace indigox

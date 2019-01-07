@@ -4,9 +4,9 @@
 #include <indigox/utils/serialise.hpp>
 #include <indigox/utils/triple.hpp>
 
-#include <numeric>
 #include <array>
 #include <initializer_list>
+#include <numeric>
 
 namespace indigox {
 
@@ -65,19 +65,19 @@ namespace indigox {
   // ===========================================================================
 
   int32_t FFAtom::GetID() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->id;
   }
   std::string FFAtom::GetName() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->name;
   }
   Forcefield FFAtom::GetForcefield() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->ff;
   }
   Element FFAtom::GetElement() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return GetPeriodicTable()[m_data->element];
   }
 
@@ -90,15 +90,15 @@ namespace indigox {
     _sanity_check_(atm);
     return GetID() == atm.GetID() && GetName() == atm.GetName();
   }
-  
+
   bool FFAtom::operator<(const FFAtom &atm) const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     _sanity_check_(atm);
     return GetID() < atm.GetID();
   }
-  
+
   bool FFAtom::operator>(const FFAtom &atm) const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     _sanity_check_(atm);
     return GetID() > atm.GetID();
   }
@@ -106,7 +106,7 @@ namespace indigox {
   std::ostream &operator<<(std::ostream &os, const FFAtom &atm) {
     if (atm) {
       os << "FFAtom(" << atm.GetID() << ")";
-      }
+    }
     return os;
   }
 
@@ -186,26 +186,26 @@ namespace indigox {
             : throw std::runtime_error("Disallowed parameter type requested"));
   }
   double FFBond::GetIdealLength() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return (
         m_data->allowed_parameters[Allow_IdealLength]
             ? m_data->raw_data[Store_IdealLength]
             : throw std::runtime_error("Disallowed parameter type requested"));
   }
   BondType FFBond::GetType() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->type;
   }
   int32_t FFBond::GetID() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->id;
   }
   FFBond FFBond::GetLinkedType() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->linked_bond;
   }
   Forcefield FFBond::GetForcefield() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->ff;
   }
 
@@ -214,15 +214,15 @@ namespace indigox {
   // ===========================================================================
 
   bool FFBond::operator==(const FFBond &bnd) const {
-  _sanity_check_(*this);
-  _sanity_check_(bnd);
+    _sanity_check_(*this);
+    _sanity_check_(bnd);
     return (GetType() == bnd.GetType() && GetID() == bnd.GetID() &&
             m_data->raw_data == bnd.m_data->raw_data);
   }
-  
+
   bool FFBond::operator<(const FFBond &bnd) const {
-  _sanity_check_(*this);
-  _sanity_check_(bnd);
+    _sanity_check_(*this);
+    _sanity_check_(bnd);
     if (GetType() < bnd.GetType())
       return true;
     if (GetID() < bnd.GetID())
@@ -230,8 +230,8 @@ namespace indigox {
     return false;
   }
   bool FFBond::operator>(const FFBond &bnd) const {
-  _sanity_check_(*this);
-  _sanity_check_(bnd);
+    _sanity_check_(*this);
+    _sanity_check_(bnd);
     if (GetType() > bnd.GetType())
       return true;
     if (GetID() > bnd.GetID())
@@ -257,10 +257,10 @@ namespace indigox {
       os << "FFBond(" << bnd.GetType() << ", " << bnd.GetID() << ")";
     return os;
   }
-  
-  #undef _sanity_check_
-  
-  #ifndef INDIGOX_DISABLE_SANITY_CHECKS
+
+#undef _sanity_check_
+
+#ifndef INDIGOX_DISABLE_SANITY_CHECKS
 #define _sanity_check_(x)                                                      \
   if (!x)                                                                      \
   throw std::runtime_error(                                                    \
@@ -327,33 +327,33 @@ namespace indigox {
   // ===========================================================================
 
   double FFAngle::GetForceConstant() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return (
         m_data->allowed_parameters[Allow_ForceConstant]
             ? m_data->raw_data[Store_ForceConstant]
             : throw std::runtime_error("Disallowed parameter type requested"));
   }
   double FFAngle::GetIdealAngle() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return (
         m_data->allowed_parameters[Allow_IdealAngle]
             ? m_data->raw_data[Store_IdealAngle]
             : throw std::runtime_error("Disallowed parameter type requested"));
   }
   AngleType FFAngle::GetType() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->type;
   }
   int32_t FFAngle::GetID() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->id;
   }
   FFAngle FFAngle::GetLinkedType() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->linked_angle;
   }
   Forcefield FFAngle::GetForcefield() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->ff;
   }
 
@@ -362,14 +362,14 @@ namespace indigox {
   // ===========================================================================
 
   bool FFAngle::operator==(const FFAngle &ang) const {
-  _sanity_check_(*this);
-  _sanity_check_(ang);
+    _sanity_check_(*this);
+    _sanity_check_(ang);
     return (GetType() == ang.GetType() && GetID() == ang.GetID() &&
             m_data->raw_data == ang.m_data->raw_data);
   }
   bool FFAngle::operator<(const FFAngle &ang) const {
-  _sanity_check_(*this);
-  _sanity_check_(ang);
+    _sanity_check_(*this);
+    _sanity_check_(ang);
     if (GetType() < ang.GetType())
       return true;
     if (GetID() < ang.GetID())
@@ -377,8 +377,8 @@ namespace indigox {
     return false;
   }
   bool FFAngle::operator>(const FFAngle &ang) const {
-  _sanity_check_(*this);
-  _sanity_check_(ang);
+    _sanity_check_(*this);
+    _sanity_check_(ang);
     if (GetType() > ang.GetType())
       return true;
     if (GetID() > ang.GetID())
@@ -473,41 +473,43 @@ namespace indigox {
   // ===========================================================================
 
   double FFDihedral::GetPhaseShift() const {
-  _sanity_check_(*this);
-    return (m_data->allowed_parameters[Allow_PhaseShift]
+    _sanity_check_(*this);
+    return (
+        m_data->allowed_parameters[Allow_PhaseShift]
             ? m_data->raw_data[Store_PhaseShift]
             : throw std::runtime_error("Disallowed parameter type requested"));
   }
   double FFDihedral::GetForceConstant() const {
-  _sanity_check_(*this);
-    return ( m_data->allowed_parameters[Allow_ForceConstant]
+    _sanity_check_(*this);
+    return (
+        m_data->allowed_parameters[Allow_ForceConstant]
             ? m_data->raw_data[Store_ForceConstant]
             : throw std::runtime_error("Disallowed parameter type requested"));
   }
   int32_t FFDihedral::GetMultiplicity() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return (
         m_data->allowed_parameters[Allow_Multiplicity]
             ? static_cast<int32_t>(m_data->raw_data[Store_Multiplicity])
             : throw std::runtime_error("Disallowed parameter type requested"));
   }
   double FFDihedral::GetIdealAngle() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return (
         m_data->allowed_parameters[Allow_IdealAngle]
             ? m_data->raw_data[Store_IdealAngle]
             : throw std::runtime_error("Disallowed parameter type requested"));
   }
   DihedralType FFDihedral::GetType() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->type;
   }
   int32_t FFDihedral::GetID() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->id;
   }
   Forcefield FFDihedral::GetForcefield() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->ff;
   }
 
@@ -516,14 +518,14 @@ namespace indigox {
   // ===========================================================================
 
   bool FFDihedral::operator==(const FFDihedral &dhd) const {
-  _sanity_check_(*this);
-  _sanity_check_(dhd);
+    _sanity_check_(*this);
+    _sanity_check_(dhd);
     return (GetType() == dhd.GetType() && GetID() == dhd.GetID() &&
             m_data->raw_data == dhd.m_data->raw_data);
   }
   bool FFDihedral::operator<(const FFDihedral &dhd) const {
-  _sanity_check_(*this);
-  _sanity_check_(dhd);
+    _sanity_check_(*this);
+    _sanity_check_(dhd);
     if (GetType() < dhd.GetType())
       return true;
     if (GetID() < dhd.GetID())
@@ -531,8 +533,8 @@ namespace indigox {
     return false;
   }
   bool FFDihedral::operator>(const FFDihedral &dhd) const {
-  _sanity_check_(*this);
-  _sanity_check_(dhd);
+    _sanity_check_(*this);
+    _sanity_check_(dhd);
     if (GetType() > dhd.GetType())
       return true;
     if (GetID() > dhd.GetID())
@@ -678,7 +680,7 @@ namespace indigox {
   // ===========================================================================
 
   FFBond Forcefield::NewBondType(BondType type, int32_t id, FFParam param) {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     if (!m_data->Contains(type))
       throw std::out_of_range("Unsupported bond type");
     if (m_data->Contains(type, id))
@@ -688,7 +690,7 @@ namespace indigox {
   }
 
   FFAngle Forcefield::NewAngleType(AngleType type, int32_t id, FFParam param) {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     if (!m_data->Contains(type))
       throw std::out_of_range("Unsupported angle type");
     if (m_data->Contains(type, id))
@@ -698,8 +700,8 @@ namespace indigox {
   }
 
   FFDihedral Forcefield::NewDihedralType(DihedralType type, int32_t id,
-                                          FFParam param) {
-_sanity_check_(*this);
+                                         FFParam param) {
+    _sanity_check_(*this);
     if (!m_data->Contains(type))
       throw std::out_of_range("Unsupported dihedral type");
     if (m_data->Contains(type, id))
@@ -709,8 +711,8 @@ _sanity_check_(*this);
   }
 
   FFAtom Forcefield::NewAtomType(int32_t id, std::string name,
-                                  const Element &element) {
-                                  _sanity_check_(*this);
+                                 const Element &element) {
+    _sanity_check_(*this);
     FFAtom atm(id, name, element, *this);
     if (std::find(m_data->atoms.begin(), m_data->atoms.end(), atm) !=
         m_data->atoms.end())
@@ -728,9 +730,9 @@ _sanity_check_(*this);
   }
 
   void Forcefield::LinkBondTypes(const FFBond &a, const FFBond &b) {
-  _sanity_check_(*this);
-  _sanity_check_(a);
-  _sanity_check_(b);
+    _sanity_check_(*this);
+    _sanity_check_(a);
+    _sanity_check_(b);
     a.m_data->linked_bond = b;
     b.m_data->linked_bond = a;
   }
@@ -740,15 +742,14 @@ _sanity_check_(*this);
       m_data->bonds.at(type).reserve(size);
   }
 
-  FFAngle Forcefield::NewAngleType(AngleType t, int32_t i, double a,
-                                    double b) {
+  FFAngle Forcefield::NewAngleType(AngleType t, int32_t i, double a, double b) {
     return NewAngleType(t, i, {a, b});
   }
 
   void Forcefield::LinkAngleTypes(const FFAngle &a, const FFAngle &b) {
-  _sanity_check_(*this);
-  _sanity_check_(a);
-  _sanity_check_(b);
+    _sanity_check_(*this);
+    _sanity_check_(a);
+    _sanity_check_(b);
     a.m_data->linked_angle = b;
     b.m_data->linked_angle = a;
   }
@@ -759,17 +760,17 @@ _sanity_check_(*this);
   }
 
   FFDihedral Forcefield::NewDihedralType(DihedralType type, int32_t id,
-                                          double a, double b, double c) {
+                                         double a, double b, double c) {
     return NewDihedralType(type, id, {b, a, c});
   }
 
   FFDihedral Forcefield::NewDihedralType(DihedralType type, int32_t id,
-                                          double a, double b) {
+                                         double a, double b) {
     return NewDihedralType(type, id, {b, a});
   }
 
   void Forcefield::ReserveDihedralTypes(DihedralType type, size_t size) {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     if (m_data->Contains(type))
       m_data->dihedrals.at(type).reserve(size);
   }
@@ -782,34 +783,34 @@ _sanity_check_(*this);
     return std::accumulate(
         begin, end, 0, [](size_t a, auto &b) { return a + b.second.size(); });
   }
-  
+
   FFAtom Forcefield::GetAtomType(std::string name) const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     auto bgn = m_data->atoms.begin();
     auto end = m_data->atoms.end();
     auto fnd = [&name](FFAtom atm) { return atm.GetName() == name; };
     auto pos = std::find_if(bgn, end, fnd);
     return (pos == end) ? FFAtom() : *pos;
   }
-  
+
   FFAtom Forcefield::GetAtomType(int32_t id) const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     auto bgn = m_data->atoms.begin();
     auto end = m_data->atoms.end();
     auto fnd = [&id](auto &Z) { return Z.GetID() == id; };
     auto pos = std::find_if(bgn, end, fnd);
     return (pos == end) ? FFAtom() : *pos;
   }
-  
+
   size_t Forcefield::NumAtomTypes() const {
     return m_data->atoms.size();
   }
-  
+
   FFBond Forcefield::GetBondType(BondType type, int32_t id) const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     if (!m_data->Contains(type)) {
       return FFBond();
-      }
+    }
     auto bgn = m_data->bonds.at(type).begin();
     auto end = m_data->bonds.at(type).end();
     auto fnd = [&id](auto &Z) { return Z.GetID() == id; };
@@ -817,62 +818,62 @@ _sanity_check_(*this);
     return (pos == end) ? FFBond() : *pos;
   }
   FFBond Forcefield::GetBondType(int32_t id) const {
-  _sanity_check_(*this);
-  FFBond typ;
+    _sanity_check_(*this);
+    FFBond typ;
     for (auto &types : m_data->bonds) {
       typ = GetBondType(types.first, id);
       if (typ) {
-      break;
+        break;
       }
     }
     return typ;
   }
-  
+
   size_t Forcefield::NumBondTypes() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return sum_of_sizes(m_data->bonds.begin(), m_data->bonds.end());
   }
-  
+
   size_t Forcefield::NumBondTypes(BondType type) const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->Contains(type) ? m_data->bonds.at(type).size() : 0;
   }
   FFAngle Forcefield::GetAngleType(AngleType type, int32_t id) const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     if (!m_data->Contains(type)) {
       return FFAngle();
-      }
+    }
     auto bgn = m_data->angles.at(type).begin();
     auto end = m_data->angles.at(type).end();
     auto fnd = [&id](auto &Z) { return Z.GetID() == id; };
     auto pos = std::find_if(bgn, end, fnd);
     return (pos == end) ? FFAngle() : *pos;
   }
-  
+
   FFAngle Forcefield::GetAngleType(int id) const {
-  _sanity_check_(*this);
-  FFAngle ang;
+    _sanity_check_(*this);
+    FFAngle ang;
     for (auto &types : m_data->angles) {
       ang = GetAngleType(types.first, id);
       if (ang) {
-      break;
+        break;
       }
     }
     return ang;
   }
-  
+
   size_t Forcefield::NumAngleTypes() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return sum_of_sizes(m_data->angles.begin(), m_data->angles.end());
   }
-  
+
   size_t Forcefield::NumAngleTypes(AngleType type) const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->Contains(type) ? m_data->angles.at(type).size() : 0;
   }
-  
+
   FFDihedral Forcefield::GetDihedralType(DihedralType type, int32_t id) const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     if (!m_data->Contains(type)) {
       return FFDihedral();
     }
@@ -881,35 +882,35 @@ _sanity_check_(*this);
     auto fnd = [&id](auto &Z) { return Z.GetID() == id; };
     auto pos = std::find_if(bgn, end, fnd);
     return (pos == end) ? FFDihedral() : *pos;
-    }
-  
+  }
+
   FFDihedral Forcefield::GetDihedralType(int32_t id) const {
-  _sanity_check_(*this);
-  FFDihedral dhd;
+    _sanity_check_(*this);
+    FFDihedral dhd;
     for (auto &types : m_data->dihedrals) {
       dhd = GetDihedralType(types.first, id);
       if (dhd) {
-      break;
+        break;
       }
     }
     return dhd;
   }
-  
+
   size_t Forcefield::NumDihedralTypes() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return sum_of_sizes(m_data->dihedrals.begin(), m_data->dihedrals.end());
   }
-  
+
   size_t Forcefield::NumDihedralTypes(DihedralType type) const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->Contains(type) ? m_data->dihedrals.at(type).size() : 0;
   }
   FFFamily Forcefield::GetFamily() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->family;
   }
   std::string Forcefield::GetName() const {
-  _sanity_check_(*this);
+    _sanity_check_(*this);
     return m_data->name;
   }
 
@@ -918,8 +919,8 @@ _sanity_check_(*this);
   // ===========================================================================
 
   bool Forcefield::operator==(const Forcefield &ff) const {
-  _sanity_check_(*this);
-  _sanity_check_(ff);
+    _sanity_check_(*this);
+    _sanity_check_(ff);
     if (GetFamily() != ff.GetFamily())
       return false;
     if (GetName() != ff.GetName())

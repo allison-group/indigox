@@ -7,9 +7,9 @@
  *  @copyright The MIT License
  */
 
-#include <limits>
-
 #include "indigox/utils/options.hpp"
+
+#include <limits>
 
 using namespace indigox;
 
@@ -25,7 +25,7 @@ typedef assign_::LocalOptimisation lo_;
 // General
 #ifndef DFT_DATA_DIR
 //#define DFT_DATA_DIR "data"
-#define DFT_DATA_DIR /Users/iwelsh/GitHub/indigox/indigox/data
+#define DFT_DATA_DIR / Users / iwelsh / GitHub / indigox / indigox / data
 #endif
 
 std::string opt_::DATA_DIRECTORY = QUOTE(DFT_DATA_DIR);
@@ -53,7 +53,8 @@ std::string opt_::DATA_DIRECTORY = QUOTE(DFT_DATA_DIR);
 #define DFT_ASSIGNELECTRON_MAX_BOND_ORDER 3
 #endif
 #ifndef DFT_ASSIGNELECTRON_ALLOWED_ELEMENTS
-#define DFT_ASSIGNELECTRON_ALLOWED_ELEMENTS "H", "C", "N", "O", "S", "P", "F", "Cl", "Br"
+#define DFT_ASSIGNELECTRON_ALLOWED_ELEMENTS                                    \
+  "H", "C", "N", "O", "S", "P", "F", "Cl", "Br"
 #endif
 #ifndef DFT_ASSIGNELECTRON_AUTO_USE_PAIRS
 #define DFT_ASSIGNELECTRON_AUTO_USE_PAIRS true
@@ -79,12 +80,12 @@ uint8_t assign_::MAXIMUM_BOND_ORDER = DFT_ASSIGNELECTRON_MAX_BOND_ORDER;
 bool assign_::USE_ELECTRON_PAIRS = DFT_ASSIGNELECTRON_USE_PAIRS;
 bool assign_::AUTO_USE_ELECTRON_PAIRS = DFT_ASSIGNELECTRON_AUTO_USE_PAIRS;
 bool assign_::USE_CHARGED_BOND_ENERGIES = DFT_ASSIGNELECTRON_CHARGED_BONDS;
-std::set<std::string> assign_::ALLOWED_ELEMENTS = {DFT_ASSIGNELECTRON_ALLOWED_ELEMENTS};
+std::set<std::string> assign_::ALLOWED_ELEMENTS = {
+    DFT_ASSIGNELECTRON_ALLOWED_ELEMENTS};
 uint32_t assign_::HIGHEST_MAGNITUDE_CHARGE = DFT_ASSIGNELECTRON_HIGHEST_CHARGE;
 bool assign_::ALLOW_CHARGED_CARBON = DFT_ASSIGNELECTRON_ALLOW_CHARGE_CARBON;
 uint32_t assign_::MAXIMUM_RESULT_COUNT = DFT_ASSIGNELECTRON_MAX_RESULT;
 bool assign_::PREPLACE_ELECTRONS = DFT_ASSIGNELECTRON_PREPLACE;
-
 
 // AssignElectron A*
 #ifndef DFT_ASSIGNELECTRON_ASTAR_HEURISTIC
@@ -96,7 +97,6 @@ bool assign_::PREPLACE_ELECTRONS = DFT_ASSIGNELECTRON_PREPLACE;
 
 astar_::Heuristic astar_::HEURISTIC = DFT_ASSIGNELECTRON_ASTAR_HEURISTIC;
 uint64_t astar_::MEGABYTE_LIMIT = DFT_ASSIGNELECTRON_ASTAR_MEGABYTE_LIMIT;
-
 
 // AssignElectron FPT
 #ifndef DFT_ASSIGNELECTRON_FPT_JAR_FILE
@@ -135,7 +135,6 @@ bool lo_::CACHE_RESULTS = DFT_ASSIGNELECTRON_LO_CACHE;
 bool lo_::CACHE_INFINITIES = DFT_ASSIGNELECTRON_LO_CACHE_INFINITIES;
 uint32_t lo_::TIMEOUT_LIMIT = DFT_ASSIGNELECTRON_LO_TIMELIMIT;
 
-
 void Options::Reset() {
   // AssignElectron general
   assign_::ALGORITHM = DFT_ASSIGNELECTRON_ALGORITHM;
@@ -164,7 +163,4 @@ void Options::Reset() {
   lo_::CACHE_RESULTS = DFT_ASSIGNELECTRON_LO_CACHE;
   lo_::CACHE_INFINITIES = DFT_ASSIGNELECTRON_LO_CACHE_INFINITIES;
   lo_::TIMEOUT_LIMIT = DFT_ASSIGNELECTRON_LO_TIMELIMIT;
-  
 }
-
-

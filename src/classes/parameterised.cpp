@@ -89,17 +89,17 @@ namespace indigox {
     return CalculateMean(m_data->charges.begin(), m_data->charges.end());
   }
   double ParamAtom::MeadianCharge() {
-    return CalculateMedian(m_data->charges.begin(),
-                           m_data->charges.end());
+    return CalculateMedian(m_data->charges.begin(), m_data->charges.end());
   }
   double ParamAtom::StandardDeviationCharge() const {
     return CalculateStandardDeviation(m_data->charges.begin(),
                                       m_data->charges.end());
   }
-  const FFAtom& ParamAtom::GetMostCommonType() const {
+  const FFAtom &ParamAtom::GetMostCommonType() const {
     using T = TypeCounts::value_type;
     return std::max_element(m_data->types.begin(), m_data->types.end(),
-                              [](T &a, T &b) { return a.second < b.second; })->first;
+                            [](T &a, T &b) { return a.second < b.second; })
+        ->first;
   }
   const ParamAtom::TypeCounts &ParamAtom::GetMappedTypeCounts() const {
     return m_data->types;
@@ -193,24 +193,26 @@ namespace indigox {
 
   int64_t ParamBond::NumSourceBonds() const {
     int64_t count = 0;
-    for (auto& countable : m_data->types) count += countable.second;
+    for (auto &countable : m_data->types)
+      count += countable.second;
     return count;
   }
-  
-  const ParamBond::BondAtoms& ParamBond::GetAtoms() const {
+
+  const ParamBond::BondAtoms &ParamBond::GetAtoms() const {
     return m_data->atoms;
   }
-  
+
   const Bond &ParamBond::GetBond() const {
     return m_data->bond;
   }
-  
-  const FFBond& ParamBond::GetMostCommonType() const {
+
+  const FFBond &ParamBond::GetMostCommonType() const {
     using T = TypeCounts::value_type;
     return std::max_element(m_data->types.begin(), m_data->types.end(),
-                              [](T &a, T &b) { return a.second < b.second; })->first;
+                            [](T &a, T &b) { return a.second < b.second; })
+        ->first;
   }
-  
+
   const ParamBond::TypeCounts &ParamBond::GetMappedTypeCounts() const {
     return m_data->types;
   }
@@ -222,12 +224,12 @@ namespace indigox {
   bool ParamBond::operator==(const ParamBond &bnd) const {
     return m_data->bond == bnd.m_data->bond;
   }
-  
+
   bool ParamBond::operator<(const ParamBond &bnd) const {
     return (m_data->bond.GetIndex() < bnd.m_data->bond.GetIndex());
   }
   bool ParamBond::operator>(const ParamBond &bnd) const {
-    return (m_data->bond.GetIndex() >  bnd.m_data->bond.GetIndex());
+    return (m_data->bond.GetIndex() > bnd.m_data->bond.GetIndex());
   }
   std::ostream &operator<<(std::ostream &os, const ParamBond &bnd) {
     if (bnd)
@@ -288,7 +290,7 @@ namespace indigox {
       return false;
     if (self_consistent && m_data->types.size() > 1)
       throw std::runtime_error("Types not self-consistent");
-    
+
     if (!m_data->angle)
       throw std::runtime_error("Mapped angle missing");
     m_data->angle.SetType(GetMostCommonType());
@@ -302,24 +304,26 @@ namespace indigox {
 
   int64_t ParamAngle::NumSourceAngles() const {
     int64_t count = 0;
-    for (auto& countable : m_data->types) count += countable.second;
+    for (auto &countable : m_data->types)
+      count += countable.second;
     return count;
   }
-  
-  const ParamAngle::AngleAtoms& ParamAngle::GetAtoms() const {
+
+  const ParamAngle::AngleAtoms &ParamAngle::GetAtoms() const {
     return m_data->atoms;
   }
-  
+
   const Angle &ParamAngle::GetAngle() const {
     return m_data->angle;
   }
-  
-  const FFAngle& ParamAngle::GetMostCommonType() const {
+
+  const FFAngle &ParamAngle::GetMostCommonType() const {
     using T = TypeCounts::value_type;
     return std::max_element(m_data->types.begin(), m_data->types.end(),
-                              [](T &a, T &b) { return a.second < b.second; })->first;
+                            [](T &a, T &b) { return a.second < b.second; })
+        ->first;
   }
-  
+
   const ParamAngle::TypeCounts &ParamAngle::GetMappedTypeCounts() const {
     return m_data->types;
   }
@@ -331,7 +335,7 @@ namespace indigox {
   bool ParamAngle::operator==(const ParamAngle &ang) const {
     return m_data->angle == ang.m_data->angle;
   }
-  
+
   bool ParamAngle::operator<(const ParamAngle &ang) const {
     return (m_data->angle.GetIndex() < ang.m_data->angle.GetIndex());
   }
@@ -396,7 +400,7 @@ namespace indigox {
       return false;
     if (self_consistent && m_data->types.size() > 1)
       throw std::runtime_error("Types not self-consistent");
-    
+
     if (!m_data->dihedral)
       throw std::runtime_error("Mapped dihedral missing");
     m_data->dihedral.SetTypes(GetMostCommonType());
@@ -410,22 +414,24 @@ namespace indigox {
 
   int64_t ParamDihedral::NumSourceDihedral() const {
     int64_t count = 0;
-    for (auto& countable : m_data->types) count += countable.second;
+    for (auto &countable : m_data->types)
+      count += countable.second;
     return count;
   }
-  
-  const ParamDihedral::DihedralAtoms& ParamDihedral::GetAtoms() const {
+
+  const ParamDihedral::DihedralAtoms &ParamDihedral::GetAtoms() const {
     return m_data->atoms;
   }
   const Dihedral &ParamDihedral::GetDihedral() const {
     return m_data->dihedral;
   }
-  const ParamDihedral::TypeGroup& ParamDihedral::GetMostCommonType() const {
+  const ParamDihedral::TypeGroup &ParamDihedral::GetMostCommonType() const {
     using T = TypeCounts::value_type;
     return std::max_element(m_data->types.begin(), m_data->types.end(),
-                              [](T &a, T &b) { return a.second < b.second; })->first;
+                            [](T &a, T &b) { return a.second < b.second; })
+        ->first;
   }
-  
+
   const ParamDihedral::TypeCounts &ParamDihedral::GetMappedTypeCounts() const {
     return m_data->types;
   }
@@ -437,11 +443,11 @@ namespace indigox {
   bool ParamDihedral::operator==(const ParamDihedral &ang) const {
     return m_data->dihedral == ang.m_data->dihedral;
   }
-  
+
   bool ParamDihedral::operator<(const ParamDihedral &ang) const {
     return (m_data->dihedral.GetIndex() < ang.m_data->dihedral.GetIndex());
   }
-  
+
   bool ParamDihedral::operator>(const ParamDihedral &ang) const {
     return (m_data->dihedral.GetIndex() > ang.m_data->dihedral.GetIndex());
   }
@@ -460,7 +466,7 @@ namespace indigox {
     std::vector<ParamBond> bonds;
     std::vector<ParamAngle> angles;
     std::vector<ParamDihedral> dihedrals;
-    
+
     ParamAtoms atom_indices;
     ParamBonds bond_indices;
     ParamAngles angle_indices;
@@ -468,12 +474,12 @@ namespace indigox {
     std::vector<ParamAtom> nonsc_atoms;
 
     ParamMoleculeImpl(const Molecule &m) : mol(m) {
-      for (const Atom& atm : mol.GetAtoms()) {
+      for (const Atom &atm : mol.GetAtoms()) {
         atoms.emplace_back(atm);
         atom_indices.emplace(atm, atom_indices.size());
       }
-      
-      for (const Bond& bnd : mol.GetBonds()) {
+
+      for (const Bond &bnd : mol.GetBonds()) {
         Atom a = bnd.GetAtoms()[0];
         Atom b = bnd.GetAtoms()[1];
         if (a > b) {
@@ -482,8 +488,8 @@ namespace indigox {
         bonds.emplace_back(std::make_pair(a, b), bnd);
         bond_indices.emplace(std::make_pair(a, b), bond_indices.size());
       }
-      
-      for (const Angle& ang : mol.GetAngles()) {
+
+      for (const Angle &ang : mol.GetAngles()) {
         Atom a = ang.GetAtoms()[0];
         Atom b = ang.GetAtoms()[1];
         Atom c = ang.GetAtoms()[2];
@@ -493,8 +499,8 @@ namespace indigox {
         angles.emplace_back(stdx::make_triple(a, b, c), ang);
         angle_indices.emplace(stdx::make_triple(a, b, c), angle_indices.size());
       }
-      
-      for (const Dihedral& dhd : mol.GetDihedrals()) {
+
+      for (const Dihedral &dhd : mol.GetDihedrals()) {
         Atom a = dhd.GetAtoms()[0];
         Atom b = dhd.GetAtoms()[1];
         Atom c = dhd.GetAtoms()[2];
@@ -504,7 +510,8 @@ namespace indigox {
           std::swap(b, c);
         }
         dihedrals.emplace_back(stdx::make_quad(a, b, c, d), dhd);
-        dihedral_indices.emplace(stdx::make_quad(a, b, c, d), dihedral_indices.size());
+        dihedral_indices.emplace(stdx::make_quad(a, b, c, d),
+                                 dihedral_indices.size());
       }
     }
   };
@@ -539,57 +546,63 @@ namespace indigox {
   // == ParamMolecule Data Retrevial ===========================================
   // ===========================================================================
 
-  const ParamAtom& ParamMolecule::GetAtom(const Atom &atm) const {
+  const ParamAtom &ParamMolecule::GetAtom(const Atom &atm) const {
     return m_data->atoms[m_data->atom_indices.find(atm)->second];
   }
 
-  const ParamBond& ParamMolecule::GetBond(const Bond &bnd) const {
+  const ParamBond &ParamMolecule::GetBond(const Bond &bnd) const {
     return GetBond(bnd.GetAtoms()[0], bnd.GetAtoms()[1]);
   }
 
-  const ParamBond& ParamMolecule::GetBond(const Atom& a, const Atom& b) const {
+  const ParamBond &ParamMolecule::GetBond(const Atom &a, const Atom &b) const {
     PBond dat = (a > b) ? std::make_pair(b, a) : std::make_pair(a, b);
     return m_data->bonds[m_data->bond_indices.find(dat)->second];
   }
 
-  const ParamAngle& ParamMolecule::GetAngle(const Angle &ang) const {
+  const ParamAngle &ParamMolecule::GetAngle(const Angle &ang) const {
     return GetAngle(ang.GetAtoms()[0], ang.GetAtoms()[1], ang.GetAtoms()[2]);
   }
 
-  const ParamAngle& ParamMolecule::GetAngle(const Atom& a, const Atom& b, const Atom& c) const {
-    PAngle dat = (a > c) ? stdx::make_triple(c, b, a) : stdx::make_triple(a, b, c);
+  const ParamAngle &ParamMolecule::GetAngle(const Atom &a, const Atom &b,
+                                            const Atom &c) const {
+    PAngle dat =
+        (a > c) ? stdx::make_triple(c, b, a) : stdx::make_triple(a, b, c);
     return m_data->angles[m_data->angle_indices.find(dat)->second];
   }
 
-  const ParamDihedral& ParamMolecule::GetDihedral(const Dihedral &dhd) {
-    return GetDihedral(dhd.GetAtoms()[0], dhd.GetAtoms()[1], dhd.GetAtoms()[2], dhd.GetAtoms()[3]);
+  const ParamDihedral &ParamMolecule::GetDihedral(const Dihedral &dhd) {
+    return GetDihedral(dhd.GetAtoms()[0], dhd.GetAtoms()[1], dhd.GetAtoms()[2],
+                       dhd.GetAtoms()[3]);
   }
 
-  const ParamDihedral& ParamMolecule::GetDihedral(const Atom& a, const Atom& b, const Atom& c, const Atom& d) {
-    PDihedral dat = (a > d) ? stdx::make_quad(d, c, b, a) : stdx::make_quad(a, b, c, d);
+  const ParamDihedral &ParamMolecule::GetDihedral(const Atom &a, const Atom &b,
+                                                  const Atom &c,
+                                                  const Atom &d) {
+    PDihedral dat =
+        (a > d) ? stdx::make_quad(d, c, b, a) : stdx::make_quad(a, b, c, d);
     auto pos = m_data->dihedral_indices.find(dat);
     if (pos != m_data->dihedral_indices.end())
       return m_data->dihedrals[pos->second];
-    
+
     Dihedral newD = m_data->mol.NewDihedral(a, b, c, d);
     m_data->dihedrals.emplace_back(dat, newD);
     m_data->dihedral_indices.emplace(dat, m_data->dihedral_indices.size());
     return m_data->dihedrals.back();
   }
 
-  const std::vector<ParamAtom>& ParamMolecule::GetAtoms() const {
+  const std::vector<ParamAtom> &ParamMolecule::GetAtoms() const {
     return m_data->atoms;
   }
 
-  const std::vector<ParamBond>& ParamMolecule::GetBonds() const {
+  const std::vector<ParamBond> &ParamMolecule::GetBonds() const {
     return m_data->bonds;
   }
 
-  const std::vector<ParamAngle>& ParamMolecule::GetAngles() const {
+  const std::vector<ParamAngle> &ParamMolecule::GetAngles() const {
     return m_data->angles;
   }
 
-  const std::vector<ParamDihedral>& ParamMolecule::GetDihedrals() const {
+  const std::vector<ParamDihedral> &ParamMolecule::GetDihedrals() const {
     return m_data->dihedrals;
   }
 

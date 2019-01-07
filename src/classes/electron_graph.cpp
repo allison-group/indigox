@@ -5,55 +5,58 @@
 //  Created by Welsh, Ivan on 12/09/17.
 //  Copyright © 2017 Allison Group. All rights reserved.
 //
+#include "indigox/classes/electron_graph.hpp"
+
+#include "indigox/classes/atom.hpp"
+#include "indigox/classes/molecular_graph.hpp"
+#include "indigox/utils/graph.hpp"
+#include "indigox/utils/options.hpp"
+#include <indigox/classes/periodictable.hpp>
+
 #include <iostream>
 #include <unordered_map>
 
-#include "indigox/classes/atom.hpp"
-#include "indigox/classes/electron_graph.hpp"
-#include "indigox/classes/molecular_graph.hpp"
-#include <indigox/classes/periodictable.hpp>
-#include "indigox/utils/graph.hpp"
-#include "indigox/utils/options.hpp"
-
 namespace indigox {
-  
+
   uint8_t PreplaceCount(const _MolecularGraph &G, MolVertex v) {
-    if (!Options::AssignElectrons::PREPLACE_ELECTRONS) return 0;
-    MolVertProp* p = G.GetProperties(v);
+    if (!Options::AssignElectrons::PREPLACE_ELECTRONS)
+      return 0;
+    MolVertProp *p = G.GetProperties(v);
     switch (G.Degree(v)) {
-      case 1:
-        switch (p->atom->GetElement()->GetAtomicNumber()) {
-          case 9:
-          case 17:
-          case 35:
-            return 6;
-          case 8:
-          case 16:
-            return 4;
-          case 7:
-            return 2;
-          default:
-            return 0;
-        }
-      case 2:
-        switch (p->atom->GetElement()->GetAtomicNumber()) {
-          case 8:
-          case 16:
-            return 4;
-          default:
-            return 0;
-        }
+    case 1:
+      switch (p->atom->GetElement()->GetAtomicNumber()) {
+      case 9:
+      case 17:
+      case 35:
+        return 6;
+      case 8:
+      case 16:
+        return 4;
+      case 7:
+        return 2;
       default:
         return 0;
+      }
+    case 2:
+      switch (p->atom->GetElement()->GetAtomicNumber()) {
+      case 8:
+      case 16:
+        return 4;
+      default:
+        return 0;
+      }
+    default:
+      return 0;
     }
   }
-  
+
   uint8_t PreplaceCount(const _MolecularGraph &G, MolEdge e) {
-    if (!Options::AssignElectrons::PREPLACE_ELECTRONS) return 2;
+    if (!Options::AssignElectrons::PREPLACE_ELECTRONS)
+      return 2;
     MolVertex u = G.GetSource(e);
     MolVertex v = G.GetTarget(e);
-    MolVertProp* u_p = G.GetProperties(u);
-    MolVertProp* v_p = G.GetProperties(v);
+    MolVertProp *u_p = G.GetProperties(u);
+    MolVertProp *v_p = G.GetProperties(v);
     if (G.Degree(u) == 2 && G.Degree(v) == 1) {
       if (u_p->atom->GetElement() == 6 && v_p->atom->GetElement() == 7) {
         return 6;
@@ -65,20 +68,16 @@ namespace indigox {
     }
     return 2;
   }
-  
+
   /************************
    *                      *
    *     Construction     *
    *                      *
    ************************/
-  _ElectronGraph::_ElectronGraph()
-  : _ElnGraph()
-  {
+  _ElectronGraph::_ElectronGraph() : _ElnGraph() {
   }
-  
-  _ElectronGraph::_ElectronGraph(const _MolecularGraph &G)
-  : _ElnGraph()
-  {
+
+  _ElectronGraph::_ElectronGraph(const _MolecularGraph &G) : _ElnGraph() {
     using namespace std;
     unordered_map<MolVertex, ElnVertex> mol2eln;
     MolVertIterPair vertices = G.GetVertices();
@@ -88,20 +87,21 @@ namespace indigox {
       ElnVertProp e_prop;
       e_prop.id = make_pair(*b, *b);
       count++;
-      e_prop.electronegativity = prop.atom->GetElement()->GetElectronegativity();
+      e_prop.electronegativity =
+          prop.atom->GetElement()->GetElectronegativity();
       e_prop.valence = prop.atom->GetElement()->GetValenceElectronCount();
       e_prop.atomic_number = prop.atom->GetElement()->GetAtomicNumber();
       e_prop.electron_count = 0;
       e_prop.pre_placed = PreplaceCount(G, *b);
       e_prop.target_octet = prop.atom->GetElement()->GetOctet();
-      e_prop.target_hyper_octet = prop.atom->GetElement()->GetHypervalentOctet();
+      e_prop.target_hyper_octet =
+          prop.atom->GetElement()->GetHypervalentOctet();
       e_prop.formal_charge = 0;
-      
-      
+
       ElnVertex e_vert = AddVertex(e_prop);
       mol2eln.insert(make_pair(*b, e_vert));
     }
-    
+
     MolEdgeIterPair edges = G.GetEdges();
     for (MolEdgeIter b = edges.first; b != edges.second; ++b) {
       MolVertex u = G.GetSource(*b), v = G.GetTarget(*b);
@@ -118,15 +118,14 @@ namespace indigox {
       AddEdge(v_eln, e_vert);
     }
   }
-  
+
   ElnVertex _ElectronGraph::GetVertex(MolVertPair id) const {
     ElnVertIterPair vertices = GetVertices();
     for (ElnVertexIter it = vertices.first; it != vertices.second; ++it) {
-      ElnVertProp* p = GetProperties(*it);
+      ElnVertProp *p = GetProperties(*it);
       if (p->id == id)
         return *it;
     }
     return ElnVertex();
   }
-}
-
+} // namespace indigox
