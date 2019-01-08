@@ -23,7 +23,7 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
   //  using MGS = MolecularGraph;
   using MGV = MGVertex;
   //  using MGE = MGEdge;
-  using VMG = std::vector<MolecularGraph>;
+  //  using VMG = std::vector<MolecularGraph>;
   //  using VMGV = MolecularGraph::VertContain;
   //  using VMGE = MolecularGraph::EdgeContain;
   using VVMGV = MolecularGraph::ComponentContain;
@@ -33,7 +33,7 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
   //  using CMGS = CondensedMolecularGraph;
   using CMGV = CMGVertex;
   //  using CMGE = CMGEdge;
-  using VCMG = std::vector<CondensedMolecularGraph>;
+  //  using VCMG = std::vector<CondensedMolecularGraph>;
   //  using VCMGV = CondensedMolecularGraph::VertContain;
   //  using VCMGE = CondensedMolecularGraph::EdgeContain;
   using VVCMGV = CondensedMolecularGraph::ComponentContain;
@@ -61,20 +61,23 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
         [](MG &g, VVMGV &c) { return ConnectedComponents(g, c); });
   m.def("ConnectedComponents",
         [](CMG &g, VVCMGV &c) { return ConnectedComponents(g, c); });
-  m.def("ConnectedSubgraphs",
-        [](MG &g, VMG &s) { return ConnectedSubgraphs(g, s); });
-  m.def("ConnectedSubgraphs",
-        [](MG &g, VMG &s, int64_t m) { return ConnectedSubgraphs(g, s, m); });
-  m.def("ConnectedSubgraphs", [](MG &g, VMG &s, int64_t m, int64_t M) {
-    return ConnectedSubgraphs(g, s, m, M);
-  });
-  m.def("ConnectedSubgraphs",
-        [](CMG &g, VCMG &s) { return ConnectedSubgraphs(g, s); });
-  m.def("ConnectedSubgraphs",
-        [](CMG &g, VCMG &s, int64_t m) { return ConnectedSubgraphs(g, s, m); });
-  m.def("ConnectedSubgraphs", [](CMG &g, VCMG &s, int64_t m, int64_t M) {
-    return ConnectedSubgraphs(g, s, m, M);
-  });
+  //  m.def("ConnectedSubgraphs", [](MG& g, size_t min = 0));
+  //  m.def("ConnectedSubgraphs",
+  //        [](MG &g, VMG &s) { return ConnectedSubgraphs(g, s); });
+  //  m.def("ConnectedSubgraphs",
+  //        [](MG &g, VMG &s, int64_t m) { return ConnectedSubgraphs(g, s, m);
+  //        });
+  //  m.def("ConnectedSubgraphs", [](MG &g, VMG &s, int64_t m, int64_t M) {
+  //    return ConnectedSubgraphs(g, s, m, M);
+  //  });
+  //  m.def("ConnectedSubgraphs",
+  //        [](CMG &g, VCMG &s) { return ConnectedSubgraphs(g, s); });
+  //  m.def("ConnectedSubgraphs",
+  //        [](CMG &g, VCMG &s, int64_t m) { return ConnectedSubgraphs(g, s, m);
+  //        });
+  //  m.def("ConnectedSubgraphs", [](CMG &g, VCMG &s, int64_t m, int64_t M) {
+  //    return ConnectedSubgraphs(g, s, m, M);
+  //});
 
   m.def("CycleBasis", [](MG &g, VVMGV &b) { return CycleBasis(g, b); });
   m.def("CycleBasis", [](MG &g, VVMGE &b) { return CycleBasis(g, b); });

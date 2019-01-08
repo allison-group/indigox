@@ -500,15 +500,15 @@ namespace indigox {
     // Get all the subgraphs of the molecule's condensed graph
     MolecularGraph MG = mol.GetGraph();
     CondensedMolecularGraph CG = MG.GetCondensedGraph();
-    std::vector<CondensedMolecularGraph> sub_graphs;
-    algorithm::ConnectedSubgraphs(CG, sub_graphs);
     eastl::vector_set<CMGVertex> all_vertices(CG.GetVertices().begin(),
                                               CG.GetVertices().end());
     eastl::vector_set<CMGEdge> all_edges(CG.GetEdges().begin(),
                                          CG.GetEdges().end());
 
     // Decide if each subgraph can be made into a fragment
-    for (CondensedMolecularGraph sub : sub_graphs) {
+    CondensedMolecularGraph sub;
+    algorithm::ConnectedSubgraphs subgraph_generator(CG);
+    while (subgraph_generator(sub)) {
       // Sort the vertices/edges of CG into not in sub and in sub
       eastl::vector_set<CMGVertex> sub_vertices(sub.GetVertices().begin(),
                                                 sub.GetVertices().end());
