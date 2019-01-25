@@ -6,8 +6,6 @@
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/parameterised.hpp>
 
-#include <boost/math/special_functions/relative_difference.hpp>
-
 namespace indigox {
 
   // ===========================================================================
