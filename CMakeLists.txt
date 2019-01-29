@@ -13,6 +13,7 @@ SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
 # Set defaults for available options
 OPTION(BUILD_PYTHON "Build Python bindings" ON)
 OPTION(BUILD_EXAMPLES "Build a few example programs" OFF)
+OPTION(INSTALL_BOOST "Install boost headers if using provided" OFF)
 
 # Default to release mode build. Does Debug actually do anything?
 IF(NOT CMAKE_BUILD_TYPE)
@@ -81,8 +82,10 @@ FIND_PACKAGE(Boost 1.66.0)
 IF(NOT Boost_FOUND)
   MESSAGE(STATUS "Using provided Boost version.")
   INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/boost/include)
-  INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/external/boost/include/boost 
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  IF (INSTALL_BOOST)
+    INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/external/boost/include/boost
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  ENDIF()
 ELSE()
   INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 ENDIF()
