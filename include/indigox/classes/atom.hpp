@@ -92,6 +92,9 @@ namespace indigox {
     /*! \brief Get number of implicit hydrogens.
      *  \return the number of implicit hydrogens in the atom. */
     int32_t GetImplicitCount() const;
+    
+    int32_t NumHydrogenBonds() const;
+    int32_t NumHeavyAtomBonds() const;
 
     /*! \brief Molecule this atom is associated with.
      *  \details The returned shared_ptr is empty of the atom is not assigned

@@ -94,6 +94,7 @@ namespace indigox {
   }
 
   bool Bond::IsAmideBond() const {
+    _sanity_check_(*this);
     // Check for being an N-C bond
     Atom n, c;
     if (GetAtoms()[0].GetElement() == "N" && GetAtoms()[1].GetElement() == "C") {
@@ -115,6 +116,7 @@ namespace indigox {
   }
   
   bool Bond::IsCarbonylBond() const {
+    _sanity_check_(*this);
     // Check for being C-O bond
     Atom c, o;
     if (GetAtoms()[0].GetElement() == "O" && GetAtoms()[1].GetElement() == "C") {

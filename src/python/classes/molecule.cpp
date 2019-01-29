@@ -48,6 +48,8 @@ void GeneratePyMolecule(pybind11::module &m) {
       .def("NumBonds", &Atom::NumBonds)
       .def("NumAngles", &Atom::NumAngles)
       .def("NumDihedrals", &Atom::NumDihedrals)
+  .def("NumHydrogenBonds", &Atom::NumHydrogenBonds)
+  .def("NumHeavyAtomBonds", &Atom::NumHeavyAtomBonds)
       .def("HasType", &Atom::HasType)
       .def("GetElement", &Atom::GetElement)
       .def("GetFormalCharge", &Atom::GetFormalCharge)
