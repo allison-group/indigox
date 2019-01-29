@@ -45,3 +45,21 @@ indigox.xcodeproj
 
 # clang-format run file
 .last_run_format
+
+# Ignore files while developing until I get around to needing them
+include/indigox/algorithm/electron_assignment/*
+include/indigox/algorithm/electron_optimisation.hpp
+include/indigox/classes/nicetreedecomp.hpp
+include/indigox/classes/permutablegraph.hpp
+include/indigox/classes/treedecomp.hpp
+include/indigox/graph/assignment.hpp
+src/algorithm/electron_assignment/*
+src/algorithm/electron_optimisation.cpp
+src/classes/electron_graph.cpp
+src/classes/iters.cpp
+src/classes/nicetreedecomp.cpp
+src/classes/permutablegraph.cpp
+src/classes/treedecomp.cpp
+src/graph/assignment.cpp
+src/main.cpp
+
