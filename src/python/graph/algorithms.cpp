@@ -4,6 +4,7 @@
 #include <indigox/algorithm/graph/isomorphism.hpp>
 #include <indigox/algorithm/graph/paths.hpp>
 #include <indigox/classes/athenaeum.hpp>
+#include <indigox/classes/atom.hpp>
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/parameterised.hpp>
@@ -23,7 +24,7 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
   //  using MGS = MolecularGraph;
   using MGV = MGVertex;
   //  using MGE = MGEdge;
-  //  using VMG = std::vector<MolecularGraph>;
+  using VMG = std::vector<MolecularGraph>;
   //  using VMGV = MolecularGraph::VertContain;
   //  using VMGE = MolecularGraph::EdgeContain;
   using VVMGV = MolecularGraph::ComponentContain;
@@ -33,7 +34,7 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
   //  using CMGS = CondensedMolecularGraph;
   using CMGV = CMGVertex;
   //  using CMGE = CMGEdge;
-  //  using VCMG = std::vector<CondensedMolecularGraph>;
+  using VCMG = std::vector<CondensedMolecularGraph>;
   //  using VCMGV = CondensedMolecularGraph::VertContain;
   //  using VCMGE = CondensedMolecularGraph::EdgeContain;
   using VVCMGV = CondensedMolecularGraph::ComponentContain;
@@ -43,41 +44,61 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
   //  using GL = GraphLabel;
 
   m.def("ShortestPath",
-        [](MG &g, MGV u, MGV v) { return ShortestPath(g, u, v); });
+        [](MG &g, MGV u, MGV v) { return ShortestPath(g, u, v); },
+        py::arg("graph"), py::arg("source"), py::arg("target"));
   m.def("ShortestPath",
-        [](CMG &g, CMGV u, CMGV v) { return ShortestPath(g, u, v); });
+        [](CMG &g, CMGV u, CMGV v) { return ShortestPath(g, u, v); },
+        py::arg("graph"), py::arg("source"), py::arg("target"));
+
   m.def("AllSimplePaths",
-        [](MG &g, MGV u, MGV v, VVMGE &p) { AllSimplePaths(g, u, v, p); });
-  m.def("AllSimplePaths", [](MG &g, MGV u, MGV v, VVMGE &p, int64_t sz) {
-    AllSimplePaths(g, u, v, p, sz);
-  });
+        [](MG &g, MGV u, MGV v, int64_t sz) -> VVMGE {
+          VVMGE p;
+          AllSimplePaths(g, u, v, p, sz);
+          return p;
+        },
+        py::arg("graph"), py::arg("source"), py::arg("target"),
+        py::arg("maximum_length") = -1);
   m.def("AllSimplePaths",
-        [](CMG &g, CMGV u, CMGV v, VVCMGE &p) { AllSimplePaths(g, u, v, p); });
-  m.def("AllSimplePaths", [](CMG &g, CMGV u, CMGV v, VVCMGE &p, int64_t sz) {
-    AllSimplePaths(g, u, v, p, sz);
-  });
+        [](CMG &g, CMGV u, CMGV v, int64_t sz) -> VVCMGE {
+          VVCMGE p;
+          AllSimplePaths(g, u, v, p, sz);
+          return p;
+        },
+        py::arg("graph"), py::arg("source"), py::arg("target"),
+        py::arg("maximum_length") = -1);
 
   m.def("ConnectedComponents",
         [](MG &g, VVMGV &c) { return ConnectedComponents(g, c); });
   m.def("ConnectedComponents",
         [](CMG &g, VVCMGV &c) { return ConnectedComponents(g, c); });
-  //  m.def("ConnectedSubgraphs", [](MG& g, size_t min = 0));
-  //  m.def("ConnectedSubgraphs",
-  //        [](MG &g, VMG &s) { return ConnectedSubgraphs(g, s); });
-  //  m.def("ConnectedSubgraphs",
-  //        [](MG &g, VMG &s, int64_t m) { return ConnectedSubgraphs(g, s, m);
-  //        });
-  //  m.def("ConnectedSubgraphs", [](MG &g, VMG &s, int64_t m, int64_t M) {
-  //    return ConnectedSubgraphs(g, s, m, M);
-  //  });
-  //  m.def("ConnectedSubgraphs",
-  //        [](CMG &g, VCMG &s) { return ConnectedSubgraphs(g, s); });
-  //  m.def("ConnectedSubgraphs",
-  //        [](CMG &g, VCMG &s, int64_t m) { return ConnectedSubgraphs(g, s, m);
-  //        });
-  //  m.def("ConnectedSubgraphs", [](CMG &g, VCMG &s, int64_t m, int64_t M) {
-  //    return ConnectedSubgraphs(g, s, m, M);
-  //});
+
+  m.def("ConnectedSubgraphs",
+        [](MG &g, size_t min, size_t max) -> VMG {
+          ConnectedSubgraphs gen(g, min, max);
+          MG subg;
+          VMG subgraphs;
+          while (gen(subg)) {
+            subgraphs.emplace_back(subg);
+          }
+          return subgraphs;
+        },
+        py::arg("graph"), py::arg("minimum_size") = 0,
+        py::arg("maximum_size") = std::numeric_limits<size_t>::max());
+  m.def("ConnectedSubgraphs",
+        [](CMG &g, size_t min, size_t max) -> VCMG {
+          ConnectedSubgraphs gen(g, min, max);
+          CMG subg;
+          VCMG subgraphs;
+          while (gen(subg)) {
+            subgraphs.emplace_back(subg);
+          }
+          return subgraphs;
+        },
+        py::arg("graph"), py::arg("minimum_size") = 0,
+        py::arg("maximum_size") = std::numeric_limits<size_t>::max());
+
+  m.def("OptimalChargeGroups", &OptimalChargeGroups, py::arg("molecule"),
+        py::arg("size_limit") = 5);
 
   m.def("CycleBasis", [](MG &g, VVMGV &b) { return CycleBasis(g, b); });
   m.def("CycleBasis", [](MG &g, VVMGE &b) { return CycleBasis(g, b); });

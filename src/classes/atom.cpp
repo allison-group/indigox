@@ -79,8 +79,8 @@ namespace indigox {
 
   Atom::Impl::Impl(const Molecule &m, const Element &e, double x, double y,
                    double z, std::string n)
-      : molecule(m), element(e), formal_charge(0), implicit_hydrogens(0),
-        position(x, y, z), name(n), partial_charge(0.0),
+      : molecule(m), element(e), formal_charge(0), charge_group_id(-1),
+        implicit_hydrogens(0), position(x, y, z), name(n), partial_charge(0.0),
         stereochemistry(AtomStereo::UNDEFINED) {
   }
 
@@ -95,6 +95,7 @@ namespace indigox {
     m_data->formal_charge = INT32_MIN;
     m_data->tag = INT64_MIN;
     m_data->unique_id = INT64_MIN;
+    m_data->charge_group_id = -1;
     m_data->implicit_hydrogens = UINT32_MAX;
     m_data->name = "";
     m_data->position = {HUGE_VAL, HUGE_VAL, HUGE_VAL};
@@ -157,6 +158,11 @@ namespace indigox {
   int64_t Atom::GetID() const {
     _sanity_check_(*this);
     return m_data->unique_id;
+  }
+
+  int32_t Atom::GetChargeGroupID() const {
+    _sanity_check_(*this);
+    return m_data->charge_group_id;
   }
 
   int32_t Atom::GetImplicitCount() const {
@@ -324,6 +330,11 @@ namespace indigox {
   void Atom::SetTag(int32_t tag) {
     _sanity_check_(*this);
     m_data->tag = tag;
+  }
+
+  void Atom::SetChargeGroupID(int32_t id) {
+    _sanity_check_(*this);
+    m_data->charge_group_id = id;
   }
 
   void Atom::SetName(std::string name) {

@@ -39,6 +39,7 @@ namespace indigox {
     int32_t formal_charge;
     int64_t tag;
     int64_t unique_id;
+    int32_t charge_group_id;
     int32_t implicit_hydrogens;
     Eigen::Vector3d position;
     std::string name;

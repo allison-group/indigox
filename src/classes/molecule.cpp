@@ -1,3 +1,4 @@
+#include <indigox/algorithm/graph/connectivity.hpp>
 #include <indigox/classes/angle.hpp>
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
@@ -425,6 +426,35 @@ namespace indigox {
   // =======================================================================
   // == STATE MODIFYING ====================================================
   // =======================================================================
+
+  void Molecule::ReorderAtoms(MoleculeAtoms &new_order) {
+    eastl::vector_set<Atom> all_atoms(m_data->atoms.begin(),
+                                      m_data->atoms.end());
+    MoleculeAtoms swap_order(new_order);
+    for (Atom atm : new_order) {
+      if (!HasAtom(atm)) {
+        throw std::runtime_error(
+            "New atom order contains atoms not part of this molecule");
+      }
+      all_atoms.erase(atm);
+    }
+    swap_order.insert(swap_order.end(), all_atoms.begin(), all_atoms.end());
+    m_data->atoms.swap(swap_order);
+  }
+
+  void Molecule::OptimiseChargeGroups() {
+    std::vector<std::vector<Atom>> charge_groups =
+        algorithm::OptimalChargeGroups(*this);
+    MoleculeAtoms new_order;
+    int32_t charge_group = -1;
+    for (std::vector<Atom> grp : charge_groups) {
+      ++charge_group;
+      new_order.insert(new_order.end(), grp.begin(), grp.end());
+      for (Atom atm : grp)
+        atm.SetChargeGroupID(charge_group);
+    }
+    ReorderAtoms(new_order);
+  }
 
   Atom Molecule::NewAtom() {
     return NewAtom(GetPeriodicTable().GetUndefined(), 0.0, 0.0, 0.0);

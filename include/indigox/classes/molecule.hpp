@@ -379,6 +379,10 @@ namespace indigox {
 
     bool HasForcefield() const;
 
+    void OptimiseChargeGroups();
+
+    void ReorderAtoms(MoleculeAtoms &new_order);
+
     // State
     State GetCurrentState() const;
     void ModificationMade();

@@ -20,10 +20,6 @@ namespace indigox::algorithm {
    *  \param minsize minimum size of subgraph to generate.
    *  \param maxsize maximum size of subgraph to generate.
    *  \return the number of generated subgraphs. */
-
-  void OptimalChargeGroups(const Molecule &mol,
-                           std::vector<std::vector<Atom>> &charge_groups);
-
   template <class GraphType> class ConnectedSubgraphs {
 
   public:
@@ -36,6 +32,10 @@ namespace indigox::algorithm {
     struct Impl;
     std::unique_ptr<Impl> implementation;
   };
+
+  std::vector<std::vector<Atom>> OptimalChargeGroups(const Molecule &mol,
+                                                     int32_t limit = 5);
+
 } // namespace indigox::algorithm
 
 #endif /* INDIGOX_ALGORITHM_GRAPH_CONNECTIVITY_HPP */

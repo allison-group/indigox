@@ -83,6 +83,8 @@ namespace indigox {
 
     int64_t GetID() const;
 
+    int32_t GetChargeGroupID() const;
+
     /*! \brief Get number of implicit hydrogens.
      *  \return the number of implicit hydrogens in the atom. */
     int32_t GetImplicitCount() const;
@@ -141,6 +143,8 @@ namespace indigox {
     /*! \brief Set the formal charge of this atom.
      *  \param q the formal charge value to set. */
     void SetFormalCharge(int32_t q);
+
+    void SetChargeGroupID(int32_t id);
 
     /*! \brief Set the partial charge of this atom.
      *  \param q the partial charge value to set. */
