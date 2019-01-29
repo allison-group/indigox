@@ -93,6 +93,44 @@ namespace indigox {
     return bool(m_data->forcefield_type);
   }
 
+  bool Bond::IsAmideBond() const {
+    // Check for being an N-C bond
+    Atom n, c;
+    if (GetAtoms()[0].GetElement() == "N" && GetAtoms()[1].GetElement() == "C") {
+      n = GetAtoms()[0];
+      c = GetAtoms()[1];
+    }
+    if (GetAtoms()[1].GetElement() == "N" && GetAtoms()[0].GetElement() == "C") {
+      n = GetAtoms()[1];
+      c = GetAtoms()[0];
+    }
+    if (!n || !c) return false;
+    if (n.NumBonds() + n.GetImplicitCount() != 3) return false;
+    
+    // Check for C being O bonded.
+    for (Bond bnd : c.GetBonds()) {
+      if (bnd.IsCarbonylBond()) return true;
+    }
+    return false;
+  }
+  
+  bool Bond::IsCarbonylBond() const {
+    // Check for being C-O bond
+    Atom c, o;
+    if (GetAtoms()[0].GetElement() == "O" && GetAtoms()[1].GetElement() == "C") {
+      o = GetAtoms()[0];
+      c = GetAtoms()[1];
+    }
+    if (GetAtoms()[1].GetElement() == "O" && GetAtoms()[0].GetElement() == "C") {
+      o = GetAtoms()[1];
+      c = GetAtoms()[0];
+    }
+    if (!o || !c) return false;
+    if (o.NumBonds() + o.GetImplicitCount() != 1) return false;
+    if (c.NumBonds() + c.GetImplicitCount() != 3) return false;
+    return true;
+  }
+  
   // =======================================================================
   // == STATE GETTING ======================================================
   // =======================================================================

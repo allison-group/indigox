@@ -120,6 +120,9 @@ namespace indigox {
     void SetType(const FFBond &type);
 
     bool HasType() const;
+    
+    bool IsAmideBond() const;
+    bool IsCarbonylBond() const;
 
   private:
     void Reset();

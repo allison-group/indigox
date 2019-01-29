@@ -113,6 +113,8 @@ void GeneratePyMolecule(pybind11::module &m) {
       .def("GetType", &Bond::GetType)
       .def("SetType", &Bond::SetType)
       .def("HasType", &Bond::HasType)
+      .def("IsAmideBond", &Bond::IsAmideBond)
+      .def("IsCarbonylBond", &Bond::IsCarbonylBond)
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)
