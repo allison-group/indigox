@@ -131,18 +131,19 @@ namespace indigox {
     _sanity_check_(*this);
     return bool(m_data->forcefield_type);
   }
-  
+
   int32_t Atom::NumHydrogenBonds() const {
     _sanity_check_(*this);
     int32_t count = 0;
-    for (Bond bnd: GetBonds()) {
+    for (Bond bnd : GetBonds()) {
       for (Atom atm : bnd.GetAtoms()) {
-        if (atm != *this && atm.GetElement() == "H") ++count;
+        if (atm != *this && atm.GetElement() == "H")
+          ++count;
       }
     }
     return count;
   }
-  
+
   int32_t Atom::NumHeavyAtomBonds() const {
     return NumBonds() - NumHydrogenBonds();
   }

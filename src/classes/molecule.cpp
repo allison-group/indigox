@@ -863,58 +863,16 @@ namespace indigox {
 
     // Identify peptide bonds
     std::vector<graph::MGEdge> to_remove;
-    for (graph::MGVertex v : residue_graph.GetVertices()) {
-      // Looking for the nitrogen of the peptide bond
-      if ((v.GetAtom().GetElement() != "N") ||
-          (residue_graph.Degree(v) + v.GetAtom().GetImplicitCount() != 3)) {
+    for (graph::MGEdge e : residue_graph.GetEdges()) {
+      Bond bnd = e.GetBond();
+      if (!bnd.IsAmideBond())
         continue;
+      for (Atom atm : bnd.GetAtoms()) {
+        // is only a peptide bond if isn't just bonded to H's
+        if (atm.GetElement() == "N" &&
+            atm.NumHydrogenBonds() + atm.GetImplicitCount() <= 1)
+          to_remove.push_back(e);
       }
-
-      // Expect one neighbour to be H, one to be a d(3) C and one to be whatever
-      graph::MGVertex h_nbr, c_nbr1, c_nbr2;
-      for (graph::MGVertex u : residue_graph.GetNeighbours(v)) {
-        if (u.GetAtom().GetElement() == "H" && residue_graph.Degree(u) == 1) {
-          if (!h_nbr) {
-            h_nbr = u;
-          } else {
-            h_nbr = graph::MGVertex();
-          }
-        }
-
-        if (u.GetAtom().GetElement() == "C" &&
-            residue_graph.Degree(u) + u.GetAtom().GetImplicitCount() == 3) {
-          if (!c_nbr1) {
-            c_nbr1 = u;
-          } else if (!c_nbr2) {
-            c_nbr2 = u;
-          }
-        }
-      }
-      if (!h_nbr || !c_nbr1)
-        continue;
-
-      // Check the neighbour carbon(s) to make sure one has d(1) O as neighbour
-      bool nbr_ok = false;
-      for (graph::MGVertex u : residue_graph.GetNeighbours(c_nbr1)) {
-        if (u.GetAtom().GetElement() == "O" && residue_graph.Degree(u) == 1) {
-          nbr_ok = true;
-        }
-      }
-
-      if (!nbr_ok && c_nbr2) {
-        for (graph::MGVertex u : residue_graph.GetNeighbours(c_nbr2)) {
-          if (u.GetAtom().GetElement() == "O" && residue_graph.Degree(u) == 1) {
-            nbr_ok = true;
-          }
-        }
-        if (nbr_ok)
-          c_nbr1 = c_nbr2;
-      }
-      if (!nbr_ok)
-        continue;
-
-      // The peptide bond is thus the bond between v and c_nbr1
-      to_remove.push_back(residue_graph.GetEdge(v, c_nbr1));
     }
 
     // Remove the peptide bonds to get the components of the graph as residues
@@ -938,7 +896,7 @@ namespace indigox {
       ++res_id;
     }
     ReorderAtoms(new_order);
-    
+
     return (int32_t)m_data->residues.size();
   }
 

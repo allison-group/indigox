@@ -92,7 +92,7 @@ namespace indigox {
     /*! \brief Get number of implicit hydrogens.
      *  \return the number of implicit hydrogens in the atom. */
     int32_t GetImplicitCount() const;
-    
+
     int32_t NumHydrogenBonds() const;
     int32_t NumHeavyAtomBonds() const;
 
