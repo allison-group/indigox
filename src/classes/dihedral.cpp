@@ -65,13 +65,11 @@ namespace indigox {
 
   Dihedral::Impl::Impl(const Atom &a, const Atom &b, const Atom &c,
                        const Atom &d, const Molecule &mol)
-      : atoms({a, b, c, d}), molecule(mol), priority(0) {
-  }
+      : atoms({a, b, c, d}), molecule(mol), priority(0) {}
 
   Dihedral::Dihedral(const Atom &a, const Atom &b, const Atom &c, const Atom &d,
                      const Molecule &mol)
-      : m_data(std::make_shared<Impl>(a, b, c, d, mol)) {
-  }
+      : m_data(std::make_shared<Impl>(a, b, c, d, mol)) {}
 
   void Dihedral::Reset() {
     m_data->atoms.fill(Atom());
@@ -122,9 +120,7 @@ namespace indigox {
 
   int64_t Dihedral::GetIndex() const {
     _sanity_check_(*this);
-    if (!m_data->molecule) {
-      return -1;
-    }
+    if (!m_data->molecule) { return -1; }
     auto mol_dihedrals = m_data->molecule.GetDihedrals();
     auto idx = std::find(mol_dihedrals.begin(), mol_dihedrals.end(), *this);
     return (idx == mol_dihedrals.end())

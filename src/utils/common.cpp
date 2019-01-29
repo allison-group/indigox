@@ -40,14 +40,12 @@ namespace indigox::utils {
         "qwertyuiopasdfghjklzxcvbnmZAQXSWCDEVFRBGTNHYMJUKILOP";
     static std::mt19937 rg{std::random_device{}()};
     static std::uniform_int_distribution<size_t> pick(0, chrs.size() - 1);
-    if (seed != 0)
-      rg.seed(seed);
+    if (seed != 0) rg.seed(seed);
 
     std::string s;
     s.reserve(length + 4); // no need to copy when adding extensions
 
-    while (length--)
-      s += chrs[pick(rg)];
+    while (length--) s += chrs[pick(rg)];
     return s;
   }
 

@@ -23,8 +23,7 @@ namespace indigox::graph {
 
     CMGVertexData() = default;
     CMGVertexData(const MGVertex &v, const CondensedMolecularGraph &g)
-        : source(v), graph(g), mask(0) {
-    }
+        : source(v), graph(g), mask(0) {}
 
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t) {
@@ -42,8 +41,7 @@ namespace indigox::graph {
 
     CMGEdgeData() = default;
     CMGEdgeData(const MGEdge &e, const CondensedMolecularGraph &g)
-        : source(e), graph(g), mask(0) {
-    }
+        : source(e), graph(g), mask(0) {}
 
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t) {
@@ -60,8 +58,7 @@ namespace indigox::graph {
     CondensedMolecularGraph super_graph;
 
     Impl() = default;
-    Impl(const MolecularGraph &g) : graph(g) {
-    }
+    Impl(const MolecularGraph &g) : graph(g) {}
 
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t) {
@@ -80,18 +77,12 @@ namespace indigox::graph {
                                                const MGVertex &) {
     using CS = CMGVertex::ContractedSymmetry;
     switch (atomic_number) {
-    case 1:
-      return CS::Hydrogen;
-    case 9:
-      return CS::Fluorine;
-    case 17:
-      return CS::Chlorine;
-    case 35:
-      return CS::Bromine;
-    case 53:
-      return CS::Iodine;
-    default:
-      throw std::runtime_error("Cannot determine contracted symmetry");
+    case 1: return CS::Hydrogen;
+    case 9: return CS::Fluorine;
+    case 17: return CS::Chlorine;
+    case 35: return CS::Bromine;
+    case 53: return CS::Iodine;
+    default: throw std::runtime_error("Cannot determine contracted symmetry");
     }
   }
 
@@ -153,14 +144,10 @@ namespace indigox::graph {
     imp_h <<= 34;
 
     mask = atm_num | fc_mag | h | f | cl | br | i | degree | imp_h;
-    if (atm.GetFormalCharge() < 0)
-      mask.set(10);
-    if (MG.IsCyclic(v, 8))
-      mask.set(26);
-    if (atm.GetStereochemistry() == AtomStereo::R)
-      mask.set(28);
-    if (atm.GetStereochemistry() == AtomStereo::S)
-      mask.set(29);
+    if (atm.GetFormalCharge() < 0) mask.set(10);
+    if (MG.IsCyclic(v, 8)) mask.set(26);
+    if (atm.GetStereochemistry() == AtomStereo::R) mask.set(28);
+    if (atm.GetStereochemistry() == AtomStereo::S) mask.set(29);
 
     m_data->mask = mask;
   }
@@ -177,17 +164,13 @@ namespace indigox::graph {
   // ====================================================================
   // == CMGVertex Methods ===============================================
   // ====================================================================
-  const MGVertex &CMGVertex::GetSource() const {
-    return m_data->source;
-  }
+  const MGVertex &CMGVertex::GetSource() const { return m_data->source; }
 
   const CondensedMolecularGraph &CMGVertex::GetGraph() const {
     return m_data->graph;
   }
 
-  size_t CMGVertex::NumContracted() const {
-    return m_data->condensed.size();
-  }
+  size_t CMGVertex::NumContracted() const { return m_data->condensed.size(); }
 
   size_t CMGVertex::NumContracted(ContractedSymmetry s) const {
     return std::accumulate(m_data->condensed.begin(), m_data->condensed.end(),
@@ -211,8 +194,7 @@ namespace indigox::graph {
   std::vector<MGVertex> CMGVertex::GetContractedVertices() const {
     std::vector<MGVertex> verts;
     verts.reserve(NumContracted());
-    for (auto &cv : m_data->condensed)
-      verts.emplace_back(cv.second);
+    for (auto &cv : m_data->condensed) verts.emplace_back(cv.second);
     return verts;
   }
 
@@ -250,12 +232,9 @@ namespace indigox::graph {
     degree_large <<= 11;
     mask.from_uint32(static_cast<uint32_t>(bnd.GetOrder()));
     mask |= degree_small | degree_large;
-    if (bnd.GetStereochemistry() == BondStereo::E)
-      mask.set(3);
-    if (bnd.GetStereochemistry() == BondStereo::Z)
-      mask.set(4);
-    if (G.IsCyclic(e, 8))
-      mask.set(5);
+    if (bnd.GetStereochemistry() == BondStereo::E) mask.set(3);
+    if (bnd.GetStereochemistry() == BondStereo::Z) mask.set(4);
+    if (G.IsCyclic(e, 8)) mask.set(5);
     //    if (e->IsCyclic(8)) _iso_mask.set(6);
     //    if (bnd.GetAromaticity())
     //      mask.set(7);
@@ -275,9 +254,7 @@ namespace indigox::graph {
   // == CMGEdge Methods ===================================================
   // ======================================================================
 
-  const MGEdge &CMGEdge::GetSource() const {
-    return m_data->source;
-  }
+  const MGEdge &CMGEdge::GetSource() const { return m_data->source; }
   const CondensedMolecularGraph &CMGEdge::GetGraph() const {
     return m_data->graph;
   }
@@ -323,8 +300,7 @@ namespace indigox::graph {
   // =======================================================================
 
   CondensedMolecularGraph::CondensedMolecularGraph(const MolecularGraph &g)
-      : m_data(std::make_shared<Impl>(g)) {
-  }
+      : m_data(std::make_shared<Impl>(g)) {}
 
   CondensedMolecularGraph Condense(const MolecularGraph &MG) {
     using CMG = CondensedMolecularGraph;
@@ -357,15 +333,13 @@ namespace indigox::graph {
         continue;
       }
       // Add vertex if parent is also a leaf
-      if (MG.Degree(u) == 1)
-        CG.AddVertex(v);
+      if (MG.Degree(u) == 1) CG.AddVertex(v);
     }
 
     for (const MGEdge &e : MG.GetEdges()) {
       MGVertex u, v;
       std::tie(u, v) = MG.GetVertices(e);
-      if (CG.HasVertex(u) && CG.HasVertex(v))
-        CG.AddEdge(e);
+      if (CG.HasVertex(u) && CG.HasVertex(v)) CG.AddEdge(e);
     }
     return CG;
   }
@@ -431,8 +405,7 @@ namespace indigox::graph {
     G.m_data->super_graph = *this;
 
     for (const CMGVertex &v : verts) {
-      if (!HasVertex(v))
-        throw std::runtime_error("Non-member vertex");
+      if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
       MGVertex source = v.GetSource();
       G.m_data->condensed_vertices.emplace(source, v);
       G.graph_type::AddVertex(v);
@@ -441,8 +414,7 @@ namespace indigox::graph {
     for (const CMGEdge &e : GetEdges()) {
       CMGVertex u = GetSourceVertex(e);
       CMGVertex v = GetTargetVertex(e);
-      if (!G.HasVertex(u) || !G.HasVertex(v))
-        continue;
+      if (!G.HasVertex(u) || !G.HasVertex(v)) continue;
       G.m_data->condensed_edges.emplace(e.GetSource(), e);
       G.graph_type::AddEdge(u, v, e);
     }
@@ -457,20 +429,17 @@ namespace indigox::graph {
     G.m_data->super_graph = *this;
 
     for (const CMGVertex &v : verts) {
-      if (!HasVertex(v))
-        throw std::runtime_error("Non-member vertex");
+      if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
       MGVertex source = v.GetSource();
       G.m_data->condensed_vertices.emplace(source, v);
       G.graph_type::AddVertex(v);
     }
 
     for (const CMGEdge &e : edges) {
-      if (!HasEdge(e))
-        throw std::runtime_error("Non-member edge");
+      if (!HasEdge(e)) throw std::runtime_error("Non-member edge");
       CMGVertex u = GetSourceVertex(e);
       CMGVertex v = GetTargetVertex(e);
-      if (!G.HasVertex(u) || !G.HasVertex(v))
-        continue;
+      if (!G.HasVertex(u) || !G.HasVertex(v)) continue;
       G.m_data->condensed_edges.emplace(e.GetSource(), e);
       G.graph_type::AddEdge(u, v, e);
     }

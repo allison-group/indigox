@@ -73,15 +73,11 @@ namespace indigox::algorithm {
 
     bool RemoveAthenaeum(const Athenaeum &library);
 
-    size_t NumAthenaeums() const {
-      return _libs.size();
-    }
+    size_t NumAthenaeums() const { return _libs.size(); }
 
     ParamMolecule ParameteriseMolecule(const Molecule &mol);
 
-    Forcefield GetForcefield() const {
-      return _ff;
-    }
+    Forcefield GetForcefield() const { return _ff; }
 
   private:
     //! \brief Forcefield

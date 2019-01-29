@@ -142,8 +142,7 @@ namespace indigox::graph {
     //! \brief Default constructor
     BaseGraph() : m_basedata(std::make_shared<BaseImpl>()){};
 
-    virtual ~BaseGraph() {
-    }
+    virtual ~BaseGraph() {}
 
   protected:
     // Modification methods protected.

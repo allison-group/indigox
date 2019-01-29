@@ -32,20 +32,17 @@ namespace indigox::algorithm {
   uint32_t CPSet::MinimumFragmentSize = 4;
   uint32_t CPSet::MaximumFragmentSize = 0; // no maximum size
 
-  CherryPicker::CherryPicker(const Forcefield &ff) : _ff(ff) {
-  }
+  CherryPicker::CherryPicker(const Forcefield &ff) : _ff(ff) {}
 
   bool CherryPicker::AddAthenaeum(const Athenaeum &library) {
-    if (library.GetForcefield() != _ff)
-      return false;
+    if (library.GetForcefield() != _ff) return false;
     _libs.push_back(library);
     return true;
   }
 
   bool CherryPicker::RemoveAthenaeum(const Athenaeum &library) {
     auto pos = std::find(_libs.begin(), _libs.end(), library);
-    if (pos != _libs.end())
-      _libs.erase(pos);
+    if (pos != _libs.end()) _libs.erase(pos);
     return pos != _libs.end();
   }
 
@@ -116,8 +113,7 @@ namespace indigox::algorithm {
 
       RegionalPermutation permutation(frag_v.begin(), frag_v.end());
       for (std::pair<size_t, size_t> be : regions) {
-        if (be.second - be.first < 2)
-          continue;
+        if (be.second - be.first < 2) continue;
         permutation.AddRegion(frag_v.begin() + be.first,
                               frag_v.begin() + be.second);
       }
@@ -188,9 +184,7 @@ namespace indigox::algorithm {
           pdhd.MappedWith(fragMol.GetDihedral(v1.GetAtom(), v2.GetAtom(),
                                               v3.GetAtom(), v4.GetAtom()));
         }
-        if (!CPSet::ParameteriseFromAllPermutations) {
-          break;
-        }
+        if (!CPSet::ParameteriseFromAllPermutations) { break; }
       }
       return true;
     }
@@ -270,20 +264,16 @@ namespace indigox::algorithm {
         for (size_t pos = 0; pos < fragments.size();
              pos = fragments.find_next(pos)) {
           Fragment frag = g_frag.second[pos];
-          if (frag.Size() < CPSet::MinimumFragmentSize)
-            continue;
+          if (frag.Size() < CPSet::MinimumFragmentSize) continue;
           if (CPSet::MaximumFragmentSize &&
               frag.Size() > CPSet::MaximumFragmentSize)
             continue;
-          if (frag.GetGraph().NumVertices() > CMG.NumVertices())
-            continue;
+          if (frag.GetGraph().NumVertices() > CMG.NumVertices()) continue;
           CherryPickerCallback callback(CMG, vmasks, emasks, pmol, frag,
                                         vertmask, edgemask);
           graph::CondensedMolecularGraph FG = frag.GetGraph();
           SubgraphIsomorphisms(FG, CMG, callback);
-          if (!callback.has_mapping) {
-            fragments -= frag.GetSupersets();
-          }
+          if (!callback.has_mapping) { fragments -= frag.GetSupersets(); }
         }
       }
       pmol.ApplyParameteristion(lib.IsSelfConsistent());

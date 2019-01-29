@@ -35,8 +35,7 @@ namespace indigox::graph {
 
     BaseImpl()
         : boost_graph(), state(0), state_cached_components(0),
-          state_cached_cycles(0) {
-    }
+          state_cached_cycles(0) {}
 
     V GetSourceVertex(const E &e) const {
       EdgeType eboost = edge_descriptors.left.at(e);
@@ -55,9 +54,7 @@ namespace indigox::graph {
       vertex_descriptors.insert(v, vboost);
       vertices.emplace_back(v);
       predecessors.emplace(v, VertContain());
-      if (D::is_directed) {
-        successors.emplace(v, VertContain());
-      }
+      if (D::is_directed)  successors.emplace(v, VertContain());
     }
 
     void AddEdge(const V &u, const V &v, const E &e) {
@@ -94,9 +91,7 @@ namespace indigox::graph {
               INDIGOX_SERIAL_NVP("edges", input_edges));
 
       // Build the graph
-      for (V &v : input_vertices) {
-        AddVertex(v);
-      }
+      for (V &v : input_vertices) AddVertex(v); 
       for (size_t pos = 0; pos < input_edges.size(); ++pos) {
         AddEdge(input_vertex_edges[pos].first, input_vertex_edges[pos].second,
                 input_edges[pos]);
@@ -163,18 +158,15 @@ namespace indigox::graph {
     m_basedata->vertices.erase(
         std::find(m_basedata->vertices.begin(), m_basedata->vertices.end(), v));
     m_basedata->predecessors.erase(v);
-    if (D::is_directed)
-      m_basedata->successors.erase(v);
+    if (D::is_directed) m_basedata->successors.erase(v);
     boost::clear_vertex(vboost, m_basedata->boost_graph);
     boost::remove_vertex(vboost, m_basedata->boost_graph);
   }
 
   BASEGRAPH(void)::AddEdge(const V &u, const V &v, const E &e) {
     ++m_basedata->state;
-    if (!HasVertex(u))
-      AddVertex(u);
-    if (!HasVertex(v))
-      AddVertex(v);
+    if (!HasVertex(u)) AddVertex(u);
+    if (!HasVertex(v)) AddVertex(v);
     m_basedata->AddEdge(u, v, e);
   }
 
@@ -203,8 +195,7 @@ namespace indigox::graph {
   }
 
   BASEGRAPH(bool)::HasEdge(const V &u, const V &v) const {
-    if (!HasVertex(u) || !HasVertex(v))
-      return false;
+    if (!HasVertex(u) || !HasVertex(v)) return false;
     VertType u_ = GetDescriptor(u);
     VertType v_ = GetDescriptor(v);
     return boost::edge(u_, v_, m_basedata->boost_graph).second;
@@ -223,10 +214,8 @@ namespace indigox::graph {
   }
 
   BASEGRAPH(int64_t)::InDegree(const V &v) const {
-    if (!HasVertex(v))
-      return -1;
-    if (D::is_directed)
-      return InDegree(GetDescriptor(v));
+    if (!HasVertex(v)) return -1;
+    if (D::is_directed) return InDegree(GetDescriptor(v));
     return OutDegree(GetDescriptor(v));
   }
 
@@ -351,16 +340,13 @@ namespace indigox::graph {
   }
 
   BASEGRAPH(bool)::IsCyclic(const V &v, uint32_t sz) {
-    if (!IsCyclic(v))
-      return false;
+    if (!IsCyclic(v)) return false;
     for (auto &cyc : m_basedata->cached_cycles) {
-      if (cyc.size() > sz)
-        return false;
+      if (cyc.size() > sz) return false;
       for (E &edge : cyc) {
         V a = GetSourceVertex(edge);
         V b = GetTargetVertex(edge);
-        if (a == v || b == v)
-          return true;
+        if (a == v || b == v) return true;
       }
     }
     return false;
@@ -374,14 +360,11 @@ namespace indigox::graph {
   }
 
   BASEGRAPH(bool)::IsCyclic(const E &e, uint32_t sz) {
-    if (!IsCyclic(e))
-      return false;
+    if (!IsCyclic(e)) return false;
     for (auto &cyc : m_basedata->cached_cycles) {
-      if (cyc.size() > sz)
-        return false;
+      if (cyc.size() > sz) return false;
       for (E &edge : cyc) {
-        if (edge == e)
-          return true;
+        if (edge == e) return true;
       }
     }
     return false;

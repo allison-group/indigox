@@ -61,9 +61,7 @@ namespace indigox {
 
     /*! \brief Number of atoms this dihedral contains.
      *  \return 4. */
-    constexpr int64_t NumAtoms() const {
-      return 4;
-    }
+    constexpr int64_t NumAtoms() const { return 4; }
 
     /*! \brief Set the tag of this dihedral.
      *  \details The tag of a dihedral should not be considered stable. Use with

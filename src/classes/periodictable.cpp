@@ -20,8 +20,7 @@ namespace indigox {
                 double rad, double cov, double vdw, double eln)
         : name(nme), symbol(sym), group(grp), period(prd), atomic_number(num),
           valence(val), octet(oct), hyper_octet(hyp), mass(mas), radius(rad),
-          covalent(cov), vanderwaals(vdw), chi(eln) {
-    }
+          covalent(cov), vanderwaals(vdw), chi(eln) {}
 
     static std::shared_ptr<ElementImpl> GetNullState() {
       static std::shared_ptr<ElementImpl> state;
@@ -36,15 +35,11 @@ namespace indigox {
   // == Element Construction and Assignment ====================================
   // ===========================================================================
 
-  Element::Element() : m_elemdat(ElementImpl::GetNullState()) {
-  }
-  Element::Element(const Element &e2) : m_elemdat(e2.m_elemdat) {
-  }
-  Element::Element(Element &&e2) : m_elemdat(std::move(e2.m_elemdat)) {
-  }
+  Element::Element() : m_elemdat(ElementImpl::GetNullState()) {}
+  Element::Element(const Element &e2) : m_elemdat(e2.m_elemdat) {}
+  Element::Element(Element &&e2) : m_elemdat(std::move(e2.m_elemdat)) {}
   Element &Element::operator=(const Element &e2) {
-    if (&e2 != this)
-      m_elemdat = e2.m_elemdat;
+    if (&e2 != this) m_elemdat = e2.m_elemdat;
     return *this;
   }
   Element &Element::operator=(Element &&e2) {
@@ -55,66 +50,41 @@ namespace indigox {
                    uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct,
                    uint8_t hyp, double rad, double cov, double vdw, double chi)
       : m_elemdat(std::make_shared<ElementImpl>(
-            name, sym, grp, prd, Z, val, oct, hyp, mass, rad, cov, vdw, chi)) {
-  }
+            name, sym, grp, prd, Z, val, oct, hyp, mass, rad, cov, vdw, chi)) {}
 
   // ===========================================================================
   // == Element Data Retrevial =================================================
   // ===========================================================================
 
-  double Element::GetAtomicMass() const {
-    return m_elemdat->mass;
-  }
-  int32_t Element::GetAtomicNumber() const {
-    return m_elemdat->atomic_number;
-  }
-  double Element::GetAtomicRadius() const {
-    return m_elemdat->radius;
-  }
-  double Element::GetCovalentRadius() const {
-    return m_elemdat->covalent;
-  }
+  double Element::GetAtomicMass() const { return m_elemdat->mass; }
+  int32_t Element::GetAtomicNumber() const { return m_elemdat->atomic_number; }
+  double Element::GetAtomicRadius() const { return m_elemdat->radius; }
+  double Element::GetCovalentRadius() const { return m_elemdat->covalent; }
   double Element::GetVanDerWaalsRadius() const {
     return m_elemdat->vanderwaals;
   }
-  std::string Element::GetName() const {
-    return m_elemdat->name;
-  }
-  std::string Element::GetSymbol() const {
-    return m_elemdat->symbol;
-  }
-  int32_t Element::GetGroup() const {
-    return m_elemdat->group;
-  }
-  int32_t Element::GetPeriod() const {
-    return m_elemdat->period;
-  }
+  std::string Element::GetName() const { return m_elemdat->name; }
+  std::string Element::GetSymbol() const { return m_elemdat->symbol; }
+  int32_t Element::GetGroup() const { return m_elemdat->group; }
+  int32_t Element::GetPeriod() const { return m_elemdat->period; }
   int32_t Element::GetValenceElectronCount() const {
     return m_elemdat->valence;
   }
-  int32_t Element::GetOctet() const {
-    return m_elemdat->octet;
-  }
+  int32_t Element::GetOctet() const { return m_elemdat->octet; }
   int32_t Element::GetHypervalentOctet() const {
     return m_elemdat->hyper_octet;
   }
-  double Element::GetElectronegativity() const {
-    return m_elemdat->chi;
-  }
+  double Element::GetElectronegativity() const { return m_elemdat->chi; }
 
   // ===========================================================================
   // == Element Operators ======================================================
   // ===========================================================================
 
-  Element::operator bool() {
-    return m_elemdat->atomic_number != -1;
-  }
+  Element::operator bool() { return m_elemdat->atomic_number != -1; }
   std::ostream &operator<<(std::ostream &os, const Element &element) {
     return (os << element.GetSymbol());
   }
-  bool Element::operator==(int32_t Z) const {
-    return Z == GetAtomicNumber();
-  }
+  bool Element::operator==(int32_t Z) const { return Z == GetAtomicNumber(); }
   bool Element::operator==(const std::string &name) const {
     return (name.size() <= 2 ? name == GetSymbol()
                              : utils::ToUpperFirst(name) == GetName());
@@ -122,15 +92,9 @@ namespace indigox {
   bool Element::operator==(const Element &element) const {
     return element.m_elemdat == m_elemdat;
   }
-  bool Element::operator!=(int32_t Z) const {
-    return !(*this == Z);
-  }
-  bool Element::operator!=(const std::string &Z) const {
-    return !(*this == Z);
-  }
-  bool Element::operator!=(const Element &Z) const {
-    return !(*this == Z);
-  }
+  bool Element::operator!=(int32_t Z) const { return !(*this == Z); }
+  bool Element::operator!=(const std::string &Z) const { return !(*this == Z); }
+  bool Element::operator!=(const Element &Z) const { return !(*this == Z); }
   bool Element::operator<(const Element &element) const {
     return GetAtomicNumber() < element.GetAtomicNumber();
   }
@@ -148,8 +112,7 @@ namespace indigox {
   // == PeriodicTable Construction/Generation ==================================
   // ===========================================================================
 
-  PeriodicTable::PeriodicTable() {
-  }
+  PeriodicTable::PeriodicTable() {}
 
   void PeriodicTable::GeneratePeriodicTable() {
     _elems[0] = Element();
@@ -405,8 +368,7 @@ namespace indigox {
   }
 
   Element PeriodicTable::GetElement(std::string name) const {
-    if (name.size() > 2)
-      name = utils::ToUpperFirst(name);
+    if (name.size() > 2) name = utils::ToUpperFirst(name);
     auto pos = _name_to_idx.find(name);
     return (pos == _name_to_idx.end()) ? _elems.at(0) : _elems.at(pos->second);
   }
@@ -418,22 +380,12 @@ namespace indigox {
   using erow = std::pair<const Element &, int>;
   std::ostream &operator<<(std::ostream &ss, erow er) {
     switch (er.second) {
-    case 0:
-      ss << "--- ";
-      break;
-    case 1:
-      ss << std::setw(3) << er.first.GetAtomicNumber() << '|';
-      break;
-    case 2:
-      ss << std::setw(3) << er.first.GetSymbol() << '|';
-      break;
-    case 3:
-      ss << "    ";
-      break;
+    case 0: ss << "--- "; break;
+    case 1: ss << std::setw(3) << er.first.GetAtomicNumber() << '|'; break;
+    case 2: ss << std::setw(3) << er.first.GetSymbol() << '|'; break;
+    case 3: ss << "    "; break;
     case 4:
-    default:
-      ss << "   |";
-      break;
+    default: ss << "   |"; break;
     }
     return ss;
   }
@@ -456,8 +408,7 @@ namespace indigox {
         62,  63,  64,  65,  66,  67,  68,  69,  70,  71,  0,   -1,  0,   0,
         0,   90,  91,  92,  93,  94,  95,  96,  97,  98,  99,  100, 101, 102,
         103, 0,   -1};
-    if (!PT.NumElements())
-      return "Empty PeriodicTable";
+    if (!PT.NumElements()) return "Empty PeriodicTable";
     ss << ' ';
     const Element &_null = PT.GetUndefined();
     for (size_t i = 0; i < elems.size();) {

@@ -33,22 +33,18 @@ Bond __unpickle_bond_version_0(py::tuple &t);
 Atom UnpickleAtom(py::tuple &t) {
   size_t pickled_version = t[t.size() - 1].cast<size_t>();
   switch (pickled_version) {
-  case 0:
-    return __unpickle_atom_version_0(t);
+  case 0: return __unpickle_atom_version_0(t);
 
-  default:
-    return __unpickle_atom_version_0(t);
+  default: return __unpickle_atom_version_0(t);
   }
 }
 
 Bond UnpickleBond(py::tuple &t) {
   size_t pickled_version = t[t.size() - 1].cast<size_t>();
   switch (pickled_version) {
-  case 0:
-    return __unpickle_bond_version_0(t);
+  case 0: return __unpickle_bond_version_0(t);
 
-  default:
-    return __unpickle_bond_version_0(t);
+  default: return __unpickle_bond_version_0(t);
   }
 }
 

@@ -23,33 +23,28 @@ namespace stdx { // extended std namespace
     quad(quad const &) = default;
     quad(quad &&) = default;
 
-    inline constexpr quad() : first(), second(), third(), fourth() {
-    }
+    inline constexpr quad() : first(), second(), third(), fourth() {}
 
     inline constexpr quad(_T1 const &__t1, _T2 const &__t2, _T3 const &__t3,
                           _T4 const &__t4)
-        : first(__t1), second(__t2), third(__t3), fourth(__t4) {
-    }
+        : first(__t1), second(__t2), third(__t3), fourth(__t4) {}
 
     template <class _U1, class _U2, class _U3, class _U4>
     inline constexpr quad(_U1 &&__u1, _U2 &&__u2, _U3 &&__u3, _U4 &&__u4)
         : first(std::forward<_U1>(__u1)), second(std::forward<_U2>(__u2)),
-          third(std::forward<_U3>(__u3)), fourth(std::forward<_U4>(__u4)) {
-    }
+          third(std::forward<_U3>(__u3)), fourth(std::forward<_U4>(__u4)) {}
 
     template <class _U1, class _U2, class _U3, class _U4>
     inline constexpr quad(quad<_U1, _U2, _U3, _U4> const &__p)
         : first(__p.first), second(__p.second), third(__p.third),
-          fourth(__p.fourth) {
-    }
+          fourth(__p.fourth) {}
 
     template <class _U1, class _U2, class _U3, class _U4>
     inline constexpr quad(quad<_U1, _U2, _U3, _U4> &&__p)
         : first(std::forward<_U1>(__p.first)),
           second(std::forward<_U2>(__p.second)),
           third(std::forward<_U3>(__p.third)),
-          fourth(std::forward<_U4>(__p.fourth)) {
-    }
+          fourth(std::forward<_U4>(__p.fourth)) {}
 
     inline quad &operator=(
         typename std::conditional<

@@ -18,8 +18,7 @@ namespace indigox {
     MappedCharge charges;
     bool applied;
 
-    ParamAtomImpl(const Atom &atm) : atom(atm), applied(false) {
-    }
+    ParamAtomImpl(const Atom &atm) : atom(atm), applied(false) {}
   };
 
   // ===========================================================================
@@ -27,16 +26,14 @@ namespace indigox {
   // ===========================================================================
 
   ParamAtom::ParamAtom(const Atom &atm)
-      : m_data(std::make_shared<ParamAtomImpl>(atm)) {
-  }
+      : m_data(std::make_shared<ParamAtomImpl>(atm)) {}
 
   // ===========================================================================
   // == ParamAtom Data Modification ============================================
   // ===========================================================================
 
   void ParamAtom::MappedWith(const Atom &mapped) {
-    if (m_data->applied)
-      return;
+    if (m_data->applied) return;
     if (!mapped.HasType())
       throw std::runtime_error("Needs a parameterised atom");
     FFAtom t = mapped.GetType();
@@ -49,10 +46,8 @@ namespace indigox {
   }
 
   bool ParamAtom::ApplyParameterisation(bool self_consistent) {
-    if (m_data->applied)
-      return false;
-    if (m_data->charges.empty())
-      return false;
+    if (m_data->applied) return false;
+    if (m_data->charges.empty()) return false;
     double mean = MeanCharge();
     if (self_consistent) {
       if (m_data->types.size() > 1)
@@ -62,8 +57,7 @@ namespace indigox {
       if (std::fabs(0.0 - StandardDeviationCharge()) > 1e-10)
         throw std::runtime_error("Charge stddev not 0");
     }
-    if (!m_data->atom)
-      throw std::runtime_error("Mapped atom missing");
+    if (!m_data->atom) throw std::runtime_error("Mapped atom missing");
     m_data->atom.SetType(GetMostCommonType());
     if (!self_consistent)
       m_data->atom.SetPartialCharge(mean);
@@ -77,12 +71,8 @@ namespace indigox {
   // == ParamAtom Data Retrevial ===============================================
   // ===========================================================================
 
-  int64_t ParamAtom::NumSourceAtoms() const {
-    return m_data->charges.size();
-  }
-  const Atom &ParamAtom::GetAtom() const {
-    return m_data->atom;
-  }
+  int64_t ParamAtom::NumSourceAtoms() const { return m_data->charges.size(); }
+  const Atom &ParamAtom::GetAtom() const { return m_data->atom; }
   double ParamAtom::MeanCharge() const {
     return CalculateMean(m_data->charges.begin(), m_data->charges.end());
   }
@@ -120,8 +110,7 @@ namespace indigox {
     return (m_data->atom.GetIndex() > atm.m_data->atom.GetIndex());
   }
   std::ostream &operator<<(std::ostream &os, const ParamAtom &atm) {
-    if (atm)
-      os << "Param[" << atm.GetAtom() << "]";
+    if (atm) os << "Param[" << atm.GetAtom() << "]";
     return os;
   }
 
@@ -136,8 +125,7 @@ namespace indigox {
     bool applied;
 
     ParamBondImpl(BondAtoms atms, const Bond &bnd)
-        : atoms(atms), bond(bnd), applied(false) {
-    }
+        : atoms(atms), bond(bnd), applied(false) {}
   };
 
   // ===========================================================================
@@ -145,16 +133,14 @@ namespace indigox {
   // ===========================================================================
 
   ParamBond::ParamBond(BondAtoms atms, const Bond &bnd)
-      : m_data(std::make_shared<ParamBondImpl>(atms, bnd)) {
-  }
+      : m_data(std::make_shared<ParamBondImpl>(atms, bnd)) {}
 
   // ===========================================================================
   // == ParamBond Data Modification ============================================
   // ===========================================================================
 
   void ParamBond::MappedWith(const Bond &mapped) {
-    if (m_data->applied)
-      return;
+    if (m_data->applied) return;
     if (!mapped.HasType())
       throw std::runtime_error("Needs a parameterised bond");
     FFBond t = mapped.GetType();
@@ -172,14 +158,11 @@ namespace indigox {
   }
 
   bool ParamBond::ApplyParameterisation(bool self_consistent) {
-    if (m_data->applied)
-      return false;
-    if (m_data->types.empty())
-      return false;
+    if (m_data->applied) return false;
+    if (m_data->types.empty()) return false;
     if (self_consistent && m_data->types.size() > 1)
       throw std::runtime_error("Types not self-consistent");
-    if (!m_data->bond)
-      throw std::runtime_error("Mapped bond missing");
+    if (!m_data->bond) throw std::runtime_error("Mapped bond missing");
     m_data->bond.SetType(GetMostCommonType());
     m_data->applied = true;
     return true;
@@ -191,8 +174,7 @@ namespace indigox {
 
   int64_t ParamBond::NumSourceBonds() const {
     int64_t count = 0;
-    for (auto &countable : m_data->types)
-      count += countable.second;
+    for (auto &countable : m_data->types) count += countable.second;
     return count;
   }
 
@@ -200,9 +182,7 @@ namespace indigox {
     return m_data->atoms;
   }
 
-  const Bond &ParamBond::GetBond() const {
-    return m_data->bond;
-  }
+  const Bond &ParamBond::GetBond() const { return m_data->bond; }
 
   const FFBond &ParamBond::GetMostCommonType() const {
     using T = TypeCounts::value_type;
@@ -230,8 +210,7 @@ namespace indigox {
     return (m_data->bond.GetIndex() > bnd.m_data->bond.GetIndex());
   }
   std::ostream &operator<<(std::ostream &os, const ParamBond &bnd) {
-    if (bnd)
-      os << "Param[" << bnd.GetBond() << "]";
+    if (bnd) os << "Param[" << bnd.GetBond() << "]";
     return os;
   }
 
@@ -246,8 +225,7 @@ namespace indigox {
     bool applied;
 
     ParamAngleImpl(AngleAtoms atms, const Angle &ang)
-        : atoms(atms), angle(ang), applied(false) {
-    }
+        : atoms(atms), angle(ang), applied(false) {}
   };
 
   // ===========================================================================
@@ -255,16 +233,14 @@ namespace indigox {
   // ===========================================================================
 
   ParamAngle::ParamAngle(AngleAtoms atms, const Angle &ang)
-      : m_data(std::make_shared<ParamAngleImpl>(atms, ang)) {
-  }
+      : m_data(std::make_shared<ParamAngleImpl>(atms, ang)) {}
 
   // ===========================================================================
   // == ParamAngle Data Modification ===========================================
   // ===========================================================================
 
   void ParamAngle::MappedWith(const Angle &mapped) {
-    if (m_data->applied)
-      return;
+    if (m_data->applied) return;
     if (!mapped.HasType())
       throw std::runtime_error("Needs a parameterised angle");
     FFAngle t = mapped.GetType();
@@ -282,15 +258,12 @@ namespace indigox {
   }
 
   bool ParamAngle::ApplyParameterisation(bool self_consistent) {
-    if (m_data->types.empty())
-      return false;
-    if (m_data->applied)
-      return false;
+    if (m_data->types.empty()) return false;
+    if (m_data->applied) return false;
     if (self_consistent && m_data->types.size() > 1)
       throw std::runtime_error("Types not self-consistent");
 
-    if (!m_data->angle)
-      throw std::runtime_error("Mapped angle missing");
+    if (!m_data->angle) throw std::runtime_error("Mapped angle missing");
     m_data->angle.SetType(GetMostCommonType());
     m_data->applied = true;
     return true;
@@ -302,8 +275,7 @@ namespace indigox {
 
   int64_t ParamAngle::NumSourceAngles() const {
     int64_t count = 0;
-    for (auto &countable : m_data->types)
-      count += countable.second;
+    for (auto &countable : m_data->types) count += countable.second;
     return count;
   }
 
@@ -311,9 +283,7 @@ namespace indigox {
     return m_data->atoms;
   }
 
-  const Angle &ParamAngle::GetAngle() const {
-    return m_data->angle;
-  }
+  const Angle &ParamAngle::GetAngle() const { return m_data->angle; }
 
   const FFAngle &ParamAngle::GetMostCommonType() const {
     using T = TypeCounts::value_type;
@@ -341,8 +311,7 @@ namespace indigox {
     return (m_data->angle.GetIndex() > ang.m_data->angle.GetIndex());
   }
   std::ostream &operator<<(std::ostream &os, const ParamAngle &ang) {
-    if (ang)
-      os << "Param[" << ang.GetAngle() << "]";
+    if (ang) os << "Param[" << ang.GetAngle() << "]";
     return os;
   }
 
@@ -357,8 +326,7 @@ namespace indigox {
     bool applied;
 
     ParamDihedralImpl(DihedralAtoms atms, const Dihedral &dhd)
-        : atoms(atms), dihedral(dhd), applied(false) {
-    }
+        : atoms(atms), dihedral(dhd), applied(false) {}
   };
 
   // ===========================================================================
@@ -366,19 +334,16 @@ namespace indigox {
   // ===========================================================================
 
   ParamDihedral::ParamDihedral(DihedralAtoms atms, const Dihedral &dhd)
-      : m_data(std::make_shared<ParamDihedralImpl>(atms, dhd)) {
-  }
+      : m_data(std::make_shared<ParamDihedralImpl>(atms, dhd)) {}
 
   // ===========================================================================
   // == ParamDihedral Data Modification ========================================
   // ===========================================================================
 
   void ParamDihedral::MappedWith(const Dihedral &mapped) {
-    if (m_data->applied)
-      return;
+    if (m_data->applied) return;
     // Can't throw with dihedrals as they can have no types assigned
-    if (!mapped.HasType())
-      return;
+    if (!mapped.HasType()) return;
     // Only map with same priority dihedrals.
     //  To avoid GROMOS duplication in eg NH3 group.
     if (mapped.GetPriority() >= 0 &&
@@ -387,20 +352,16 @@ namespace indigox {
 
     TypeGroup t = mapped.GetTypes();
     auto t_pos = m_data->types.emplace(t, 1);
-    if (!t_pos.second)
-      ++(t_pos.first->second);
+    if (!t_pos.second) ++(t_pos.first->second);
   }
 
   bool ParamDihedral::ApplyParameterisation(bool self_consistent) {
-    if (m_data->types.empty())
-      return false;
-    if (m_data->applied)
-      return false;
+    if (m_data->types.empty()) return false;
+    if (m_data->applied) return false;
     if (self_consistent && m_data->types.size() > 1)
       throw std::runtime_error("Types not self-consistent");
 
-    if (!m_data->dihedral)
-      throw std::runtime_error("Mapped dihedral missing");
+    if (!m_data->dihedral) throw std::runtime_error("Mapped dihedral missing");
     m_data->dihedral.SetTypes(GetMostCommonType());
     m_data->applied = true;
     return true;
@@ -412,8 +373,7 @@ namespace indigox {
 
   int64_t ParamDihedral::NumSourceDihedral() const {
     int64_t count = 0;
-    for (auto &countable : m_data->types)
-      count += countable.second;
+    for (auto &countable : m_data->types) count += countable.second;
     return count;
   }
 
@@ -450,8 +410,7 @@ namespace indigox {
     return (m_data->dihedral.GetIndex() > ang.m_data->dihedral.GetIndex());
   }
   std::ostream &operator<<(std::ostream &os, const ParamDihedral &ang) {
-    if (ang)
-      os << "Param[" << ang.GetDihedral() << "]";
+    if (ang) os << "Param[" << ang.GetDihedral() << "]";
     return os;
   }
 
@@ -480,9 +439,7 @@ namespace indigox {
       for (const Bond &bnd : mol.GetBonds()) {
         Atom a = bnd.GetAtoms()[0];
         Atom b = bnd.GetAtoms()[1];
-        if (a > b) {
-          std::swap(a, b);
-        }
+        if (a > b) { std::swap(a, b); }
         bonds.emplace_back(std::make_pair(a, b), bnd);
         bond_indices.emplace(std::make_pair(a, b), bond_indices.size());
       }
@@ -491,9 +448,7 @@ namespace indigox {
         Atom a = ang.GetAtoms()[0];
         Atom b = ang.GetAtoms()[1];
         Atom c = ang.GetAtoms()[2];
-        if (a > c) {
-          std::swap(a, c);
-        }
+        if (a > c) { std::swap(a, c); }
         angles.emplace_back(stdx::make_triple(a, b, c), ang);
         angle_indices.emplace(stdx::make_triple(a, b, c), angle_indices.size());
       }
@@ -519,8 +474,7 @@ namespace indigox {
   // ===========================================================================
 
   ParamMolecule::ParamMolecule(const Molecule &mol)
-      : m_data(std::make_shared<ParamMoleculeImpl>(mol)) {
-  }
+      : m_data(std::make_shared<ParamMoleculeImpl>(mol)) {}
 
   // ===========================================================================
   // == ParamMolecule Data Modification ========================================
@@ -529,15 +483,11 @@ namespace indigox {
   void ParamMolecule::ApplyParameteristion(bool sc) {
     for (ParamAtom atm : m_data->atoms) {
       bool param = atm.ApplyParameterisation(sc);
-      if (!sc && param)
-        m_data->nonsc_atoms.emplace_back(atm);
+      if (!sc && param) m_data->nonsc_atoms.emplace_back(atm);
     }
-    for (ParamBond bnd : m_data->bonds)
-      bnd.ApplyParameterisation(sc);
-    for (ParamAngle ang : m_data->angles)
-      ang.ApplyParameterisation(sc);
-    for (ParamDihedral dhd : m_data->dihedrals)
-      dhd.ApplyParameterisation(sc);
+    for (ParamBond bnd : m_data->bonds) bnd.ApplyParameterisation(sc);
+    for (ParamAngle ang : m_data->angles) ang.ApplyParameterisation(sc);
+    for (ParamDihedral dhd : m_data->dihedrals) dhd.ApplyParameterisation(sc);
   }
 
   // ===========================================================================

@@ -42,9 +42,7 @@ namespace indigox {
 
     /*! \brief Number of atoms this angle contains.
      *  \return 3. */
-    constexpr int64_t NumAtoms() const {
-      return 3;
-    }
+    constexpr int64_t NumAtoms() const { return 3; }
 
     /*! \brief Tag of the angle.
      *  \details This value may be modified without warning. Use with caution.

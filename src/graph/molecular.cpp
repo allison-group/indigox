@@ -15,8 +15,7 @@ namespace indigox::graph {
     MolecularGraph graph;
 
     MGVertexData() = default;
-    MGVertexData(const Atom &a, const MolecularGraph &g) : atom(a), graph(g) {
-    }
+    MGVertexData(const Atom &a, const MolecularGraph &g) : atom(a), graph(g) {}
 
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t) {
@@ -30,8 +29,7 @@ namespace indigox::graph {
     MolecularGraph graph;
 
     MGEdgeData() = default;
-    MGEdgeData(const Bond &b, const MolecularGraph &g) : bond(b), graph(g) {
-    }
+    MGEdgeData(const Bond &b, const MolecularGraph &g) : bond(b), graph(g) {}
 
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t) {
@@ -48,8 +46,7 @@ namespace indigox::graph {
     MolecularGraph super_graph;
 
     Impl() = default;
-    Impl(const Molecule &mol) : molecule(mol) {
-    }
+    Impl(const Molecule &mol) : molecule(mol) {}
 
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t) {
@@ -90,45 +87,32 @@ namespace indigox::graph {
   // ====================================================================
 
   MGVertex::MGVertex(const Atom &a, const MolecularGraph &graph)
-      : m_data(std::make_shared<MGVertexData>(a, graph)) {
-  }
+      : m_data(std::make_shared<MGVertexData>(a, graph)) {}
 
   MGEdge::MGEdge(const Bond &b, const MolecularGraph &graph)
-      : m_data(std::make_shared<MGEdgeData>(b, graph)) {
-  }
+      : m_data(std::make_shared<MGEdgeData>(b, graph)) {}
 
   MolecularGraph::MolecularGraph(const Molecule &mol)
       : BaseGraph<MGVertex, MGEdge, MolecularGraph>(),
-        m_data(std::make_shared<Impl>(mol)) {
-  }
+        m_data(std::make_shared<Impl>(mol)) {}
 
   // =====================================================================
   // == GETTING ==========================================================
   // =====================================================================
 
-  const Atom &MGVertex::GetAtom() const {
-    return m_data->atom;
-  }
-  const MolecularGraph &MGVertex::GetGraph() const {
-    return m_data->graph;
-  }
+  const Atom &MGVertex::GetAtom() const { return m_data->atom; }
+  const MolecularGraph &MGVertex::GetGraph() const { return m_data->graph; }
 
-  const Bond &MGEdge::GetBond() const {
-    return m_data->bond;
-  }
-  const MolecularGraph &MGEdge::GetGraph() const {
-    return m_data->graph;
-  }
+  const Bond &MGEdge::GetBond() const { return m_data->bond; }
+  const MolecularGraph &MGEdge::GetGraph() const { return m_data->graph; }
 
   const MGEdge &MolecularGraph::GetEdge(const Bond &bnd) const {
-    if (!HasEdge(bnd))
-      throw std::out_of_range("No such edge");
+    if (!HasEdge(bnd)) throw std::out_of_range("No such edge");
     return m_data->bond_edges.at(bnd);
   }
 
   const MGVertex &MolecularGraph::GetVertex(const Atom &atm) const {
-    if (!HasVertex(atm))
-      throw std::out_of_range("No such vertex");
+    if (!HasVertex(atm)) throw std::out_of_range("No such vertex");
     return m_data->atom_vertices.at(atm);
   }
 
@@ -144,9 +128,7 @@ namespace indigox::graph {
     return m_data->super_graph;
   }
 
-  bool MolecularGraph::IsSubgraph() const {
-    return bool(m_data->super_graph);
-  }
+  bool MolecularGraph::IsSubgraph() const { return bool(m_data->super_graph); }
 
   // ===================================================================
   // == Subgraph Generation ============================================
@@ -157,8 +139,7 @@ namespace indigox::graph {
     G.m_data->super_graph = *this;
 
     for (const MGVertex &v : verts) {
-      if (!HasVertex(v))
-        throw std::runtime_error("Non-member vertex");
+      if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
       G.m_data->atom_vertices.emplace(v.GetAtom(), v);
       G.graph_type::AddVertex(v);
     }
@@ -166,9 +147,7 @@ namespace indigox::graph {
     for (const MGEdge &e : GetEdges()) {
       MGVertex u = GetSourceVertex(e);
       MGVertex v = GetTargetVertex(e);
-      if (!G.HasVertex(u) || !G.HasVertex(v)) {
-        continue;
-      }
+      if (!G.HasVertex(u) || !G.HasVertex(v)) { continue; }
       G.m_data->bond_edges.emplace(e.GetBond(), e);
       G.graph_type::AddEdge(u, v, e);
     }
@@ -182,19 +161,16 @@ namespace indigox::graph {
     G.m_data->super_graph = *this;
 
     for (const MGVertex &v : verts) {
-      if (!HasVertex(v))
-        throw std::runtime_error("Non-member vertex");
+      if (!HasVertex(v)) throw std::runtime_error("Non-member vertex");
       G.m_data->atom_vertices.emplace(v.GetAtom(), v);
       G.graph_type::AddVertex(v);
     }
 
     for (const MGEdge &e : edges) {
-      if (!HasEdge(e))
-        throw std::runtime_error("Non-member edge");
+      if (!HasEdge(e)) throw std::runtime_error("Non-member edge");
       MGVertex u = GetSourceVertex(e);
       MGVertex v = GetTargetVertex(e);
-      if (!G.HasVertex(u) || !G.HasVertex(v))
-        continue;
+      if (!G.HasVertex(u) || !G.HasVertex(v)) continue;
       G.m_data->bond_edges.emplace(e.GetBond(), e);
       G.graph_type::AddEdge(u, v, e);
     }
@@ -253,8 +229,7 @@ namespace indigox::graph {
   const CondensedMolecularGraph &MolecularGraph::GetCondensedGraph() {
     if (!m_data->molecule.IsFrozen())
       throw std::runtime_error("Can only condense a frozen molecule");
-    if (!m_data->condensed_graph)
-      m_data->condensed_graph = Condense(*this);
+    if (!m_data->condensed_graph) m_data->condensed_graph = Condense(*this);
     return m_data->condensed_graph;
   }
 
@@ -275,9 +250,7 @@ namespace indigox::graph {
   }
 
   std::ostream &operator<<(std::ostream &os, const MGVertex &v) {
-    if (v) {
-      os << "MGVertex(" << v.GetAtom().GetIndex() + 1 << ")";
-    }
+    if (v) { os << "MGVertex(" << v.GetAtom().GetIndex() + 1 << ")"; }
     return os;
   }
 
@@ -294,9 +267,7 @@ namespace indigox::graph {
   }
 
   std::ostream &operator<<(std::ostream &os, const MGEdge &e) {
-    if (e) {
-      os << "MGEdge(" << e.GetBond().GetIndex() + 1 << ")";
-    }
+    if (e) { os << "MGEdge(" << e.GetBond().GetIndex() + 1 << ")"; }
     return os;
   }
 

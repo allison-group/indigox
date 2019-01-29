@@ -14,8 +14,7 @@ namespace indigox::algorithm {
 
   bool CMGPrintCallback::operator()(const CorrespondenceMap &cmap) {
     std::cout << "Mapping instance " << ++count << ":\n";
-    for (auto &ab : cmap)
-      std::cout << ab.first << " -- " << ab.second << "\n";
+    for (auto &ab : cmap) std::cout << ab.first << " -- " << ab.second << "\n";
     std::cout << "\n";
     return true;
   }
@@ -26,8 +25,7 @@ namespace indigox::algorithm {
 
   bool MGPrintCallback::operator()(const CorrespondenceMap &cmap) {
     std::cout << "Mapping instance " << ++count << ":\n";
-    for (auto &ab : cmap)
-      std::cout << ab.first << " -- " << ab.second << "\n";
+    for (auto &ab : cmap) std::cout << ab.first << " -- " << ab.second << "\n";
     std::cout << "\n";
     return true;
   }
@@ -56,8 +54,7 @@ namespace indigox::algorithm {
           vdm_small(access::GetVertexMap(s).right),
           vdm_large(access::GetVertexMap(l).right),
           edm_small(access::GetEdgeMap(s).right),
-          edm_large(access::GetEdgeMap(l).right) {
-    }
+          edm_large(access::GetEdgeMap(l).right) {}
 
     template <class CMap1to2, class CMap2to1>
     bool operator()(CMap1to2 one, CMap2to1) {

@@ -170,9 +170,7 @@ namespace indigox {
      *  \param z the atomic number of the element to get.
      *  \return the requested element.
      *  \see IXPeriodicTable::GetElement(const uint8_t) const */
-    Element operator[](const int32_t z) const {
-      return GetElement(z);
-    }
+    Element operator[](const int32_t z) const { return GetElement(z); }
 
     /*! \brief Get the element with the given name or symbol.
      *  \param name the name or symbol of the element to get.
@@ -186,15 +184,11 @@ namespace indigox {
      *  \details As there is not much point in an undefined element, this
      *  method is intended for internal use.
      *  \return the undefined Element. */
-    Element GetUndefined() const {
-      return _elems.at(0);
-    }
+    Element GetUndefined() const { return _elems.at(0); }
 
     /*! \brief Number of elements in the PeriodicTable.
      *  \return the number of elements in the PeriodicTable. */
-    inline size_t NumElements() const {
-      return _elems.size() - 1;
-    }
+    inline size_t NumElements() const { return _elems.size() - 1; }
 
   private:
     PeriodicTable();

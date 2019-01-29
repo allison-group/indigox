@@ -16,13 +16,11 @@ namespace indigox {
                       std::vector<std::vector<T>> &out) {
     out.clear();
     std::vector<T> pool(first, last);
-    if (r > pool.size())
-      return 0;
+    if (r > pool.size()) return 0;
     std::vector<size_t> indices(r);
     std::iota(indices.begin(), indices.end(), 0);
     out.emplace_back(std::vector<T>());
-    for (size_t i : indices)
-      out.back().emplace_back(pool[i]);
+    for (size_t i : indices) out.back().emplace_back(pool[i]);
     std::vector<size_t> tmp(r);
     std::iota(tmp.begin(), tmp.end(), 0);
     std::reverse(tmp.begin(), tmp.end());
@@ -36,16 +34,13 @@ namespace indigox {
           break;
         }
       }
-      if (!broken)
-        break;
+      if (!broken) break;
       ++indices[i];
       std::vector<size_t> tmp2(r - i - 1);
       std::iota(tmp2.begin(), tmp2.end(), i + 1);
-      for (size_t j : tmp2)
-        indices[j] = indices[j - 1] + 1;
+      for (size_t j : tmp2) indices[j] = indices[j - 1] + 1;
       out.emplace_back(std::vector<T>());
-      for (size_t i : indices)
-        out.back().emplace_back(pool[i]);
+      for (size_t i : indices) out.back().emplace_back(pool[i]);
     }
     return out.size();
   }

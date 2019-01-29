@@ -80,8 +80,7 @@ namespace indigox::utils {
         std::is_same<typename std::weak_ptr<T>,
                      typename std::iterator_traits<__Iter>::value_type>::value,
         "__Iter must be iterator over std::weak_ptr<T>.");
-    if (!x)
-      return e;
+    if (!x) return e;
     return std::find_if(b, e,
                         [x](std::weak_ptr<T> _x) { return _x.lock() == x; });
   }

@@ -28,9 +28,7 @@ namespace indigox { namespace utils {
 
     /// @brief Reads the file from disk.
     void GetAllLines(std::vector<std::string> &);
-    inline void SetFilePath(const std::string &p) {
-      path_ = p;
-    }
+    inline void SetFilePath(const std::string &p) { path_ = p; }
 
   private:
     std::string path_;

@@ -88,27 +88,22 @@ namespace indigox {
   Fragment::OverlapType _GetOverType(const graph::CMGVertex &v,
                                      graph::CondensedMolecularGraph &g,
                                      std::vector<graph::CMGVertex> &) {
-    if (!g.HasVertex(v))
-      throw std::runtime_error("Issue with overlap type");
+    if (!g.HasVertex(v)) throw std::runtime_error("Issue with overlap type");
     return Fragment::OverlapType::GenericOverlap;
   }
 
   Fragment::Fragment(const Molecule &mol, std::vector<Atom> &frag,
                      std::vector<Atom> &overlap) {
 
-    if (frag.empty()) {
-      throw std::runtime_error("A fragment requires atoms");
-    }
+    if (frag.empty()) { throw std::runtime_error("A fragment requires atoms"); }
 
     graph::MolecularGraph G = mol.GetGraph();
     std::vector<graph::MGVertex> frag_v, overlap_v;
     frag_v.reserve(frag.size());
     overlap_v.reserve(overlap.size());
 
-    for (Atom atm : frag)
-      frag_v.push_back(G.GetVertex(atm));
-    for (Atom atm : overlap)
-      overlap_v.push_back(G.GetVertex(atm));
+    for (Atom atm : frag) frag_v.push_back(G.GetVertex(atm));
+    for (Atom atm : overlap) overlap_v.push_back(G.GetVertex(atm));
 
     Fragment tmp(G, frag_v, overlap_v);
     m_data = tmp.m_data;
@@ -118,8 +113,7 @@ namespace indigox {
                      std::vector<graph::MGVertex> &frag,
                      std::vector<graph::MGVertex> &overlap)
       : m_data(std::make_shared<FragmentData>()) {
-    if (frag.empty())
-      throw std::runtime_error("A fragment needs vertices");
+    if (frag.empty()) throw std::runtime_error("A fragment needs vertices");
 
     // Induce a new subgraph
     graph::MolecularGraph g = G;
@@ -153,31 +147,24 @@ namespace indigox {
     auto &all_v = CG.GetVertices();
     m_data->graph_mask = boost::dynamic_bitset<>(all_v.size());
     for (size_t i = 0; i < all_v.size(); ++i) {
-      if (m_data->graph.HasVertex(all_v[i]))
-        m_data->graph_mask.set(i);
+      if (m_data->graph.HasVertex(all_v[i])) m_data->graph_mask.set(i);
     }
 
     // Get the bonds which are allowed
     std::deque<BndType> tmp_bnd;
     for (Bond bnd : mol.GetBonds()) {
-      if (!bnd.HasType())
-        continue;
+      if (!bnd.HasType()) continue;
       AtmType a = G.GetVertex(bnd.GetAtoms()[0]);
       AtmType b = G.GetVertex(bnd.GetAtoms()[1]);
       auto a_pos = std::find(atm_check.begin(), atm_check.end(), a);
-      if (a_pos == atm_check.end())
-        continue;
+      if (a_pos == atm_check.end()) continue;
       auto b_pos = std::find(atm_check.begin(), atm_check.end(), b);
-      if (b_pos == atm_check.end())
-        continue;
+      if (b_pos == atm_check.end()) continue;
       size_t dangle = 0;
-      if (std::distance(atm_check.begin(), a_pos) >= acceptable_pos)
-        ++dangle;
-      if (std::distance(atm_check.begin(), b_pos) >= acceptable_pos)
-        ++dangle;
+      if (std::distance(atm_check.begin(), a_pos) >= acceptable_pos) ++dangle;
+      if (std::distance(atm_check.begin(), b_pos) >= acceptable_pos) ++dangle;
       // Bonds are allowed one dangling. Danglings go on end
-      if (dangle > 1)
-        continue;
+      if (dangle > 1) continue;
       if (dangle)
         tmp_bnd.emplace_back(a, b);
       else
@@ -188,30 +175,22 @@ namespace indigox {
     // Get the angles which are allowed
     std::deque<AngType> tmp_ang;
     for (Angle ang : mol.GetAngles()) {
-      if (!ang.HasType())
-        continue;
+      if (!ang.HasType()) continue;
       AtmType a = G.GetVertex(ang.GetAtoms()[0]);
       AtmType b = G.GetVertex(ang.GetAtoms()[1]);
       AtmType c = G.GetVertex(ang.GetAtoms()[2]);
       auto a_pos = std::find(atm_check.begin(), atm_check.end(), a);
-      if (a_pos == atm_check.end())
-        continue;
+      if (a_pos == atm_check.end()) continue;
       auto b_pos = std::find(atm_check.begin(), atm_check.end(), b);
-      if (b_pos == atm_check.end())
-        continue;
+      if (b_pos == atm_check.end()) continue;
       auto c_pos = std::find(atm_check.begin(), atm_check.end(), c);
-      if (c_pos == atm_check.end())
-        continue;
+      if (c_pos == atm_check.end()) continue;
       size_t dangle = 0;
-      if (std::distance(atm_check.begin(), a_pos) >= acceptable_pos)
-        ++dangle;
-      if (std::distance(atm_check.begin(), b_pos) >= acceptable_pos)
-        ++dangle;
-      if (std::distance(atm_check.begin(), c_pos) >= acceptable_pos)
-        ++dangle;
+      if (std::distance(atm_check.begin(), a_pos) >= acceptable_pos) ++dangle;
+      if (std::distance(atm_check.begin(), b_pos) >= acceptable_pos) ++dangle;
+      if (std::distance(atm_check.begin(), c_pos) >= acceptable_pos) ++dangle;
       // Angles are allowed one dangling. Danglings go on end
-      if (dangle > 1)
-        continue;
+      if (dangle > 1) continue;
       if (dangle)
         tmp_ang.emplace_back(a, b, c);
       else
@@ -222,31 +201,25 @@ namespace indigox {
     // Get the dihedrals which are allowed
     std::deque<DhdType> tmp_dhd;
     for (Dihedral dhd : mol.GetDihedrals()) {
-      if (!dhd.HasType())
-        continue;
+      if (!dhd.HasType()) continue;
       AtmType a = G.GetVertex(dhd.GetAtoms()[0]);
       AtmType b = G.GetVertex(dhd.GetAtoms()[1]);
       AtmType c = G.GetVertex(dhd.GetAtoms()[2]);
       AtmType d = G.GetVertex(dhd.GetAtoms()[3]);
       auto a_pos = std::find(atm_check.begin(), atm_check.end(), a);
-      if (a_pos == atm_check.end())
-        continue;
+      if (a_pos == atm_check.end()) continue;
       auto b_pos = std::find(atm_check.begin(), atm_check.end(), b);
-      if (b_pos == atm_check.end())
-        continue;
+      if (b_pos == atm_check.end()) continue;
       auto c_pos = std::find(atm_check.begin(), atm_check.end(), c);
-      if (c_pos == atm_check.end())
-        continue;
+      if (c_pos == atm_check.end()) continue;
       auto d_pos = std::find(atm_check.begin(), atm_check.end(), d);
-      if (d_pos == atm_check.end())
-        continue;
+      if (d_pos == atm_check.end()) continue;
       bool d1 = std::distance(atm_check.begin(), a_pos) < acceptable_pos;
       bool d2 = std::distance(atm_check.begin(), b_pos) < acceptable_pos;
       bool d3 = std::distance(atm_check.begin(), c_pos) < acceptable_pos;
       bool d4 = std::distance(atm_check.begin(), d_pos) < acceptable_pos;
       // Need two adjacent atoms to not be dangling
-      if (!((d1 && d2) || (d2 && d3) || (d3 && d4)))
-        continue;
+      if (!((d1 && d2) || (d2 && d3) || (d3 && d4))) continue;
       if (d1 || d2 || d3 || d4)
         tmp_dhd.emplace_front(a, b, c, d);
       else
@@ -267,9 +240,7 @@ namespace indigox {
     return m_data->frag;
   }
 
-  size_t Fragment::Size() const {
-    return m_data->frag.size();
-  }
+  size_t Fragment::Size() const { return m_data->frag.size(); }
 
   const std::vector<Fragment::OverlapVertex> &Fragment::GetOverlap() const {
     return m_data->overlap;
@@ -303,28 +274,21 @@ namespace indigox {
   }
 
   bool Fragment::operator==(const Fragment &frag) const {
-    if (m_data == frag.m_data)
-      return true;
-    if (m_data->frag != frag.m_data->frag)
-      return false;
-    if (m_data->overlap != frag.m_data->overlap)
-      return false;
+    if (m_data == frag.m_data) return true;
+    if (m_data->frag != frag.m_data->frag) return false;
+    if (m_data->overlap != frag.m_data->overlap) return false;
     return true;
   }
 
   bool Fragment::operator<(const Fragment &frag) const {
-    if (m_data == frag.m_data)
-      return false;
-    if (m_data->frag < frag.m_data->frag)
-      return true;
+    if (m_data == frag.m_data) return false;
+    if (m_data->frag < frag.m_data->frag) return true;
     return m_data->overlap < frag.m_data->overlap;
   }
 
   bool Fragment::operator>(const Fragment &frag) const {
-    if (m_data == frag.m_data)
-      return false;
-    if (m_data->frag > frag.m_data->frag)
-      return true;
+    if (m_data == frag.m_data) return false;
+    if (m_data->frag > frag.m_data->frag) return true;
     return m_data->overlap > frag.m_data->overlap;
   }
 
@@ -341,8 +305,7 @@ namespace indigox {
 
     AthenaeumData() = default;
     AthenaeumData(const Forcefield &f, uint32_t o, uint32_t r)
-        : ff(f), overlap(o), ring_overlap(r), self_consistent(false) {
-    }
+        : ff(f), overlap(o), ring_overlap(r), self_consistent(false) {}
 
     template <class Archive> void serialise(Archive &archive, const uint32_t) {
       archive(INDIGOX_SERIAL_NVP("forcefield", ff),
@@ -367,13 +330,11 @@ namespace indigox {
   }
 
   Athenaeum::Athenaeum(const Forcefield &ff, uint32_t overlap)
-      : Athenaeum(ff, overlap, Settings::DefaultCycleOverlap) {
-  }
+      : Athenaeum(ff, overlap, Settings::DefaultCycleOverlap) {}
 
   Athenaeum::Athenaeum(const Forcefield &ff, uint32_t overlap,
                        uint32_t cycleoverlap)
-      : m_data(std::make_shared<AthenaeumData>(ff, overlap, cycleoverlap)) {
-  }
+      : m_data(std::make_shared<AthenaeumData>(ff, overlap, cycleoverlap)) {}
 
   template <class Archive>
   void Athenaeum::serialise(Archive &archive, const uint32_t) {
@@ -389,8 +350,7 @@ namespace indigox {
 
   size_t Athenaeum::NumFragments(const Molecule &mol) const {
     auto pos = m_data->fragments.find(mol);
-    if (pos == m_data->fragments.end())
-      return 0;
+    if (pos == m_data->fragments.end()) return 0;
     return pos->second.size();
   }
 
@@ -410,17 +370,11 @@ namespace indigox {
     return m_data->fragments.find(mol) != m_data->fragments.end();
   }
 
-  const Forcefield &Athenaeum::GetForcefield() const {
-    return m_data->ff;
-  }
+  const Forcefield &Athenaeum::GetForcefield() const { return m_data->ff; }
 
-  bool Athenaeum::IsSelfConsistent() const {
-    return m_data->self_consistent;
-  }
+  bool Athenaeum::IsSelfConsistent() const { return m_data->self_consistent; }
 
-  void Athenaeum::SetSelfConsistent() {
-    m_data->self_consistent = true;
-  }
+  void Athenaeum::SetSelfConsistent() { m_data->self_consistent = true; }
 
   void Athenaeum::SortAndMask(const Molecule &mol) {
     auto pos = m_data->fragments.find(mol);
@@ -447,17 +401,12 @@ namespace indigox {
     graph::MolecularGraph MG = mol.GetGraph();
     graph::CondensedMolecularGraph CG = MG.GetCondensedGraph();
     graph::CondensedMolecularGraph fg = frag.GetGraph();
-    while (fg.IsSubgraph()) {
-      fg = fg.GetSuperGraph();
-    }
-    if (CG != fg)
-      return false;
+    while (fg.IsSubgraph()) { fg = fg.GetSuperGraph(); }
+    if (CG != fg) return false;
 
     // Check that the molecule forcefield matchs the athenaeum forcefield
-    if (!mol.HasForcefield())
-      return false;
-    if (mol.GetForcefield() != m_data->ff)
-      return false;
+    if (!mol.HasForcefield()) return false;
+    if (mol.GetForcefield() != m_data->ff) return false;
 
     auto pos = m_data->fragments.emplace(mol, FragContain());
     pos.first->second.emplace_back(frag);
@@ -466,8 +415,7 @@ namespace indigox {
   }
 
   bool CanCutEdge(graph::CMGEdge &e, graph::CondensedMolecularGraph &g) {
-    if (!g.HasEdge(e))
-      return false;
+    if (!g.HasEdge(e)) return false;
     // Only single or aromatic
     Bond bnd = e.GetSource().GetBond();
     if (bnd.GetOrder() != BondOrder::SINGLE &&
@@ -545,15 +493,13 @@ namespace indigox {
           break;
         }
       }
-      if (cut_edges.empty())
-        continue;
+      if (cut_edges.empty()) continue;
 
       // Find all the vertices within _overlap of the fragment vertices
       eastl::vector_set<CMGVertex> overlap_vertices;
       for (CMGVertex v : sub_vertices) {
         for (CMGVertex u : other_vertices) {
-          if (overlap_vertices.find(u) != overlap_vertices.end())
-            continue;
+          if (overlap_vertices.find(u) != overlap_vertices.end()) continue;
           auto path = algorithm::ShortestPath(CG, u, v);
           if (!path.empty() && path.size() <= m_data->overlap)
             overlap_vertices.emplace(u);
@@ -568,20 +514,16 @@ namespace indigox {
                           overlap_vertices.end());
       CondensedMolecularGraph withoverlap = CG.Subgraph(fragoververt);
       CondensedMolecularGraph::ComponentContain tmp;
-      if (algorithm::ConnectedComponents(withoverlap, tmp) > 1)
-        continue;
+      if (algorithm::ConnectedComponents(withoverlap, tmp) > 1) continue;
       bool bad_overlaps = false;
       for (CMGVertex u : overlap_vertices) {
-        if (withoverlap.Degree(u) > 1)
-          continue;
+        if (withoverlap.Degree(u) > 1) continue;
         for (CMGVertex v : sub_vertices) {
           auto path = algorithm::ShortestPath(withoverlap, u, v);
-          if (path.size() < m_data->overlap)
-            bad_overlaps = true;
+          if (path.size() < m_data->overlap) bad_overlaps = true;
         }
       }
-      if (bad_overlaps)
-        continue;
+      if (bad_overlaps) continue;
 
       // Create the fragment and add it in
       std::vector<MGVertex> final_frag, final_overlap;
@@ -600,17 +542,14 @@ namespace indigox {
           pos.first->second.end())
         pos.first->second.emplace_back(f);
     }
-    if (pos.first->second.size() != initial_count) {
-      SortAndMask(mol);
-    }
+    if (pos.first->second.size() != initial_count) { SortAndMask(mol); }
     return pos.first->second.size() - initial_count;
   }
 
   void SaveAthenaeum(const Athenaeum &a, std::string path) {
     using Archive = cereal::PortableBinaryOutputArchive;
     std::ofstream os(path);
-    if (!os.is_open())
-      throw std::runtime_error("Unable to open output stream");
+    if (!os.is_open()) throw std::runtime_error("Unable to open output stream");
     Archive archive(os);
     std::string stype("Athenaeum");
     archive(stype, a);
@@ -619,13 +558,11 @@ namespace indigox {
   Athenaeum LoadAthenaeum(std::string path) {
     using Archive = cereal::PortableBinaryInputArchive;
     std::ifstream is(path);
-    if (!is.is_open())
-      throw std::runtime_error("Unable to open input stream");
+    if (!is.is_open()) throw std::runtime_error("Unable to open input stream");
     std::string stype;
     Archive archive(is);
     archive(stype);
-    if (stype != "Athenaeum")
-      throw std::runtime_error("Not an Athenaeum file");
+    if (stype != "Athenaeum") throw std::runtime_error("Not an Athenaeum file");
     Athenaeum a;
     archive(a);
     return a;

@@ -31,8 +31,7 @@ namespace indigox {
 
     Impl() = default;
     Impl(int32_t i, std::string n, const Element &e, const Forcefield &f)
-        : id(i), name(n), element(e.GetAtomicNumber()), ff(f) {
-    }
+        : id(i), name(n), element(e.GetAtomicNumber()), ff(f) {}
 
     template <class Archive> void serialise(Archive &archive, const uint32_t) {
       archive(INDIGOX_SERIAL_NVP("id", id), INDIGOX_SERIAL_NVP("name", name),
@@ -47,8 +46,7 @@ namespace indigox {
 
   FFAtom::FFAtom(int32_t id, std::string name, const Element &e,
                  const Forcefield &ff)
-      : m_data(std::make_shared<Impl>(id, name, e, ff)) {
-  }
+      : m_data(std::make_shared<Impl>(id, name, e, ff)) {}
 
   // ===========================================================================
   // == FFAtom Serialisation ===================================================
@@ -104,9 +102,7 @@ namespace indigox {
   }
 
   std::ostream &operator<<(std::ostream &os, const FFAtom &atm) {
-    if (atm) {
-      os << "FFAtom(" << atm.GetID() << ")";
-    }
+    if (atm) { os << "FFAtom(" << atm.GetID() << ")"; }
     return os;
   }
 
@@ -136,10 +132,8 @@ namespace indigox {
     Impl() = default;
     Impl(BondType t, int32_t i, FFParam data, const Forcefield &f)
         : type(t), id(i), linked_bond(), ff(f) {
-      if (t == BondType::Harmonic)
-        allowed_parameters.from_uint32(3);
-      if (t == BondType::Quartic)
-        allowed_parameters.from_uint32(3);
+      if (t == BondType::Harmonic) allowed_parameters.from_uint32(3);
+      if (t == BondType::Quartic) allowed_parameters.from_uint32(3);
       raw_data.fill(0);
       if (data.size() != allowed_parameters.count())
         throw std::range_error("Incorrect item count");
@@ -161,8 +155,7 @@ namespace indigox {
 
   FFBond::FFBond(BondType type, int32_t id, FFParam params,
                  const Forcefield &ff)
-      : m_data(std::make_shared<Impl>(type, id, params, ff)) {
-  }
+      : m_data(std::make_shared<Impl>(type, id, params, ff)) {}
 
   // ===========================================================================
   // == FFBond Serialisation ===================================================
@@ -223,38 +216,29 @@ namespace indigox {
   bool FFBond::operator<(const FFBond &bnd) const {
     _sanity_check_(*this);
     _sanity_check_(bnd);
-    if (GetType() < bnd.GetType())
-      return true;
-    if (GetID() < bnd.GetID())
-      return true;
+    if (GetType() < bnd.GetType()) return true;
+    if (GetID() < bnd.GetID()) return true;
     return false;
   }
   bool FFBond::operator>(const FFBond &bnd) const {
     _sanity_check_(*this);
     _sanity_check_(bnd);
-    if (GetType() > bnd.GetType())
-      return true;
-    if (GetID() > bnd.GetID())
-      return true;
+    if (GetType() > bnd.GetType()) return true;
+    if (GetID() > bnd.GetID()) return true;
     return false;
   }
 
   std::ostream &operator<<(std::ostream &os, BondType type) {
     switch (type) {
-    case FFBond::Type::Empty:
-      return os << "Empty";
-    case FFBond::Type::Harmonic:
-      return os << "Harmonic";
-    case FFBond::Type::Quartic:
-      return os << "Quartic";
-    default:
-      return os;
+    case FFBond::Type::Empty: return os << "Empty";
+    case FFBond::Type::Harmonic: return os << "Harmonic";
+    case FFBond::Type::Quartic: return os << "Quartic";
+    default: return os;
     }
   }
 
   std::ostream &operator<<(std::ostream &os, const FFBond &bnd) {
-    if (bnd)
-      os << "FFBond(" << bnd.GetType() << ", " << bnd.GetID() << ")";
+    if (bnd) os << "FFBond(" << bnd.GetType() << ", " << bnd.GetID() << ")";
     return os;
   }
 
@@ -284,10 +268,8 @@ namespace indigox {
     Impl() = default;
     Impl(AngleType t, int32_t i, FFParam data, const Forcefield &f)
         : type(t), id(i), linked_angle(), ff(f) {
-      if (t == AngleType::Harmonic)
-        allowed_parameters.from_uint32(3);
-      if (t == AngleType::CosineHarmonic)
-        allowed_parameters.from_uint32(3);
+      if (t == AngleType::Harmonic) allowed_parameters.from_uint32(3);
+      if (t == AngleType::CosineHarmonic) allowed_parameters.from_uint32(3);
       raw_data.fill(0);
       if (data.size() != allowed_parameters.count())
         throw std::range_error("Incorrect item count");
@@ -309,8 +291,7 @@ namespace indigox {
 
   FFAngle::FFAngle(AngleType type, int32_t id, FFParam par,
                    const Forcefield &ff)
-      : m_data(std::make_shared<Impl>(type, id, par, ff)) {
-  }
+      : m_data(std::make_shared<Impl>(type, id, par, ff)) {}
 
   // ===========================================================================
   // == FFAngle Serialisation ==================================================
@@ -370,38 +351,29 @@ namespace indigox {
   bool FFAngle::operator<(const FFAngle &ang) const {
     _sanity_check_(*this);
     _sanity_check_(ang);
-    if (GetType() < ang.GetType())
-      return true;
-    if (GetID() < ang.GetID())
-      return true;
+    if (GetType() < ang.GetType()) return true;
+    if (GetID() < ang.GetID()) return true;
     return false;
   }
   bool FFAngle::operator>(const FFAngle &ang) const {
     _sanity_check_(*this);
     _sanity_check_(ang);
-    if (GetType() > ang.GetType())
-      return true;
-    if (GetID() > ang.GetID())
-      return true;
+    if (GetType() > ang.GetType()) return true;
+    if (GetID() > ang.GetID()) return true;
     return false;
   }
 
   std::ostream &operator<<(std::ostream &os, AngleType type) {
     switch (type) {
-    case FFAngle::Type::Empty:
-      return os << "Empty";
-    case FFAngle::Type::Harmonic:
-      return os << "Harmonic";
-    case FFAngle::Type::CosineHarmonic:
-      return os << "CosineHarmonic";
-    default:
-      return os;
+    case FFAngle::Type::Empty: return os << "Empty";
+    case FFAngle::Type::Harmonic: return os << "Harmonic";
+    case FFAngle::Type::CosineHarmonic: return os << "CosineHarmonic";
+    default: return os;
     }
   }
 
   std::ostream &operator<<(std::ostream &os, const FFAngle &ang) {
-    if (ang)
-      os << "FFAngle(" << ang.GetType() << ", " << ang.GetID() << ")";
+    if (ang) os << "FFAngle(" << ang.GetType() << ", " << ang.GetID() << ")";
     return os;
   }
 
@@ -430,10 +402,8 @@ namespace indigox {
     Impl() = default;
     Impl(DihedralType t, int32_t i, FFParam data, const Forcefield &f)
         : type(t), id(i), ff(f) {
-      if (t == DihedralType::Proper)
-        allowed_parameters.from_uint32(7);
-      if (t == DihedralType::Improper)
-        allowed_parameters.from_uint32(10);
+      if (t == DihedralType::Proper) allowed_parameters.from_uint32(7);
+      if (t == DihedralType::Improper) allowed_parameters.from_uint32(10);
       raw_data.fill(0);
       if (data.size() != allowed_parameters.count())
         throw std::range_error("Incorrect item count");
@@ -455,8 +425,7 @@ namespace indigox {
 
   FFDihedral::FFDihedral(DihedralType type, int32_t id, FFParam par,
                          const Forcefield &ff)
-      : m_data(std::make_shared<Impl>(type, id, par, ff)) {
-  }
+      : m_data(std::make_shared<Impl>(type, id, par, ff)) {}
 
   // ===========================================================================
   // == FFDihedral Serialisation ===============================================
@@ -526,38 +495,29 @@ namespace indigox {
   bool FFDihedral::operator<(const FFDihedral &dhd) const {
     _sanity_check_(*this);
     _sanity_check_(dhd);
-    if (GetType() < dhd.GetType())
-      return true;
-    if (GetID() < dhd.GetID())
-      return true;
+    if (GetType() < dhd.GetType()) return true;
+    if (GetID() < dhd.GetID()) return true;
     return false;
   }
   bool FFDihedral::operator>(const FFDihedral &dhd) const {
     _sanity_check_(*this);
     _sanity_check_(dhd);
-    if (GetType() > dhd.GetType())
-      return true;
-    if (GetID() > dhd.GetID())
-      return true;
+    if (GetType() > dhd.GetType()) return true;
+    if (GetID() > dhd.GetID()) return true;
     return false;
   }
 
   std::ostream &operator<<(std::ostream &os, DihedralType dhd) {
     switch (dhd) {
-    case FFDihedral::Type::Empty:
-      return (os << "Empty");
-    case FFDihedral::Type::Proper:
-      return (os << "Proper");
-    case FFDihedral::Type::Improper:
-      return (os << "Improper");
-    default:
-      return os;
+    case FFDihedral::Type::Empty: return (os << "Empty");
+    case FFDihedral::Type::Proper: return (os << "Proper");
+    case FFDihedral::Type::Improper: return (os << "Improper");
+    default: return os;
     }
   }
 
   std::ostream &operator<<(std::ostream &os, const FFDihedral &dhd) {
-    if (dhd)
-      os << "FFDihedral(" << dhd.GetType() << ", " << dhd.GetID() << ")";
+    if (dhd) os << "FFDihedral(" << dhd.GetType() << ", " << dhd.GetID() << ")";
     return os;
   }
 
@@ -625,22 +585,16 @@ namespace indigox {
               INDIGOX_SERIAL_NVP("dihedrals", dihedrals));
     }
 
-    bool Contains(BondType t) {
-      return bonds.find(t) != bonds.end();
-    }
+    bool Contains(BondType t) { return bonds.find(t) != bonds.end(); }
     bool Contains(BondType t, int32_t i) {
-      if (!Contains(t))
-        return false;
+      if (!Contains(t)) return false;
       return (std::find_if(bonds.at(t).begin(), bonds.at(t).end(),
                            [&i](auto &b) { return b.GetID() == i; }) !=
               bonds.at(t).end());
     }
-    bool Contains(AngleType t) {
-      return angles.find(t) != angles.end();
-    }
+    bool Contains(AngleType t) { return angles.find(t) != angles.end(); }
     bool Contains(AngleType t, int32_t i) {
-      if (!Contains(t))
-        return false;
+      if (!Contains(t)) return false;
       return (std::find_if(angles.at(t).begin(), angles.at(t).end(),
                            [&i](auto &b) { return b.GetID() == i; }) !=
               angles.at(t).end());
@@ -649,8 +603,7 @@ namespace indigox {
       return dihedrals.find(t) != dihedrals.end();
     }
     bool Contains(DihedralType t, int32_t i) {
-      if (!Contains(t))
-        return false;
+      if (!Contains(t)) return false;
       return (std::find_if(dihedrals.at(t).begin(), dihedrals.at(t).end(),
                            [&i](auto &b) { return b.GetID() == i; }) !=
               dihedrals.at(t).end());
@@ -662,8 +615,7 @@ namespace indigox {
   // ===========================================================================
 
   Forcefield::Forcefield(FFFamily family, std::string name)
-      : m_data(std::make_shared<Impl>(family, name)) {
-  }
+      : m_data(std::make_shared<Impl>(family, name)) {}
 
   // ===========================================================================
   // == Forcefield Serialisation ===============================================
@@ -721,9 +673,7 @@ namespace indigox {
     return m_data->atoms.back();
   }
 
-  void Forcefield::ReserveAtomTypes(size_t sz) {
-    m_data->atoms.reserve(sz);
-  }
+  void Forcefield::ReserveAtomTypes(size_t sz) { m_data->atoms.reserve(sz); }
 
   FFBond Forcefield::NewBondType(BondType t, int32_t i, double a, double b) {
     return NewBondType(t, i, {a, b});
@@ -738,8 +688,7 @@ namespace indigox {
   }
 
   void Forcefield::ReserveBondTypes(BondType type, size_t size) {
-    if (m_data->Contains(type))
-      m_data->bonds.at(type).reserve(size);
+    if (m_data->Contains(type)) m_data->bonds.at(type).reserve(size);
   }
 
   FFAngle Forcefield::NewAngleType(AngleType t, int32_t i, double a, double b) {
@@ -755,8 +704,7 @@ namespace indigox {
   }
 
   void Forcefield::ReserveAngleTypes(AngleType type, size_t size) {
-    if (m_data->Contains(type))
-      m_data->angles.at(type).reserve(size);
+    if (m_data->Contains(type)) m_data->angles.at(type).reserve(size);
   }
 
   FFDihedral Forcefield::NewDihedralType(DihedralType type, int32_t id,
@@ -771,8 +719,7 @@ namespace indigox {
 
   void Forcefield::ReserveDihedralTypes(DihedralType type, size_t size) {
     _sanity_check_(*this);
-    if (m_data->Contains(type))
-      m_data->dihedrals.at(type).reserve(size);
+    if (m_data->Contains(type)) m_data->dihedrals.at(type).reserve(size);
   }
 
   // ================================================================
@@ -802,15 +749,11 @@ namespace indigox {
     return (pos == end) ? FFAtom() : *pos;
   }
 
-  size_t Forcefield::NumAtomTypes() const {
-    return m_data->atoms.size();
-  }
+  size_t Forcefield::NumAtomTypes() const { return m_data->atoms.size(); }
 
   FFBond Forcefield::GetBondType(BondType type, int32_t id) const {
     _sanity_check_(*this);
-    if (!m_data->Contains(type)) {
-      return FFBond();
-    }
+    if (!m_data->Contains(type)) { return FFBond(); }
     auto bgn = m_data->bonds.at(type).begin();
     auto end = m_data->bonds.at(type).end();
     auto fnd = [&id](auto &Z) { return Z.GetID() == id; };
@@ -822,9 +765,7 @@ namespace indigox {
     FFBond typ;
     for (auto &types : m_data->bonds) {
       typ = GetBondType(types.first, id);
-      if (typ) {
-        break;
-      }
+      if (typ) { break; }
     }
     return typ;
   }
@@ -840,9 +781,7 @@ namespace indigox {
   }
   FFAngle Forcefield::GetAngleType(AngleType type, int32_t id) const {
     _sanity_check_(*this);
-    if (!m_data->Contains(type)) {
-      return FFAngle();
-    }
+    if (!m_data->Contains(type)) { return FFAngle(); }
     auto bgn = m_data->angles.at(type).begin();
     auto end = m_data->angles.at(type).end();
     auto fnd = [&id](auto &Z) { return Z.GetID() == id; };
@@ -855,9 +794,7 @@ namespace indigox {
     FFAngle ang;
     for (auto &types : m_data->angles) {
       ang = GetAngleType(types.first, id);
-      if (ang) {
-        break;
-      }
+      if (ang) { break; }
     }
     return ang;
   }
@@ -874,9 +811,7 @@ namespace indigox {
 
   FFDihedral Forcefield::GetDihedralType(DihedralType type, int32_t id) const {
     _sanity_check_(*this);
-    if (!m_data->Contains(type)) {
-      return FFDihedral();
-    }
+    if (!m_data->Contains(type)) { return FFDihedral(); }
     auto bgn = m_data->dihedrals.at(type).begin();
     auto end = m_data->dihedrals.at(type).end();
     auto fnd = [&id](auto &Z) { return Z.GetID() == id; };
@@ -889,9 +824,7 @@ namespace indigox {
     FFDihedral dhd;
     for (auto &types : m_data->dihedrals) {
       dhd = GetDihedralType(types.first, id);
-      if (dhd) {
-        break;
-      }
+      if (dhd) { break; }
     }
     return dhd;
   }
@@ -921,17 +854,14 @@ namespace indigox {
   bool Forcefield::operator==(const Forcefield &ff) const {
     _sanity_check_(*this);
     _sanity_check_(ff);
-    if (GetFamily() != ff.GetFamily())
-      return false;
-    if (GetName() != ff.GetName())
-      return false;
+    if (GetFamily() != ff.GetFamily()) return false;
+    if (GetName() != ff.GetName()) return false;
     /// \todo Add more indepth comparision
     return true;
   }
 
   std::ostream &operator<<(std::ostream &os, const Forcefield &ff) {
-    if (ff)
-      os << "Forcefield(" << ff.GetName() << ")";
+    if (ff) os << "Forcefield(" << ff.GetName() << ")";
     return os;
   }
 
@@ -961,8 +891,7 @@ namespace indigox {
         {10, "NZ", 7, 0},     {6, "N", 7, 0},       {24, "CU1+", 29, 0},
         {50, "OTFE", 8, 0},   {25, "CU2+", 29, 0},  {3, "OA", 8, 0},
         {47, "FTFE", 9, 0},   {18, "CH2r", 6, 2},   {9, "NR", 7, 0}};
-    for (auto &in : atom_dat)
-      ff.NewAtomType(in.first, in.second, PT[in.third]);
+    for (auto &in : atom_dat) ff.NewAtomType(in.first, in.second, PT[in.third]);
 
     // Add bond types
     std::vector<stdx::quad<int, double, double, double>> bnd_dat = {

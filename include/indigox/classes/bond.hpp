@@ -100,9 +100,7 @@ namespace indigox {
   public:
     /*! \brief Number of atoms this bond is between.
      *  \returns 2. */
-    constexpr int64_t NumAtoms() const {
-      return 2;
-    }
+    constexpr int64_t NumAtoms() const { return 2; }
 
     /*! \brief Get the index from the molecule.
      *  \details Calculates the index of the bond in the container of bonds

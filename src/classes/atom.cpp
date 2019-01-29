@@ -57,9 +57,7 @@ namespace indigox {
   // == OPERATORS ==========================================================
   // =======================================================================
 
-  bool Atom::operator==(const Atom &atm) const {
-    return m_data == atm.m_data;
-  }
+  bool Atom::operator==(const Atom &atm) const { return m_data == atm.m_data; }
 
   bool Atom::operator<(const Atom &atm) const {
     _sanity_check_(*this);
@@ -82,13 +80,11 @@ namespace indigox {
       : molecule(m), element(e), formal_charge(0), charge_group_id(-1),
         residue_id(-1), implicit_hydrogens(0), position(x, y, z), name(n),
         residue_name(""), partial_charge(0.0),
-        stereochemistry(AtomStereo::UNDEFINED) {
-  }
+        stereochemistry(AtomStereo::UNDEFINED) {}
 
   Atom::Atom(const Molecule &m, const Element &e, double x, double y, double z,
              std::string n)
-      : m_data(std::make_shared<Impl>(m, e, x, y, z, n)) {
-  }
+      : m_data(std::make_shared<Impl>(m, e, x, y, z, n)) {}
 
   void Atom::Reset() {
     m_data->element = GetPeriodicTable().GetUndefined();
@@ -137,8 +133,7 @@ namespace indigox {
     int32_t count = 0;
     for (Bond bnd : GetBonds()) {
       for (Atom atm : bnd.GetAtoms()) {
-        if (atm != *this && atm.GetElement() == "H")
-          ++count;
+        if (atm != *this && atm.GetElement() == "H") ++count;
       }
     }
     return count;
@@ -251,9 +246,7 @@ namespace indigox {
 
   int64_t Atom::GetIndex() const {
     _sanity_check_(*this);
-    if (!m_data->molecule) {
-      return -1;
-    }
+    if (!m_data->molecule) { return -1; }
 
     const Molecule::MoleculeAtoms &atoms = m_data->molecule.GetAtoms();
     auto found = std::find(atoms.begin(), atoms.end(), *this);
@@ -298,26 +291,20 @@ namespace indigox {
   void Atom::RemoveBond(const Bond &bond) {
     _sanity_check_(*this);
     auto found = std::find(m_data->bonds.begin(), m_data->bonds.end(), bond);
-    if (found != m_data->bonds.end()) {
-      m_data->bonds.erase(found);
-    }
+    if (found != m_data->bonds.end()) { m_data->bonds.erase(found); }
   }
 
   void Atom::RemoveAngle(const Angle &angle) {
     _sanity_check_(*this);
     auto found = std::find(m_data->angles.begin(), m_data->angles.end(), angle);
-    if (found != m_data->angles.end()) {
-      m_data->angles.erase(found);
-    }
+    if (found != m_data->angles.end()) { m_data->angles.erase(found); }
   }
 
   void Atom::RemoveDihedral(const Dihedral &dihedral) {
     _sanity_check_(*this);
     auto found =
         std::find(m_data->dihedrals.begin(), m_data->dihedrals.end(), dihedral);
-    if (found != m_data->dihedrals.end()) {
-      m_data->dihedrals.erase(found);
-    }
+    if (found != m_data->dihedrals.end()) { m_data->dihedrals.erase(found); }
   }
 
   // =======================================================================
@@ -326,9 +313,7 @@ namespace indigox {
 
   void Atom::SetElement(const Element &element) {
     _sanity_check_(*this);
-    if (m_data->molecule) {
-      m_data->molecule.ModificationMade();
-    }
+    if (m_data->molecule) { m_data->molecule.ModificationMade(); }
     m_data->element = element;
   }
 
@@ -399,9 +384,7 @@ namespace indigox {
   // =======================================================================
 
   std::ostream &operator<<(std::ostream &os, const Atom &atm) {
-    if (atm) {
-      os << "Atom(" << atm.GetIndex() + 1 << ")";
-    }
+    if (atm) { os << "Atom(" << atm.GetIndex() + 1 << ")"; }
     return os;
   }
 } // namespace indigox

@@ -11,15 +11,9 @@ namespace indigox::algorithm {
   struct MappingCallback {
     using GraphType = graph::BaseGraph<V, E, S, D, VP, EP>;
     using CorrespondenceMap = eastl::vector_map<V, V>;
-    virtual bool operator()(const CorrespondenceMap &) {
-      return true;
-    }
-    virtual bool operator()(const V &, const V &) {
-      return true;
-    }
-    virtual bool operator()(const E &, const E &) {
-      return true;
-    }
+    virtual bool operator()(const CorrespondenceMap &) { return true; }
+    virtual bool operator()(const V &, const V &) { return true; }
+    virtual bool operator()(const E &, const E &) { return true; }
     virtual ~MappingCallback() = default;
   };
 
@@ -35,8 +29,7 @@ namespace indigox::algorithm {
 
   struct CMGPrintCallback : public CMGCallback {
     int count;
-    CMGPrintCallback() : count(0) {
-    }
+    CMGPrintCallback() : count(0) {}
     bool operator()(const CorrespondenceMap &cmap) override;
     bool operator()(const graph::CMGVertex &vs,
                     const graph::CMGVertex &vl) override;
@@ -44,8 +37,7 @@ namespace indigox::algorithm {
 
   struct MGPrintCallback : public MGCallback {
     int count;
-    MGPrintCallback() : count(0) {
-    }
+    MGPrintCallback() : count(0) {}
     bool operator()(const CorrespondenceMap &cmap) override;
   };
 

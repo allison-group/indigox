@@ -103,8 +103,7 @@ namespace indigox::algorithm {
     CycleVertContain v_basis;
     CycleBasis(G, v_basis);
     e_basis.clear();
-    if (v_basis.size() == 0)
-      return 0;
+    if (v_basis.size() == 0) return 0;
     for (VertContain &path : v_basis) {
       path.emplace(path.end(), path.back());
       EdgeContain path_edge;
@@ -213,18 +212,15 @@ namespace indigox::algorithm {
                          c.end(), std::inserter(tmp, tmp.begin()));
           added_edges.swap(tmp);
         }
-        if (added_edges == cyclic_edges)
-          break;
+        if (added_edges == cyclic_edges) break;
         current_size = cycle.size();
       }
 
       // Don't add cycles which will mean more than 2 occurances of an edge
       bool add_cycle = true;
       for (E *e : cycle) {
-        if (edge_counts.find(e) == edge_counts.end())
-          continue;
-        if (edge_counts[e] < 2)
-          continue;
+        if (edge_counts.find(e) == edge_counts.end()) continue;
+        if (edge_counts[e] < 2) continue;
         add_cycle = false;
         break;
       }
@@ -233,13 +229,11 @@ namespace indigox::algorithm {
       if (add_cycle) {
         bool new_edge = false;
         for (E *e : cycle) {
-          if (edge_counts.find(e) != edge_counts.end())
-            continue;
+          if (edge_counts.find(e) != edge_counts.end()) continue;
           new_edge = true;
           break;
         }
-        if (!new_edge)
-          add_cycle = false;
+        if (!new_edge) add_cycle = false;
       }
 
       if (add_cycle) {

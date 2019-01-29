@@ -18,8 +18,7 @@ namespace indigox::algorithm {
     if (!G.HasVertex(source) || !G.HasVertex(target))
       throw std::runtime_error("Vertices not in graph");
     std::vector<E> path;
-    if (source == target)
-      return path;
+    if (source == target) return path;
 
     using NbrType = eastl::vector_map<V, V>;
     NbrType pre, suc;
@@ -33,14 +32,12 @@ namespace indigox::algorithm {
 
     // Find the vertices to traverse in the path
     while (!forward.empty() && !backward.empty()) {
-      if (found)
-        break;
+      if (found) break;
       std::vector<V> current_dir;
       if (forward.size() <= backward.size()) {
         current_dir.swap(forward);
         for (V v : current_dir) {
-          if (found)
-            break;
+          if (found) break;
           for (V nbr : G.GetNeighbours(v)) {
             if (pre.find(nbr) == pre.end()) {
               forward.emplace_back(nbr);
@@ -56,8 +53,7 @@ namespace indigox::algorithm {
       } else {
         current_dir.swap(backward);
         for (V v : current_dir) {
-          if (found)
-            break;
+          if (found) break;
           for (V nbr : G.GetNeighbours(v)) {
             if (suc.find(nbr) == suc.end()) {
               backward.emplace_back(nbr);
@@ -72,8 +68,7 @@ namespace indigox::algorithm {
         }
       }
     }
-    if (!found)
-      return path;
+    if (!found) return path;
 
     // Build the path
     path.reserve(pre.size() + suc.size());
@@ -110,8 +105,7 @@ namespace indigox::algorithm {
     paths.clear();
     if (!G.HasVertex(source) || !G.HasVertex(target))
       throw std::runtime_error("Vertices not in graph");
-    if (source == target)
-      return;
+    if (source == target) return;
 
     std::vector<V> visited;
     visited.reserve(G.NumVertices());

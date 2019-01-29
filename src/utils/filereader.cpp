@@ -22,8 +22,7 @@ namespace indigox::utils {
   /** @details Sets the path of a file to read.
    *  @param file path to the file to read.
    */
-  FileReader::FileReader(const std::string &file) : path_(file) {
-  }
+  FileReader::FileReader(const std::string &file) : path_(file) {}
 
   /** @details Loads the given file and reads it itemwise (white space
    *  seperator). Lines begining with the comment character (\#) are
@@ -36,8 +35,7 @@ namespace indigox::utils {
     std::string next_item, line;
     std::ifstream infile;
     infile.open(path_);
-    if (!infile)
-      throw std::invalid_argument("File can't be opened.");
+    if (!infile) throw std::invalid_argument("File can't be opened.");
     while (std::getline(infile, line)) {
       boost::trim(line);
       out_items.push_back(line);

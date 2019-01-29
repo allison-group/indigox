@@ -78,12 +78,10 @@ namespace indigox {
 
   Angle::Impl::Impl(const Atom &a, const Atom &b, const Atom &c,
                     const Molecule &mol)
-      : atoms({a, b, c}), molecule(mol) {
-  }
+      : atoms({a, b, c}), molecule(mol) {}
 
   Angle::Angle(const Atom &a, const Atom &b, const Atom &c, const Molecule &mol)
-      : m_data(std::make_shared<Impl>(a, b, c, mol)) {
-  }
+      : m_data(std::make_shared<Impl>(a, b, c, mol)) {}
 
   void Angle::Reset() {
     m_data->atoms.fill(Atom());
@@ -133,9 +131,7 @@ namespace indigox {
 
   int64_t Angle::GetIndex() const {
     _sanity_check_(*this);
-    if (!m_data->molecule) {
-      return -1;
-    }
+    if (!m_data->molecule) { return -1; }
     auto mol_angles = m_data->molecule.GetAngles();
     auto idx = std::find(mol_angles.begin(), mol_angles.end(), *this);
     return (idx == mol_angles.end()) ? -1

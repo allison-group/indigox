@@ -39,8 +39,7 @@ namespace indigox::algorithm {
     associative_property_map<VertIdxMap> indexMap(data);
     typename GraphType::VertIter begin, end;
     std::tie(begin, end) = boost::vertices(g);
-    for (int i = 0; begin != end; ++begin, ++i)
-      put(indexMap, *begin, i);
+    for (int i = 0; begin != end; ++begin, ++i) put(indexMap, *begin, i);
     size_t num = connected_components(g, get(&VP::component, g),
                                       vertex_index_map(indexMap));
     bits.clear();
@@ -75,8 +74,7 @@ namespace indigox::algorithm {
 
     Impl(GraphType &G, size_t min, size_t max)
         : graph(G), min_subgraph_size(min), max_subgraph_size(max),
-          vertices(G.GetVertices()) {
-    }
+          vertices(G.GetVertices()) {}
 
     void BuildNeighboursBitsets() {
       for (size_t i = 0; i < vertices.size(); ++i) {
@@ -95,8 +93,7 @@ namespace indigox::algorithm {
       BuildNeighboursBitsets();
       BitSet bag(vertices.size());
       bag.reset();
-      for (size_t i = 0; i < vertices.size(); ++i)
-        bag.set(i);
+      for (size_t i = 0; i < vertices.size(); ++i) bag.set(i);
       BitSet initial(vertices.size());
       initial.reset();
       BitSet nbrs(bag);
@@ -104,8 +101,7 @@ namespace indigox::algorithm {
       size_t pos = initial.find_first();
       while (pos < neighbours.size()) {
         auto test = neighbours.find(pos);
-        if (test == neighbours.end())
-          break;
+        if (test == neighbours.end()) break;
         nbrs |= test->second;
         pos = initial.find_next(pos);
       }
@@ -226,8 +222,7 @@ namespace indigox::algorithm {
   }
 
   ChargeGroupOptimiser::ChargeGroupOptimiser(const Molecule &mol, int32_t limit)
-      : full_graph(mol.GetGraph()), size_limit(limit) {
-  }
+      : full_graph(mol.GetGraph()), size_limit(limit) {}
 
   double ChargeGroupOptimiser::PenaltyScore(BitSet group) {
     double score = 0.;
@@ -314,9 +309,7 @@ namespace indigox::algorithm {
 
   ChargeGroupOptimiser::Division &ChargeGroupOptimiser::Divisions(BitSet bag) {
     auto seen_pos = optimal_seen_divisions.find(bag);
-    if (seen_pos != optimal_seen_divisions.end()) {
-      return seen_pos->second;
-    }
+    if (seen_pos != optimal_seen_divisions.end()) { return seen_pos->second; }
 
     BitSet::size_type v = bag.find_first();
     std::vector<BitSet> subgraphs;
@@ -345,8 +338,7 @@ namespace indigox::algorithm {
         seen_division_scores[optimal_div] = optimal_score;
       }
 
-      if (-1e-10 < optimal_score && 1e-10 > optimal_score)
-        break;
+      if (-1e-10 < optimal_score && 1e-10 > optimal_score) break;
     }
     return optimal_seen_divisions.at(bag);
   }
@@ -362,8 +354,7 @@ namespace indigox::algorithm {
       stack.pop_back();
 
       BitSet possibles = item.first;
-      if (item.second.any())
-        possibles = item.first & item.third;
+      if (item.second.any()) possibles = item.first & item.third;
       if (possibles.none() && item.second.any()) {
         subgraphs.emplace_back(item.second);
       } else if (possibles.any()) {

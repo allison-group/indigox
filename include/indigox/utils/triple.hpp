@@ -29,33 +29,27 @@ namespace stdx { // extended std namespace
     triple(triple const &t) : A(t.A), B(t.B), C(t.C){};
     triple(triple &&t)
         : A(std::move(t.A)), B(std::move(t.B)), C(std::move(t.C)){};
-    ~triple() {
-    }
+    ~triple() {}
 
-    inline constexpr triple() : first(), second(), third() {
-    }
+    inline constexpr triple() : first(), second(), third() {}
 
     inline constexpr triple(_T1 const &__t1, _T2 const &__t2, _T3 const &__t3)
-        : first(__t1), second(__t2), third(__t3) {
-    }
+        : first(__t1), second(__t2), third(__t3) {}
 
     template <class _U1, class _U2, class _U3>
     inline constexpr triple(_U1 &&__u1, _U2 &&__u2, _U3 &&__u3)
         : first(std::forward<_U1>(__u1)), second(std::forward<_U2>(__u2)),
-          third(std::forward<_U3>(__u3)) {
-    }
+          third(std::forward<_U3>(__u3)) {}
 
     template <class _U1, class _U2, class _U3>
     inline constexpr triple(triple<_U1, _U2, _U3> const &__p)
-        : first(__p.first), second(__p.second), third(__p.third) {
-    }
+        : first(__p.first), second(__p.second), third(__p.third) {}
 
     template <class _U1, class _U2, class _U3>
     inline constexpr triple(triple<_U1, _U2, _U3> &&__p)
         : first(std::forward<_U1>(__p.first)),
           second(std::forward<_U2>(__p.second)),
-          third(std::forward<_U3>(__p.third)) {
-    }
+          third(std::forward<_U3>(__p.third)) {}
 
     inline triple &operator=(
         typename std::conditional<

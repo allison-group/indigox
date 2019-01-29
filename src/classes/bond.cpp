@@ -44,9 +44,7 @@ namespace indigox {
   // == OPERATORS ==========================================================
   // =======================================================================
 
-  bool Bond::operator==(const Bond &bnd) const {
-    return m_data == bnd.m_data;
-  }
+  bool Bond::operator==(const Bond &bnd) const { return m_data == bnd.m_data; }
 
   bool Bond::operator<(const Bond &bnd) const {
     _sanity_check_(*this);
@@ -67,12 +65,10 @@ namespace indigox {
   Bond::Impl::Impl(const Atom &a, const Atom &b, const Molecule &mol,
                    BondOrder o)
       : atoms({a, b}), molecule(mol), order(o),
-        stereochemistry(BondStereo::UNDEFINED) {
-  }
+        stereochemistry(BondStereo::UNDEFINED) {}
 
   Bond::Bond(const Atom &a, const Atom &b, const Molecule &m, BondOrder o)
-      : m_data(std::make_shared<Impl>(a, b, m, o)) {
-  }
+      : m_data(std::make_shared<Impl>(a, b, m, o)) {}
 
   void Bond::Reset() {
     m_data->atoms.fill(Atom());
@@ -107,15 +103,12 @@ namespace indigox {
       n = GetAtoms()[1];
       c = GetAtoms()[0];
     }
-    if (!n || !c)
-      return false;
-    if (n.NumBonds() + n.GetImplicitCount() != 3)
-      return false;
+    if (!n || !c) return false;
+    if (n.NumBonds() + n.GetImplicitCount() != 3) return false;
 
     // Check for C being O bonded.
     for (Bond bnd : c.GetBonds()) {
-      if (bnd.IsCarbonylBond())
-        return true;
+      if (bnd.IsCarbonylBond()) return true;
     }
     return false;
   }
@@ -134,12 +127,9 @@ namespace indigox {
       o = GetAtoms()[1];
       c = GetAtoms()[0];
     }
-    if (!o || !c)
-      return false;
-    if (o.NumBonds() + o.GetImplicitCount() != 1)
-      return false;
-    if (c.NumBonds() + c.GetImplicitCount() != 3)
-      return false;
+    if (!o || !c) return false;
+    if (o.NumBonds() + o.GetImplicitCount() != 1) return false;
+    if (c.NumBonds() + c.GetImplicitCount() != 3) return false;
     return true;
   }
 
@@ -179,9 +169,7 @@ namespace indigox {
 
   int64_t Bond::GetIndex() const {
     _sanity_check_(*this);
-    if (!m_data->molecule) {
-      return -1;
-    }
+    if (!m_data->molecule) { return -1; }
     auto mol_bonds = m_data->molecule.GetBonds();
     auto idx = std::find(mol_bonds.begin(), mol_bonds.end(), *this);
     return (idx == mol_bonds.end()) ? -1

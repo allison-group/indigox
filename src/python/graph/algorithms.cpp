@@ -77,9 +77,7 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
           ConnectedSubgraphs gen(g, min, max);
           MG subg;
           VMG subgraphs;
-          while (gen(subg)) {
-            subgraphs.emplace_back(subg);
-          }
+          while (gen(subg)) { subgraphs.emplace_back(subg); }
           return subgraphs;
         },
         py::arg("graph"), py::arg("minimum_size") = 0,
@@ -89,9 +87,7 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
           ConnectedSubgraphs gen(g, min, max);
           CMG subg;
           VCMG subgraphs;
-          while (gen(subg)) {
-            subgraphs.emplace_back(subg);
-          }
+          while (gen(subg)) { subgraphs.emplace_back(subg); }
           return subgraphs;
         },
         py::arg("graph"), py::arg("minimum_size") = 0,
