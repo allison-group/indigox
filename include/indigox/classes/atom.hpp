@@ -83,6 +83,10 @@ namespace indigox {
 
     int64_t GetID() const;
 
+    int32_t GetResidueID();
+
+    std::string GetResidueName();
+
     int32_t GetChargeGroupID() const;
 
     /*! \brief Get number of implicit hydrogens.

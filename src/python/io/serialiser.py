@@ -25,8 +25,8 @@ TEST   3
   for atom in mol.GetAtoms():
     atm_dat = {"index": atom.GetIndex() + 1,
               "type": atom.GetType().GetName() if atom.HasType() else "%%%",
-              "residx": 1,
-              "resname": "TEST",
+              "residx": atom.GetResidueID(),
+              "resname": atom.GetResidueName(),
               "name": atom.GetName(),
               "chargegroup": atom.GetTag(),
               "charge": atom.GetPartialCharge(),
@@ -180,8 +180,8 @@ def SavePDBFile(path, mol):
     atom_info = ['HETATM']
     atom_info.append('{:>5} '.format(atom.GetIndex() + 1))
     atom_info.append('{:>4} '.format(atom.GetName()))
-    atom_info.append('RESN ')  # residue name
-    atom_info.append('{:>4}    '.format(1))  # residue number
+    atom_info.append('{:>4} '.format(atom.GetResidueName()))  # residue name
+    atom_info.append('{:>4}    '.format(atom.GetResidueID()))  # residue number
     # convert nm to angstroms
     atom_info.append('{:>8.3f}'.format(atom.GetX() * 10))
     atom_info.append('{:>8.3f}'.format(atom.GetY() * 10))

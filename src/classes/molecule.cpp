@@ -346,6 +346,10 @@ namespace indigox {
     return Dihedral();
   }
 
+  const Molecule::MoleculeAtoms &Molecule::GetResidueID(int32_t id) {
+    return GetResidues()[id];
+  }
+
   std::string Molecule::GetFormula() {
     _sanity_check_(*this);
     State state = m_data->modification_state;
@@ -413,6 +417,12 @@ namespace indigox {
     return m_data->dihedrals;
   }
 
+  const Molecule::MoleculeResidues &Molecule::GetResidues() {
+    _sanity_check_(*this);
+    PerceiveResidues();
+    return m_data->residues;
+  }
+
   const Forcefield &Molecule::GetForcefield() const {
     _sanity_check_(*this);
     return m_data->forcefield;
@@ -439,7 +449,7 @@ namespace indigox {
       all_atoms.erase(atm);
     }
     swap_order.insert(swap_order.end(), all_atoms.begin(), all_atoms.end());
-    m_data->atoms.swap(swap_order);
+    m_data->atoms = swap_order;
   }
 
   void Molecule::OptimiseChargeGroups() {
@@ -836,6 +846,100 @@ namespace indigox {
       }
     }
     return count;
+  }
+
+  int32_t Molecule::PerceiveResidues() {
+    _sanity_check_(*this);
+    State state = GetCurrentState();
+    if (state && state == m_data->residues_perceved_state) {
+      return (int32_t)m_data->residues.size();
+    }
+    m_data->residues_perceved_state = state;
+
+    graph::MolecularGraph::VertContain all_vertices =
+        m_data->molecular_graph.GetVertices();
+    graph::MolecularGraph residue_graph =
+        m_data->molecular_graph.Subgraph(all_vertices);
+
+    // Identify peptide bonds
+    std::vector<graph::MGEdge> to_remove;
+    for (graph::MGVertex v : residue_graph.GetVertices()) {
+      // Looking for the nitrogen of the peptide bond
+      if ((v.GetAtom().GetElement() != "N") ||
+          (residue_graph.Degree(v) + v.GetAtom().GetImplicitCount() != 3)) {
+        continue;
+      }
+
+      // Expect one neighbour to be H, one to be a d(3) C and one to be whatever
+      graph::MGVertex h_nbr, c_nbr1, c_nbr2;
+      for (graph::MGVertex u : residue_graph.GetNeighbours(v)) {
+        if (u.GetAtom().GetElement() == "H" && residue_graph.Degree(u) == 1) {
+          if (!h_nbr) {
+            h_nbr = u;
+          } else {
+            h_nbr = graph::MGVertex();
+          }
+        }
+
+        if (u.GetAtom().GetElement() == "C" &&
+            residue_graph.Degree(u) + u.GetAtom().GetImplicitCount() == 3) {
+          if (!c_nbr1) {
+            c_nbr1 = u;
+          } else if (!c_nbr2) {
+            c_nbr2 = u;
+          }
+        }
+      }
+      if (!h_nbr || !c_nbr1)
+        continue;
+
+      // Check the neighbour carbon(s) to make sure one has d(1) O as neighbour
+      bool nbr_ok = false;
+      for (graph::MGVertex u : residue_graph.GetNeighbours(c_nbr1)) {
+        if (u.GetAtom().GetElement() == "O" && residue_graph.Degree(u) == 1) {
+          nbr_ok = true;
+        }
+      }
+
+      if (!nbr_ok && c_nbr2) {
+        for (graph::MGVertex u : residue_graph.GetNeighbours(c_nbr2)) {
+          if (u.GetAtom().GetElement() == "O" && residue_graph.Degree(u) == 1) {
+            nbr_ok = true;
+          }
+        }
+        if (nbr_ok)
+          c_nbr1 = c_nbr2;
+      }
+      if (!nbr_ok)
+        continue;
+
+      // The peptide bond is thus the bond between v and c_nbr1
+      to_remove.push_back(residue_graph.GetEdge(v, c_nbr1));
+    }
+
+    // Remove the peptide bonds to get the components of the graph as residues
+    for (graph::MGEdge e : to_remove) {
+      residue_graph.RemoveEdge(e);
+    }
+
+    MoleculeAtoms new_order;
+    int32_t res_id = 1;
+    m_data->residues.clear();
+    for (graph::MolecularGraph::VertContain component :
+         residue_graph.GetConnectedComponents()) {
+      m_data->residues.emplace_back(MoleculeAtoms());
+      for (graph::MGVertex v : component) {
+        Atom atm = v.GetAtom();
+        new_order.emplace_back(atm);
+        m_data->residues.back().emplace_back(atm);
+        atm.m_data->residue_id = res_id;
+        atm.m_data->residue_name = "RS" + std::to_string(res_id);
+      }
+      ++res_id;
+    }
+    ReorderAtoms(new_order);
+    
+    return (int32_t)m_data->residues.size();
   }
 
   void Molecule::ModificationMade() {

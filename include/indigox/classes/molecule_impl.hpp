@@ -40,9 +40,11 @@ namespace indigox {
     int64_t tag;
     int64_t unique_id;
     int32_t charge_group_id;
+    int32_t residue_id;
     int32_t implicit_hydrogens;
     Eigen::Vector3d position;
     std::string name;
+    std::string residue_name;
     double partial_charge;
     Stereo stereochemistry;
     FFAtom forcefield_type;
@@ -110,6 +112,7 @@ namespace indigox {
     MoleculeBonds bonds;
     MoleculeAngles angles;
     MoleculeDihedrals dihedrals;
+    MoleculeResidues residues;
     Forcefield forcefield;
     graph::MolecularGraph molecular_graph;
     State modification_state;
@@ -120,6 +123,7 @@ namespace indigox {
     State cached_formula_state;
     State angle_percieved_state;
     State dihedral_percieved_state;
+    State residues_perceved_state;
 
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t);

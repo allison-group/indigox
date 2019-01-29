@@ -80,7 +80,8 @@ namespace indigox {
   Atom::Impl::Impl(const Molecule &m, const Element &e, double x, double y,
                    double z, std::string n)
       : molecule(m), element(e), formal_charge(0), charge_group_id(-1),
-        implicit_hydrogens(0), position(x, y, z), name(n), partial_charge(0.0),
+        residue_id(-1), implicit_hydrogens(0), position(x, y, z), name(n),
+        residue_name(""), partial_charge(0.0),
         stereochemistry(AtomStereo::UNDEFINED) {
   }
 
@@ -163,6 +164,18 @@ namespace indigox {
   int32_t Atom::GetChargeGroupID() const {
     _sanity_check_(*this);
     return m_data->charge_group_id;
+  }
+
+  int32_t Atom::GetResidueID() {
+    _sanity_check_(*this);
+    m_data->molecule.PerceiveResidues();
+    return m_data->residue_id;
+  }
+
+  std::string Atom::GetResidueName() {
+    _sanity_check_(*this);
+    m_data->molecule.PerceiveResidues();
+    return m_data->residue_name;
   }
 
   int32_t Atom::GetImplicitCount() const {

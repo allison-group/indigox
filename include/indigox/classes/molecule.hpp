@@ -30,6 +30,8 @@ namespace indigox {
      *  \details A molecule takes ownership of all dihedrals it contains. */
     using MoleculeDihedrals = std::vector<Dihedral>;
 
+    using MoleculeResidues = std::vector<MoleculeAtoms>;
+
   private:
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t version);
@@ -345,6 +347,8 @@ namespace indigox {
      *  dihedrals can only be removed by removing an atom or bond.
      *  \return the number of dihedrals added. */
     int64_t PerceiveDihedrals();
+
+    int32_t PerceiveResidues();
     //    size_t AssignElectrons();
     //    bool ApplyElectronAssignment(size_t);
     //    FCSCORE GetMinimumElectronAssignmentScore();
@@ -370,6 +374,10 @@ namespace indigox {
     const MoleculeAngles &GetAngles(); // percevie first
 
     const MoleculeDihedrals &GetDihedrals(); // perceive first
+
+    const MoleculeAtoms &GetResidueID(int32_t id); // perceive first
+
+    const MoleculeResidues &GetResidues(); // perceive first
 
     const Forcefield &GetForcefield() const;
 
