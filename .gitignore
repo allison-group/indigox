@@ -42,3 +42,6 @@ indigox.xcodeproj
 # Athenauem and molecule save files
 *.ath
 *.mol
+
+# clang-format run file
+.last_run_format
