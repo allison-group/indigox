@@ -54,7 +54,7 @@ namespace indigox::graph {
       vertex_descriptors.insert(v, vboost);
       vertices.emplace_back(v);
       predecessors.emplace(v, VertContain());
-      if (D::is_directed)  successors.emplace(v, VertContain());
+      if (D::is_directed) successors.emplace(v, VertContain());
     }
 
     void AddEdge(const V &u, const V &v, const E &e) {
@@ -91,7 +91,7 @@ namespace indigox::graph {
               INDIGOX_SERIAL_NVP("edges", input_edges));
 
       // Build the graph
-      for (V &v : input_vertices) AddVertex(v); 
+      for (V &v : input_vertices) AddVertex(v);
       for (size_t pos = 0; pos < input_edges.size(); ++pos) {
         AddEdge(input_vertex_edges[pos].first, input_vertex_edges[pos].second,
                 input_edges[pos]);

@@ -38,6 +38,25 @@ namespace indigox::algorithm {
   void AllSimplePaths(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source,
                       V target, std::vector<std::vector<E>> &paths,
                       int64_t limit = -1);
+
+  /*! \brief Perform a breadth first search of G.
+   *  \details Returns ordered vector of vertex pairs. Order is the order in
+   *  which the vertices were discovered. First member of pair is the discovered
+   *  vertex, second member is the predecessor of the discovered vertex. If no
+   *  source is provided, the source is chosen arbitarily until all vertices
+   *  have been discovered. If source is provided, only vertices within the
+   *  component containing source will be searched. Limit is the limit of search
+   *  depth.
+   */
+  template <class V, class E, class S, class D, class VP, class EP>
+  std::vector<std::pair<V, V>>
+  DepthFirstSearch(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source = V(),
+                   int64_t limit = -1);
+
+  template <class V, class E, class S, class D, class VP, class EP>
+  std::vector<std::pair<V, V>>
+  BreadthFirstSearch(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source = V(),
+                     int64_t limit = -1);
 } // namespace indigox::algorithm
 
 #endif /* INDIGOX_ALGORITHM_GRAPH_PATHS_HPP */

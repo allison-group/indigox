@@ -3,6 +3,7 @@
 #include <indigox/graph/molecular.hpp>
 
 #include <EASTL/vector_map.h>
+#include <deque>
 #include <vector>
 
 namespace indigox::algorithm {
@@ -155,4 +156,124 @@ namespace indigox::algorithm {
                                int64_t);
   template void AllSimplePaths(MolecularGraph::graph_type &, MGVertex, MGVertex,
                                std::vector<std::vector<MGEdge>> &, int64_t);
+
+  // ===========================================================================
+  // == DepthFirstSearch implementation ========================================
+  // ===========================================================================
+
+  template <class V, class E, class S, class D, class VP, class EP>
+  std::vector<std::pair<V, V>>
+  DepthFirstSearch(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source,
+                   int64_t limit) {
+    using GraphType = typename graph::BaseGraph<V, E, S, D, VP, EP>;
+    using NbrsIter =
+        typename GraphType::NbrsContain::mapped_type::const_iterator;
+
+    std::vector<V> vertices;
+    if (!source)
+      vertices.insert(vertices.end(), G.GetVertices().begin(),
+                      G.GetVertices().end());
+    else if (G.HasVertex(source))
+      vertices.emplace_back(source);
+    else
+      throw std::runtime_error("Source vertex not part of graph");
+
+    eastl::vector_set<V> visited;
+    std::vector<std::pair<V, V>> ordered_vertices;
+    if (limit < 1) limit = G.NumVertices();
+    for (V start : vertices) {
+      if (visited.find(start) != visited.end()) continue;
+      visited.insert(start);
+      ordered_vertices.emplace_back(start, V());
+      using StackItem = stdx::triple<V, int64_t, std::pair<NbrsIter, NbrsIter>>;
+      std::vector<StackItem> stack;
+      stack.emplace_back(start, limit,
+                         std::make_pair(G.GetNeighbours(start).begin(),
+                                        G.GetNeighbours(start).end()));
+      while (!stack.empty()) {
+        StackItem &item = stack.back();
+        if (item.third.first == item.third.second) {
+          stack.pop_back();
+          continue;
+        }
+        V child = *item.third.first;
+        ++item.third.first;
+        if (visited.find(child) != visited.end()) continue;
+        ordered_vertices.emplace_back(child, item.first);
+        visited.insert(child);
+        if (item.second > 1)
+          stack.emplace_back(child, item.second - 1,
+                             std::make_pair(G.GetNeighbours(child).begin(),
+                                            G.GetNeighbours(child).end()));
+      }
+    }
+
+    return ordered_vertices;
+  }
+
+  template std::vector<std::pair<CMGVertex, CMGVertex>>
+  DepthFirstSearch(CondensedMolecularGraph::graph_type &, CMGVertex, int64_t);
+  template std::vector<std::pair<MGVertex, MGVertex>>
+  DepthFirstSearch(MolecularGraph::graph_type &, MGVertex, int64_t);
+
+  // ===========================================================================
+  // == BreadthFirstSearch implementation ======================================
+  // ===========================================================================
+
+  template <class V, class E, class S, class D, class VP, class EP>
+  std::vector<std::pair<V, V>>
+  BreadthFirstSearch(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source,
+                     int64_t limit) {
+    using GraphType = typename graph::BaseGraph<V, E, S, D, VP, EP>;
+    using NbrsIter =
+        typename GraphType::NbrsContain::mapped_type::const_iterator;
+
+    std::vector<V> vertices;
+    if (!source)
+      vertices.insert(vertices.end(), G.GetVertices().begin(),
+                      G.GetVertices().end());
+    else if (G.HasVertex(source))
+      vertices.emplace_back(source);
+    else
+      throw std::runtime_error("Source vertex not part of graph");
+
+    eastl::vector_set<V> visited;
+    std::vector<std::pair<V, V>> ordered_vertices;
+    if (limit < 1) limit = G.NumVertices();
+
+    for (V start : vertices) {
+      if (visited.find(start) != visited.end()) continue;
+      visited.insert(start);
+      ordered_vertices.emplace_back(start, V());
+      using QueueItem = stdx::triple<V, int64_t, std::pair<NbrsIter, NbrsIter>>;
+      std::deque<QueueItem> queue;
+      queue.emplace_back(start, limit,
+                         std::make_pair(G.GetNeighbours(start).begin(),
+                                        G.GetNeighbours(start).end()));
+      while (!queue.empty()) {
+        QueueItem &item = queue.front();
+        if (item.third.first == item.third.second) {
+          queue.pop_front();
+          continue;
+        }
+        V child = *item.third.first;
+        ++item.third.first;
+        if (visited.find(child) != visited.end()) continue;
+        ordered_vertices.emplace_back(child, item.first);
+        visited.insert(child);
+        if (item.second > 1)
+          queue.emplace_back(child, item.second - 1,
+                             std::make_pair(G.GetNeighbours(child).begin(),
+                                            G.GetNeighbours(child).end()));
+      }
+    }
+
+    return ordered_vertices;
+  }
+
+  template std::vector<std::pair<CMGVertex, CMGVertex>>
+  BreadthFirstSearch(CondensedMolecularGraph::graph_type &, CMGVertex, int64_t);
+
+  template std::vector<std::pair<MGVertex, MGVertex>>
+  BreadthFirstSearch(MolecularGraph::graph_type &, MGVertex, int64_t);
 } // namespace indigox::algorithm
