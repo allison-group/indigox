@@ -1,4 +1,5 @@
 #include <indigox/algorithm/graph/connectivity.hpp>
+#include <indigox/algorithm/graph/paths.hpp>
 #include <indigox/classes/angle.hpp>
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
@@ -790,7 +791,22 @@ namespace indigox {
     return count;
   }
 
+  // Finds the edges of a graph corresponding to peptide bonds in a molecule
+  void PeptideBonds(const graph::MolecularGraph &G,
+                    std::vector<graph::MGEdge> &edges) {
+    for (graph::MGEdge e : G.GetEdges()) {
+      if (!e.GetBond().IsAmideBond()) continue;
+      for (Atom atm : e.GetBond().GetAtoms()) {
+        if (atm.GetElement() == "N" &&
+            atm.NumHydrogenBonds() + atm.GetImplicitCount() <= 1) {
+          edges.push_back(e);
+        }
+      }
+    }
+  }
+
   int32_t Molecule::PerceiveResidues() {
+    using namespace graph;
     _sanity_check_(*this);
     State state = GetCurrentState();
     if (state && state == m_data->residues_perceved_state) {
@@ -798,40 +814,168 @@ namespace indigox {
     }
     m_data->residues_perceved_state = state;
 
-    graph::MolecularGraph::VertContain all_vertices =
-        m_data->molecular_graph.GetVertices();
-    graph::MolecularGraph residue_graph =
-        m_data->molecular_graph.Subgraph(all_vertices);
+    MolecularGraph graph = m_data->molecular_graph;
+
+    MolecularGraph::VertContain all_vertices = graph.GetVertices();
+    MolecularGraph residue_graph = graph.Subgraph(all_vertices);
 
     // Identify peptide bonds
     std::vector<graph::MGEdge> to_remove;
-    for (graph::MGEdge e : residue_graph.GetEdges()) {
-      Bond bnd = e.GetBond();
-      if (!bnd.IsAmideBond()) continue;
-      for (Atom atm : bnd.GetAtoms()) {
-        // is only a peptide bond if isn't just bonded to H's
-        if (atm.GetElement() == "N" &&
-            atm.NumHydrogenBonds() + atm.GetImplicitCount() <= 1)
-          to_remove.push_back(e);
+    PeptideBonds(residue_graph, to_remove);
+    //! \todo Other types of bonds to break on for residue identification?
+
+    // Remove the peptide bonds to get the components of the graph as residues
+    std::vector<MGVertex> res_vert;
+    res_vert.reserve(2 * to_remove.size());
+    for (MGEdge e : to_remove) {
+      residue_graph.RemoveEdge(e);
+      res_vert.emplace_back(graph.GetSourceVertex(e));
+      res_vert.emplace_back(graph.GetTargetVertex(e));
+    }
+    // Uniquify the residue vertices, just in case
+    std::sort(res_vert.begin(), res_vert.end());
+    auto last = std::unique(res_vert.begin(), res_vert.end());
+    res_vert.erase(last, res_vert.end());
+
+    // Make a graph of only the vertices of residue breaking bonds
+    MolecularGraph residue_ordering = graph.Subgraph(res_vert, to_remove);
+    // Add bonds between every atom pair within a component
+    for (auto component : residue_graph.GetConnectedComponents()) {
+      for (MGVertex source : component) {
+        if (!residue_ordering.HasVertex(source)) continue;
+        for (MGVertex target : component) {
+          if (!residue_ordering.HasVertex(target)) continue;
+          Bond tmp_bnd(source.GetAtom(), target.GetAtom(), *this,
+                       BondOrder::SINGLE);
+          residue_ordering.AddEdge(tmp_bnd);
+        }
       }
     }
 
-    // Remove the peptide bonds to get the components of the graph as residues
-    for (graph::MGEdge e : to_remove) { residue_graph.RemoveEdge(e); }
+    // order vertices based on degree and element. carbons and d(1) first.
+    std::sort(res_vert.begin(), res_vert.end(),
+              [&residue_ordering](MGVertex u, MGVertex v) {
+                if (residue_ordering.Degree(u) != residue_ordering.Degree(v))
+                  return residue_ordering.Degree(u) <
+                         residue_ordering.Degree(v);
+                return u.GetAtom().GetElement().GetAtomicNumber() <
+                       v.GetAtom().GetElement().GetAtomicNumber();
+              });
+
+    //----
+    //- Order vertices to get sensible order for component storing
+    //---
+
+    // For every component, Do a depth first search starting from the first C
+    std::vector<MGVertex> ordered_vertices;
+    for (auto &component : residue_ordering.GetConnectedComponents()) {
+      MGVertex source;
+      for (MGVertex test : res_vert) {
+        if (std::find(component.begin(), component.end(), test) ==
+            component.end())
+          continue;
+        source = test;
+        break;
+      }
+      if (!source) throw std::runtime_error("Something went wrong");
+
+      algorithm::TraversalResults<MGVertex> dfs =
+          algorithm::DepthFirstSearch(residue_ordering, source);
+      std::pair<MGVertex, int32_t> l_path =
+          std::make_pair(dfs.furthest, dfs.path_lengths[dfs.furthest]);
+
+      eastl::vector_set<MGVertex> seen;
+      while (component.size() > seen.size()) {
+        std::vector<MGVertex> current_path;
+        current_path.reserve(l_path.second);
+        while (l_path.first && seen.find(l_path.first) == seen.end()) {
+          current_path.push_back(l_path.first);
+          seen.insert(l_path.first);
+          l_path.first = dfs.predecessors[l_path.first];
+        }
+        ordered_vertices.insert(ordered_vertices.end(), current_path.rbegin(),
+                                current_path.rend());
+        l_path.second = -1;
+        for (auto &vl : dfs.path_lengths) {
+          if (seen.find(vl.first) != seen.end()) continue;
+          if (vl.second > l_path.second)
+            l_path = std::make_pair(vl.first, vl.second);
+        }
+      }
+    }
+
+    MolecularGraph::ComponentContain components =
+        residue_graph.GetConnectedComponents();
+    // Figure out the order for the components
+    std::vector<int32_t> order;
+    for (MGVertex v : ordered_vertices) {
+      int32_t index = -1;
+      for (auto &component : components) {
+        ++index;
+        if (std::find(order.begin(), order.end(), index) != order.end())
+          continue;
+        if (std::find(component.begin(), component.end(), v) !=
+            component.end()) {
+          order.push_back(index);
+          break;
+        }
+      }
+    }
 
     MoleculeAtoms new_order;
     int32_t res_id = 1;
     m_data->residues.clear();
-    for (graph::MolecularGraph::VertContain component :
-         residue_graph.GetConnectedComponents()) {
+    for (int32_t index : order) {
+      MolecularGraph graph = residue_graph.Subgraph(components[index]);
+      // order component vertices. dfs from first in ordered_vertices
+      MGVertex source;
+      eastl::vector_set<MGVertex> comp_vert(graph.GetVertices().begin(),
+                                            graph.GetVertices().end());
+      for (MGVertex v : ordered_vertices) {
+        if (comp_vert.find(v) != comp_vert.end()) {
+          source = v;
+          break;
+        }
+      }
+      if (!source) throw std::runtime_error("Something went wrong");
+      auto dfs = algorithm::DepthFirstSearch(graph, source);
       m_data->residues.emplace_back(MoleculeAtoms());
-      for (graph::MGVertex v : component) {
+      std::vector<MGVertex> order;
+      eastl::vector_set<MGVertex> seen;
+      MGVertex start = dfs.furthest;
+      while (order.size() < dfs.discover_order.size()) {
+        std::vector<MGVertex> path_order;
+        while (start && seen.find(start) == seen.end()) {
+          for (MGVertex nbr : graph.GetNeighbours(start)) {
+            if (graph.Degree(nbr) != 1) continue;
+            if (seen.find(nbr) == seen.end()) {
+              seen.insert(nbr);
+              path_order.push_back(nbr);
+            }
+          }
+          path_order.push_back(start);
+          seen.insert(start);
+          start = dfs.predecessors[start];
+        }
+        order.insert(order.end(), path_order.rbegin(), path_order.rend());
+        int32_t furthest_length = -1;
+        for (MGVertex v : dfs.discover_order) {
+          if (seen.find(v) != seen.end()) continue;
+          if (dfs.path_lengths[v] > furthest_length) {
+            start = v;
+            furthest_length = dfs.path_lengths[v];
+          }
+        }
+      }
+
+      for (MGVertex v : order) {
         Atom atm = v.GetAtom();
         new_order.emplace_back(atm);
         m_data->residues.back().emplace_back(atm);
         atm.m_data->residue_id = res_id;
         atm.m_data->residue_name = "RS" + std::to_string(res_id);
       }
+
       ++res_id;
     }
     ReorderAtoms(new_order);

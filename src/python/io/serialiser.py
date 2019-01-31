@@ -3,7 +3,7 @@ from pathlib import Path
 from collections import defaultdict
 import indigox as ix
 
-__all__ = ["SaveITPFile", "SavePDBFile"]
+__all__ = ["SaveITPFile", "SavePDBFile", "SaveIXDFile"]
 
 def SaveITPFile(path, mol, pmol=None):
   h_mass = ix.GetPeriodicTable()["H"].GetAtomicMass()
@@ -202,4 +202,19 @@ def SavePDBFile(path, mol):
     for end in sorted(bonds_raw[begin]):
       bond_info.append('{:>5}'.format(end))
     print(''.join(bond_info), file=file)
+  file.close()
+
+
+def SaveIXDFile(path, mol):
+  path.parent.mkdir(parents=True, exist_ok=True)
+  file = path.open('w')
+  tot_fc = 0
+  for atom in mol.GetAtoms():
+    if atom.GetFormalCharge() == 0: continue
+    tot_fc += atom.GetFormalCharge()
+    print("ATOM  {}  {}  {}".format(atom.GetIndex() + 1, atom.GetFormalCharge(), atom.GetImplicitCount()), file=file)
+  print("MOLECULE  {}".format(tot_fc), file=file)
+  for bond in mol.GetBonds():
+    if bond.GetOrder() == ix.BondOrder.Single: continue
+    print("BOND  {}  {}  {}".format(bond.GetAtoms()[0].GetIndex() + 1, bond.GetAtoms()[1].GetIndex() + 1, int(bond.GetOrder())), file=file)
   file.close()

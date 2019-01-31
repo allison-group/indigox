@@ -162,12 +162,12 @@ namespace indigox::algorithm {
   // ===========================================================================
 
   template <class V, class E, class S, class D, class VP, class EP>
-  std::vector<std::pair<V, V>>
-  DepthFirstSearch(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source,
-                   int64_t limit) {
+  TraversalResults<V> DepthFirstSearch(graph::BaseGraph<V, E, S, D, VP, EP> &G,
+                                       V source, int64_t limit) {
     using GraphType = typename graph::BaseGraph<V, E, S, D, VP, EP>;
     using NbrsIter =
         typename GraphType::NbrsContain::mapped_type::const_iterator;
+    using Results = TraversalResults<V>;
 
     std::vector<V> vertices;
     if (!source)
@@ -179,12 +179,21 @@ namespace indigox::algorithm {
       throw std::runtime_error("Source vertex not part of graph");
 
     eastl::vector_set<V> visited;
-    std::vector<std::pair<V, V>> ordered_vertices;
+    typename Results::OrderType discover_order;
+    typename Results::PredType predecessors;
+    typename Results::LengthType path_lengths;
+    V furthest;
+
+    discover_order.reserve(G.NumVertices());
+
     if (limit < 1) limit = G.NumVertices();
     for (V start : vertices) {
       if (visited.find(start) != visited.end()) continue;
       visited.insert(start);
-      ordered_vertices.emplace_back(start, V());
+      discover_order.emplace_back(start);
+      predecessors[start] = V();
+      path_lengths[start] = 0;
+      furthest = start;
       using StackItem = stdx::triple<V, int64_t, std::pair<NbrsIter, NbrsIter>>;
       std::vector<StackItem> stack;
       stack.emplace_back(start, limit,
@@ -199,7 +208,10 @@ namespace indigox::algorithm {
         V child = *item.third.first;
         ++item.third.first;
         if (visited.find(child) != visited.end()) continue;
-        ordered_vertices.emplace_back(child, item.first);
+        discover_order.emplace_back(child);
+        predecessors[child] = item.first;
+        path_lengths[child] = 1 + path_lengths[item.first];
+        if (path_lengths[child] > path_lengths[furthest]) furthest = child;
         visited.insert(child);
         if (item.second > 1)
           stack.emplace_back(child, item.second - 1,
@@ -208,12 +220,12 @@ namespace indigox::algorithm {
       }
     }
 
-    return ordered_vertices;
+    return Results(discover_order, predecessors, path_lengths, furthest);
   }
 
-  template std::vector<std::pair<CMGVertex, CMGVertex>>
+  template TraversalResults<CMGVertex>
   DepthFirstSearch(CondensedMolecularGraph::graph_type &, CMGVertex, int64_t);
-  template std::vector<std::pair<MGVertex, MGVertex>>
+  template TraversalResults<MGVertex>
   DepthFirstSearch(MolecularGraph::graph_type &, MGVertex, int64_t);
 
   // ===========================================================================
@@ -221,12 +233,13 @@ namespace indigox::algorithm {
   // ===========================================================================
 
   template <class V, class E, class S, class D, class VP, class EP>
-  std::vector<std::pair<V, V>>
+  TraversalResults<V>
   BreadthFirstSearch(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source,
                      int64_t limit) {
     using GraphType = typename graph::BaseGraph<V, E, S, D, VP, EP>;
     using NbrsIter =
         typename GraphType::NbrsContain::mapped_type::const_iterator;
+    using Results = TraversalResults<V>;
 
     std::vector<V> vertices;
     if (!source)
@@ -238,13 +251,23 @@ namespace indigox::algorithm {
       throw std::runtime_error("Source vertex not part of graph");
 
     eastl::vector_set<V> visited;
-    std::vector<std::pair<V, V>> ordered_vertices;
+    typename Results::OrderType discover_order;
+    typename Results::PredType predecessors;
+    typename Results::LengthType path_lengths;
+    V furthest;
+
+    discover_order.reserve(G.NumVertices());
+
     if (limit < 1) limit = G.NumVertices();
 
     for (V start : vertices) {
       if (visited.find(start) != visited.end()) continue;
       visited.insert(start);
-      ordered_vertices.emplace_back(start, V());
+      discover_order.emplace_back(start);
+      predecessors[start] = V();
+      path_lengths[start] = 0;
+      furthest = start;
+
       using QueueItem = stdx::triple<V, int64_t, std::pair<NbrsIter, NbrsIter>>;
       std::deque<QueueItem> queue;
       queue.emplace_back(start, limit,
@@ -259,7 +282,10 @@ namespace indigox::algorithm {
         V child = *item.third.first;
         ++item.third.first;
         if (visited.find(child) != visited.end()) continue;
-        ordered_vertices.emplace_back(child, item.first);
+        discover_order.emplace_back(child);
+        predecessors[child] = item.first;
+        path_lengths[child] = 1 + path_lengths[item.first];
+        if (path_lengths[child] > path_lengths[furthest]) furthest = child;
         visited.insert(child);
         if (item.second > 1)
           queue.emplace_back(child, item.second - 1,
@@ -268,12 +294,12 @@ namespace indigox::algorithm {
       }
     }
 
-    return ordered_vertices;
+    return Results(discover_order, predecessors, path_lengths, furthest);
   }
 
-  template std::vector<std::pair<CMGVertex, CMGVertex>>
+  template TraversalResults<CMGVertex>
   BreadthFirstSearch(CondensedMolecularGraph::graph_type &, CMGVertex, int64_t);
 
-  template std::vector<std::pair<MGVertex, MGVertex>>
+  template TraversalResults<MGVertex>
   BreadthFirstSearch(MolecularGraph::graph_type &, MGVertex, int64_t);
 } // namespace indigox::algorithm

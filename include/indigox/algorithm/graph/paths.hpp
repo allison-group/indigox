@@ -1,5 +1,6 @@
 #include "../../utils/fwd_declares.hpp"
 
+#include <map>
 #include <vector>
 
 #ifndef INDIGOX_ALGORITHM_GRAPH_PATHS_HPP
@@ -39,6 +40,21 @@ namespace indigox::algorithm {
                       V target, std::vector<std::vector<E>> &paths,
                       int64_t limit = -1);
 
+  template <class V> struct TraversalResults {
+    using OrderType = typename std::vector<V>;
+    using PredType = typename std::map<V, V>;
+    using LengthType = typename std::map<V, int32_t>;
+    OrderType discover_order;
+    PredType predecessors;
+    LengthType path_lengths;
+    V furthest;
+
+    TraversalResults(OrderType &order, PredType &pred, LengthType &length,
+                     V &far)
+        : discover_order(order), predecessors(pred), path_lengths(length),
+          furthest(far) {}
+  };
+
   /*! \brief Perform a breadth first search of G.
    *  \details Returns ordered vector of vertex pairs. Order is the order in
    *  which the vertices were discovered. First member of pair is the discovered
@@ -49,12 +65,11 @@ namespace indigox::algorithm {
    *  depth.
    */
   template <class V, class E, class S, class D, class VP, class EP>
-  std::vector<std::pair<V, V>>
-  DepthFirstSearch(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source = V(),
-                   int64_t limit = -1);
+  TraversalResults<V> DepthFirstSearch(graph::BaseGraph<V, E, S, D, VP, EP> &G,
+                                       V source = V(), int64_t limit = -1);
 
   template <class V, class E, class S, class D, class VP, class EP>
-  std::vector<std::pair<V, V>>
+  TraversalResults<V>
   BreadthFirstSearch(graph::BaseGraph<V, E, S, D, VP, EP> &G, V source = V(),
                      int64_t limit = -1);
 } // namespace indigox::algorithm
