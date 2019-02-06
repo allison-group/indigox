@@ -1,6 +1,7 @@
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/bond.hpp>
 #include <indigox/classes/molecule.hpp>
+#include <indigox/classes/molecule_impl.hpp>
 #include <indigox/graph/condensed.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/utils/serialise.hpp>
@@ -227,9 +228,11 @@ namespace indigox::graph {
   }
 
   const CondensedMolecularGraph &MolecularGraph::GetCondensedGraph() {
-    if (!m_data->molecule.IsFrozen())
-      throw std::runtime_error("Can only condense a frozen molecule");
-    if (!m_data->condensed_graph) m_data->condensed_graph = Condense(*this);
+    if (m_data->molecule) {
+      m_data->condensed_graph = m_data->molecule.GetCondensedGraph();
+    } else {
+      m_data->condensed_graph = Condense(*this);
+    }
     return m_data->condensed_graph;
   }
 

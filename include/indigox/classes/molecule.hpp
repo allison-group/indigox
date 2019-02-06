@@ -30,7 +30,7 @@ namespace indigox {
      *  \details A molecule takes ownership of all dihedrals it contains. */
     using MoleculeDihedrals = std::vector<Dihedral>;
 
-    using MoleculeResidues = std::vector<MoleculeAtoms>;
+    using MoleculeResidues = std::vector<Residue>;
 
   private:
     template <typename Archive>
@@ -45,15 +45,6 @@ namespace indigox {
   public:
     INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(Molecule);
     INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(Molecule, mol);
-
-  private:
-    // Return the index in a's bonds if found, -1 if not found
-    int64_t FindBond(const Atom &a, const Atom &b) const;
-    // Return the index in b's angles if found, -1 if not found
-    int64_t FindAngle(const Atom &a, const Atom &b, const Atom &c) const;
-    // Return the index in a's dihedrals if found, -1 if not found
-    int64_t FindDihedral(const Atom &a, const Atom &b, const Atom &c,
-                         const Atom &d) const;
 
   public:
     /*! \brief Check if the atom is owned by this molecule.
@@ -96,8 +87,6 @@ namespace indigox {
      *  \return if there is a dihedral between the four atoms. */
     bool HasDihedral(const Atom &a, const Atom &b, const Atom &c,
                      const Atom &d);
-
-    bool IsFrozen() const;
 
     /*! \brief Get the number of atoms in the molecule.
      *  \return the number of atoms in the molecule. */
@@ -254,6 +243,8 @@ namespace indigox {
      *  \return the molecular graph of this molecule. */
     const graph::MolecularGraph &GetGraph() const;
 
+    const graph::CondensedMolecularGraph &GetCondensedGraph() const;
+
     /*! \brief Get the name of the molecule.
      *  \return the name of the molecule. */
     const std::string &GetName() const;
@@ -375,7 +366,7 @@ namespace indigox {
 
     const MoleculeDihedrals &GetDihedrals(); // perceive first
 
-    const MoleculeAtoms &GetResidueID(int32_t id); // perceive first
+    Residue GetResidueID(int32_t id); // perceive first
 
     const MoleculeResidues &GetResidues(); // perceive first
 
@@ -391,11 +382,7 @@ namespace indigox {
 
     void ReorderAtoms(MoleculeAtoms &new_order);
 
-    // State
-    State GetCurrentState() const;
     void ModificationMade();
-
-    void FreezeModifications();
 
   private:
     struct Impl;

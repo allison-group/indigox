@@ -432,8 +432,6 @@ namespace indigox {
   size_t Athenaeum::AddAllFragments(const Molecule &mol) {
     using namespace indigox::graph;
     // Perform checks
-    if (!mol.IsFrozen())
-      throw std::runtime_error("Can only add fragments from frozen molecule");
     if (!mol.HasForcefield())
       throw std::runtime_error(
           "Attempting to fragment unparameterised molecule");

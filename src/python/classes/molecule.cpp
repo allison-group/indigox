@@ -4,6 +4,7 @@
 #include <indigox/classes/dihedral.hpp>
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
+#include <indigox/classes/residue.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/python/interface.hpp>
 
@@ -39,6 +40,14 @@ void GeneratePyMolecule(pybind11::module &m) {
       .value("None", BondStereo::NONE)
       .value("E", BondStereo::E)
       .value("Z", BondStereo::Z);
+
+  py::enum_<ResidueType>(m, "ResidueType")
+      .value("Unspecified", ResidueType::Unspecified)
+      .value("AminoAcid", ResidueType::AminoAcid)
+      .value("Sugar", ResidueType::Sugar)
+      .value("NucleicAcid", ResidueType::NucleicAcid)
+      .value("Lipid", ResidueType::Lipid)
+      .value("NonSpecific", ResidueType::NonSpecific);
 
   // ===========================================================================
   // == Atom class bindings ====================================================
@@ -182,6 +191,23 @@ void GeneratePyMolecule(pybind11::module &m) {
       .def("__repr__", &outstream_operator<Dihedral>);
 
   // ===========================================================================
+  // == Residue class bindings =================================================
+  // ===========================================================================
+
+  py::class_<Residue>(m, "Residue")
+      .def("HasAtom", &Residue::HasAtom)
+      .def("GetType", &Residue::GetType)
+      .def("IsAminoAcid", &Residue::IsAminoAcid)
+      .def("IsAlphaAminoAcid", &Residue::IsAlphaAminoAcid)
+      .def("IsBetaAminoAcid", &Residue::IsBetaAminoAcid)
+      .def("IsGammaAminoAcid", &Residue::IsGammaAminoAcid)
+      .def("IsDeltaAminoAcid", &Residue::IsDeltaAminoAcid)
+      .def("IsSugar", &Residue::IsSugar)
+      .def("IsLipid", &Residue::IsLipid)
+      .def("IsNucleicAcid", &Residue::IsNucleicAcid)
+      .def("GetAtoms", &Residue::GetAtoms);
+
+  // ===========================================================================
   // == Molecule class bindings ================================================
   // ===========================================================================
   py::class_<Molecule>(m, "Molecule")
@@ -202,7 +228,6 @@ void GeneratePyMolecule(pybind11::module &m) {
       .def("HasDihedral",
            py::overload_cast<const Atom &, const Atom &, const Atom &,
                              const Atom &>(&Molecule::HasDihedral))
-      .def("IsFrozen", &Molecule::IsFrozen)
       .def("NumAtoms", &Molecule::NumAtoms)
       .def("NumBonds", &Molecule::NumBonds)
       .def("NumAngles", &Molecule::NumAngles)
@@ -265,9 +290,7 @@ void GeneratePyMolecule(pybind11::module &m) {
       .def("SetForcefield", &Molecule::SetForcefield)
       .def("ResetForcefield", &Molecule::ResetForcefield)
       .def("HasForcefield", &Molecule::HasForcefield)
-      .def("GetCurrentState", &Molecule::GetCurrentState)
-      .def("ModificationMade", &Molecule::ModificationMade)
-      .def("FreezeModifications", &Molecule::FreezeModifications);
+      .def("ModificationMade", &Molecule::ModificationMade);
 
   // ===========================================================================
   // == Module function bindings ===============================================
@@ -300,7 +323,6 @@ void GeneratePyMolecule(pybind11::module &m) {
     mol.NewBond(C4, Br).SetOrder(BondOrder::SINGLE);
     mol.NewBond(C5, I1).SetOrder(BondOrder::SINGLE);
     mol.NewBond(C6, H2).SetOrder(BondOrder::SINGLE);
-    mol.FreezeModifications();
     return mol;
   });
 

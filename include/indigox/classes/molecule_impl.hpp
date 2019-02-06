@@ -1,13 +1,19 @@
 #ifndef INDIGOX_CLASSES_MOLECULE_IMPL_HPP
 #define INDIGOX_CLASSES_MOLECULE_IMPL_HPP
 
+#include "../graph/condensed.hpp"
 #include "../graph/molecular.hpp"
 #include "../utils/fwd_declares.hpp"
 #include "angle.hpp"
 #include "atom.hpp"
 #include "bond.hpp"
 #include "dihedral.hpp"
+#include "forcefield.hpp"
 #include "molecule.hpp"
+#include "periodictable.hpp"
+#include "residue.hpp"
+
+#include <bitset>
 
 namespace indigox {
 
@@ -101,8 +107,37 @@ namespace indigox {
   };
 
   // =======================================================================
+  // == RESIDUE IMPLEMENTATION =============================================
+  // =======================================================================
+
+  struct Residue::Impl {
+    ResidueType type;
+    ResidueAtoms atoms;
+    Molecule molecule;
+    graph::MolecularGraph residue_graph;
+
+    template <typename Archive>
+    void serialise(Archive &archive, const uint32_t version);
+
+    Impl() = default;
+    Impl(const std::vector<Atom> &atms, const Molecule &mol);
+
+    void DetermineType();
+  };
+
+  // =======================================================================
   // == MOLECULE IMPLEMENTATION ============================================
   // =======================================================================
+
+  enum class CalculatedData : uint8_t {
+    Formula,
+    AnglePerception,
+    DihedralPerception,
+    ResiduePerception,
+    ChargeGroupDetermination,
+    CondensedGraph,
+    Number
+  };
 
   struct Molecule::Impl {
     std::string name;
@@ -115,21 +150,37 @@ namespace indigox {
     MoleculeResidues residues;
     Forcefield forcefield;
     graph::MolecularGraph molecular_graph;
-    State modification_state;
-    bool frozen;
+    graph::CondensedMolecularGraph condensed_molecular_graph;
+
+    std::bitset<static_cast<uint8_t>(CalculatedData::Number)> calculated_data;
 
     // Cached variables
     std::string cached_formula;
-    State cached_formula_state;
-    State angle_percieved_state;
-    State dihedral_percieved_state;
-    State residues_perceved_state;
 
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t);
 
     Impl() = default;
     Impl(std::string n);
+
+    // Return the index in a's bonds if found, -1 if not found
+    int64_t FindBond(const Atom &a, const Atom &b) const;
+    // Return the index in b's angles if found, -1 if not found
+    int64_t FindAngle(const Atom &a, const Atom &b, const Atom &c) const;
+    // Return the index in a's dihedrals if found, -1 if not found
+    int64_t FindDihedral(const Atom &a, const Atom &b, const Atom &c,
+                         const Atom &d) const;
+
+    inline bool Test(CalculatedData dat) const {
+      return calculated_data.test(static_cast<uint8_t>(dat));
+    }
+    inline void Set(CalculatedData dat) {
+      calculated_data.set(static_cast<uint8_t>(dat));
+    }
+    inline void Reset(CalculatedData dat) {
+      calculated_data.reset(static_cast<uint8_t>(dat));
+    }
+    inline void Reset() { calculated_data.reset(); }
   };
 } // namespace indigox
 

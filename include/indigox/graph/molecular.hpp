@@ -228,17 +228,6 @@ namespace indigox::graph {
   private:
     struct Impl;
     std::shared_ptr<Impl> m_data;
-
-    //    //! \brief Map Atoms to their corresponding MGVertex
-    //    AtomMap _at2v;
-    //    //! \brief Map Bonds to their corresponding MGEdge
-    //    BondMap _bn2e;
-    //    //! \brief Source molecule
-    //    Molecule _mol;
-    //    //! \brief Condensed version of graph
-    //    sCondensedMolecularGraph _cond;
-    //    //! \brief If is subgraph
-    //    wMolecularGraph _subg;
   };
 } // namespace indigox::graph
 

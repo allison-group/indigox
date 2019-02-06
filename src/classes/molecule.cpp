@@ -8,6 +8,7 @@
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/molecule_impl.hpp>
 #include <indigox/classes/periodictable.hpp>
+#include <indigox/graph/condensed.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/utils/serialise.hpp>
 
@@ -29,6 +30,9 @@
 #endif
 
 namespace indigox {
+
+  using Data = CalculatedData;
+
   // =======================================================================
   // == SERIALISATION ======================================================
   // =======================================================================
@@ -44,8 +48,8 @@ namespace indigox {
             INDIGOX_SERIAL_NVP("dihedrals", dihedrals),
             INDIGOX_SERIAL_NVP("forcefield", forcefield),
             INDIGOX_SERIAL_NVP("graph", molecular_graph),
-            INDIGOX_SERIAL_NVP("state", modification_state),
-            INDIGOX_SERIAL_NVP("frozen", frozen));
+            INDIGOX_SERIAL_NVP("formula", cached_formula),
+            INDIGOX_SERIAL_NVP("calculated", calculated_data));
   }
 
   template <typename Archive>
@@ -81,9 +85,8 @@ namespace indigox {
   // =======================================================================
 
   Molecule::Impl::Impl(std::string n)
-      : name(n), molecular_charge(0), modification_state(0), frozen(false),
-        cached_formula_state(0), angle_percieved_state(0),
-        dihedral_percieved_state(0) {}
+      : name(n), next_unique_id(0), molecular_charge(0), calculated_data(0),
+        cached_formula("") {}
 
   Molecule::Molecule(std::string n) : m_data(std::make_shared<Impl>(n)) {
     m_data->molecular_graph = graph::MolecularGraph(*this);
@@ -93,19 +96,19 @@ namespace indigox {
   // == STATE CHECKING =====================================================
   // =======================================================================
 
-  int64_t Molecule::FindBond(const Atom &a, const Atom &b) const {
-    _sanity_check_(*this);
+  int64_t Molecule::Impl::FindBond(const Atom &a, const Atom &b) const {
+    //    _sanity_check_(*this);
     int64_t pos = 0;
     for (const Bond &bnd : a.GetBonds()) {
-      if (bnd.GetAtoms()[0] == b || bnd.GetAtoms()[1] == b) { break; }
+      if (bnd.GetAtoms()[0] == b || bnd.GetAtoms()[1] == b) break;
       ++pos;
     }
     return pos == a.NumBonds() ? -1 : pos;
   }
 
-  int64_t Molecule::FindAngle(const Atom &a, const Atom &b,
-                              const Atom &c) const {
-    _sanity_check_(*this);
+  int64_t Molecule::Impl::FindAngle(const Atom &a, const Atom &b,
+                                    const Atom &c) const {
+    //    _sanity_check_(*this);
     int64_t pos = 0;
     for (const Angle &ang : b.GetAngles()) {
       if ((ang.GetAtoms()[0] == a && ang.GetAtoms()[2] == c) ||
@@ -117,9 +120,9 @@ namespace indigox {
     return pos == b.NumAngles() ? -1 : pos;
   }
 
-  int64_t Molecule::FindDihedral(const Atom &a, const Atom &b, const Atom &c,
-                                 const Atom &d) const {
-    _sanity_check_(*this);
+  int64_t Molecule::Impl::FindDihedral(const Atom &a, const Atom &b,
+                                       const Atom &c, const Atom &d) const {
+    //    _sanity_check_(*this);
     int64_t pos = 0;
     for (const Dihedral &dhd : a.GetDihedrals()) {
       if ((dhd.GetAtoms()[0] == a && dhd.GetAtoms()[1] == b &&
@@ -144,7 +147,8 @@ namespace indigox {
   }
 
   bool Molecule::HasBond(const Atom &a, const Atom &b) const {
-    return (HasAtom(a) && HasAtom(b)) ? (FindBond(a, b) != -1) : false;
+    _sanity_check_(*this);
+    return (HasAtom(a) && HasAtom(b)) ? (m_data->FindBond(a, b) != -1) : false;
   }
 
   bool Molecule::HasAngle(const Angle &angle) const {
@@ -153,9 +157,11 @@ namespace indigox {
   }
 
   bool Molecule::HasAngle(const Atom &a, const Atom &b, const Atom &c) {
+    _sanity_check_(*this);
     PerceiveAngles();
-    return (HasAtom(a) && HasAtom(b) && HasAtom(c)) ? (FindAngle(a, b, c) != -1)
-                                                    : false;
+    return (HasAtom(a) && HasAtom(b) && HasAtom(c))
+               ? (m_data->FindAngle(a, b, c) != -1)
+               : false;
   }
 
   bool Molecule::HasDihedral(const Dihedral &dihedral) const {
@@ -165,20 +171,16 @@ namespace indigox {
 
   bool Molecule::HasDihedral(const Atom &a, const Atom &b, const Atom &c,
                              const Atom &d) {
+    _sanity_check_(*this);
     PerceiveDihedrals();
     return (HasAtom(a) && HasAtom(b) && HasAtom(c) && HasAtom(d))
-               ? (FindDihedral(a, b, c, d) != -1)
+               ? (m_data->FindDihedral(a, b, c, d) != -1)
                : false;
   }
 
   bool Molecule::HasForcefield() const {
     _sanity_check_(*this);
     return bool(m_data->forcefield);
-  }
-
-  bool Molecule::IsFrozen() const {
-    _sanity_check_(*this);
-    return m_data->frozen;
   }
 
   int64_t Molecule::NumAtoms() const {
@@ -245,7 +247,7 @@ namespace indigox {
 
   Bond Molecule::GetBond(const Atom &a, const Atom &b) const {
     _sanity_check_(*this);
-    int64_t pos = FindBond(a, b);
+    int64_t pos = m_data->FindBond(a, b);
     return (HasAtom(a) && pos != -1) ? a.GetBonds()[pos] : Bond();
   }
 
@@ -274,7 +276,7 @@ namespace indigox {
   Angle Molecule::GetAngle(const Atom &a, const Atom &b, const Atom &c) {
     _sanity_check_(*this);
     PerceiveAngles();
-    int64_t pos = FindAngle(a, b, c);
+    int64_t pos = m_data->FindAngle(a, b, c);
     return (HasAtom(b) && pos != -1) ? b.GetAngles()[pos] : Angle();
   }
 
@@ -304,7 +306,7 @@ namespace indigox {
                                  const Atom &d) {
     _sanity_check_(*this);
     PerceiveDihedrals();
-    int64_t pos = FindDihedral(a, b, c, d);
+    int64_t pos = m_data->FindDihedral(a, b, c, d);
     return (HasAtom(a) && pos != -1) ? a.GetDihedrals()[pos] : Dihedral();
   }
 
@@ -324,15 +326,11 @@ namespace indigox {
     return Dihedral();
   }
 
-  const Molecule::MoleculeAtoms &Molecule::GetResidueID(int32_t id) {
-    return GetResidues()[id];
-  }
+  Residue Molecule::GetResidueID(int32_t id) { return GetResidues()[id]; }
 
   std::string Molecule::GetFormula() {
     _sanity_check_(*this);
-    State state = m_data->modification_state;
-    if (state != m_data->cached_formula_state ||
-        m_data->cached_formula_state == 0) {
+    if (!m_data->Test(Data::Formula)) {
       std::map<std::string, size_t> e_count;
       for (const Atom &atm : m_data->atoms)
         e_count[atm.GetElement().GetSymbol()]++;
@@ -347,7 +345,7 @@ namespace indigox {
           if (e.second > 1) ss << e.second;
         }
       }
-      m_data->cached_formula_state = state;
+      m_data->Set(Data::Formula);
       m_data->cached_formula = ss.str();
     }
     return m_data->cached_formula;
@@ -356,6 +354,16 @@ namespace indigox {
   const graph::MolecularGraph &Molecule::GetGraph() const {
     _sanity_check_(*this);
     return m_data->molecular_graph;
+  }
+
+  const graph::CondensedMolecularGraph &Molecule::GetCondensedGraph() const {
+    _sanity_check_(*this);
+    if (!m_data->Test(Data::CondensedGraph)) {
+      m_data->condensed_molecular_graph =
+          graph::Condense(m_data->molecular_graph);
+      m_data->Set(Data::CondensedGraph);
+    }
+    return m_data->condensed_molecular_graph;
   }
 
   const std::string &Molecule::GetName() const {
@@ -401,11 +409,6 @@ namespace indigox {
     return m_data->forcefield;
   }
 
-  State Molecule::GetCurrentState() const {
-    _sanity_check_(*this);
-    return m_data->modification_state;
-  }
-
   // =======================================================================
   // == STATE MODIFYING ====================================================
   // =======================================================================
@@ -448,7 +451,7 @@ namespace indigox {
 
   Atom Molecule::NewAtom(const Element &element, double x, double y, double z) {
     _sanity_check_(*this);
-    ModificationMade();
+    m_data->Reset();
     Atom atom = Atom(*this, element, x, y, z, "");
     atom.m_data->unique_id = m_data->next_unique_id++;
     m_data->atoms.emplace_back(atom);
@@ -461,11 +464,11 @@ namespace indigox {
     Bond bnd;
 
     if (HasAtom(a) && HasAtom(b)) {
-      int64_t pos = FindBond(a, b);
+      int64_t pos = m_data->FindBond(a, b);
       if (pos != -1) {
         bnd = a.GetBonds()[pos];
       } else {
-        ModificationMade();
+        m_data->Reset();
         bnd = Bond(a, b, *this, BondOrder::SINGLE);
         bnd.m_data->unique_id = m_data->next_unique_id++;
         bnd.m_data->atoms[0].AddBond(bnd);
@@ -504,11 +507,10 @@ namespace indigox {
       }
     }
 
-    int64_t pos = FindDihedral(a, b, c, d);
+    int64_t pos = m_data->FindDihedral(a, b, c, d);
     if (pos != -1) {
       dhd = a.GetDihedrals()[pos];
     } else {
-      if (manual) { ModificationMade(); }
       dhd = Dihedral(a, b, c, d, *this);
       dhd.m_data->unique_id = m_data->next_unique_id++;
       dhd.m_data->atoms[0].AddDihedral(dhd);
@@ -528,7 +530,7 @@ namespace indigox {
   bool Molecule::RemoveAtom(const Atom &atom) {
     _sanity_check_(*this);
     if (!HasAtom(atom)) return false;
-    ModificationMade();
+    m_data->Reset();
     // Remove all bonds this atom is part of from molecule
     auto bnd_pred = [&atom](Bond bnd) { // Predicate checks if atom in bnd
       return !(bnd.m_data->atoms[0] == atom || bnd.m_data->atoms[1] == atom);
@@ -595,7 +597,7 @@ namespace indigox {
   bool Molecule::RemoveBond(const Bond &bond) {
     _sanity_check_(*this);
     if (!HasBond(bond)) return false;
-    ModificationMade();
+    m_data->Reset();
     Atom a = bond.GetAtoms()[0];
     Atom b = bond.GetAtoms()[1];
     // Remove the bond from each atom
@@ -604,8 +606,10 @@ namespace indigox {
 
     // Remove all angles this bond is part of from molecule
     auto ang_pred = [&](Angle ang) {
-      int64_t b1_pos = FindBond(ang.m_data->atoms[1], ang.m_data->atoms[0]);
-      int64_t b2_pos = FindBond(ang.m_data->atoms[1], ang.m_data->atoms[2]);
+      int64_t b1_pos =
+          m_data->FindBond(ang.m_data->atoms[1], ang.m_data->atoms[0]);
+      int64_t b2_pos =
+          m_data->FindBond(ang.m_data->atoms[1], ang.m_data->atoms[2]);
       return (ang.GetAtoms()[1].GetBonds()[b1_pos] != bond &&
               ang.GetAtoms()[1].GetBonds()[b2_pos] != bond);
     };
@@ -623,9 +627,9 @@ namespace indigox {
 
     // Remove all dihedrals this bond is part of from molecule
     auto dhd_pred = [&](Dihedral dhd) {
-      int64_t b1_pos = FindBond(dhd.GetAtoms()[0], dhd.GetAtoms()[1]);
-      int64_t b2_pos = FindBond(dhd.GetAtoms()[1], dhd.GetAtoms()[2]);
-      int64_t b3_pos = FindBond(dhd.GetAtoms()[2], dhd.GetAtoms()[3]);
+      int64_t b1_pos = m_data->FindBond(dhd.GetAtoms()[0], dhd.GetAtoms()[1]);
+      int64_t b2_pos = m_data->FindBond(dhd.GetAtoms()[1], dhd.GetAtoms()[2]);
+      int64_t b3_pos = m_data->FindBond(dhd.GetAtoms()[2], dhd.GetAtoms()[3]);
       if (b1_pos == -1 || b2_pos == -1 || b3_pos == -1) { return true; }
       Atom a = dhd.GetAtoms()[0];
       return (a.GetBonds()[b1_pos] != bond && a.GetBonds()[b2_pos] != bond &&
@@ -660,9 +664,8 @@ namespace indigox {
 
   int64_t Molecule::PerceiveAngles() {
     _sanity_check_(*this);
-    State state = GetCurrentState();
-    if (state && state == m_data->angle_percieved_state) { return 0; }
-    m_data->angle_percieved_state = state;
+    if (m_data->Test(Data::AnglePerception)) { return 0; }
+    m_data->Set(Data::AnglePerception);
 
     // Expected number of angles
     auto sum = [&](size_t current, Atom v) -> size_t {
@@ -690,7 +693,7 @@ namespace indigox {
 
       for (size_t i = 0; i < nbrs.size() - 1; ++i) {
         for (size_t j = i + 1; j < nbrs.size(); ++j) {
-          if (FindAngle(nbrs[i], at, nbrs[j]) != -1) { continue; }
+          if (m_data->FindAngle(nbrs[i], at, nbrs[j]) != -1) { continue; }
           NewAngle(nbrs[i], at, nbrs[j]);
           ++count;
         }
@@ -701,9 +704,8 @@ namespace indigox {
   }
 
   int64_t Molecule::PerceiveDihedrals() {
-    State state = GetCurrentState();
-    if (state && state == m_data->dihedral_percieved_state) { return 0; }
-    m_data->dihedral_percieved_state = state;
+    if (m_data->Test(Data::DihedralPerception)) { return 0; }
+    m_data->Set(Data::DihedralPerception);
 
     // Expected number of dihedrals
     auto sum = [&](size_t current, Bond b) -> size_t {
@@ -746,7 +748,7 @@ namespace indigox {
         if (B_nbrs[i] == C) { continue; }
         for (size_t j = 0; j < C_nbrs.size(); ++j) {
           if (C_nbrs[j] == B) { continue; }
-          if (FindDihedral(B_nbrs[i], B, C, C_nbrs[j]) != -1) { continue; }
+          if (m_data->FindDihedral(B_nbrs[i], B, C, C_nbrs[j]) != -1) continue;
           NewDihedral(B_nbrs[i], B, C, C_nbrs[j], false);
           ++count;
         }
@@ -808,11 +810,10 @@ namespace indigox {
   int32_t Molecule::PerceiveResidues() {
     using namespace graph;
     _sanity_check_(*this);
-    State state = GetCurrentState();
-    if (state && state == m_data->residues_perceved_state) {
+    if (m_data->Test(Data::ResiduePerception)) {
       return (int32_t)m_data->residues.size();
     }
-    m_data->residues_perceved_state = state;
+    m_data->Set(Data::ResiduePerception);
 
     MolecularGraph graph = m_data->molecular_graph;
 
@@ -939,7 +940,7 @@ namespace indigox {
       }
       if (!source) throw std::runtime_error("Something went wrong");
       auto dfs = algorithm::DepthFirstSearch(graph, source);
-      m_data->residues.emplace_back(MoleculeAtoms());
+
       std::vector<MGVertex> order;
       eastl::vector_set<MGVertex> seen;
       MGVertex start = dfs.furthest;
@@ -968,13 +969,17 @@ namespace indigox {
         }
       }
 
+      std::vector<Atom> ordered_atoms;
+      ordered_atoms.reserve(order.size());
       for (MGVertex v : order) {
         Atom atm = v.GetAtom();
         new_order.emplace_back(atm);
-        m_data->residues.back().emplace_back(atm);
+        ordered_atoms.emplace_back(atm);
         atm.m_data->residue_id = res_id;
         atm.m_data->residue_name = "RS" + std::to_string(res_id);
       }
+      Residue res(ordered_atoms, *this);
+      m_data->residues.emplace_back(res);
 
       ++res_id;
     }
@@ -983,18 +988,7 @@ namespace indigox {
     return (int32_t)m_data->residues.size();
   }
 
-  void Molecule::ModificationMade() {
-    if (m_data->frozen) {
-      throw std::runtime_error("Attempting to modify a frozen object");
-    }
-    ++m_data->modification_state;
-  }
-
-  void Molecule::FreezeModifications() {
-    PerceiveAngles();
-    PerceiveDihedrals();
-    m_data->frozen = true;
-  }
+  void Molecule::ModificationMade() { m_data->Reset(); }
 
   // =======================================================================
   // == STATE SETTING ======================================================
@@ -1007,7 +1001,7 @@ namespace indigox {
 
   void Molecule::SetMolecularCharge(int32_t q) {
     _sanity_check_(*this);
-    ModificationMade();
+    m_data->Reset();
     m_data->molecular_charge = q;
   }
 

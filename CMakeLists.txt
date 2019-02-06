@@ -59,6 +59,7 @@ SET(INDIGOX_LIB_SRCS
     src/classes/molecule.cpp
     src/classes/parameterised.cpp
     src/classes/periodictable.cpp
+    src/classes/residue.cpp
     src/graph/condensed.cpp
     src/graph/molecular.cpp
     src/utils/common.cpp

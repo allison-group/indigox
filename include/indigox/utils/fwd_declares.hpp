@@ -52,6 +52,7 @@ namespace indigox {
   class Dihedral;
   class Element;
   class PeriodicTable;
+  class Residue;
 
   // CherryPicker Related
   class ParamMolecule;
