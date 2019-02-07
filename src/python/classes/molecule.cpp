@@ -205,7 +205,9 @@ void GeneratePyMolecule(pybind11::module &m) {
       .def("IsSugar", &Residue::IsSugar)
       .def("IsLipid", &Residue::IsLipid)
       .def("IsNucleicAcid", &Residue::IsNucleicAcid)
-      .def("GetAtoms", &Residue::GetAtoms);
+      .def("GetAtoms", [](const Residue &res) -> std::vector<Atom> {
+        return std::vector<Atom>(res.GetAtoms().begin(), res.GetAtoms().end());
+      });
 
   // ===========================================================================
   // == Molecule class bindings ================================================

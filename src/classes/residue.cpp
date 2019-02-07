@@ -1,3 +1,4 @@
+#include <indigox/algorithm/graph/paths.hpp>
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/molecule_impl.hpp>
@@ -50,7 +51,12 @@ namespace indigox {
     return m_data->atoms.find(atom) != m_data->atoms.end();
   }
 
-  void Residue::Impl::DetermineType() { type = ResidueType::NonSpecific; }
+  void Residue::Impl::DetermineType() {
+    if (AminoAcidTest())
+      type = ResidueType::AminoAcid;
+    else
+      type = ResidueType::NonSpecific;
+  }
 
   ResidueType Residue::GetType() {
     _sanity_check_(*this);
@@ -60,7 +66,7 @@ namespace indigox {
 
   bool Residue::IsAminoAcid() {
     _sanity_check_(*this);
-    return GetType() == ResidueType::AminoAcid;
+    return m_data->AminoAcidTest();
   }
 
   bool Residue::IsAlphaAminoAcid() {
@@ -101,6 +107,67 @@ namespace indigox {
   const Residue::ResidueAtoms &Residue::GetAtoms() const {
     _sanity_check_(*this);
     return m_data->atoms;
+  }
+
+  bool Residue::Impl::AminoAcidTest() {
+    graph::MolecularGraph G = molecule.GetGraph();
+    std::vector<graph::MGVertex> carbons, nitrogens;
+    for (Atom atm : atoms) {
+      graph::MGVertex v = residue_graph.GetVertex(atm);
+      if (atm.GetElement() == "C") {
+        if (G.Degree(v) != residue_graph.Degree(v))
+          carbons.push_back(v);
+        else {
+          for (graph::MGVertex u : residue_graph.GetNeighbours(v)) {
+            Bond bnd = residue_graph.GetEdge(u, v).GetBond();
+            if (bnd.IsCarbonylBond()) {
+              carbons.push_back(v);
+              break;
+            }
+          }
+        }
+      }
+      if (atm.GetElement() == "N") {
+        if (G.Degree(v) != residue_graph.Degree(v))
+          nitrogens.push_back(v);
+        else {
+          for (graph::MGVertex u : residue_graph.GetNeighbours(v)) {
+            if (u.GetAtom().GetElement() == "H") {
+              nitrogens.push_back(v);
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    if (carbons.empty() || nitrogens.empty()) return false;
+
+    for (graph::MGVertex source : carbons) {
+      for (graph::MGVertex target : nitrogens) {
+        auto path = algorithm::ShortestPath(residue_graph, source, target);
+        std::vector<graph::MGVertex> v_path;
+        for (graph::MGEdge edge : path) {
+          graph::MGVertex begin = residue_graph.GetSourceVertex(edge);
+          graph::MGVertex end = residue_graph.GetTargetVertex(edge);
+          if (v_path.empty() && begin == source)
+            v_path.emplace_back(end);
+          else if (v_path.empty())
+            v_path.emplace_back(begin);
+          else if (begin == v_path.back() && end != target)
+            v_path.emplace_back(begin);
+          else if (end == v_path.back() && begin != target)
+            v_path.emplace_back(end);
+        }
+        bool is_amino_acid_path = true;
+        for (graph::MGVertex v : v_path) {
+          if (v.GetAtom().GetElement() != "C") is_amino_acid_path = false;
+        }
+        if (is_amino_acid_path) return true;
+      }
+    }
+
+    return false;
   }
 
 } // namespace indigox

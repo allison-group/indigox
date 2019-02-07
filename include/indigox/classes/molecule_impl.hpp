@@ -122,6 +122,8 @@ namespace indigox {
     Impl() = default;
     Impl(const std::vector<Atom> &atms, const Molecule &mol);
 
+    bool AminoAcidTest();
+
     void DetermineType();
   };
 
