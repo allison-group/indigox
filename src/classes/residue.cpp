@@ -1,9 +1,9 @@
-#include <indigox/algorithm/graph/paths.hpp>
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/molecule_impl.hpp>
 #include <indigox/classes/residue.hpp>
 #include <indigox/graph/molecular.hpp>
+#include <indigox/algorithm/graph/paths.hpp>
 
 #ifndef INDIGOX_DISABLE_SANITY_CHECKS
 #define _sanity_check_(x)                                                      \
@@ -52,10 +52,8 @@ namespace indigox {
   }
 
   void Residue::Impl::DetermineType() {
-    if (AminoAcidTest())
-      type = ResidueType::AminoAcid;
-    else
-      type = ResidueType::NonSpecific;
+    if (AminoAcidTest()) type = ResidueType::AminoAcid;
+    else type = ResidueType::NonSpecific;
   }
 
   ResidueType Residue::GetType() {
@@ -115,8 +113,7 @@ namespace indigox {
     for (Atom atm : atoms) {
       graph::MGVertex v = residue_graph.GetVertex(atm);
       if (atm.GetElement() == "C") {
-        if (G.Degree(v) != residue_graph.Degree(v))
-          carbons.push_back(v);
+        if (G.Degree(v) != residue_graph.Degree(v)) carbons.push_back(v);
         else {
           for (graph::MGVertex u : residue_graph.GetNeighbours(v)) {
             Bond bnd = residue_graph.GetEdge(u, v).GetBond();
@@ -128,8 +125,7 @@ namespace indigox {
         }
       }
       if (atm.GetElement() == "N") {
-        if (G.Degree(v) != residue_graph.Degree(v))
-          nitrogens.push_back(v);
+        if (G.Degree(v) != residue_graph.Degree(v)) nitrogens.push_back(v);
         else {
           for (graph::MGVertex u : residue_graph.GetNeighbours(v)) {
             if (u.GetAtom().GetElement() == "H") {
@@ -142,7 +138,7 @@ namespace indigox {
     }
 
     if (carbons.empty() || nitrogens.empty()) return false;
-
+    
     for (graph::MGVertex source : carbons) {
       for (graph::MGVertex target : nitrogens) {
         auto path = algorithm::ShortestPath(residue_graph, source, target);
@@ -150,23 +146,19 @@ namespace indigox {
         for (graph::MGEdge edge : path) {
           graph::MGVertex begin = residue_graph.GetSourceVertex(edge);
           graph::MGVertex end = residue_graph.GetTargetVertex(edge);
-          if (v_path.empty() && begin == source)
-            v_path.emplace_back(end);
-          else if (v_path.empty())
-            v_path.emplace_back(begin);
-          else if (begin == v_path.back() && end != target)
-            v_path.emplace_back(begin);
-          else if (end == v_path.back() && begin != target)
-            v_path.emplace_back(end);
+          if (v_path.empty() && begin == source) v_path.emplace_back(end);
+          else if (v_path.empty() && end == source) v_path.emplace_back(begin);
+          else if (begin == v_path.back() && end != target) v_path.emplace_back(end);
+          else if (end == v_path.back() && begin != target) v_path.emplace_back(begin);
         }
         bool is_amino_acid_path = true;
-        for (graph::MGVertex v : v_path) {
+        for (graph::MGVertex v : v_path){
           if (v.GetAtom().GetElement() != "C") is_amino_acid_path = false;
         }
-        if (is_amino_acid_path) return true;
+        if (is_amino_acid_path && !v_path.empty()) return true;
       }
     }
-
+    
     return false;
   }
 
