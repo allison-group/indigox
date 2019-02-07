@@ -69,22 +69,26 @@ namespace indigox {
 
   bool Residue::IsAlphaAminoAcid() {
     _sanity_check_(*this);
-    return false;
+    if (!IsAminoAcid()) return false;
+    return m_data->cache_aa_length.find(1) != m_data->cache_aa_length.end();
   }
 
   bool Residue::IsBetaAminoAcid() {
     _sanity_check_(*this);
-    return false;
+    if (!IsAminoAcid()) return false;
+    return m_data->cache_aa_length.find(2) != m_data->cache_aa_length.end();
   }
 
   bool Residue::IsGammaAminoAcid() {
     _sanity_check_(*this);
-    return false;
+    if (!IsAminoAcid()) return false;
+    return m_data->cache_aa_length.find(3) != m_data->cache_aa_length.end();
   }
 
   bool Residue::IsDeltaAminoAcid() {
     _sanity_check_(*this);
-    return false;
+    if (!IsAminoAcid()) return false;
+    return m_data->cache_aa_length.find(4) != m_data->cache_aa_length.end();
   }
 
   bool Residue::IsSugar() {
@@ -108,24 +112,28 @@ namespace indigox {
   }
 
   bool Residue::Impl::AminoAcidTest() {
+    if (!cache_aa_length.empty()) {
+      return cache_aa_length.size() > 1;
+    }
+    cache_aa_length.insert(-1);
+    
     graph::MolecularGraph G = molecule.GetGraph();
     std::vector<graph::MGVertex> carbons, nitrogens;
     for (Atom atm : atoms) {
       graph::MGVertex v = residue_graph.GetVertex(atm);
       if (atm.GetElement() == "C") {
-        if (G.Degree(v) != residue_graph.Degree(v)) carbons.push_back(v);
-        else {
-          for (graph::MGVertex u : residue_graph.GetNeighbours(v)) {
-            Bond bnd = residue_graph.GetEdge(u, v).GetBond();
-            if (bnd.IsCarbonylBond()) {
-              carbons.push_back(v);
-              break;
-            }
-          }
+        bool carbonyl = false, oxygen = false;
+        for (graph::MGVertex u : residue_graph.GetNeighbours(v)) {
+          Bond bnd = residue_graph.GetEdge(u, v).GetBond();
+          if (!carbonyl && bnd.IsCarbonylBond()) carbonyl = true;
+          else if (!oxygen && u.GetAtom().GetElement() == "O") oxygen = true;
+        }
+        if (carbonyl && (oxygen || residue_graph.Degree(v) + 1 == G.Degree(v))) {
+          carbons.push_back(v);
         }
       }
       if (atm.GetElement() == "N") {
-        if (G.Degree(v) != residue_graph.Degree(v)) nitrogens.push_back(v);
+        if (G.Degree(v) - 1 == residue_graph.Degree(v)) nitrogens.push_back(v);
         else {
           for (graph::MGVertex u : residue_graph.GetNeighbours(v)) {
             if (u.GetAtom().GetElement() == "H") {
@@ -151,15 +159,15 @@ namespace indigox {
           else if (begin == v_path.back() && end != target) v_path.emplace_back(end);
           else if (end == v_path.back() && begin != target) v_path.emplace_back(begin);
         }
-        bool is_amino_acid_path = true;
+        bool is_amino_acid_path = !v_path.empty();
         for (graph::MGVertex v : v_path){
           if (v.GetAtom().GetElement() != "C") is_amino_acid_path = false;
         }
-        if (is_amino_acid_path && !v_path.empty()) return true;
+        if (is_amino_acid_path) cache_aa_length.insert(v_path.size());
       }
     }
     
-    return false;
+    return cache_aa_length.size() > 1;
   }
 
 } // namespace indigox

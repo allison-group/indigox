@@ -115,6 +115,7 @@ namespace indigox {
     ResidueAtoms atoms;
     Molecule molecule;
     graph::MolecularGraph residue_graph;
+    eastl::vector_set<int32_t> cache_aa_length;
 
     template <typename Archive>
     void serialise(Archive &archive, const uint32_t version);

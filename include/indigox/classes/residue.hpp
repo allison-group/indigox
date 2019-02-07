@@ -38,7 +38,30 @@ namespace indigox {
 
   public:
     bool HasAtom(const Atom &atom) const;
+    /*! \brief Determine the type of the residue.
+     *  \details Checks if the residue matches each of the specific residue
+     *  types, in order. The first type which matches is the returned type. If
+     *  you want to check if a residue is also another type, use the IsType
+     *  methods directly.
+     */
     Type GetType();
+    
+    /*! \brief Determine if the residue is an amino acid.
+     *  \details The algorithm for determining if a residue is an amino acid is
+     *  as follows. First, all potential carboxylic acid and amine atoms are
+     *  identified. For carbon atoms, they are classed as potential carboxylic
+     *  acid atoms if they are 3 co-ordinate, have a carbonyl bond and another
+     *  neighbouring oxygen atom. The additional neighbouring oxygen atom can
+     *  also be accounted for by a bond between this residue and the next. For
+     *  nitrogen atoms, they are classed as potential amine atoms if they have a
+     *  hydrogen bond or a bond to the next residue. This allows for proline to
+     *  be identified as an amino acid even though it technically is not.
+     *
+     *  Once all potential carboxylic and amine atoms are identified, shortest
+     *  paths between all pairs of them are checked. If one of these paths
+     *  consists of only carbon atoms, the residue is regarded as being an
+     *  amino acid.
+     */
     bool IsAminoAcid();
     bool IsAlphaAminoAcid();
     bool IsBetaAminoAcid();
