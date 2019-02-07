@@ -821,18 +821,38 @@ namespace indigox {
     MolecularGraph residue_graph = graph.Subgraph(all_vertices);
 
     // Identify peptide bonds
-    std::vector<graph::MGEdge> to_remove;
-    PeptideBonds(residue_graph, to_remove);
+    std::vector<graph::MGEdge> potential_remove, to_remove;
+    PeptideBonds(residue_graph, potential_remove);
     //! \todo Other types of bonds to break on for residue identification?
 
     // Remove the peptide bonds to get the components of the graph as residues
     std::vector<MGVertex> res_vert;
-    res_vert.reserve(2 * to_remove.size());
-    for (MGEdge e : to_remove) {
-      residue_graph.RemoveEdge(e);
-      res_vert.emplace_back(graph.GetSourceVertex(e));
-      res_vert.emplace_back(graph.GetTargetVertex(e));
+    res_vert.reserve(2 * potential_remove.size());
+    for (MGEdge e : potential_remove) residue_graph.RemoveEdge(e);
+
+    // Re-add edges that create non-specific residues
+    eastl::vector_set<MGVertex> unspecified_residues;
+    for (auto c : residue_graph.GetConnectedComponents()) {
+      std::vector<Atom> atms;
+      atms.reserve(c.size());
+      for (MGVertex v : c) atms.emplace_back(v.GetAtom());
+      Residue tmp_res(atms, *this);
+      if (tmp_res.GetType() == ResidueType::NonSpecific)
+        unspecified_residues.insert(c.begin(), c.end());
     }
+    for (MGEdge e : potential_remove) {
+      MGVertex u = graph.GetSourceVertex(e);
+      MGVertex v = graph.GetTargetVertex(e);
+      if (unspecified_residues.find(u) == unspecified_residues.end() ||
+          unspecified_residues.find(v) == unspecified_residues.end()) {
+        res_vert.emplace_back(u);
+        res_vert.emplace_back(v);
+        to_remove.emplace_back(e);
+      } else {
+        residue_graph.AddEdge(e.GetBond());
+      }
+    }
+
     // Uniquify the residue vertices, just in case
     std::sort(res_vert.begin(), res_vert.end());
     auto last = std::unique(res_vert.begin(), res_vert.end());
@@ -905,8 +925,7 @@ namespace indigox {
       }
     }
 
-    MolecularGraph::ComponentContain components =
-        residue_graph.GetConnectedComponents();
+    auto components = residue_graph.GetConnectedComponents();
     // Figure out the order for the components
     std::vector<int32_t> order;
     for (MGVertex v : ordered_vertices) {
