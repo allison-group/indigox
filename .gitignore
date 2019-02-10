@@ -63,3 +63,4 @@ src/classes/treedecomp.cpp
 src/graph/assignment.cpp
 src/main.cpp
 
+docs/html
