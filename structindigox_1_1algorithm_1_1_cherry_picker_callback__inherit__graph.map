@@ -1,0 +1,5 @@
+<map id="CherryPickerCallback" name="CherryPickerCallback">
+<area shape="rect" id="node2" href="$structindigox_1_1algorithm_1_1_c_m_g_callback.html" title="CMGCallback" alt="" coords="710,59,813,85"/>
+<area shape="rect" id="node3" href="$structindigox_1_1algorithm_1_1_mapping_callback.html" title="MappingCallback\&lt; graph\l::CMGVertex, graph::CMGEdge,\l graph::CondensedMolecularGraph,\l graph::Undirected, graph::GraphLabel,\l graph::GraphLabel \&gt;" alt="" coords="407,33,660,111"/>
+<area shape="rect" id="node4" href="$structindigox_1_1algorithm_1_1_mapping_callback.html" title="MappingCallback\&lt; V,\l E, S, D, VP, EP \&gt;" alt="" coords="5,53,152,91"/>
+</map>

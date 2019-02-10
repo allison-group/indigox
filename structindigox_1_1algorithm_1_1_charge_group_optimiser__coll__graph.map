@@ -1,0 +1,8 @@
+<map id="ChargeGroupOptimiser" name="ChargeGroupOptimiser">
+<area shape="rect" id="node3" title="STL class. " alt="" coords="384,99,479,124"/>
+<area shape="rect" id="node10" title="STL class. " alt="" coords="387,231,476,256"/>
+<area shape="rect" id="node6" href="$classindigox_1_1graph_1_1_molecular_graph.html" title="Class containing a graph representation of a molecule. " alt="" coords="775,391,891,416"/>
+<area shape="rect" id="node7" href="$classindigox_1_1graph_1_1_base_graph.html" title="BaseGraph\&lt; MGVertex,\l MGEdge, MolecularGraph \&gt;" alt="" coords="336,412,527,451"/>
+<area shape="rect" id="node8" href="$classindigox_1_1graph_1_1_base_graph.html" title="Template base class for all graphs used in the indigoX library. " alt="" coords="5,412,150,451"/>
+<area shape="rect" id="node14" href="$classindigox_1_1graph_1_1_m_g_vertex.html" title="Class for the vertices of a IXMolecularGraph. " alt="" coords="391,363,472,388"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="include/indigox/graph/condensed.hpp" name="include/indigox/graph/condensed.hpp">
+<area shape="rect" id="node2" href="$fwd__declares_8hpp.html" title="../utils/fwd_declares.hpp" alt="" coords="722,432,886,457"/>
+<area shape="rect" id="node5" href="$base__graph_8hpp.html" title="base_graph.hpp" alt="" coords="800,92,918,117"/>
+<area shape="rect" id="node6" href="$simple__bimap_8hpp.html" title="../utils/simple_bimap.hpp" alt="" coords="1048,172,1216,197"/>
+<area shape="rect" id="node10" href="$base__graph__impl_8hpp.html" title="base_graph_impl.hpp" alt="" coords="696,172,846,197"/>
+<area shape="rect" id="node11" href="$connectivity_8hpp.html" title="../algorithm/graph\l/connectivity.hpp" alt="" coords="235,339,360,377"/>
+<area shape="rect" id="node13" href="$cycles_8hpp.html" title="../algorithm/graph\l/cycles.hpp" alt="" coords="720,252,845,291"/>
+<area shape="rect" id="node20" href="$serialise_8hpp.html" title="../utils/serialise.hpp" alt="" coords="1701,345,1835,371"/>
+<area shape="rect" id="node35" href="$triple_8hpp.html" title="../utils/triple.hpp" alt="" coords="869,259,984,284"/>
+<area shape="rect" id="node14" href="$numerics_8hpp.html" title="../../utils/numerics.hpp" alt="" coords="385,345,536,371"/>
+</map>

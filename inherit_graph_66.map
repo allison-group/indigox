@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$structindigox_1_1algorithm_1_1_mapping_callback.html" title="MappingCallback\&lt; graph\l::CMGVertex, graph::CMGEdge,\l graph::CondensedMolecularGraph,\l graph::Undirected, graph::GraphLabel,\l graph::GraphLabel \&gt;" alt="" coords="5,5,259,84"/>
+<area shape="rect" id="node2" href="$structindigox_1_1algorithm_1_1_c_m_g_callback.html" title="CMGCallback" alt="" coords="307,32,410,57"/>
+<area shape="rect" id="node3" href="$structindigox_1_1algorithm_1_1_cherry_picker_callback.html" title="CherryPickerCallback" alt="" coords="458,7,608,32"/>
+<area shape="rect" id="node4" href="$structindigox_1_1algorithm_1_1_c_m_g_print_callback.html" title="CMGPrintCallback" alt="" coords="468,56,598,81"/>
+</map>

@@ -1,0 +1,37 @@
+var classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm =
+[
+    [ "_bool_opts", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a6b678037b3d687602a1a178027011f3a", [
+      [ "__pairs", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a6b678037b3d687602a1a178027011f3aa7795fabbdcd227b58219258bfc1772fe", null ],
+      [ "__charged_c", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a6b678037b3d687602a1a178027011f3aa9e74ac00278ba620e013f60c67fbbf25", null ],
+      [ "__preplace", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a6b678037b3d687602a1a178027011f3aa5840347aa7f00ba115955696054295d8", null ],
+      [ "__initalised", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a6b678037b3d687602a1a178027011f3aaa30bd5f56816294dba51274ea6d27dd3", null ],
+      [ "__num_opts", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a6b678037b3d687602a1a178027011f3aa847d43015eb7c81d529d53d168593f82", null ]
+    ] ],
+    [ "AssignAlgorithm", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a41faf21928168b04451682242bdc89e7", null ],
+    [ "AssignAlgorithm", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a8c034dc1de7a89fed9fb48e5c4395722", null ],
+    [ "~AssignAlgorithm", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#ade16fa5ca565c706141dd1954c9ae57d", null ],
+    [ "ApplyAssignment", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a107d5c55a76d192631e9eb3411672613", null ],
+    [ "CalculateAssignmentScore", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#add22adc41a6260fba5955343270795f3", null ],
+    [ "CalculateUpperLimit", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a05d130bb7de1ddfcc3a9c4e81a91900e", null ],
+    [ "CalculateVertexScore", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a813b55277d8242d660bf0f9db220f071", null ],
+    [ "GetAssignmentGraph", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a790734cf2d299a4da9d3af2e06d23197", null ],
+    [ "GetOptimalCount", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#aa4e6aa48e0fba36734eed5b6a37f9b5b", null ],
+    [ "GetOptimisedScore", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a80458fbe068fe16c6bd01171b6e38249", null ],
+    [ "Initalise", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a32e974def408babc846ac808ddd55933", null ],
+    [ "IsInitalised", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a38f461990e83c281683778babd50a6d1", null ],
+    [ "Run", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#adc27ee0d7b66b8795db722f47a615cfe", null ],
+    [ "SetAssignment", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a0875fce5da5ba7e5f76a6bc36d8ee71d", null ],
+    [ "_g", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#aa1a8eaee6b3a4f9221dc9db60f28b296", null ],
+    [ "_inf", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a5643c1d640d6dfb6259a9515dad394c2", null ],
+    [ "_limit", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#af922f08e82a740113467406144dffa62", null ],
+    [ "_locs", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#ad0a1515cc3ec1175dce1d9fa8653b761", null ],
+    [ "_max_charge", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#ad1521f4ef76b12ce2344fdbc95d42feb", null ],
+    [ "_max_results", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a38f15f5027e4cac4a459575244ec2682", null ],
+    [ "_min_score", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a8e2bc806d77a46552594d4c63dbeb6ce", null ],
+    [ "_mol", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#ab7807cd67ea3d90644d93f9e9482ba6b", null ],
+    [ "_num_e", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#aa887dca2fafbdf6b8c971c192a714f8f", null ],
+    [ "_opts", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a6a7409de5ec53be692c8796e61cf2619", null ],
+    [ "_previous_mask", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a3fa4b0d8c67756542a66e03147609995", null ],
+    [ "_results", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a518d7c26cb56318facf4b5631499d141", null ],
+    [ "_table", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#abb6a6bd36eb693ca25dbe48d3ca816da", null ]
+];

@@ -1,0 +1,15 @@
+<map id="include/indigox/algorithm/electron_assignment/astar_optimisation.hpp" name="include/indigox/algorithm/electron_assignment/astar_optimisation.hpp">
+<area shape="rect" id="node2" href="$assignment_8hpp.html" title="../../graph/assignment.hpp" alt="" coords="2665,185,2840,211"/>
+<area shape="rect" id="node41" href="$assigner_8hpp.html" title="assigner.hpp" alt="" coords="3083,105,3180,131"/>
+<area shape="rect" id="node3" href="$common_8hpp.html" title="../utils/common.hpp" alt="" coords="3085,519,3222,544"/>
+<area shape="rect" id="node9" href="$fwd__declares_8hpp.html" title="../utils/fwd_declares.hpp" alt="" coords="2482,605,2647,631"/>
+<area shape="rect" id="node11" href="$base__graph_8hpp.html" title="base_graph.hpp" alt="" coords="2271,265,2389,291"/>
+<area shape="rect" id="node12" href="$simple__bimap_8hpp.html" title="../utils/simple_bimap.hpp" alt="" coords="2488,345,2656,371"/>
+<area shape="rect" id="node16" href="$base__graph__impl_8hpp.html" title="base_graph_impl.hpp" alt="" coords="2311,345,2461,371"/>
+<area shape="rect" id="node17" href="$connectivity_8hpp.html" title="../algorithm/graph\l/connectivity.hpp" alt="" coords="2641,512,2766,551"/>
+<area shape="rect" id="node19" href="$cycles_8hpp.html" title="../algorithm/graph\l/cycles.hpp" alt="" coords="2323,425,2448,464"/>
+<area shape="rect" id="node23" href="$serialise_8hpp.html" title="../utils/serialise.hpp" alt="" coords="1228,519,1362,544"/>
+<area shape="rect" id="node37" href="$triple_8hpp.html" title="../utils/triple.hpp" alt="" coords="2032,432,2147,457"/>
+<area shape="rect" id="node20" href="$numerics_8hpp.html" title="../../utils/numerics.hpp" alt="" coords="2910,519,3061,544"/>
+<area shape="rect" id="node42" href="$periodictable_8hpp.html" title="../../classes/periodictable.hpp" alt="" coords="3112,345,3305,371"/>
+</map>

@@ -1,0 +1,12 @@
+<map id="include/indigox/graph/assignment.hpp" name="include/indigox/graph/assignment.hpp">
+<area shape="rect" id="node2" href="$common_8hpp.html" title="../utils/common.hpp" alt="" coords="2605,345,2742,371"/>
+<area shape="rect" id="node8" href="$fwd__declares_8hpp.html" title="../utils/fwd_declares.hpp" alt="" coords="2454,432,2618,457"/>
+<area shape="rect" id="node10" href="$base__graph_8hpp.html" title="base_graph.hpp" alt="" coords="2820,92,2938,117"/>
+<area shape="rect" id="node11" href="$simple__bimap_8hpp.html" title="../utils/simple_bimap.hpp" alt="" coords="3068,172,3236,197"/>
+<area shape="rect" id="node15" href="$base__graph__impl_8hpp.html" title="base_graph_impl.hpp" alt="" coords="2716,172,2865,197"/>
+<area shape="rect" id="node16" href="$connectivity_8hpp.html" title="../algorithm/graph\l/connectivity.hpp" alt="" coords="3168,339,3293,377"/>
+<area shape="rect" id="node18" href="$cycles_8hpp.html" title="../algorithm/graph\l/cycles.hpp" alt="" coords="2673,252,2799,291"/>
+<area shape="rect" id="node22" href="$serialise_8hpp.html" title="../utils/serialise.hpp" alt="" coords="1493,345,1627,371"/>
+<area shape="rect" id="node36" href="$triple_8hpp.html" title="../utils/triple.hpp" alt="" coords="2300,259,2415,284"/>
+<area shape="rect" id="node19" href="$numerics_8hpp.html" title="../../utils/numerics.hpp" alt="" coords="2766,345,2917,371"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="MGPrintCallback" name="MGPrintCallback">
+<area shape="rect" id="node2" href="$structindigox_1_1algorithm_1_1_m_g_callback.html" title="MGCallback" alt="" coords="659,59,753,85"/>
+<area shape="rect" id="node3" href="$structindigox_1_1algorithm_1_1_mapping_callback.html" title="MappingCallback\&lt; graph\l::MGVertex, graph::MGEdge,\l graph::MolecularGraph, graph\l::Undirected, graph::GraphLabel,\l graph::GraphLabel \&gt;" alt="" coords="394,33,610,111"/>
+<area shape="rect" id="node4" href="$structindigox_1_1algorithm_1_1_mapping_callback.html" title="MappingCallback\&lt; V,\l E, S, D, VP, EP \&gt;" alt="" coords="5,53,152,91"/>
+</map>

@@ -1,0 +1,20 @@
+<map id="src/python/classes/athenaeum.cpp" name="src/python/classes/athenaeum.cpp">
+<area shape="rect" id="node2" href="$athenaeum_8hpp.html" title="indigox/classes/athenaeum.hpp" alt="" coords="565,245,773,271"/>
+<area shape="rect" id="node21" href="$forcefield_8hpp.html" title="indigox/classes/forcefield.hpp" alt="" coords="860,245,1055,271"/>
+<area shape="rect" id="node29" href="$molecule_8hpp.html" title="indigox/classes/molecule.hpp" alt="" coords="1317,245,1512,271"/>
+<area shape="rect" id="node32" href="$condensed_8hpp.html" title="indigox/graph/condensed.hpp" alt="" coords="1603,92,1799,117"/>
+<area shape="rect" id="node40" href="$molecular_8hpp.html" title="indigox/graph/molecular.hpp" alt="" coords="2366,92,2554,117"/>
+<area shape="rect" id="node43" href="$interface_8hpp.html" title="indigox/python/interface.hpp" alt="" coords="2882,245,3070,271"/>
+<area shape="rect" id="node3" href="$fwd__declares_8hpp.html" title="../utils/fwd_declares.hpp" alt="" coords="1718,492,1882,517"/>
+<area shape="rect" id="node6" href="$quad_8hpp.html" title="../utils/quad.hpp" alt="" coords="549,332,664,357"/>
+<area shape="rect" id="node16" href="$triple_8hpp.html" title="../utils/triple.hpp" alt="" coords="688,332,803,357"/>
+<area shape="rect" id="node9" href="$serialise_8hpp.html" title="serialise.hpp" alt="" coords="835,412,931,437"/>
+<area shape="rect" id="node22" href="$periodictable_8hpp.html" title="periodictable.hpp" alt="" coords="827,332,949,357"/>
+<area shape="rect" id="node23" href="$common_8hpp.html" title="../utils/common.hpp" alt="" coords="674,412,811,437"/>
+<area shape="rect" id="node33" href="$base__graph_8hpp.html" title="base_graph.hpp" alt="" coords="1984,165,2102,191"/>
+<area shape="rect" id="node34" href="$simple__bimap_8hpp.html" title="../utils/simple_bimap.hpp" alt="" coords="2141,245,2309,271"/>
+<area shape="rect" id="node36" href="$base__graph__impl_8hpp.html" title="base_graph_impl.hpp" alt="" coords="1968,245,2117,271"/>
+<area shape="rect" id="node37" href="$cycles_8hpp.html" title="../algorithm/graph\l/cycles.hpp" alt="" coords="2285,325,2411,364"/>
+<area shape="rect" id="node38" href="$numerics_8hpp.html" title="../../utils/numerics.hpp" alt="" coords="2411,412,2562,437"/>
+<area shape="rect" id="node50" href="$opaquecontainers_8hpp.html" title="opaquecontainers.hpp" alt="" coords="2687,332,2841,357"/>
+</map>

@@ -1,0 +1,23 @@
+<map id="src/python/graph/algorithms.cpp" name="src/python/graph/algorithms.cpp">
+<area shape="rect" id="node2" href="$cherrypicker_8hpp.html" title="indigox/algorithm/cherrypicker.hpp" alt="" coords="407,79,631,104"/>
+<area shape="rect" id="node3" href="$athenaeum_8hpp.html" title="../classes/athenaeum.hpp" alt="" coords="497,159,670,184"/>
+<area shape="rect" id="node14" href="$forcefield_8hpp.html" title="../classes/forcefield.hpp" alt="" coords="1920,159,2081,184"/>
+<area shape="rect" id="node21" href="$connectivity_8hpp.html" title="indigox/algorithm/graph\l/connectivity.hpp" alt="" coords="826,239,986,277"/>
+<area shape="rect" id="node23" href="$cycles_8hpp.html" title="indigox/algorithm/graph\l/cycles.hpp" alt="" coords="1401,152,1561,191"/>
+<area shape="rect" id="node29" href="$isomorphism_8hpp.html" title="indigox/algorithm/graph\l/isomorphism.hpp" alt="" coords="3191,239,3351,277"/>
+<area shape="rect" id="node30" href="$paths_8hpp.html" title="indigox/algorithm/graph\l/paths.hpp" alt="" coords="1686,152,1846,191"/>
+<area shape="rect" id="node31" href="$atom_8hpp.html" title="indigox/classes/atom.hpp" alt="" coords="1415,245,1586,271"/>
+<area shape="rect" id="node33" href="$molecule_8hpp.html" title="indigox/classes/molecule.hpp" alt="" coords="2806,159,3001,184"/>
+<area shape="rect" id="node36" href="$parameterised_8hpp.html" title="indigox/classes/parameterised.hpp" alt="" coords="910,159,1137,184"/>
+<area shape="rect" id="node37" href="$condensed_8hpp.html" title="indigox/graph/condensed.hpp" alt="" coords="2401,159,2597,184"/>
+<area shape="rect" id="node40" href="$molecular_8hpp.html" title="indigox/graph/molecular.hpp" alt="" coords="2024,79,2212,104"/>
+<area shape="rect" id="node43" href="$interface_8hpp.html" title="indigox/python/interface.hpp" alt="" coords="3671,159,3859,184"/>
+<area shape="rect" id="node4" href="$fwd__declares_8hpp.html" title="../utils/fwd_declares.hpp" alt="" coords="2024,325,2188,351"/>
+<area shape="rect" id="node19" href="$enum__class__bitwise_8hpp.html" title="../utils/enum_class\l_bitwise.hpp" alt="" coords="175,152,306,191"/>
+<area shape="rect" id="node7" href="$quad_8hpp.html" title="../utils/quad.hpp" alt="" coords="359,245,474,271"/>
+<area shape="rect" id="node9" href="$triple_8hpp.html" title="../utils/triple.hpp" alt="" coords="221,245,335,271"/>
+<area shape="rect" id="node15" href="$periodictable_8hpp.html" title="periodictable.hpp" alt="" coords="1935,245,2058,271"/>
+<area shape="rect" id="node24" href="$numerics_8hpp.html" title="../../utils/numerics.hpp" alt="" coords="549,245,700,271"/>
+<area shape="rect" id="node38" href="$base__graph_8hpp.html" title="base_graph.hpp" alt="" coords="2266,245,2383,271"/>
+<area shape="rect" id="node50" href="$opaquecontainers_8hpp.html" title="opaquecontainers.hpp" alt="" coords="3425,245,3579,271"/>
+</map>

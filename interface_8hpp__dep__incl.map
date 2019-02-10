@@ -1,0 +1,12 @@
+<map id="include/indigox/python/interface.hpp" name="include/indigox/python/interface.hpp">
+<area shape="rect" id="node2" href="$python_2classes_2athenaeum_8cpp.html" title="src/python/classes\l/athenaeum.cpp" alt="" coords="5,92,136,131"/>
+<area shape="rect" id="node3" href="$python_2classes_2forcefield_8cpp.html" title="src/python/classes\l/forcefield.cpp" alt="" coords="160,92,291,131"/>
+<area shape="rect" id="node4" href="$python_2classes_2molecule_8cpp.html" title="src/python/classes\l/molecule.cpp" alt="" coords="315,92,446,131"/>
+<area shape="rect" id="node5" href="$parammolecule_8cpp.html" title="src/python/classes\l/parammolecule.cpp" alt="" coords="469,92,611,131"/>
+<area shape="rect" id="node6" href="$python_2classes_2periodictable_8cpp.html" title="src/python/classes\l/periodictable.cpp" alt="" coords="635,92,766,131"/>
+<area shape="rect" id="node7" href="$algorithms_8cpp.html" title="src/python/graph/algorithms.cpp" alt="" coords="789,99,1000,124"/>
+<area shape="rect" id="node8" href="$graphs_8cpp.html" title="src/python/graph/graphs.cpp" alt="" coords="1025,99,1215,124"/>
+<area shape="rect" id="node9" href="$interface_8cpp.html" title="src/python/interface.cpp" alt="" coords="1239,99,1402,124"/>
+<area shape="rect" id="node10" href="$pyassigner_8cpp.html" title="src/python/pyassigner.cpp" alt="" coords="1426,99,1601,124"/>
+<area shape="rect" id="node11" href="$pyoptions_8cpp.html" title="src/python/pyoptions.cpp" alt="" coords="1625,99,1794,124"/>
+</map>

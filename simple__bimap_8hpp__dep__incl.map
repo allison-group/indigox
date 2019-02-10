@@ -1,0 +1,30 @@
+<map id="include/indigox/utils/simple_bimap.hpp" name="include/indigox/utils/simple_bimap.hpp">
+<area shape="rect" id="node2" href="$base__graph_8hpp.html" title="include/indigox/graph\l/base_graph.hpp" alt="" coords="1232,92,1379,131"/>
+<area shape="rect" id="node3" href="$access_8hpp.html" title="include/indigox/algorithm\l/access.hpp" alt="" coords="1131,179,1299,217"/>
+<area shape="rect" id="node6" href="$assignment_8hpp.html" title="include/indigox/graph\l/assignment.hpp" alt="" coords="401,179,548,217"/>
+<area shape="rect" id="node14" href="$condensed_8hpp.html" title="include/indigox/graph\l/condensed.hpp" alt="" coords="1930,179,2078,217"/>
+<area shape="rect" id="node28" href="$molecular_8hpp.html" title="include/indigox/graph\l/molecular.hpp" alt="" coords="1377,179,1524,217"/>
+<area shape="rect" id="node4" href="$connectivity_8cpp.html" title="src/algorithm/graph\l/connectivity.cpp" alt="" coords="1147,265,1282,304"/>
+<area shape="rect" id="node5" href="$isomorphism_8cpp.html" title="src/algorithm/graph\l/isomorphism.cpp" alt="" coords="936,265,1072,304"/>
+<area shape="rect" id="node7" href="$assigner_8hpp.html" title="include/indigox/algorithm\l/electron_assignment/assigner.hpp" alt="" coords="285,265,512,304"/>
+<area shape="rect" id="node8" href="$astar__optimisation_8hpp.html" title="include/indigox/algorithm\l/electron_assignment/astar\l_optimisation.hpp" alt="" coords="387,352,568,404"/>
+<area shape="rect" id="node9" href="$assigner_8cpp.html" title="src/algorithm/electron\l_assignment/assigner.cpp" alt="" coords="261,452,437,491"/>
+<area shape="rect" id="node10" href="$astar__optimisation_8cpp.html" title="src/algorithm/electron\l_assignment/astar_optimisation.cpp" alt="" coords="514,452,748,491"/>
+<area shape="rect" id="node11" href="$local__optimisation_8hpp.html" title="include/indigox/algorithm\l/electron_assignment/local\l_optimisation.hpp" alt="" coords="32,352,211,404"/>
+<area shape="rect" id="node12" href="$local__optimisation_8cpp.html" title="src/algorithm/electron\l_assignment/local_optimisation.cpp" alt="" coords="5,452,237,491"/>
+<area shape="rect" id="node13" href="$assignment_8cpp.html" title="src/graph/assignment.cpp" alt="" coords="637,272,811,297"/>
+<area shape="rect" id="node15" href="$molecule__impl_8hpp.html" title="include/indigox/classes\l/molecule_impl.hpp" alt="" coords="1426,265,1584,304"/>
+<area shape="rect" id="node20" href="$molecule_8cpp.html" title="src/classes/molecule.cpp" alt="" coords="2052,365,2222,391"/>
+<area shape="rect" id="node22" href="$molecular_8cpp.html" title="src/graph/molecular.cpp" alt="" coords="1865,365,2028,391"/>
+<area shape="rect" id="node23" href="$cherrypicker_8cpp.html" title="src/algorithm/cherrypicker.cpp" alt="" coords="1905,272,2103,297"/>
+<area shape="rect" id="node24" href="$cycles_8cpp.html" title="src/algorithm/graph\l/cycles.cpp" alt="" coords="2492,265,2628,304"/>
+<area shape="rect" id="node25" href="$paths_8cpp.html" title="src/algorithm/graph\l/paths.cpp" alt="" coords="2127,265,2262,304"/>
+<area shape="rect" id="node26" href="$athenaeum_8cpp.html" title="src/classes/athenaeum.cpp" alt="" coords="2286,272,2469,297"/>
+<area shape="rect" id="node27" href="$condensed_8cpp.html" title="src/graph/condensed.cpp" alt="" coords="1709,272,1880,297"/>
+<area shape="rect" id="node16" href="$angle_8cpp.html" title="src/classes/angle.cpp" alt="" coords="1167,365,1316,391"/>
+<area shape="rect" id="node17" href="$atom_8cpp.html" title="src/classes/atom.cpp" alt="" coords="1339,365,1485,391"/>
+<area shape="rect" id="node18" href="$bond_8cpp.html" title="src/classes/bond.cpp" alt="" coords="1508,365,1654,391"/>
+<area shape="rect" id="node19" href="$dihedral_8cpp.html" title="src/classes/dihedral.cpp" alt="" coords="1678,365,1842,391"/>
+<area shape="rect" id="node21" href="$residue_8cpp.html" title="src/classes/residue.cpp" alt="" coords="983,365,1143,391"/>
+<area shape="rect" id="node29" href="$main_8cpp.html" title="src/main.cpp" alt="" coords="1306,272,1403,297"/>
+</map>

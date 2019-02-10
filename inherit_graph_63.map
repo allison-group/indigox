@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html" title="Base class for an electron assignment algorithm. " alt="" coords="5,24,140,63"/>
+<area shape="rect" id="node2" href="$classindigox_1_1algorithm_1_1_i_x_a_star_optimisation.html" title="IXAStarOptimisation" alt="" coords="188,5,329,31"/>
+<area shape="rect" id="node3" href="$classindigox_1_1algorithm_1_1_i_x_local_optimisation.html" title="Local optimisation electron assignment algorithm. " alt="" coords="189,55,329,80"/>
+</map>

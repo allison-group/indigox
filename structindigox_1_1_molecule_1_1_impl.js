@@ -1,0 +1,26 @@
+var structindigox_1_1_molecule_1_1_impl =
+[
+    [ "Impl", "structindigox_1_1_molecule_1_1_impl.html#afeb69188a71a806986b7d877654a6bbb", null ],
+    [ "Impl", "structindigox_1_1_molecule_1_1_impl.html#a4a3c4aba72e124061d6596a18fc8d2dd", null ],
+    [ "FindAngle", "structindigox_1_1_molecule_1_1_impl.html#a89b7c8984712b1b24508257dedef73cd", null ],
+    [ "FindBond", "structindigox_1_1_molecule_1_1_impl.html#a5cfc241d1ff669c213ad467e8c1a5c0f", null ],
+    [ "FindDihedral", "structindigox_1_1_molecule_1_1_impl.html#ad7c85c89d5be5c1d49add3d9a9f908c2", null ],
+    [ "Reset", "structindigox_1_1_molecule_1_1_impl.html#a8de36fe16f15bf9ed0905e61f2c31257", null ],
+    [ "Reset", "structindigox_1_1_molecule_1_1_impl.html#a372de693ad40b3f42839c8ec6ac845f4", null ],
+    [ "serialise", "structindigox_1_1_molecule_1_1_impl.html#a6c484cea597675ce87b37072eecfff5a", null ],
+    [ "Set", "structindigox_1_1_molecule_1_1_impl.html#a21a9277d71ba8ca8a1cd7931bacc7ace", null ],
+    [ "Test", "structindigox_1_1_molecule_1_1_impl.html#a02964248f45bd2d1f8e6d3a503047ba1", null ],
+    [ "angles", "structindigox_1_1_molecule_1_1_impl.html#a647d71963f602def4ac6391eb01e4ca9", null ],
+    [ "atoms", "structindigox_1_1_molecule_1_1_impl.html#afaa573f7baeb0945b02c556e30daff3a", null ],
+    [ "bonds", "structindigox_1_1_molecule_1_1_impl.html#a88936016b9cdc9272141f5c615eebac3", null ],
+    [ "cached_formula", "structindigox_1_1_molecule_1_1_impl.html#a14440fd6611abf0a48e40bc0daad5689", null ],
+    [ "calculated_data", "structindigox_1_1_molecule_1_1_impl.html#a1cd1977519040cd9c4bfb1cb40d0e517", null ],
+    [ "condensed_molecular_graph", "structindigox_1_1_molecule_1_1_impl.html#aa531437b47d34eb20b4467422ebaf7f3", null ],
+    [ "dihedrals", "structindigox_1_1_molecule_1_1_impl.html#a6a561417d518a28975e6f3268ff223da", null ],
+    [ "forcefield", "structindigox_1_1_molecule_1_1_impl.html#a3ee27e071b1273f42738cf34c145e140", null ],
+    [ "molecular_charge", "structindigox_1_1_molecule_1_1_impl.html#a9f023d4dc6b0adcbad8495243c802cc4", null ],
+    [ "molecular_graph", "structindigox_1_1_molecule_1_1_impl.html#aac5997d5069265ef1e3212441f15bd86", null ],
+    [ "name", "structindigox_1_1_molecule_1_1_impl.html#a9b45b3e13bd9167aab02e17e08916231", null ],
+    [ "next_unique_id", "structindigox_1_1_molecule_1_1_impl.html#a905604d15492e93031037d980d05b76f", null ],
+    [ "residues", "structindigox_1_1_molecule_1_1_impl.html#a0e953251c7232d320f8f6ede4540261f", null ]
+];

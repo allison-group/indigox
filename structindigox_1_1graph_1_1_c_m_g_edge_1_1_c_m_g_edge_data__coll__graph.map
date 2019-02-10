@@ -1,0 +1,6 @@
+<map id="CMGEdge::CMGEdgeData" name="CMGEdge::CMGEdgeData">
+<area shape="rect" id="node2" href="$classindigox_1_1graph_1_1_m_g_edge.html" title="Class for the edges of a IXMolecularGraph. " alt="" coords="22,220,96,245"/>
+<area shape="rect" id="node3" href="$classindigox_1_1graph_1_1_condensed_molecular_graph.html" title="CondensedMolecularGraph" alt="" coords="120,220,304,245"/>
+<area shape="rect" id="node4" href="$classindigox_1_1graph_1_1_base_graph.html" title="BaseGraph\&lt; CMGVertex,\l CMGEdge, CondensedMolecular\lGraph \&gt;" alt="" coords="102,119,322,171"/>
+<area shape="rect" id="node5" href="$classindigox_1_1graph_1_1_base_graph.html" title="Template base class for all graphs used in the indigoX library. " alt="" coords="140,5,284,44"/>
+</map>

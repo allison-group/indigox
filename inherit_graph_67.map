@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$structindigox_1_1algorithm_1_1_mapping_callback.html" title="MappingCallback\&lt; graph\l::MGVertex, graph::MGEdge,\l graph::MolecularGraph, graph\l::Undirected, graph::GraphLabel,\l graph::GraphLabel \&gt;" alt="" coords="5,5,221,84"/>
+<area shape="rect" id="node2" href="$structindigox_1_1algorithm_1_1_m_g_callback.html" title="MGCallback" alt="" coords="269,32,363,57"/>
+<area shape="rect" id="node3" href="$structindigox_1_1algorithm_1_1_m_g_print_callback.html" title="MGPrintCallback" alt="" coords="411,32,532,57"/>
+</map>
