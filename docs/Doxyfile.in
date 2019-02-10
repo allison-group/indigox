@@ -436,7 +436,7 @@ LOOKUP_CACHE_SIZE      = 0
 # normally produced when WARNINGS is set to YES.
 # The default value is: NO.
 
-EXTRACT_ALL            = NO
+EXTRACT_ALL            = YES
 
 # If the EXTRACT_PRIVATE tag is set to YES, all private members of a class will
 # be included in the documentation.
@@ -877,6 +877,10 @@ RECURSIVE              = YES
 
 EXCLUDE                = @PROJECT_SOURCE_DIR@/external \
                          @PROJECT_SOURCE_DIR@/include/indigox/test \
+                         @PROJECT_SOURCE_DIR@/include/indigox/algorithm/formalbonds \
+                         @PROJECT_SOURCE_DIR@/include/indigox/python \
+                         @PROJECT_SOURCE_DIR@/src/algorithm/formalbonds \
+                         @PROJECT_SOURCE_DIR@/src/python \
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

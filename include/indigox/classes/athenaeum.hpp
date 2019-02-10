@@ -12,6 +12,8 @@
 
 namespace indigox {
 
+  /*! \brief Fragment class for CherryPicker parameterisation algorithm.
+   */
   class Fragment {
     friend class cereal::access;
     friend class Athenaeum;
@@ -67,6 +69,8 @@ namespace indigox {
     std::shared_ptr<FragmentData> m_data;
   };
 
+  /*! \brief Athenaeum class for fragment storage in CherryPicker algorithm.
+   */
   class Athenaeum {
     friend class cereal::access;
 

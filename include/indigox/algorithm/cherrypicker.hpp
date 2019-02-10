@@ -12,6 +12,57 @@
 
 namespace indigox::algorithm {
 
+  /*! \brief CherryPicker parameterisation algorithm class.
+   *  \details The CherryPicker algorithm is a parameterisation algorithm for
+   * molecular dynamics simulations. It parameterises novel molecules by
+   * identifying fragments of previously parameterised molecules which match
+   * portions of the novel molecule, then applying the parameters found to the
+   * novel molecule.
+   *
+   *  Use of CherryPicker is straight forward using the Python bindings, which
+   * is the recommended way of doing so. All following code is given as if
+   * utilising the Python bindings, and assuming that the following line is
+   * included in the script:
+   *
+   *  \code{.py}
+   *  import indigox as ix
+   *  \endcode
+   *
+   * There are two main parts to the CherryPicker algorithm: algorithm setup,
+   * and running. Setup consists of initailising a CherryPicker instance,
+   * providing an Athenaeum to search through, and changing any of the default
+   * settings as desired. The first step of setup requires obtaining a
+   * Forcefield which contains all the parameters that could be used to
+   * parameterise your target molecule. That is, you are going to parameterise
+   * your molecule with this Forcefield. As we primarially use the GROMOS family
+   * of forcefields within our group, in particular the <a
+   * href="http://dx.doi.org/10.1007/s00249-011-0700-9">54A7 version</a> , a
+   * hard coded implementation of the forcefield is provided for simple access.
+   * If you wish to use a different version or family of forcefield, consult the
+   * Forcefield class for help. With a Forcefield, obtaining a CherryPicker
+   * instance then requires simply calling the CherryPicker constructor:
+   *
+   *  \code{.py}
+   *  forcefield = ix.GenerateGROMOS54A7()
+   *  cherrypicker = ix.algorithm.CherryPicker(forcefield)
+   *  \endcode
+   *
+   * Left as-is, this CherryPicker instance is useless. It will not be able to
+   * parameterise any molecules as it does not have an Athenaeum to search
+   * through for matching fragments. As such, the next step is to provide an
+   * Athenaeum to CherryPicker. See the Athenaeum class for details on how to
+   * create one.
+   *
+   * \code{.py}
+   *  added_ok = cherrypicker.AddAthenaeum(athenaeum)
+   *  if not added_ok:
+   *    print("Athenaeum failed to add to CherryPicker instance.")
+   * \endcode
+   *
+   *  The AddAthenaeum() method returns a boolean for if the Athenaeum was successfully added to the CherryPicker instance or not. To be successfully added, the Athenaeum::GetForcefield() method must return a Forcefield which matches the Forcefield used to create the CherryPicker instance. As shown above, this return value should be checked to ensure that everything is as expected.
+   *
+   *  Of further note is that CherryPicker is designed to be able to parameterise molecules using multiple Athenaeum instances.
+   */
   class CherryPicker {
   public:
     enum class VertexParameters {

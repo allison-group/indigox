@@ -18,7 +18,7 @@ cmake .. && make
 
 make install
 
-Examples are provided in the examples directory.
+Examples are provided in the examples directory. Documentation can be built by make doc. Alternatively, a version of the documentation up to date with the most recent release is available at https://allison-group.github.io/indigox/
 
 ## File formats
 

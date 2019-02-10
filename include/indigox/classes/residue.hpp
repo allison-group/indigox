@@ -45,7 +45,7 @@ namespace indigox {
      *  methods directly.
      */
     Type GetType();
-    
+
     /*! \brief Determine if the residue is an amino acid.
      *  \details The algorithm for determining if a residue is an amino acid is
      *  as follows. First, all potential carboxylic acid and amine atoms are
