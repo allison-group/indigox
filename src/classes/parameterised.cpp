@@ -48,19 +48,17 @@ namespace indigox {
   bool ParamAtom::ApplyParameterisation(bool self_consistent) {
     if (m_data->applied) return false;
     if (m_data->charges.empty()) return false;
-    double mean = MeanCharge();
     if (self_consistent) {
       if (m_data->types.size() > 1)
         throw std::runtime_error("Types not self-consistent");
-      if (std::fabs(mean - MeadianCharge()) > 1e-10)
-        throw std::runtime_error("Charges mean/median not equal");
-      if (std::fabs(0.0 - StandardDeviationCharge()) > 1e-10)
-        throw std::runtime_error("Charge stddev not 0");
+      auto min_max = std::minmax_element(m_data->charges.begin(), m_data->charges.end());
+      if ((*min_max.second - *min_max.first) > 1e-10)
+        throw std::runtime_error("Charges not self-consistent");
     }
     if (!m_data->atom) throw std::runtime_error("Mapped atom missing");
     m_data->atom.SetType(GetMostCommonType());
     if (!self_consistent)
-      m_data->atom.SetPartialCharge(mean);
+      m_data->atom.SetPartialCharge(MeanCharge());
     else
       m_data->atom.SetPartialCharge(MeadianCharge());
     m_data->applied = true;
