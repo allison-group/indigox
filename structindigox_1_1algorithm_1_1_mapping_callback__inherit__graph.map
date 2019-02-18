@@ -1,9 +1,9 @@
 <map id="MappingCallback&lt; V, E, S, D, VP, EP &gt;" name="MappingCallback&lt; V, E, S, D, VP, EP &gt;">
-<area shape="rect" id="node2" href="$structindigox_1_1algorithm_1_1_mapping_callback.html" title="MappingCallback\&lt; graph\l::CMGVertex, graph::CMGEdge,\l graph::CondensedMolecularGraph,\l graph::Undirected, graph::GraphLabel,\l graph::GraphLabel \&gt;" alt="" coords="407,23,660,102"/>
-<area shape="rect" id="node6" href="$structindigox_1_1algorithm_1_1_mapping_callback.html" title="MappingCallback\&lt; graph\l::MGVertex, graph::MGEdge,\l graph::MolecularGraph, graph\l::Undirected, graph::GraphLabel,\l graph::GraphLabel \&gt;" alt="" coords="426,126,641,205"/>
-<area shape="rect" id="node3" href="$structindigox_1_1algorithm_1_1_c_m_g_callback.html" title="CMGCallback" alt="" coords="710,50,813,75"/>
-<area shape="rect" id="node4" href="$structindigox_1_1algorithm_1_1_cherry_picker_callback.html" title="CherryPickerCallback" alt="" coords="863,26,1012,51"/>
-<area shape="rect" id="node5" href="$structindigox_1_1algorithm_1_1_c_m_g_print_callback.html" title="CMGPrintCallback" alt="" coords="872,75,1003,101"/>
-<area shape="rect" id="node7" href="$structindigox_1_1algorithm_1_1_m_g_callback.html" title="MGCallback" alt="" coords="714,153,808,178"/>
-<area shape="rect" id="node8" href="$structindigox_1_1algorithm_1_1_m_g_print_callback.html" title="MGPrintCallback" alt="" coords="877,153,998,178"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,95,152,134"/>
+<area shape="rect" id="node2" href="$structindigox_1_1algorithm_1_1_mapping_callback.html" title=" " alt="" coords="407,23,660,102"/>
+<area shape="rect" id="node5" href="$structindigox_1_1algorithm_1_1_mapping_callback.html" title=" " alt="" coords="426,126,641,205"/>
+<area shape="rect" id="node3" href="$structindigox_1_1algorithm_1_1_c_m_g_callback.html" title=" " alt="" coords="710,50,813,75"/>
+<area shape="rect" id="node4" href="$structindigox_1_1algorithm_1_1_c_m_g_print_callback.html" title=" " alt="" coords="863,50,994,75"/>
+<area shape="rect" id="node6" href="$structindigox_1_1algorithm_1_1_m_g_callback.html" title=" " alt="" coords="714,153,808,178"/>
+<area shape="rect" id="node7" href="$structindigox_1_1algorithm_1_1_m_g_print_callback.html" title=" " alt="" coords="867,153,989,178"/>
 </map>

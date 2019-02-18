@@ -1,15 +1,10 @@
 var classindigox_1_1graph_1_1_i_x_assignment_graph =
 [
-    [ "graph_type", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#ac0dcec15bc31b4f38fe15517abfd3077", null ],
     [ "NbrsIter", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#aa595d16811c9477bc10e2cea0cd62cb6", null ],
-    [ "VertContain", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a245e2bcc8938a2691d80163bb6aa475f", null ],
     [ "VertIter", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#ace275f19474804ce3cd15c95abe288e8", null ],
     [ "IXAssignmentGraph", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a5ee2ae554d3315b33281d29b13e7dc13", null ],
     [ "IXAssignmentGraph", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#ada000bca4caaf5ab52fd27ba96b108fd", null ],
-    [ "AddEdges", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#afc53110911fcf1a9c09d12b6cf168fa8", null ],
-    [ "AddVertex", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a6de2b2e8c9c9f2101bb063e3917b4461", null ],
     [ "Degree", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a2442e79c41d3af616987b7e680502152", null ],
-    [ "DetermineAllNeighbours", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#aea49924f3f602edd0c9f4360c02ca1e5", null ],
     [ "GetNeighbours", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a628f99f13d4e5e8c34eb1eb2494c8012", null ],
     [ "GetVertex", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a72571ef0d02a770b36fdd280bfa562aa", null ],
     [ "GetVertex", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a4c7da77ccbe26b36d7971ef59270046d", null ],
@@ -19,11 +14,5 @@ var classindigox_1_1graph_1_1_i_x_assignment_graph =
     [ "HasVertex", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a4e602ce4824105ba8dce49fb835b6136", null ],
     [ "NumVertices", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a36a6a11fdebe4990fcd5a6f641258c2a", null ],
     [ "PreassignElectrons", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a99a08b16b4e10ed7fd31dd1e10e7d3a3", null ],
-    [ "indigox::test::TestAssignmentGraph", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#af582998c781e8c02ce089f9cb87d34af", null ],
-    [ "_e2v", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a7619f51c2beadb55be518228c01c69bf", null ],
-    [ "_g", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a6dd1dab854a164591be7b5e98a605568", null ],
-    [ "_n", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#aa935d91152e61c79458bf513366960f0", null ],
-    [ "_source", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#aba5b19a137474153ce991a23f953ef5f", null ],
-    [ "_v", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#aefd6fcf302aeac256d1721ceae4b5c2b", null ],
-    [ "_v2v", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#a0fb5666527e8250a5cfbfc9aa745f95b", null ]
+    [ "indigox::test::TestAssignmentGraph", "classindigox_1_1graph_1_1_i_x_assignment_graph.html#af582998c781e8c02ce089f9cb87d34af", null ]
 ];

@@ -1,27 +1,4 @@
 var searchData=
 [
-  ['dft_5fassign_5felectron_5ftd_5fadd_5fedges',['DFT_ASSIGN_ELECTRON_TD_ADD_EDGES',['../options_8cpp.html#af232842a99e1f1db1ad6aeb9eb8cde3b',1,'options.cpp']]],
-  ['dft_5fassignelectron_5falgorithm',['DFT_ASSIGNELECTRON_ALGORITHM',['../options_8cpp.html#a52ad0b2cb58deae33301ad410685f20f',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fallow_5fcharge_5fcarbon',['DFT_ASSIGNELECTRON_ALLOW_CHARGE_CARBON',['../options_8cpp.html#a41c93e0da082ba54060c9b9a4d2d5239',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fallowed_5felements',['DFT_ASSIGNELECTRON_ALLOWED_ELEMENTS',['../options_8cpp.html#a6442bd79e93035f779f7a859a813aaf4',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fastar_5fheuristic',['DFT_ASSIGNELECTRON_ASTAR_HEURISTIC',['../options_8cpp.html#aed839ba8e47678b2eabf5c84b3107ad1',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fastar_5fmegabyte_5flimit',['DFT_ASSIGNELECTRON_ASTAR_MEGABYTE_LIMIT',['../options_8cpp.html#ac04534a4f25e1d7517f15b03ce515d06',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fatom_5ffile',['DFT_ASSIGNELECTRON_ATOM_FILE',['../options_8cpp.html#aa55c4c333d9701fa0cc652babb5c1cc6',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fauto_5fuse_5fpairs',['DFT_ASSIGNELECTRON_AUTO_USE_PAIRS',['../options_8cpp.html#aa4565c6baf55ca1ade1e48182e484952',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fbond_5ffile',['DFT_ASSIGNELECTRON_BOND_FILE',['../options_8cpp.html#aea2bdf7880dcdb8aea59734dbbe68290',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fcharged_5fbonds',['DFT_ASSIGNELECTRON_CHARGED_BONDS',['../options_8cpp.html#a698ea63b456ce7fe50a7633ee862dd18',1,'options.cpp']]],
-  ['dft_5fassignelectron_5ffpt_5fjar_5ffile',['DFT_ASSIGNELECTRON_FPT_JAR_FILE',['../options_8cpp.html#a10abdd3313771316d87b60c233dddd17',1,'options.cpp']]],
-  ['dft_5fassignelectron_5ffpt_5fminimum_5fdepth',['DFT_ASSIGNELECTRON_FPT_MINIMUM_DEPTH',['../options_8cpp.html#a423bbabe13c01b902156a8aa6224afa3',1,'options.cpp']]],
-  ['dft_5fassignelectron_5ffpt_5fperm_5falgo',['DFT_ASSIGNELECTRON_FPT_PERM_ALGO',['../options_8cpp.html#a75e58dc4da5bf3eaf11accda50f652f9',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fhighest_5fcharge',['DFT_ASSIGNELECTRON_HIGHEST_CHARGE',['../options_8cpp.html#a7a6540d6e31526b0e24d92ba0f227fc0',1,'options.cpp']]],
-  ['dft_5fassignelectron_5finfinity',['DFT_ASSIGNELECTRON_INFINITY',['../options_8cpp.html#af9ef96f2f8e4717a0110aebdcf1567cb',1,'options.cpp']]],
-  ['dft_5fassignelectron_5flo_5fcache',['DFT_ASSIGNELECTRON_LO_CACHE',['../options_8cpp.html#a5e909a95a43214cb22da57f13c6f1c46',1,'options.cpp']]],
-  ['dft_5fassignelectron_5flo_5fcache_5finfinities',['DFT_ASSIGNELECTRON_LO_CACHE_INFINITIES',['../options_8cpp.html#a02838223ce99002b3c2ef4ec32822fdd',1,'options.cpp']]],
-  ['dft_5fassignelectron_5flo_5foptimise_5fall',['DFT_ASSIGNELECTRON_LO_OPTIMISE_ALL',['../options_8cpp.html#ac11532f62fdf450abf46de837828b263',1,'options.cpp']]],
-  ['dft_5fassignelectron_5flo_5ftimelimit',['DFT_ASSIGNELECTRON_LO_TIMELIMIT',['../options_8cpp.html#af202e8abbe5086c145799dfb529deb31',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fmax_5fbond_5forder',['DFT_ASSIGNELECTRON_MAX_BOND_ORDER',['../options_8cpp.html#ac82df802a9fbd5da9ce42539029f23a9',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fmax_5fresult',['DFT_ASSIGNELECTRON_MAX_RESULT',['../options_8cpp.html#a5b8dd214e877bc23d4da20c8f6a0f016',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fpreplace',['DFT_ASSIGNELECTRON_PREPLACE',['../options_8cpp.html#a578171689fdde3ab09b87d053d2e2ead',1,'options.cpp']]],
-  ['dft_5fassignelectron_5fuse_5fpairs',['DFT_ASSIGNELECTRON_USE_PAIRS',['../options_8cpp.html#a1a3455405304f9f04b85d11a63963488',1,'options.cpp']]],
-  ['dft_5fdata_5fdir',['DFT_DATA_DIR',['../options_8cpp.html#aa01731f8d4b1fd04c30c2642c6940a86',1,'options.cpp']]]
+  ['graphtemplate',['GRAPHTEMPLATE',['../base__graph__impl_8hpp.html#a6bd0130ef2068aaee0c880d0d6ec3ecb',1,'base_graph_impl.hpp']]]
 ];

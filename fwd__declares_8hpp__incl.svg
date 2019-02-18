@@ -12,15 +12,21 @@
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
+<g id="a_node1"><a xlink:title=" ">
 <polygon fill="#bfbfbf" stroke="#000000" points="4.0913,-55.5 4.0913,-83.5 106.8101,-83.5 106.8101,-55.5 4.0913,-55.5"/>
 <text text-anchor="start" x="12.0913" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">include/indigox/utils</text>
 <text text-anchor="middle" x="55.4507" y="-61.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">/fwd_declares.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node1 -->
 <g id="node2" class="node">
 <title>Node1</title>
+<g id="a_node2"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="0,-.5 0,-18.5 44.9014,-18.5 44.9014,-.5 0,-.5"/>
 <text text-anchor="middle" x="22.4507" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cstdint</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node1 -->
 <g id="edge1" class="edge">
@@ -31,8 +37,11 @@
 <!-- Node2 -->
 <g id="node3" class="node">
 <title>Node2</title>
+<g id="a_node3"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="63.394,-.5 63.394,-18.5 115.5073,-18.5 115.5073,-.5 63.394,-.5"/>
 <text text-anchor="middle" x="89.4507" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">memory</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node2 -->
 <g id="edge2" class="edge">

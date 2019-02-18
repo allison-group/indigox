@@ -1,6 +1,5 @@
 var classindigox_1_1_param_angle =
 [
-    [ "ParamAngleImpl", "structindigox_1_1_param_angle_1_1_param_angle_impl.html", "structindigox_1_1_param_angle_1_1_param_angle_impl" ],
     [ "AngleAtoms", "classindigox_1_1_param_angle.html#a7b5061005aa69b2e9dea2af3381b683a", null ],
     [ "TypeCounts", "classindigox_1_1_param_angle.html#addd2aa69a2da2028d6ae28356d33c118", null ],
     [ "ParamAngle", "classindigox_1_1_param_angle.html#a1773e6c443707c17b7e9f940b30329da", null ],
@@ -9,10 +8,10 @@ var classindigox_1_1_param_angle =
     [ "~ ParamAngle", "classindigox_1_1_param_angle.html#a74104385082d1f37390c6ee216774285", null ],
     [ "ParamAngle", "classindigox_1_1_param_angle.html#a0342df9642b7149b779e64da9cbe4936", null ],
     [ "ApplyParameterisation", "classindigox_1_1_param_angle.html#a89f4f8a16d454d066b230a3d7dc1d7d9", null ],
-    [ "GetAngle", "classindigox_1_1_param_angle.html#ab3d6b4868006bb2c258dc42441a1d015", null ],
-    [ "GetAtoms", "classindigox_1_1_param_angle.html#aba4092ef2f2fd4715a0bdd1b84630ba0", null ],
-    [ "GetMappedTypeCounts", "classindigox_1_1_param_angle.html#a302bc1150df1a4dd2b48c5125d2ada3e", null ],
-    [ "GetMostCommonType", "classindigox_1_1_param_angle.html#a9dd5a8b1c4bd0186ba79fb8cf0d613af", null ],
+    [ "GetAngle", "classindigox_1_1_param_angle.html#a33cdc36943b868b803bab405dcf6ff1d", null ],
+    [ "GetAtoms", "classindigox_1_1_param_angle.html#a6a37cce44e1f8966e4e66e8f12a8c01d", null ],
+    [ "GetMappedTypeCounts", "classindigox_1_1_param_angle.html#aaaa3221098cfe238138301d850e2ae34", null ],
+    [ "GetMostCommonType", "classindigox_1_1_param_angle.html#a0861c46a79e11ed3f2386805b9058ef1", null ],
     [ "MappedWith", "classindigox_1_1_param_angle.html#a2b35c94dfb42a8f9cd2ce653a25b96b4", null ],
     [ "NumSourceAngles", "classindigox_1_1_param_angle.html#af621ac56dab088cb8007f2aa06b2c022", null ],
     [ "operator bool", "classindigox_1_1_param_angle.html#a67b76affb3b5d35fa419ac234144038b", null ],
@@ -25,6 +24,5 @@ var classindigox_1_1_param_angle =
     [ "operator>", "classindigox_1_1_param_angle.html#a696f5c4c57d3c6ad37c63e4956af3bbf", null ],
     [ "operator>=", "classindigox_1_1_param_angle.html#a7434a2f6510208a652c3f1a5db75aa74", null ],
     [ "operator<<", "classindigox_1_1_param_angle.html#a41fe7f331849a04b38bb3819306de92f", null ],
-    [ "ParamMolecule", "classindigox_1_1_param_angle.html#a3188b39d7848ca72187a4c8eac21b08a", null ],
-    [ "m_data", "classindigox_1_1_param_angle.html#ac79cb28f830628d99f469409e602276d", null ]
+    [ "ParamMolecule", "classindigox_1_1_param_angle.html#a3188b39d7848ca72187a4c8eac21b08a", null ]
 ];

@@ -1,6 +1,14 @@
 <map id="IXLocalOptimisation" name="IXLocalOptimisation">
-<area shape="rect" id="node2" href="$classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html" title="Base class for an electron assignment algorithm. " alt="" coords="284,285,402,311"/>
-<area shape="rect" id="node3" title="STL class. " alt="" coords="5,179,100,204"/>
-<area shape="rect" id="node9" title="STL class. " alt="" coords="179,92,267,117"/>
-<area shape="rect" id="node7" title="STL class. " alt="" coords="527,92,626,117"/>
+<area shape="rect" id="node1" title="Local optimisation electron assignment algorithm." alt="" coords="904,130,1044,155"/>
+<area shape="rect" id="node2" href="$classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html" title="Base class for an electron assignment algorithm." alt="" coords="737,130,855,155"/>
+<area shape="rect" id="node3" title="STL class." alt="" coords="161,6,255,31"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,6,44,31"/>
+<area shape="rect" id="node5" title=" " alt="" coords="5,94,44,119"/>
+<area shape="rect" id="node7" title="STL class." alt="" coords="150,91,266,117"/>
+<area shape="rect" id="node11" title="STL class." alt="" coords="164,141,252,166"/>
+<area shape="rect" id="node6" title=" " alt="" coords="460,67,639,106"/>
+<area shape="rect" id="node12" title=" " alt="" coords="460,130,639,155"/>
+<area shape="rect" id="node8" title=" " alt="" coords="474,229,624,254"/>
+<area shape="rect" id="node9" title="STL class." alt="" coords="158,229,257,254"/>
+<area shape="rect" id="node10" title=" " alt="" coords="473,179,625,205"/>
 </map>

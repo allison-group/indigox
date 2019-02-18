@@ -17,7 +17,7 @@ var classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm =
     [ "GetAssignmentGraph", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a790734cf2d299a4da9d3af2e06d23197", null ],
     [ "GetOptimalCount", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#aa4e6aa48e0fba36734eed5b6a37f9b5b", null ],
     [ "GetOptimisedScore", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a80458fbe068fe16c6bd01171b6e38249", null ],
-    [ "Initalise", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a32e974def408babc846ac808ddd55933", null ],
+    [ "Initalise", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a12b25d9ba44f079586dea660ab153b81", null ],
     [ "IsInitalised", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a38f461990e83c281683778babd50a6d1", null ],
     [ "Run", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#adc27ee0d7b66b8795db722f47a615cfe", null ],
     [ "SetAssignment", "classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#a0875fce5da5ba7e5f76a6bc36d8ee71d", null ],

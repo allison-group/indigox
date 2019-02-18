@@ -12,14 +12,20 @@
 <!-- Node1 -->
 <g id="node1" class="node">
 <title>Node1</title>
+<g id="a_node1"><a xlink:title=" ">
 <polygon fill="#bfbfbf" stroke="#000000" points="68.2891,-.5 68.2891,-18.5 182.8486,-18.5 182.8486,-.5 68.2891,-.5"/>
 <text text-anchor="middle" x="125.5688" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">TraversalResults&lt; V &gt;</text>
+</a>
+</g>
 </g>
 <!-- Node2 -->
 <g id="node2" class="node">
 <title>Node2</title>
+<g id="a_node2"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="0,-65.5 0,-83.5 67.1377,-83.5 67.1377,-65.5 0,-65.5"/>
 <text text-anchor="middle" x="33.5688" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">vector&lt; V &gt;</text>
+</a>
+</g>
 </g>
 <!-- Node2&#45;&gt;Node1 -->
 <g id="edge1" class="edge">
@@ -31,7 +37,7 @@
 <!-- Node3 -->
 <g id="node3" class="node">
 <title>Node3</title>
-<g id="a_node3"><a xlink:title="STL class. ">
+<g id="a_node3"><a xlink:title="STL class.">
 <polygon fill="#ffffff" stroke="#bfbfbf" points=".4565,-130.5 .4565,-148.5 66.6812,-148.5 66.6812,-130.5 .4565,-130.5"/>
 <text text-anchor="middle" x="33.5688" y="-136.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">vector&lt; T &gt;</text>
 </a>
@@ -47,8 +53,11 @@
 <!-- Node4 -->
 <g id="node4" class="node">
 <title>Node4</title>
+<g id="a_node4"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="52.0688,-195.5 52.0688,-213.5 81.0688,-213.5 81.0688,-195.5 52.0688,-195.5"/>
 <text text-anchor="middle" x="66.123" y="-201.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">T</text>
+</a>
+</g>
 </g>
 <!-- Node4&#45;&gt;Node3 -->
 <g id="edge3" class="edge">
@@ -60,7 +69,7 @@
 <!-- Node6 -->
 <g id="node6" class="node">
 <title>Node6</title>
-<g id="a_node6"><a xlink:title="STL class. ">
+<g id="a_node6"><a xlink:title="STL class.">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="119.2324,-130.5 119.2324,-148.5 189.9053,-148.5 189.9053,-130.5 119.2324,-130.5"/>
 <text text-anchor="middle" x="154.5688" y="-136.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">map&lt; K, T &gt;</text>
 </a>
@@ -76,8 +85,11 @@
 <!-- Node5 -->
 <g id="node5" class="node">
 <title>Node5</title>
+<g id="a_node5"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="87.2349,-65.5 87.2349,-83.5 157.9028,-83.5 157.9028,-65.5 87.2349,-65.5"/>
 <text text-anchor="middle" x="122.5688" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">map&lt; V, V &gt;</text>
+</a>
+</g>
 </g>
 <!-- Node5&#45;&gt;Node1 -->
 <g id="edge4" class="edge">
@@ -96,8 +108,11 @@
 <!-- Node8 -->
 <g id="node8" class="node">
 <title>Node8</title>
+<g id="a_node8"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="175.5576,-65.5 175.5576,-83.5 269.5801,-83.5 269.5801,-65.5 175.5576,-65.5"/>
 <text text-anchor="middle" x="222.5688" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">map&lt; V, int32_t &gt;</text>
+</a>
+</g>
 </g>
 <!-- Node6&#45;&gt;Node8 -->
 <g id="edge9" class="edge">
@@ -109,8 +124,11 @@
 <!-- Node7 -->
 <g id="node7" class="node">
 <title>Node7</title>
+<g id="a_node7"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="151.0688,-195.5 151.0688,-213.5 180.0688,-213.5 180.0688,-195.5 151.0688,-195.5"/>
 <text text-anchor="middle" x="165.4038" y="-201.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">K</text>
+</a>
+</g>
 </g>
 <!-- Node7&#45;&gt;Node6 -->
 <g id="edge6" class="edge">

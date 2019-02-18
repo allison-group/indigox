@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['heuristic',['Heuristic',['../classindigox_1_1algorithm_1_1_i_x_a_star_optimisation.html#a35d651e776fc105830877a30b2c7da6a',1,'indigox::algorithm::IXAStarOptimisation']]]
+  ['iteratortype',['IteratorType',['../namespaceindigox.html#a4f6da121dba1526ce091ea9753d0647a',1,'indigox']]]
 ];

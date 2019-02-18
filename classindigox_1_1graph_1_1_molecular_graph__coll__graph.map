@@ -1,4 +1,8 @@
 <map id="MolecularGraph" name="MolecularGraph">
-<area shape="rect" id="node2" href="$classindigox_1_1graph_1_1_base_graph.html" title="BaseGraph\&lt; MGVertex,\l MGEdge, MolecularGraph \&gt;" alt="" coords="5,119,197,157"/>
-<area shape="rect" id="node3" href="$classindigox_1_1graph_1_1_base_graph.html" title="Template base class for all graphs used in the indigoX library. " alt="" coords="29,5,173,44"/>
+<area shape="rect" id="node1" title="Class containing a graph representation of a molecule." alt="" coords="43,467,159,492"/>
+<area shape="rect" id="node2" href="$classindigox_1_1graph_1_1_base_graph.html" title=" " alt="" coords="5,379,197,417"/>
+<area shape="rect" id="node3" title=" " alt="" coords="19,179,183,204"/>
+<area shape="rect" id="node6" href="$classindigox_1_1graph_1_1_base_graph.html" title="Template base class for all graphs used in the indigoX library." alt="" coords="181,265,325,304"/>
+<area shape="rect" id="node4" title="STL class." alt="" coords="43,92,159,117"/>
+<area shape="rect" id="node5" title=" " alt="" coords="82,5,120,31"/>
 </map>

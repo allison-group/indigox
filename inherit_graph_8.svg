@@ -9,24 +9,27 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 23)">
 <title>Graphical Class Hierarchy</title>
 <polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-23 213.7383,-23 213.7383,4 -4,4"/>
-<!-- Node107 -->
+<!-- Node80 -->
 <g id="node1" class="node">
-<title>Node107</title>
+<title>Node80</title>
+<g id="a_node1"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="0,-.5 0,-18.5 73.2461,-18.5 73.2461,-.5 0,-.5"/>
 <text text-anchor="middle" x="36.623" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_PermGraph</text>
+</a>
+</g>
 </g>
 <!-- Node0 -->
 <g id="node2" class="node">
 <title>Node0</title>
-<g id="a_node2"><a xlink:href="classindigox_1_1___permutable_graph.html" target="_top" xlink:title="_PermutableGraph">
+<g id="a_node2"><a xlink:href="classindigox_1_1___permutable_graph.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="109.2461,-.5 109.2461,-18.5 209.7383,-18.5 209.7383,-.5 109.2461,-.5"/>
 <text text-anchor="middle" x="159.4922" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_PermutableGraph</text>
 </a>
 </g>
 </g>
-<!-- Node107&#45;&gt;Node0 -->
+<!-- Node80&#45;&gt;Node0 -->
 <g id="edge1" class="edge">
-<title>Node107&#45;&gt;Node0</title>
+<title>Node80&#45;&gt;Node0</title>
 <path fill="none" stroke="#191970" d="M83.729,-9.5C92.0079,-9.5 100.6545,-9.5 109.0207,-9.5"/>
 <polygon fill="#191970" stroke="#191970" points="83.4879,-6.0001 73.4878,-9.5 83.4878,-13.0001 83.4879,-6.0001"/>
 </g>

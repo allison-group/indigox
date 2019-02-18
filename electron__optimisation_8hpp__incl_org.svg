@@ -12,14 +12,17 @@
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
+<g id="a_node1"><a xlink:title=" ">
 <polygon fill="#bfbfbf" stroke="#000000" points="389.5986,-120.5 389.5986,-148.5 522.3369,-148.5 522.3369,-120.5 389.5986,-120.5"/>
 <text text-anchor="start" x="397.5986" y="-136.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">include/indigox/algorithm</text>
 <text text-anchor="middle" x="455.9678" y="-126.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">/electron_optimisation.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node1 -->
 <g id="node2" class="node">
 <title>Node1</title>
-<g id="a_node2"><a xlink:href="electron__graph_8hpp.html" target="_top" xlink:title="../classes/electron\l_graph.hpp">
+<g id="a_node2"><a xlink:href="electron__graph_8hpp.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="206.9507,-55.5 206.9507,-83.5 302.9849,-83.5 302.9849,-55.5 206.9507,-55.5"/>
 <text text-anchor="start" x="214.9507" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">../classes/electron</text>
 <text text-anchor="middle" x="254.9678" y="-61.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_graph.hpp</text>
@@ -35,8 +38,11 @@
 <!-- Node4 -->
 <g id="node5" class="node">
 <title>Node4</title>
+<g id="a_node5"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="308.5171,-.5 308.5171,-18.5 353.4185,-18.5 353.4185,-.5 308.5171,-.5"/>
 <text text-anchor="middle" x="330.9678" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cstdint</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node4 -->
 <g id="edge7" class="edge">
@@ -47,9 +53,12 @@
 <!-- Node6 -->
 <g id="node7" class="node">
 <title>Node6</title>
+<g id="a_node7"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="359.064,-55.5 359.064,-83.5 462.8716,-83.5 462.8716,-55.5 359.064,-55.5"/>
 <text text-anchor="start" x="367.064" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">../classes/molecular</text>
 <text text-anchor="middle" x="410.9678" y="-61.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_graph.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node6 -->
 <g id="edge6" class="edge">
@@ -60,8 +69,11 @@
 <!-- Node7 -->
 <g id="node8" class="node">
 <title>Node7</title>
+<g id="a_node8"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="480.7412,-60.5 480.7412,-78.5 521.1943,-78.5 521.1943,-60.5 480.7412,-60.5"/>
 <text text-anchor="middle" x="500.9678" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">string</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node7 -->
 <g id="edge8" class="edge">
@@ -72,8 +84,11 @@
 <!-- Node8 -->
 <g id="node9" class="node">
 <title>Node8</title>
+<g id="a_node9"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="539.665,-60.5 539.665,-78.5 626.2705,-78.5 626.2705,-60.5 539.665,-60.5"/>
 <text text-anchor="middle" x="582.9678" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">unordered_map</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node8 -->
 <g id="edge9" class="edge">
@@ -84,8 +99,11 @@
 <!-- Node9 -->
 <g id="node10" class="node">
 <title>Node9</title>
+<g id="a_node10"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="644.3521,-60.5 644.3521,-78.5 687.5835,-78.5 687.5835,-60.5 644.3521,-60.5"/>
 <text text-anchor="middle" x="665.9678" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">vector</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node9 -->
 <g id="edge10" class="edge">
@@ -96,8 +114,11 @@
 <!-- Node2 -->
 <g id="node3" class="node">
 <title>Node2</title>
+<g id="a_node3"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="0,-.5 0,-18.5 89.9355,-18.5 89.9355,-.5 0,-.5"/>
 <text text-anchor="middle" x="44.9678" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">../utils/graph.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node1&#45;&gt;Node2 -->
 <g id="edge2" class="edge">
@@ -108,8 +129,11 @@
 <!-- Node3 -->
 <g id="node4" class="node">
 <title>Node3</title>
+<g id="a_node4"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="107.9927,-.5 107.9927,-18.5 217.9429,-18.5 217.9429,-.5 107.9927,-.5"/>
 <text text-anchor="middle" x="162.9678" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">molecular_graph.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node1&#45;&gt;Node3 -->
 <g id="edge3" class="edge">
@@ -126,8 +150,11 @@
 <!-- Node5 -->
 <g id="node6" class="node">
 <title>Node5</title>
+<g id="a_node6"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="235.7954,-.5 235.7954,-18.5 290.1401,-18.5 290.1401,-.5 235.7954,-.5"/>
 <text text-anchor="middle" x="262.9678" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">iostream</text>
+</a>
+</g>
 </g>
 <!-- Node1&#45;&gt;Node5 -->
 <g id="edge5" class="edge">

@@ -1,6 +1,5 @@
 var classindigox_1_1_param_bond =
 [
-    [ "ParamBondImpl", "structindigox_1_1_param_bond_1_1_param_bond_impl.html", "structindigox_1_1_param_bond_1_1_param_bond_impl" ],
     [ "BondAtoms", "classindigox_1_1_param_bond.html#af0dd878f25cad2ff1954cce9b5928c43", null ],
     [ "TypeCounts", "classindigox_1_1_param_bond.html#a7728a7f54d015dc36c225951e6172a73", null ],
     [ "ParamBond", "classindigox_1_1_param_bond.html#a89d6df3dc4928a2f5d1f1f27601d8caf", null ],
@@ -9,10 +8,10 @@ var classindigox_1_1_param_bond =
     [ "~ ParamBond", "classindigox_1_1_param_bond.html#a19fa2e9b15474e017bedd970adc06b10", null ],
     [ "ParamBond", "classindigox_1_1_param_bond.html#ac22987a9e0508bfe8e524c358b3e9a8c", null ],
     [ "ApplyParameterisation", "classindigox_1_1_param_bond.html#a89f4f8a16d454d066b230a3d7dc1d7d9", null ],
-    [ "GetAtoms", "classindigox_1_1_param_bond.html#a846924ac4ae157569eba53ea69f86f15", null ],
-    [ "GetBond", "classindigox_1_1_param_bond.html#a2e84f5637b5b612c150f0232beb38450", null ],
-    [ "GetMappedTypeCounts", "classindigox_1_1_param_bond.html#a77467e52c95f8507ab116d92b9be5510", null ],
-    [ "GetMostCommonType", "classindigox_1_1_param_bond.html#ab9092b1796bbda5732faf0300759751c", null ],
+    [ "GetAtoms", "classindigox_1_1_param_bond.html#aa2c188a072839a60e85f4418ed3a6e82", null ],
+    [ "GetBond", "classindigox_1_1_param_bond.html#a9aebdd0527a5126dd128e3457cebd1f7", null ],
+    [ "GetMappedTypeCounts", "classindigox_1_1_param_bond.html#aaaa3221098cfe238138301d850e2ae34", null ],
+    [ "GetMostCommonType", "classindigox_1_1_param_bond.html#a12c8510dcf98ffa65efaff39818a6dfe", null ],
     [ "MappedWith", "classindigox_1_1_param_bond.html#a4fdbb1e4439b02b709ec57c3b53bd8bd", null ],
     [ "NumSourceBonds", "classindigox_1_1_param_bond.html#ae94d1a582fad3e979c3b2e33c53d4f71", null ],
     [ "operator bool", "classindigox_1_1_param_bond.html#a67b76affb3b5d35fa419ac234144038b", null ],
@@ -25,6 +24,5 @@ var classindigox_1_1_param_bond =
     [ "operator>", "classindigox_1_1_param_bond.html#a0849313ce55951db3bf0ea75ac6852a9", null ],
     [ "operator>=", "classindigox_1_1_param_bond.html#a826d22e9d3057cde8dba6ffc66f2dcf6", null ],
     [ "operator<<", "classindigox_1_1_param_bond.html#a2c055f69a43116732dc76e18240a7b5a", null ],
-    [ "ParamMolecule", "classindigox_1_1_param_bond.html#a3188b39d7848ca72187a4c8eac21b08a", null ],
-    [ "m_data", "classindigox_1_1_param_bond.html#ae62f982a9a68fca3db7a09dd06b9341a", null ]
+    [ "ParamMolecule", "classindigox_1_1_param_bond.html#a3188b39d7848ca72187a4c8eac21b08a", null ]
 ];

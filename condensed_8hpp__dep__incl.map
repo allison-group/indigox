@@ -1,17 +1,4 @@
 <map id="include/indigox/graph/condensed.hpp" name="include/indigox/graph/condensed.hpp">
-<area shape="rect" id="node2" href="$molecule__impl_8hpp.html" title="include/indigox/classes\l/molecule_impl.hpp" alt="" coords="622,92,780,131"/>
-<area shape="rect" id="node7" href="$molecule_8cpp.html" title="src/classes/molecule.cpp" alt="" coords="888,179,1058,204"/>
-<area shape="rect" id="node9" href="$molecular_8cpp.html" title="src/graph/molecular.cpp" alt="" coords="1082,179,1245,204"/>
-<area shape="rect" id="node10" href="$cherrypicker_8cpp.html" title="src/algorithm/cherrypicker.cpp" alt="" coords="1060,99,1259,124"/>
-<area shape="rect" id="node11" href="$connectivity_8cpp.html" title="src/algorithm/graph\l/connectivity.cpp" alt="" coords="1283,92,1418,131"/>
-<area shape="rect" id="node12" href="$cycles_8cpp.html" title="src/algorithm/graph\l/cycles.cpp" alt="" coords="1443,92,1578,131"/>
-<area shape="rect" id="node13" href="$isomorphism_8cpp.html" title="src/algorithm/graph\l/isomorphism.cpp" alt="" coords="1603,92,1738,131"/>
-<area shape="rect" id="node14" href="$paths_8cpp.html" title="src/algorithm/graph\l/paths.cpp" alt="" coords="1763,92,1898,131"/>
-<area shape="rect" id="node15" href="$athenaeum_8cpp.html" title="src/classes/athenaeum.cpp" alt="" coords="1921,99,2104,124"/>
-<area shape="rect" id="node16" href="$condensed_8cpp.html" title="src/graph/condensed.cpp" alt="" coords="2129,99,2300,124"/>
-<area shape="rect" id="node3" href="$angle_8cpp.html" title="src/classes/angle.cpp" alt="" coords="716,179,865,204"/>
-<area shape="rect" id="node4" href="$atom_8cpp.html" title="src/classes/atom.cpp" alt="" coords="5,179,151,204"/>
-<area shape="rect" id="node5" href="$bond_8cpp.html" title="src/classes/bond.cpp" alt="" coords="175,179,320,204"/>
-<area shape="rect" id="node6" href="$dihedral_8cpp.html" title="src/classes/dihedral.cpp" alt="" coords="344,179,508,204"/>
-<area shape="rect" id="node8" href="$residue_8cpp.html" title="src/classes/residue.cpp" alt="" coords="532,179,692,204"/>
+<area shape="rect" id="node1" title=" " alt="" coords="11,5,158,44"/>
+<area shape="rect" id="node2" href="$molecule__impl_8hpp.html" title=" " alt="" coords="5,92,163,131"/>
 </map>

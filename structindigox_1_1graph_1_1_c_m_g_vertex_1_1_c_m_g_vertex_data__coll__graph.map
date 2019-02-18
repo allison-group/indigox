@@ -1,7 +1,0 @@
-<map id="CMGVertex::CMGVertexData" name="CMGVertex::CMGVertexData">
-<area shape="rect" id="node2" href="$classindigox_1_1graph_1_1_m_g_vertex.html" title="Class for the vertices of a IXMolecularGraph. " alt="" coords="5,232,86,257"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="159,132,247,157"/>
-<area shape="rect" id="node6" href="$classindigox_1_1graph_1_1_condensed_molecular_graph.html" title="CondensedMolecularGraph" alt="" coords="320,232,505,257"/>
-<area shape="rect" id="node7" href="$classindigox_1_1graph_1_1_base_graph.html" title="BaseGraph\&lt; CMGVertex,\l CMGEdge, CondensedMolecular\lGraph \&gt;" alt="" coords="302,119,523,171"/>
-<area shape="rect" id="node8" href="$classindigox_1_1graph_1_1_base_graph.html" title="Template base class for all graphs used in the indigoX library. " alt="" coords="340,5,484,44"/>
-</map>

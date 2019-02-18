@@ -1,10 +1,4 @@
 <map id="include/indigox/classes/residue.hpp" name="include/indigox/classes/residue.hpp">
-<area shape="rect" id="node2" href="$molecule__impl_8hpp.html" title="include/indigox/classes\l/molecule_impl.hpp" alt="" coords="614,92,772,131"/>
-<area shape="rect" id="node8" href="$residue_8cpp.html" title="src/classes/residue.cpp" alt="" coords="1085,179,1245,204"/>
-<area shape="rect" id="node3" href="$angle_8cpp.html" title="src/classes/angle.cpp" alt="" coords="5,179,154,204"/>
-<area shape="rect" id="node4" href="$atom_8cpp.html" title="src/classes/atom.cpp" alt="" coords="177,179,323,204"/>
-<area shape="rect" id="node5" href="$bond_8cpp.html" title="src/classes/bond.cpp" alt="" coords="347,179,493,204"/>
-<area shape="rect" id="node6" href="$dihedral_8cpp.html" title="src/classes/dihedral.cpp" alt="" coords="517,179,680,204"/>
-<area shape="rect" id="node7" href="$molecule_8cpp.html" title="src/classes/molecule.cpp" alt="" coords="704,179,874,204"/>
-<area shape="rect" id="node9" href="$molecular_8cpp.html" title="src/graph/molecular.cpp" alt="" coords="898,179,1061,204"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,5,163,44"/>
+<area shape="rect" id="node2" href="$molecule__impl_8hpp.html" title=" " alt="" coords="5,92,163,131"/>
 </map>

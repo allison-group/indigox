@@ -12,14 +12,17 @@
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
+<g id="a_node1"><a xlink:title="Template base class for all graphs used in the indigoX library.">
 <polygon fill="#bfbfbf" stroke="#000000" points="0,-30.5 0,-58.5 108.1875,-58.5 108.1875,-30.5 0,-30.5"/>
 <text text-anchor="start" x="8" y="-46.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">BaseGraph&lt; V, E, S,</text>
 <text text-anchor="middle" x="54.0938" y="-36.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> D, VP, EP &gt;</text>
+</a>
+</g>
 </g>
 <!-- Node1 -->
 <g id="node2" class="node">
 <title>Node1</title>
-<g id="a_node2"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title="BaseGraph\&lt; MGVertex,\l MGEdge, MolecularGraph \&gt;">
+<g id="a_node2"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="288.8604,-57.5 288.8604,-85.5 432.4189,-85.5 432.4189,-57.5 288.8604,-57.5"/>
 <text text-anchor="start" x="296.8604" y="-73.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">BaseGraph&lt; MGVertex,</text>
 <text text-anchor="middle" x="360.6396" y="-63.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> MGEdge, MolecularGraph &gt;</text>
@@ -37,7 +40,7 @@
 <!-- Node3 -->
 <g id="node4" class="node">
 <title>Node3</title>
-<g id="a_node4"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title="BaseGraph\&lt; CMGVertex,\l CMGEdge, CondensedMolecular\lGraph \&gt;">
+<g id="a_node4"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="277.8789,-.5 277.8789,-38.5 443.4004,-38.5 443.4004,-.5 277.8789,-.5"/>
 <text text-anchor="start" x="285.8789" y="-26.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">BaseGraph&lt; CMGVertex,</text>
 <text text-anchor="start" x="285.8789" y="-16.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> CMGEdge, CondensedMolecular</text>
@@ -56,7 +59,7 @@
 <!-- Node2 -->
 <g id="node3" class="node">
 <title>Node2</title>
-<g id="a_node3"><a xlink:href="classindigox_1_1graph_1_1_molecular_graph.html" target="_top" xlink:title="Class containing a graph representation of a molecule. ">
+<g id="a_node3"><a xlink:href="classindigox_1_1graph_1_1_molecular_graph.html" target="_top" xlink:title="Class containing a graph representation of a molecule.">
 <polygon fill="#ffffff" stroke="#000000" points="505.9766,-62.5 505.9766,-80.5 593.1191,-80.5 593.1191,-62.5 505.9766,-62.5"/>
 <text text-anchor="middle" x="549.5479" y="-68.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">MolecularGraph</text>
 </a>
@@ -71,7 +74,7 @@
 <!-- Node4 -->
 <g id="node5" class="node">
 <title>Node4</title>
-<g id="a_node5"><a xlink:href="classindigox_1_1graph_1_1_condensed_molecular_graph.html" target="_top" xlink:title="CondensedMolecularGraph">
+<g id="a_node5"><a xlink:href="classindigox_1_1graph_1_1_condensed_molecular_graph.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="480.4004,-10.5 480.4004,-28.5 618.6953,-28.5 618.6953,-10.5 480.4004,-10.5"/>
 <text text-anchor="middle" x="549.5479" y="-16.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">CondensedMolecularGraph</text>
 </a>

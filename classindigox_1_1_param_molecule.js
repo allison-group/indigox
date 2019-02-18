@@ -1,6 +1,5 @@
 var classindigox_1_1_param_molecule =
 [
-    [ "ParamMoleculeImpl", "structindigox_1_1_param_molecule_1_1_param_molecule_impl.html", "structindigox_1_1_param_molecule_1_1_param_molecule_impl" ],
     [ "PAngle", "classindigox_1_1_param_molecule.html#a6c25e54a7bde564988671ad0b6652b06", null ],
     [ "ParamAngles", "classindigox_1_1_param_molecule.html#a6fbf9265c5ad416b5215bec2a4b8c3ce", null ],
     [ "ParamAtoms", "classindigox_1_1_param_molecule.html#ad7881d3b9e2c4c091f783c10084c0291", null ],
@@ -14,17 +13,17 @@ var classindigox_1_1_param_molecule =
     [ "~ ParamMolecule", "classindigox_1_1_param_molecule.html#a9f7cee46ee90131e3f887e98a04aa67b", null ],
     [ "ParamMolecule", "classindigox_1_1_param_molecule.html#a03da484a657b3287f5288b856ec7069f", null ],
     [ "ApplyParameteristion", "classindigox_1_1_param_molecule.html#a500a270b443e006c4bad683d1c4c7c60", null ],
-    [ "GetAngle", "classindigox_1_1_param_molecule.html#ad958e88a59d64bcca17eded255c187b9", null ],
-    [ "GetAngle", "classindigox_1_1_param_molecule.html#ad125ab8e592d398b071cab81051f851d", null ],
-    [ "GetAngles", "classindigox_1_1_param_molecule.html#abc433a2cf5f9956f7e1e505a0e81846d", null ],
-    [ "GetAtom", "classindigox_1_1_param_molecule.html#a940ffe1e70feca45cee796eb0a4e55af", null ],
-    [ "GetAtoms", "classindigox_1_1_param_molecule.html#a1db160a53d64dd7d0850b5413c4ade63", null ],
-    [ "GetBond", "classindigox_1_1_param_molecule.html#a732e3ad28efbf28046172eb626b1efba", null ],
-    [ "GetBond", "classindigox_1_1_param_molecule.html#a3a34927cbb5a86c22bce6ebd8fd79e62", null ],
-    [ "GetBonds", "classindigox_1_1_param_molecule.html#a945b2ee8f55fbde273783086805476c9", null ],
-    [ "GetDihedral", "classindigox_1_1_param_molecule.html#a0d948e551aa63fd4c7a28d94252a5a7d", null ],
-    [ "GetDihedral", "classindigox_1_1_param_molecule.html#aebadd3e42ad2a66e876e3996a0669798", null ],
-    [ "GetDihedrals", "classindigox_1_1_param_molecule.html#a02fee1033943328bdf2ff29a8e36d498", null ],
+    [ "GetAngle", "classindigox_1_1_param_molecule.html#a91cea2558e11c647d5e974be7b416213", null ],
+    [ "GetAngle", "classindigox_1_1_param_molecule.html#a4027afb3524e7414995bd89efce207b7", null ],
+    [ "GetAngles", "classindigox_1_1_param_molecule.html#ad246d6469144cecabb4b491ee5d6c99e", null ],
+    [ "GetAtom", "classindigox_1_1_param_molecule.html#a2d0528c2e886d0f32d3790297985a26e", null ],
+    [ "GetAtoms", "classindigox_1_1_param_molecule.html#a0a0cf1735395fe3b0264d629f302a36e", null ],
+    [ "GetBond", "classindigox_1_1_param_molecule.html#a678e54cc847c7b48198d099c2664bcbe", null ],
+    [ "GetBond", "classindigox_1_1_param_molecule.html#ac5bd29bbac147d26df2ee8edc49cc735", null ],
+    [ "GetBonds", "classindigox_1_1_param_molecule.html#a9dac0358145391e565f8c1841d3f73d9", null ],
+    [ "GetDihedral", "classindigox_1_1_param_molecule.html#acb9bf07aec20c0c2371ef238b2d52f23", null ],
+    [ "GetDihedral", "classindigox_1_1_param_molecule.html#a245ac99eb1782edecfe6dc81e85406d6", null ],
+    [ "GetDihedrals", "classindigox_1_1_param_molecule.html#ac94a95022566a6829bdd307c59ce0f3a", null ],
     [ "operator bool", "classindigox_1_1_param_molecule.html#a67b76affb3b5d35fa419ac234144038b", null ],
     [ "operator!=", "classindigox_1_1_param_molecule.html#a83b4d818ded1ff0d3329f41a28beec79", null ],
     [ "operator<", "classindigox_1_1_param_molecule.html#a97168559387f5e21778d663451fdf61d", null ],
@@ -34,6 +33,5 @@ var classindigox_1_1_param_molecule =
     [ "operator==", "classindigox_1_1_param_molecule.html#abc0b9a7add879fe3e5b60c7e55f8c5f9", null ],
     [ "operator>", "classindigox_1_1_param_molecule.html#a86ea65e1d66c43f3674ee25432f8cb62", null ],
     [ "operator>=", "classindigox_1_1_param_molecule.html#accd13d9f67295cadede62a71ee8376bc", null ],
-    [ "operator<<", "classindigox_1_1_param_molecule.html#a2127ae18c5243d31187bd1acf8d4eb02", null ],
-    [ "m_data", "classindigox_1_1_param_molecule.html#ac36a07ebab823b6b4e7d40295187aced", null ]
+    [ "operator<<", "classindigox_1_1_param_molecule.html#a2127ae18c5243d31187bd1acf8d4eb02", null ]
 ];

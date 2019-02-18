@@ -12,7 +12,7 @@
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
-<g id="a_node1"><a xlink:href="structstdx_1_1____make__triple__return__impl.html" target="_top" xlink:title="__make_triple_return\l_impl\&lt; _Tp \&gt;">
+<g id="a_node1"><a xlink:href="structstdx_1_1____make__triple__return__impl.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-28.5 110.4971,-28.5 110.4971,-.5 0,-.5"/>
 <text text-anchor="start" x="8" y="-16.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">__make_triple_return</text>
 <text text-anchor="middle" x="55.2485" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_impl&lt; _Tp &gt;</text>

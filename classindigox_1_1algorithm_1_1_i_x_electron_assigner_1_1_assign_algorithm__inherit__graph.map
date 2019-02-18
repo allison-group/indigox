@@ -1,4 +1,5 @@
 <map id="IXElectronAssigner::AssignAlgorithm" name="IXElectronAssigner::AssignAlgorithm">
-<area shape="rect" id="node2" href="$classindigox_1_1algorithm_1_1_i_x_a_star_optimisation.html" title="IXAStarOptimisation" alt="" coords="5,92,147,117"/>
-<area shape="rect" id="node3" href="$classindigox_1_1algorithm_1_1_i_x_local_optimisation.html" title="Local optimisation electron assignment algorithm. " alt="" coords="170,92,310,117"/>
+<area shape="rect" id="node1" title="Base class for an electron assignment algorithm." alt="" coords="90,5,225,44"/>
+<area shape="rect" id="node2" href="$classindigox_1_1algorithm_1_1_i_x_a_star_optimisation.html" title=" " alt="" coords="5,92,147,117"/>
+<area shape="rect" id="node3" href="$classindigox_1_1algorithm_1_1_i_x_local_optimisation.html" title="Local optimisation electron assignment algorithm." alt="" coords="170,92,310,117"/>
 </map>

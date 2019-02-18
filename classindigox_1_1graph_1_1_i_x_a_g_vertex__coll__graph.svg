@@ -12,15 +12,21 @@
 <!-- Node2 -->
 <g id="node1" class="node">
 <title>Node2</title>
+<g id="a_node1"><a xlink:title="Class for the vertices of an IXAssignmentGraph.">
 <polygon fill="#bfbfbf" stroke="#000000" points="19.7388,-.5 19.7388,-18.5 87.9897,-18.5 87.9897,-.5 19.7388,-.5"/>
 <text text-anchor="middle" x="53.8643" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">IXAGVertex</text>
+</a>
+</g>
 </g>
 <!-- Node3 -->
 <g id="node2" class="node">
 <title>Node3</title>
+<g id="a_node2"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="0,-55.5 0,-83.5 107.7285,-83.5 107.7285,-55.5 0,-55.5"/>
 <text text-anchor="start" x="8" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">enable_shared_from</text>
 <text text-anchor="middle" x="53.8643" y="-61.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_this&lt; IXAGVertex &gt;</text>
+</a>
+</g>
 </g>
 <!-- Node3&#45;&gt;Node2 -->
 <g id="edge1" class="edge">

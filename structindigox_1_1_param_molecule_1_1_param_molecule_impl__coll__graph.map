@@ -1,8 +1,0 @@
-<map id="ParamMolecule::ParamMoleculeImpl" name="ParamMolecule::ParamMoleculeImpl">
-<area shape="rect" id="node3" href="$classindigox_1_1_param_atom.html" title="ParamAtom" alt="" coords="159,55,251,80"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="161,164,249,189"/>
-<area shape="rect" id="node7" href="$classindigox_1_1_param_bond.html" title="ParamBond" alt="" coords="159,5,251,31"/>
-<area shape="rect" id="node9" href="$classindigox_1_1_param_dihedral.html" title="ParamDihedral" alt="" coords="150,324,260,349"/>
-<area shape="rect" id="node11" href="$classindigox_1_1_param_angle.html" title="ParamAngle" alt="" coords="158,275,252,300"/>
-<area shape="rect" id="node12" href="$classindigox_1_1_molecule.html" title="Molecule" alt="" coords="546,288,620,313"/>
-</map>

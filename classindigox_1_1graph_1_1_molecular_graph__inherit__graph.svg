@@ -12,13 +12,16 @@
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
+<g id="a_node1"><a xlink:title="Class containing a graph representation of a molecule.">
 <polygon fill="#bfbfbf" stroke="#000000" points="28.208,-.5 28.208,-18.5 115.3506,-18.5 115.3506,-.5 28.208,-.5"/>
 <text text-anchor="middle" x="71.7793" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">MolecularGraph</text>
+</a>
+</g>
 </g>
 <!-- Node1 -->
 <g id="node2" class="node">
 <title>Node1</title>
-<g id="a_node2"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title="BaseGraph\&lt; MGVertex,\l MGEdge, MolecularGraph \&gt;">
+<g id="a_node2"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="0,-56.5 0,-84.5 143.5586,-84.5 143.5586,-56.5 0,-56.5"/>
 <text text-anchor="start" x="8" y="-72.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">BaseGraph&lt; MGVertex,</text>
 <text text-anchor="middle" x="71.7793" y="-62.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> MGEdge, MolecularGraph &gt;</text>
@@ -34,7 +37,7 @@
 <!-- Node2 -->
 <g id="node3" class="node">
 <title>Node2</title>
-<g id="a_node3"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title="Template base class for all graphs used in the indigoX library. ">
+<g id="a_node3"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title="Template base class for all graphs used in the indigoX library.">
 <polygon fill="#ffffff" stroke="#000000" points="17.6855,-141.5 17.6855,-169.5 125.873,-169.5 125.873,-141.5 17.6855,-141.5"/>
 <text text-anchor="start" x="25.6855" y="-157.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">BaseGraph&lt; V, E, S,</text>
 <text text-anchor="middle" x="71.7793" y="-147.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> D, VP, EP &gt;</text>

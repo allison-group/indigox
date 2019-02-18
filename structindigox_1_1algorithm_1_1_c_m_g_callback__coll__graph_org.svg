@@ -9,16 +9,19 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 83.5)">
 <title>CMGCallback</title>
 <polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-83.5 609.9219,-83.5 609.9219,4 -4,4"/>
-<!-- Node5 -->
+<!-- Node4 -->
 <g id="node1" class="node">
-<title>Node5</title>
+<title>Node4</title>
+<g id="a_node1"><a xlink:title=" ">
 <polygon fill="#bfbfbf" stroke="#000000" points="528.2422,-20.5 528.2422,-38.5 605.9219,-38.5 605.9219,-20.5 528.2422,-20.5"/>
 <text text-anchor="middle" x="567.082" y="-26.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">CMGCallback</text>
+</a>
 </g>
-<!-- Node6 -->
+</g>
+<!-- Node5 -->
 <g id="node2" class="node">
-<title>Node6</title>
-<g id="a_node2"><a xlink:href="structindigox_1_1algorithm_1_1_mapping_callback.html" target="_top" xlink:title="MappingCallback\&lt; graph\l::CMGVertex, graph::CMGEdge,\l graph::CondensedMolecularGraph,\l graph::Undirected, graph::GraphLabel,\l graph::GraphLabel \&gt;">
+<title>Node5</title>
+<g id="a_node2"><a xlink:href="structindigox_1_1algorithm_1_1_mapping_callback.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="301.2432,-.5 301.2432,-58.5 491.2422,-58.5 491.2422,-.5 301.2432,-.5"/>
 <text text-anchor="start" x="309.2432" y="-46.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">MappingCallback&lt; graph</text>
 <text text-anchor="start" x="309.2432" y="-36.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::CMGVertex, graph::CMGEdge,</text>
@@ -28,25 +31,25 @@
 </a>
 </g>
 </g>
-<!-- Node6&#45;&gt;Node5 -->
+<!-- Node5&#45;&gt;Node4 -->
 <g id="edge1" class="edge">
-<title>Node6&#45;&gt;Node5</title>
+<title>Node5&#45;&gt;Node4</title>
 <path fill="none" stroke="#191970" d="M501.7976,-29.5C511.0469,-29.5 519.9623,-29.5 528.0754,-29.5"/>
 <polygon fill="#191970" stroke="#191970" points="501.6521,-26.0001 491.6521,-29.5 501.6521,-33.0001 501.6521,-26.0001"/>
 </g>
-<!-- Node7 -->
+<!-- Node6 -->
 <g id="node3" class="node">
-<title>Node7</title>
-<g id="a_node3"><a xlink:href="structindigox_1_1algorithm_1_1_mapping_callback.html" target="_top" xlink:title="MappingCallback\&lt; V,\l E, S, D, VP, EP \&gt;">
+<title>Node6</title>
+<g id="a_node3"><a xlink:href="structindigox_1_1algorithm_1_1_mapping_callback.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="0,-15.5 0,-43.5 109.8574,-43.5 109.8574,-15.5 0,-15.5"/>
 <text text-anchor="start" x="8" y="-31.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">MappingCallback&lt; V,</text>
 <text text-anchor="middle" x="54.9287" y="-21.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> E, S, D, VP, EP &gt;</text>
 </a>
 </g>
 </g>
-<!-- Node7&#45;&gt;Node6 -->
+<!-- Node6&#45;&gt;Node5 -->
 <g id="edge2" class="edge">
-<title>Node7&#45;&gt;Node6</title>
+<title>Node6&#45;&gt;Node5</title>
 <path fill="none" stroke="#ffa500" stroke-dasharray="5,2" d="M120.4231,-29.5C171.6291,-29.5 243.5368,-29.5 301.0924,-29.5"/>
 <polygon fill="#ffa500" stroke="#ffa500" points="120.1461,-26.0001 110.146,-29.5 120.146,-33.0001 120.1461,-26.0001"/>
 <text text-anchor="start" x="127.8574" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> &lt; graph::CMGVertex,</text>

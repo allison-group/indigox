@@ -24,13 +24,24 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "indigoX", "index.html", [
+    [ "File formats", "fileformats.html", [
+      [ "FRAG file", "fileformats.html#fragfile", null ],
+      [ "IXD file", "fileformats.html#ixdfile", null ]
+    ] ],
+    [ "Tutorials", "tutorials.html", [
+      [ "How to use CherryPicker", "tutorials.html#usingcherrypicker", [
+        [ "Overview", "tutorials.html#cherrypickeroverview", null ],
+        [ "First Steps", "tutorials.html#cherrypickerfirststeps", null ],
+        [ "Athenaeum generation", "tutorials.html#cherrypickerathenaeum", null ],
+        [ "Applying CherryPicker algorithm", "tutorials.html#cherrypickeralgo", null ]
+      ] ]
+    ] ],
     [ "Todo List", "todo.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
-        [ "All", "namespacemembers.html", "namespacemembers_dup" ],
+        [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
-        [ "Variables", "namespacemembers_vars.html", null ],
         [ "Typedefs", "namespacemembers_type.html", null ],
         [ "Enumerations", "namespacemembers_enum.html", null ],
         [ "Enumerator", "namespacemembers_eval.html", null ]
@@ -43,7 +54,7 @@ var NAVTREE =
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", "functions_func" ],
-        [ "Variables", "functions_vars.html", "functions_vars" ],
+        [ "Variables", "functions_vars.html", null ],
         [ "Typedefs", "functions_type.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
         [ "Enumerator", "functions_eval.html", null ],
@@ -54,8 +65,6 @@ var NAVTREE =
       [ "File List", "files.html", "files_dup" ],
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
-        [ "Functions", "globals_func.html", null ],
-        [ "Typedefs", "globals_type.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
@@ -65,16 +74,13 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "access_8hpp.html",
-"classindigox_1_1_atom.html#a468b0e37cb2755f32bbc3d3616216fd1",
-"classindigox_1_1_f_f_angle.html#acb45ee8d616db27c5e6afa66d674536c",
-"classindigox_1_1_molecule.html#a42527486d8cfd6cb5b3049209e374e22",
-"classindigox_1_1_residue.html#ac9d1ceecfaadd83be98586935557e340",
-"classindigox_1_1graph_1_1_base_graph.html#ae39ce87be0a20cef56ed916f1fb36d42",
-"classindigox_1_1graph_1_1_molecular_graph.html#a2438e94aabb5da93972fa679a30945dc",
-"functions_enum.html",
-"parameterised_8cpp.html#a0452bf24734737bbd1b9a06722f78ccc",
-"structindigox_1_1_forcefield_1_1_impl.html#aa6d6c6c2106e8ef4f98f95968c7b0fbd",
-"structindigox_1_1algorithm_1_1_queue_item.html#ab6de1dcd02c23b62bda80f5404fd8d8c"
+"classindigox_1_1_bond.html#afbb7a18945a0832b5189bbe768dd0c51a0db45d2a4141101bdfe48e3314cfbca3",
+"classindigox_1_1_forcefield.html#adadfade0028040b42a7a00ee592e986a",
+"classindigox_1_1_param_molecule.html#ad91bf281f52fe5ad52d4104a740c50fc",
+"classindigox_1_1graph_1_1_base_graph.html#ac3596cc99160e4757af9d7259f830fd9",
+"classindigox_1_1graph_1_1_molecular_graph.html#a935ad2e5f20e30097f0ef0fe69b22707",
+"nicetreedecomp_8hpp.html#ad630c138dd87fc1e77d43719c12efdf2",
+"structindigox_1_1algorithm_1_1_mapping_callback.html#a722700dcc9f1e085612d2678ef990b2c"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -58,14 +58,17 @@ var sectionId = 'dynsection-0';
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
+<g id="a_node1"><a xlink:title=" ">
 <polygon fill="#bfbfbf" stroke="#000000" points="880.8084,-370.5 880.8084,-398.5 991.3201,-398.5 991.3201,-370.5 880.8084,-370.5"/>
 <text text-anchor="start" x="888.8084" y="-386.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">include/indigox/graph</text>
 <text text-anchor="middle" x="936.0642" y="-376.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">/condensed.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node1 -->
 <g id="node2" class="node">
 <title>Node1</title>
-<g id="a_node2"><a xlink:href="fwd__declares_8hpp.html" target="_top" xlink:title="../utils/fwd_declares.hpp">
+<g id="a_node2"><a xlink:href="fwd__declares_8hpp.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="537.4241,-60.5 537.4241,-78.5 660.7044,-78.5 660.7044,-60.5 537.4241,-60.5"/>
 <text text-anchor="middle" x="599.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">../utils/fwd_declares.hpp</text>
 </a>
@@ -80,8 +83,11 @@ var sectionId = 'dynsection-0';
 <!-- Node3 -->
 <g id="node4" class="node">
 <title>Node3</title>
+<g id="a_node4"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="2432.0076,-.5 2432.0076,-18.5 2484.1209,-18.5 2484.1209,-.5 2432.0076,-.5"/>
 <text text-anchor="middle" x="2458.0642" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">memory</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node3 -->
 <g id="edge54" class="edge">
@@ -92,7 +98,7 @@ var sectionId = 'dynsection-0';
 <!-- Node4 -->
 <g id="node5" class="node">
 <title>Node4</title>
-<g id="a_node5"><a xlink:href="base__graph_8hpp.html" target="_top" xlink:title="base_graph.hpp">
+<g id="a_node5"><a xlink:href="base__graph_8hpp.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="595.9217,-315.5 595.9217,-333.5 684.2068,-333.5 684.2068,-315.5 595.9217,-315.5"/>
 <text text-anchor="middle" x="640.0642" y="-321.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">base_graph.hpp</text>
 </a>
@@ -107,8 +113,11 @@ var sectionId = 'dynsection-0';
 <!-- Node6 -->
 <g id="node7" class="node">
 <title>Node6</title>
+<g id="a_node7"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="790.5423,-190.5 790.5423,-208.5 901.5862,-208.5 901.5862,-190.5 790.5423,-190.5"/>
 <text text-anchor="middle" x="846.0642" y="-196.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">EASTL/vector_map.h</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node6 -->
 <g id="edge52" class="edge">
@@ -119,8 +128,11 @@ var sectionId = 'dynsection-0';
 <!-- Node8 -->
 <g id="node9" class="node">
 <title>Node8</title>
+<g id="a_node9"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="14.4485,-60.5 14.4485,-78.5 57.68,-78.5 57.68,-60.5 14.4485,-60.5"/>
 <text text-anchor="middle" x="36.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">vector</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node8 -->
 <g id="edge55" class="edge">
@@ -131,8 +143,11 @@ var sectionId = 'dynsection-0';
 <!-- Node36 -->
 <g id="node37" class="node">
 <title>Node36</title>
+<g id="a_node37"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="920.5989,-190.5 920.5989,-208.5 1025.5296,-208.5 1025.5296,-190.5 920.5989,-190.5"/>
 <text text-anchor="middle" x="973.0642" y="-196.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">EASTL/vector_set.h</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node36 -->
 <g id="edge53" class="edge">
@@ -143,8 +158,11 @@ var sectionId = 'dynsection-0';
 <!-- Node37 -->
 <g id="node38" class="node">
 <title>Node37</title>
+<g id="a_node38"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="2523.7146,-315.5 2523.7146,-333.5 2606.4138,-333.5 2606.4138,-315.5 2523.7146,-315.5"/>
 <text text-anchor="middle" x="2565.0642" y="-321.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">EASTL/bitset.h</text>
+</a>
+</g>
 </g>
 <!-- Node0&#45;&gt;Node37 -->
 <g id="edge51" class="edge">
@@ -155,8 +173,11 @@ var sectionId = 'dynsection-0';
 <!-- Node2 -->
 <g id="node3" class="node">
 <title>Node2</title>
+<g id="a_node3"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="110.6136,-.5 110.6136,-18.5 155.5149,-18.5 155.5149,-.5 110.6136,-.5"/>
 <text text-anchor="middle" x="133.0642" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cstdint</text>
+</a>
+</g>
 </g>
 <!-- Node1&#45;&gt;Node2 -->
 <g id="edge2" class="edge">
@@ -191,7 +212,7 @@ var sectionId = 'dynsection-0';
 <!-- Node5 -->
 <g id="node6" class="node">
 <title>Node5</title>
-<g id="a_node6"><a xlink:href="simple__bimap_8hpp.html" target="_top" xlink:title="../utils/simple_bimap.hpp">
+<g id="a_node6"><a xlink:href="simple__bimap_8hpp.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="782.0374,-255.5 782.0374,-273.5 908.0911,-273.5 908.0911,-255.5 782.0374,-255.5"/>
 <text text-anchor="middle" x="845.0642" y="-261.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">../utils/simple_bimap.hpp</text>
 </a>
@@ -206,9 +227,12 @@ var sectionId = 'dynsection-0';
 <!-- Node7 -->
 <g id="node8" class="node">
 <title>Node7</title>
+<g id="a_node8"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="647.7517,-250.5 647.7517,-278.5 764.3767,-278.5 764.3767,-250.5 647.7517,-250.5"/>
 <text text-anchor="start" x="655.7517" y="-266.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">boost/graph/adjacency</text>
 <text text-anchor="middle" x="706.0642" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_list.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node4&#45;&gt;Node7 -->
 <g id="edge8" class="edge">
@@ -225,7 +249,7 @@ var sectionId = 'dynsection-0';
 <!-- Node9 -->
 <g id="node10" class="node">
 <title>Node9</title>
-<g id="a_node10"><a xlink:href="base__graph__impl_8hpp.html" target="_top" xlink:title="base_graph_impl.hpp">
+<g id="a_node10"><a xlink:href="base__graph__impl_8hpp.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="517.9734,-255.5 517.9734,-273.5 630.1551,-273.5 630.1551,-255.5 517.9734,-255.5"/>
 <text text-anchor="middle" x="574.0642" y="-261.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">base_graph_impl.hpp</text>
 </a>
@@ -258,7 +282,7 @@ var sectionId = 'dynsection-0';
 <!-- Node10 -->
 <g id="node11" class="node">
 <title>Node10</title>
-<g id="a_node11"><a xlink:href="connectivity_8hpp.html" target="_top" xlink:title="../algorithm/graph\l/connectivity.hpp">
+<g id="a_node11"><a xlink:href="connectivity_8hpp.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="172.1555,-120.5 172.1555,-148.5 265.9729,-148.5 265.9729,-120.5 172.1555,-120.5"/>
 <text text-anchor="start" x="180.1555" y="-136.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">../algorithm/graph</text>
 <text text-anchor="middle" x="219.0642" y="-126.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">/connectivity.hpp</text>
@@ -274,7 +298,7 @@ var sectionId = 'dynsection-0';
 <!-- Node12 -->
 <g id="node13" class="node">
 <title>Node12</title>
-<g id="a_node13"><a xlink:href="cycles_8hpp.html" target="_top" xlink:title="../algorithm/graph\l/cycles.hpp">
+<g id="a_node13"><a xlink:href="cycles_8hpp.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="536.1555,-185.5 536.1555,-213.5 629.9729,-213.5 629.9729,-185.5 536.1555,-185.5"/>
 <text text-anchor="start" x="544.1555" y="-201.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">../algorithm/graph</text>
 <text text-anchor="middle" x="583.0642" y="-191.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">/cycles.hpp</text>
@@ -290,7 +314,7 @@ var sectionId = 'dynsection-0';
 <!-- Node19 -->
 <g id="node20" class="node">
 <title>Node19</title>
-<g id="a_node20"><a xlink:href="serialise_8hpp.html" target="_top" xlink:title="../utils/serialise.hpp">
+<g id="a_node20"><a xlink:href="serialise_8hpp.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="1271.5447,-125.5 1271.5447,-143.5 1372.5838,-143.5 1372.5838,-125.5 1271.5447,-125.5"/>
 <text text-anchor="middle" x="1322.0642" y="-131.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">../utils/serialise.hpp</text>
 </a>
@@ -305,7 +329,7 @@ var sectionId = 'dynsection-0';
 <!-- Node34 -->
 <g id="node35" class="node">
 <title>Node34</title>
-<g id="a_node35"><a xlink:href="triple_8hpp.html" target="_top" xlink:title="../utils/triple.hpp">
+<g id="a_node35"><a xlink:href="triple_8hpp.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="648.0471,-190.5 648.0471,-208.5 734.0813,-208.5 734.0813,-190.5 648.0471,-190.5"/>
 <text text-anchor="middle" x="691.0642" y="-196.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">../utils/triple.hpp</text>
 </a>
@@ -344,8 +368,11 @@ var sectionId = 'dynsection-0';
 <!-- Node11 -->
 <g id="node12" class="node">
 <title>Node11</title>
+<g id="a_node12"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="113.6775,-60.5 113.6775,-78.5 152.451,-78.5 152.451,-60.5 113.6775,-60.5"/>
 <text text-anchor="middle" x="133.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">limits</text>
+</a>
+</g>
 </g>
 <!-- Node10&#45;&gt;Node11 -->
 <g id="edge16" class="edge">
@@ -362,7 +389,7 @@ var sectionId = 'dynsection-0';
 <!-- Node13 -->
 <g id="node14" class="node">
 <title>Node13</title>
-<g id="a_node14"><a xlink:href="numerics_8hpp.html" target="_top" xlink:title="../../utils/numerics.hpp">
+<g id="a_node14"><a xlink:href="numerics_8hpp.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="284.4339,-125.5 284.4339,-143.5 397.6946,-143.5 397.6946,-125.5 284.4339,-125.5"/>
 <text text-anchor="middle" x="341.0642" y="-131.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">../../utils/numerics.hpp</text>
 </a>
@@ -389,8 +416,11 @@ var sectionId = 'dynsection-0';
 <!-- Node14 -->
 <g id="node15" class="node">
 <title>Node14</title>
+<g id="a_node15"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="462.5003,-60.5 462.5003,-78.5 519.6282,-78.5 519.6282,-60.5 462.5003,-60.5"/>
 <text text-anchor="middle" x="491.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">algorithm</text>
+</a>
+</g>
 </g>
 <!-- Node13&#45;&gt;Node14 -->
 <g id="edge21" class="edge">
@@ -401,8 +431,11 @@ var sectionId = 'dynsection-0';
 <!-- Node15 -->
 <g id="node16" class="node">
 <title>Node15</title>
+<g id="a_node16"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="208.4485,-60.5 208.4485,-78.5 251.68,-78.5 251.68,-60.5 208.4485,-60.5"/>
 <text text-anchor="middle" x="230.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cmath</text>
+</a>
+</g>
 </g>
 <!-- Node13&#45;&gt;Node15 -->
 <g id="edge22" class="edge">
@@ -413,8 +446,11 @@ var sectionId = 'dynsection-0';
 <!-- Node16 -->
 <g id="node17" class="node">
 <title>Node16</title>
+<g id="a_node17"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="269.5027,-60.5 269.5027,-78.5 316.6258,-78.5 316.6258,-60.5 269.5027,-60.5"/>
 <text text-anchor="middle" x="293.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">iterator</text>
+</a>
+</g>
 </g>
 <!-- Node13&#45;&gt;Node16 -->
 <g id="edge24" class="edge">
@@ -425,8 +461,11 @@ var sectionId = 'dynsection-0';
 <!-- Node17 -->
 <g id="node18" class="node">
 <title>Node17</title>
+<g id="a_node18"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="334.281,-60.5 334.281,-78.5 385.8474,-78.5 385.8474,-60.5 334.281,-60.5"/>
 <text text-anchor="middle" x="360.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">numeric</text>
+</a>
+</g>
 </g>
 <!-- Node13&#45;&gt;Node17 -->
 <g id="edge25" class="edge">
@@ -437,8 +476,11 @@ var sectionId = 'dynsection-0';
 <!-- Node18 -->
 <g id="node19" class="node">
 <title>Node18</title>
+<g id="a_node19"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="403.8377,-60.5 403.8377,-78.5 444.2908,-78.5 444.2908,-60.5 403.8377,-60.5"/>
 <text text-anchor="middle" x="424.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">string</text>
+</a>
+</g>
 </g>
 <!-- Node13&#45;&gt;Node18 -->
 <g id="edge26" class="edge">
@@ -455,8 +497,11 @@ var sectionId = 'dynsection-0';
 <!-- Node20 -->
 <g id="node21" class="node">
 <title>Node20</title>
+<g id="a_node21"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="758.7639,-60.5 758.7639,-78.5 855.3645,-78.5 855.3645,-60.5 758.7639,-60.5"/>
 <text text-anchor="middle" x="807.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/access.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node20 -->
 <g id="edge30" class="edge">
@@ -467,8 +512,11 @@ var sectionId = 'dynsection-0';
 <!-- Node21 -->
 <g id="node22" class="node">
 <title>Node21</title>
+<g id="a_node22"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="873.1458,-60.5 873.1458,-78.5 996.9827,-78.5 996.9827,-60.5 873.1458,-60.5"/>
 <text text-anchor="middle" x="935.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/archives/json.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node21 -->
 <g id="edge31" class="edge">
@@ -479,9 +527,12 @@ var sectionId = 'dynsection-0';
 <!-- Node22 -->
 <g id="node23" class="node">
 <title>Node22</title>
+<g id="a_node23"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="1014.9807,-55.5 1014.9807,-83.5 1137.1477,-83.5 1137.1477,-55.5 1014.9807,-55.5"/>
 <text text-anchor="start" x="1022.9807" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/archives/portable</text>
 <text text-anchor="middle" x="1076.0642" y="-61.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_binary.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node22 -->
 <g id="edge32" class="edge">
@@ -492,8 +543,11 @@ var sectionId = 'dynsection-0';
 <!-- Node23 -->
 <g id="node24" class="node">
 <title>Node23</title>
+<g id="a_node24"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="1154.7073,-60.5 1154.7073,-78.5 1247.4212,-78.5 1247.4212,-60.5 1154.7073,-60.5"/>
 <text text-anchor="middle" x="1201.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/cereal.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node23 -->
 <g id="edge33" class="edge">
@@ -504,8 +558,11 @@ var sectionId = 'dynsection-0';
 <!-- Node24 -->
 <g id="node25" class="node">
 <title>Node24</title>
+<g id="a_node25"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="1264.9627,-60.5 1264.9627,-78.5 1379.1658,-78.5 1379.1658,-60.5 1264.9627,-60.5"/>
 <text text-anchor="middle" x="1322.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/types/array.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node24 -->
 <g id="edge34" class="edge">
@@ -516,8 +573,11 @@ var sectionId = 'dynsection-0';
 <!-- Node25 -->
 <g id="node26" class="node">
 <title>Node25</title>
+<g id="a_node26"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="1397.0349,-60.5 1397.0349,-78.5 1513.0935,-78.5 1513.0935,-60.5 1397.0349,-60.5"/>
 <text text-anchor="middle" x="1455.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/types/bitset.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node25 -->
 <g id="edge35" class="edge">
@@ -528,9 +588,12 @@ var sectionId = 'dynsection-0';
 <!-- Node26 -->
 <g id="node27" class="node">
 <title>Node26</title>
+<g id="a_node27"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="1531.2024,-55.5 1531.2024,-83.5 1638.9261,-83.5 1638.9261,-55.5 1531.2024,-55.5"/>
 <text text-anchor="start" x="1539.2024" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/types/boost</text>
 <text text-anchor="middle" x="1585.0642" y="-61.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_dynamic_bitset.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node26 -->
 <g id="edge36" class="edge">
@@ -541,9 +604,12 @@ var sectionId = 'dynsection-0';
 <!-- Node27 -->
 <g id="node28" class="node">
 <title>Node27</title>
+<g id="a_node28"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="1657.1555,-55.5 1657.1555,-83.5 1750.9729,-83.5 1750.9729,-55.5 1657.1555,-55.5"/>
 <text text-anchor="start" x="1665.1555" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/types/eastl</text>
 <text text-anchor="middle" x="1704.0642" y="-61.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_bitset.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node27 -->
 <g id="edge37" class="edge">
@@ -554,8 +620,11 @@ var sectionId = 'dynsection-0';
 <!-- Node28 -->
 <g id="node29" class="node">
 <title>Node28</title>
+<g id="a_node29"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="1768.7517,-60.5 1768.7517,-78.5 1885.3767,-78.5 1885.3767,-60.5 1768.7517,-60.5"/>
 <text text-anchor="middle" x="1827.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/types/eigen.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node28 -->
 <g id="edge38" class="edge">
@@ -566,8 +635,11 @@ var sectionId = 'dynsection-0';
 <!-- Node29 -->
 <g id="node30" class="node">
 <title>Node29</title>
+<g id="a_node30"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="1903.2591,-60.5 1903.2591,-78.5 2014.8694,-78.5 2014.8694,-60.5 1903.2591,-60.5"/>
 <text text-anchor="middle" x="1959.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/types/map.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node29 -->
 <g id="edge39" class="edge">
@@ -578,8 +650,11 @@ var sectionId = 'dynsection-0';
 <!-- Node30 -->
 <g id="node31" class="node">
 <title>Node30</title>
+<g id="a_node31"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="2033.2976,-60.5 2033.2976,-78.5 2160.8308,-78.5 2160.8308,-60.5 2033.2976,-60.5"/>
 <text text-anchor="middle" x="2097.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/types/memory.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node30 -->
 <g id="edge40" class="edge">
@@ -590,8 +665,11 @@ var sectionId = 'dynsection-0';
 <!-- Node31 -->
 <g id="node32" class="node">
 <title>Node31</title>
+<g id="a_node32"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="2178.9627,-60.5 2178.9627,-78.5 2293.1658,-78.5 2293.1658,-60.5 2178.9627,-60.5"/>
 <text text-anchor="middle" x="2236.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/types/utility.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node31 -->
 <g id="edge41" class="edge">
@@ -602,8 +680,11 @@ var sectionId = 'dynsection-0';
 <!-- Node32 -->
 <g id="node33" class="node">
 <title>Node32</title>
+<g id="a_node33"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="2311.6433,-60.5 2311.6433,-78.5 2430.4851,-78.5 2430.4851,-60.5 2311.6433,-60.5"/>
 <text text-anchor="middle" x="2371.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">cereal/types/vector.hpp</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node32 -->
 <g id="edge42" class="edge">
@@ -614,8 +695,11 @@ var sectionId = 'dynsection-0';
 <!-- Node33 -->
 <g id="node34" class="node">
 <title>Node33</title>
+<g id="a_node34"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="678.9978,-60.5 678.9978,-78.5 741.1306,-78.5 741.1306,-60.5 678.9978,-60.5"/>
 <text text-anchor="middle" x="710.0642" y="-66.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">type_traits</text>
+</a>
+</g>
 </g>
 <!-- Node19&#45;&gt;Node33 -->
 <g id="edge43" class="edge">
@@ -638,8 +722,11 @@ var sectionId = 'dynsection-0';
 <!-- Node35 -->
 <g id="node36" class="node">
 <title>Node35</title>
+<g id="a_node36"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="643.6726,-125.5 643.6726,-143.5 682.4558,-143.5 682.4558,-125.5 643.6726,-125.5"/>
 <text text-anchor="middle" x="663.0642" y="-131.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">utility</text>
+</a>
+</g>
 </g>
 <!-- Node34&#45;&gt;Node35 -->
 <g id="edge46" class="edge">

@@ -12,14 +12,20 @@
 <!-- Node1 -->
 <g id="node1" class="node">
 <title>Node1</title>
+<g id="a_node1"><a xlink:title=" ">
 <polygon fill="#bfbfbf" stroke="#000000" points="302.894,-.5 302.894,-18.5 366.6821,-18.5 366.6821,-.5 302.894,-.5"/>
 <text text-anchor="middle" x="334.7881" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Atom::Impl</text>
+</a>
+</g>
 </g>
 <!-- Node2 -->
 <g id="node2" class="node">
 <title>Node2</title>
+<g id="a_node2"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="10.0396,-75.5 10.0396,-93.5 95.5366,-93.5 95.5366,-75.5 10.0396,-75.5"/>
 <text text-anchor="middle" x="52.7881" y="-81.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">vector&lt; Angle &gt;</text>
+</a>
+</g>
 </g>
 <!-- Node2&#45;&gt;Node1 -->
 <g id="edge1" class="edge">
@@ -31,7 +37,7 @@
 <!-- Node3 -->
 <g id="node3" class="node">
 <title>Node3</title>
-<g id="a_node3"><a xlink:href="classindigox_1_1_angle.html" target="_top" xlink:title="Angle">
+<g id="a_node3"><a xlink:href="classindigox_1_1_angle.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="0,-140.5 0,-158.5 41.5762,-158.5 41.5762,-140.5 0,-140.5"/>
 <text text-anchor="middle" x="20.7881" y="-146.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Angle</text>
 </a>
@@ -47,7 +53,7 @@
 <!-- Node4 -->
 <g id="node4" class="node">
 <title>Node4</title>
-<g id="a_node4"><a xlink:title="STL class. ">
+<g id="a_node4"><a xlink:title="STL class.">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="121.6758,-140.5 121.6758,-158.5 187.9004,-158.5 187.9004,-140.5 121.6758,-140.5"/>
 <text text-anchor="middle" x="154.7881" y="-146.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">vector&lt; T &gt;</text>
 </a>
@@ -63,8 +69,11 @@
 <!-- Node7 -->
 <g id="node7" class="node">
 <title>Node7</title>
+<g id="a_node7"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="183.877,-75.5 183.877,-93.5 267.6992,-93.5 267.6992,-75.5 183.877,-75.5"/>
 <text text-anchor="middle" x="225.7881" y="-81.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">vector&lt; Bond &gt;</text>
+</a>
+</g>
 </g>
 <!-- Node4&#45;&gt;Node7 -->
 <g id="edge8" class="edge">
@@ -76,8 +85,11 @@
 <!-- Node12 -->
 <g id="node12" class="node">
 <title>Node12</title>
+<g id="a_node12"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="285.9336,-75.5 285.9336,-93.5 383.6426,-93.5 383.6426,-75.5 285.9336,-75.5"/>
 <text text-anchor="middle" x="334.7881" y="-81.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">vector&lt; Dihedral &gt;</text>
+</a>
+</g>
 </g>
 <!-- Node4&#45;&gt;Node12 -->
 <g id="edge14" class="edge">
@@ -89,8 +101,11 @@
 <!-- Node5 -->
 <g id="node5" class="node">
 <title>Node5</title>
+<g id="a_node5"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="140.2881,-205.5 140.2881,-223.5 169.2881,-223.5 169.2881,-205.5 140.2881,-205.5"/>
 <text text-anchor="middle" x="154.3423" y="-211.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">T</text>
+</a>
+</g>
 </g>
 <!-- Node5&#45;&gt;Node4 -->
 <g id="edge4" class="edge">
@@ -102,7 +117,7 @@
 <!-- Node6 -->
 <g id="node6" class="node">
 <title>Node6</title>
-<g id="a_node6"><a xlink:href="classindigox_1_1_element.html" target="_top" xlink:title="Read only class for storing elemental information. ">
+<g id="a_node6"><a xlink:href="classindigox_1_1_element.html" target="_top" xlink:title="Read only class for storing elemental information.">
 <polygon fill="#ffffff" stroke="#000000" points="113.4458,-75.5 113.4458,-93.5 166.1304,-93.5 166.1304,-75.5 113.4458,-75.5"/>
 <text text-anchor="middle" x="139.7881" y="-81.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Element</text>
 </a>
@@ -125,7 +140,7 @@
 <!-- Node8 -->
 <g id="node8" class="node">
 <title>Node8</title>
-<g id="a_node8"><a xlink:href="classindigox_1_1_bond.html" target="_top" xlink:title="Bond">
+<g id="a_node8"><a xlink:href="classindigox_1_1_bond.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="281.1108,-140.5 281.1108,-158.5 320.4653,-158.5 320.4653,-140.5 281.1108,-140.5"/>
 <text text-anchor="middle" x="300.7881" y="-146.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Bond</text>
 </a>
@@ -141,7 +156,7 @@
 <!-- Node9 -->
 <g id="node9" class="node">
 <title>Node9</title>
-<g id="a_node9"><a xlink:title="STL class. ">
+<g id="a_node9"><a xlink:title="STL class.">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="475.5615,-75.5 475.5615,-93.5 516.0146,-93.5 516.0146,-75.5 475.5615,-75.5"/>
 <text text-anchor="middle" x="495.7881" y="-81.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">string</text>
 </a>
@@ -158,7 +173,7 @@
 <!-- Node10 -->
 <g id="node10" class="node">
 <title>Node10</title>
-<g id="a_node10"><a xlink:title="STL class. ">
+<g id="a_node10"><a xlink:title="STL class.">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="442.7637,-140.5 442.7637,-158.5 548.8125,-158.5 548.8125,-140.5 442.7637,-140.5"/>
 <text text-anchor="middle" x="495.7881" y="-146.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">basic_string&lt; char &gt;</text>
 </a>
@@ -173,7 +188,7 @@
 <!-- Node11 -->
 <g id="node11" class="node">
 <title>Node11</title>
-<g id="a_node11"><a xlink:href="classindigox_1_1_molecule.html" target="_top" xlink:title="Molecule">
+<g id="a_node11"><a xlink:href="classindigox_1_1_molecule.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="401.7783,-75.5 401.7783,-93.5 457.7979,-93.5 457.7979,-75.5 401.7783,-75.5"/>
 <text text-anchor="middle" x="429.7881" y="-81.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Molecule</text>
 </a>
@@ -196,7 +211,7 @@
 <!-- Node13 -->
 <g id="node13" class="node">
 <title>Node13</title>
-<g id="a_node13"><a xlink:href="classindigox_1_1_dihedral.html" target="_top" xlink:title="Dihedral">
+<g id="a_node13"><a xlink:href="classindigox_1_1_dihedral.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="340.1675,-140.5 340.1675,-158.5 393.4087,-158.5 393.4087,-140.5 340.1675,-140.5"/>
 <text text-anchor="middle" x="366.7881" y="-146.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Dihedral</text>
 </a>
@@ -212,7 +227,7 @@
 <!-- Node14 -->
 <g id="node14" class="node">
 <title>Node14</title>
-<g id="a_node14"><a xlink:href="classindigox_1_1_f_f_atom.html" target="_top" xlink:title="FFAtom">
+<g id="a_node14"><a xlink:href="classindigox_1_1_f_f_atom.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="546.2832,-75.5 546.2832,-93.5 597.293,-93.5 597.293,-75.5 546.2832,-75.5"/>
 <text text-anchor="middle" x="571.7881" y="-81.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">FFAtom</text>
 </a>

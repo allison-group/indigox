@@ -1,19 +1,8 @@
 <map id="include/indigox/utils/quad.hpp" name="include/indigox/utils/quad.hpp">
-<area shape="rect" id="node2" href="$athenaeum_8hpp.html" title="include/indigox/classes\l/athenaeum.hpp" alt="" coords="150,92,308,131"/>
-<area shape="rect" id="node7" href="$dihedral_8hpp.html" title="include/indigox/classes\l/dihedral.hpp" alt="" coords="737,92,895,131"/>
-<area shape="rect" id="node17" href="$parameterised_8hpp.html" title="include/indigox/classes\l/parameterised.hpp" alt="" coords="508,92,665,131"/>
-<area shape="rect" id="node18" href="$forcefield_8cpp.html" title="src/classes/forcefield.cpp" alt="" coords="919,99,1089,124"/>
-<area shape="rect" id="node3" href="$cherrypicker_8hpp.html" title="include/indigox/algorithm\l/cherrypicker.hpp" alt="" coords="24,179,192,217"/>
-<area shape="rect" id="node4" href="$cherrypicker_8cpp.html" title="src/algorithm/cherrypicker.cpp" alt="" coords="155,265,354,291"/>
-<area shape="rect" id="node5" href="$main_8cpp.html" title="src/main.cpp" alt="" coords="34,265,131,291"/>
-<area shape="rect" id="node6" href="$athenaeum_8cpp.html" title="src/classes/athenaeum.cpp" alt="" coords="318,185,501,211"/>
-<area shape="rect" id="node8" href="$molecule__impl_8hpp.html" title="include/indigox/classes\l/molecule_impl.hpp" alt="" coords="904,179,1061,217"/>
-<area shape="rect" id="node10" href="$atom_8cpp.html" title="src/classes/atom.cpp" alt="" coords="378,265,523,291"/>
-<area shape="rect" id="node12" href="$dihedral_8cpp.html" title="src/classes/dihedral.cpp" alt="" coords="1261,265,1424,291"/>
-<area shape="rect" id="node13" href="$molecule_8cpp.html" title="src/classes/molecule.cpp" alt="" coords="1448,265,1618,291"/>
-<area shape="rect" id="node16" href="$parameterised_8cpp.html" title="src/classes/parameterised.cpp" alt="" coords="576,185,778,211"/>
-<area shape="rect" id="node9" href="$angle_8cpp.html" title="src/classes/angle.cpp" alt="" coords="1088,265,1237,291"/>
-<area shape="rect" id="node11" href="$bond_8cpp.html" title="src/classes/bond.cpp" alt="" coords="547,265,693,291"/>
-<area shape="rect" id="node14" href="$residue_8cpp.html" title="src/classes/residue.cpp" alt="" coords="717,265,877,291"/>
-<area shape="rect" id="node15" href="$molecular_8cpp.html" title="src/graph/molecular.cpp" alt="" coords="901,265,1064,291"/>
+<area shape="rect" id="node1" title=" " alt="" coords="206,5,343,44"/>
+<area shape="rect" id="node2" href="$athenaeum_8hpp.html" title=" " alt="" coords="12,92,170,131"/>
+<area shape="rect" id="node4" href="$dihedral_8hpp.html" title=" " alt="" coords="196,92,354,131"/>
+<area shape="rect" id="node6" href="$parameterised_8hpp.html" title=" " alt="" coords="377,92,535,131"/>
+<area shape="rect" id="node3" href="$cherrypicker_8hpp.html" title=" " alt="" coords="5,179,173,217"/>
+<area shape="rect" id="node5" href="$molecule__impl_8hpp.html" title=" " alt="" coords="197,179,355,217"/>
 </map>

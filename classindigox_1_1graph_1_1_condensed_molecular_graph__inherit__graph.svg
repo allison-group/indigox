@@ -12,13 +12,16 @@
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
+<g id="a_node1"><a xlink:title=" ">
 <polygon fill="#bfbfbf" stroke="#000000" points="13.6133,-.5 13.6133,-18.5 151.9082,-18.5 151.9082,-.5 13.6133,-.5"/>
 <text text-anchor="middle" x="82.7607" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">CondensedMolecularGraph</text>
+</a>
+</g>
 </g>
 <!-- Node1 -->
 <g id="node2" class="node">
 <title>Node1</title>
-<g id="a_node2"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title="BaseGraph\&lt; CMGVertex,\l CMGEdge, CondensedMolecular\lGraph \&gt;">
+<g id="a_node2"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="0,-56.5 0,-94.5 165.5215,-94.5 165.5215,-56.5 0,-56.5"/>
 <text text-anchor="start" x="8" y="-82.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">BaseGraph&lt; CMGVertex,</text>
 <text text-anchor="start" x="8" y="-72.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> CMGEdge, CondensedMolecular</text>
@@ -35,7 +38,7 @@
 <!-- Node2 -->
 <g id="node3" class="node">
 <title>Node2</title>
-<g id="a_node3"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title="Template base class for all graphs used in the indigoX library. ">
+<g id="a_node3"><a xlink:href="classindigox_1_1graph_1_1_base_graph.html" target="_top" xlink:title="Template base class for all graphs used in the indigoX library.">
 <polygon fill="#ffffff" stroke="#000000" points="28.667,-151.5 28.667,-179.5 136.8545,-179.5 136.8545,-151.5 28.667,-151.5"/>
 <text text-anchor="start" x="36.667" y="-167.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">BaseGraph&lt; V, E, S,</text>
 <text text-anchor="middle" x="82.7607" y="-157.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> D, VP, EP &gt;</text>

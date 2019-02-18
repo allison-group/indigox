@@ -1,7 +1,6 @@
 var searchData=
 [
   ['_7e_20angle',['~ Angle',['../classindigox_1_1_angle.html#ae97e3020d95ccbc8583ce1d77df0e65f',1,'indigox::Angle']]],
-  ['_7e_20athenaeum',['~ Athenaeum',['../classindigox_1_1_athenaeum.html#a5a4ceb8a06171f2fc26c496a449842d3',1,'indigox::Athenaeum']]],
   ['_7e_20atom',['~ Atom',['../classindigox_1_1_atom.html#a291300678f299ab9a45969002e2dee5f',1,'indigox::Atom']]],
   ['_7e_20bond',['~ Bond',['../classindigox_1_1_bond.html#a779f4386a02189055896a9923169ae3c',1,'indigox::Bond']]],
   ['_7e_20cmgedge',['~ CMGEdge',['../classindigox_1_1graph_1_1_c_m_g_edge.html#ac3175ef5a7487e0c9cafe01da4879514',1,'indigox::graph::CMGEdge']]],
@@ -13,7 +12,6 @@ var searchData=
   ['_7e_20ffbond',['~ FFBond',['../classindigox_1_1_f_f_bond.html#ab9a6ff7c1f148be38c8e6e8b77cb6c22',1,'indigox::FFBond']]],
   ['_7e_20ffdihedral',['~ FFDihedral',['../classindigox_1_1_f_f_dihedral.html#a69ccafe9b97ab7c67a531243275d886a',1,'indigox::FFDihedral']]],
   ['_7e_20forcefield',['~ Forcefield',['../classindigox_1_1_forcefield.html#ac97a4698a039161028df447c37ad3b71',1,'indigox::Forcefield']]],
-  ['_7e_20fragment',['~ Fragment',['../classindigox_1_1_fragment.html#affa93eadc6bedde91a42f6cdf388e7b6',1,'indigox::Fragment']]],
   ['_7e_20mgedge',['~ MGEdge',['../classindigox_1_1graph_1_1_m_g_edge.html#a50ee1d3d7c6749b5904fcbb710304497',1,'indigox::graph::MGEdge']]],
   ['_7e_20mgvertex',['~ MGVertex',['../classindigox_1_1graph_1_1_m_g_vertex.html#a000ee7e77c8dcc19bd185e16953831f9',1,'indigox::graph::MGVertex']]],
   ['_7e_20moleculargraph',['~ MolecularGraph',['../classindigox_1_1graph_1_1_molecular_graph.html#aa13f57ad1e58031c2e5d91c0345c0165',1,'indigox::graph::MolecularGraph']]],
@@ -27,7 +25,6 @@ var searchData=
   ['_7eassignalgorithm',['~AssignAlgorithm',['../classindigox_1_1algorithm_1_1_i_x_electron_assigner_1_1_assign_algorithm.html#ade16fa5ca565c706141dd1954c9ae57d',1,'indigox::algorithm::IXElectronAssigner::AssignAlgorithm']]],
   ['_7eatomiterator',['~AtomIterator',['../classindigox_1_1_atom_iterator.html#a3675851fb08f8ad404acd028630a0091',1,'indigox::AtomIterator']]],
   ['_7ebasegraph',['~BaseGraph',['../classindigox_1_1graph_1_1_base_graph.html#acf24cbad90951315d555898801bb88b6',1,'indigox::graph::BaseGraph']]],
-  ['_7echerrypicker',['~CherryPicker',['../classindigox_1_1algorithm_1_1_cherry_picker.html#ac13ff3515d97fd2a0a28e48c4d0d793f',1,'indigox::algorithm::CherryPicker']]],
   ['_7econnectedsubgraphs',['~ConnectedSubgraphs',['../classindigox_1_1algorithm_1_1_connected_subgraphs.html#a9c614fa7826c26f45436c2054a142a72',1,'indigox::algorithm::ConnectedSubgraphs']]],
   ['_7emappingcallback',['~MappingCallback',['../structindigox_1_1algorithm_1_1_mapping_callback.html#a259976aede6f6fc41a2d26a6e9069bfc',1,'indigox::algorithm::MappingCallback']]],
   ['_7etriple',['~triple',['../structstdx_1_1triple.html#a849ecf48e749e08050a01485273b5252',1,'stdx::triple']]],

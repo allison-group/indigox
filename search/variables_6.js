@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['family',['family',['../structindigox_1_1_forcefield_1_1_impl.html#a678e989f581b31da1cdf0b66ecc7f6f1',1,'indigox::Forcefield::Impl']]],
-  ['ff',['ff',['../structindigox_1_1_athenaeum_1_1_athenaeum_data.html#ae7499215075fdddc5686a7a1138843d4',1,'indigox::Athenaeum::AthenaeumData::ff()'],['../structindigox_1_1_f_f_atom_1_1_impl.html#ae7499215075fdddc5686a7a1138843d4',1,'indigox::FFAtom::Impl::ff()'],['../structindigox_1_1_f_f_bond_1_1_impl.html#ae7499215075fdddc5686a7a1138843d4',1,'indigox::FFBond::Impl::ff()'],['../structindigox_1_1_f_f_angle_1_1_impl.html#ae7499215075fdddc5686a7a1138843d4',1,'indigox::FFAngle::Impl::ff()'],['../structindigox_1_1_f_f_dihedral_1_1_impl.html#ae7499215075fdddc5686a7a1138843d4',1,'indigox::FFDihedral::Impl::ff()']]],
   ['finalscore_5f',['finalScore_',['../classindigox_1_1_electron_opt.html#a095dd583615d782fbf1c3da7b31fc0a2',1,'indigox::ElectronOpt']]],
   ['finished',['finished',['../struct_cartesian_product.html#a9324389a5cdc532c6417a87ccafe18ce',1,'CartesianProduct::finished()'],['../struct_regional_permutation.html#a9324389a5cdc532c6417a87ccafe18ce',1,'RegionalPermutation::finished()']]],
   ['first',['first',['../structstdx_1_1quad.html#a250628cfa77b0346cdf085a5434792a2',1,'stdx::quad::first()'],['../structstdx_1_1triple.html#a9b5a3fc101a92e0884c13bebefad25e9',1,'stdx::triple::first()']]],
@@ -11,9 +9,5 @@ var searchData=
   ['forcefield_5ftypes',['forcefield_types',['../structindigox_1_1_dihedral_1_1_impl.html#a6656e984f02262e42c037393d27934dc',1,'indigox::Dihedral::Impl']]],
   ['formal_5fcharge',['formal_charge',['../structindigox_1_1_eln_vert_prop.html#abd5a6d8d3feb6589bc6d9f9ef58f26bc',1,'indigox::ElnVertProp::formal_charge()'],['../structindigox_1_1_atom_1_1_impl.html#a2cc0a851ae0447f4d3a5843b29024ad0',1,'indigox::Atom::Impl::formal_charge()']]],
   ['fourth',['fourth',['../structstdx_1_1quad.html#a8ab1ae409754ca41d56783c259c66ad3',1,'stdx::quad']]],
-  ['frag',['frag',['../structindigox_1_1algorithm_1_1_cherry_picker_callback.html#a60f8c504c2a66fa36f739ebcc362890f',1,'indigox::algorithm::CherryPickerCallback::frag()'],['../structindigox_1_1_fragment_1_1_fragment_data.html#a96f90b35221f3d64234015107a061ebd',1,'indigox::Fragment::FragmentData::frag()']]],
-  ['fragmentcycles',['FragmentCycles',['../structindigox_1_1_athenaeum_1_1_settings.html#ad66a595159ed46642cadffbf828c62df',1,'indigox::Athenaeum::Settings']]],
-  ['fragments',['fragments',['../structindigox_1_1_athenaeum_1_1_athenaeum_data.html#a7fe30ec6caa0222500db93eb71b0e787',1,'indigox::Athenaeum::AthenaeumData']]],
-  ['full_5fgraph',['full_graph',['../structindigox_1_1algorithm_1_1_charge_group_optimiser.html#a32db605ccaacd796cd99624bf4e96d70',1,'indigox::algorithm::ChargeGroupOptimiser']]],
   ['furthest',['furthest',['../structindigox_1_1algorithm_1_1_traversal_results.html#a3a21ee4c5239eaaa1f108c5c0fbc609a',1,'indigox::algorithm::TraversalResults']]]
 ];

@@ -1,10 +1,8 @@
 var classindigox_1_1_element =
 [
-    [ "ElementImpl", "structindigox_1_1_element_1_1_element_impl.html", "structindigox_1_1_element_1_1_element_impl" ],
     [ "Element", "classindigox_1_1_element.html#ab6edd5ea4f400b450f07203f432d1c81", null ],
     [ "Element", "classindigox_1_1_element.html#a70bf0196dba1539ad1b53d110476ec27", null ],
     [ "Element", "classindigox_1_1_element.html#a5a9f56bf5b2556777a763ae2a202d9fa", null ],
-    [ "Element", "classindigox_1_1_element.html#a4abf77d7ba6a61d6486bd25c82fe59ab", null ],
     [ "GetAtomicMass", "classindigox_1_1_element.html#a2c881c14b105f45a8d7f555aedc12964", null ],
     [ "GetAtomicNumber", "classindigox_1_1_element.html#ad9cdcf689d32baf1d9fb036dad20b439", null ],
     [ "GetAtomicRadius", "classindigox_1_1_element.html#a8ef5c8af34af15b1f07f13076d7f7d49", null ],
@@ -24,14 +22,13 @@ var classindigox_1_1_element =
     [ "operator!=", "classindigox_1_1_element.html#a4c4d6755349ab39c161f63afaaea5737", null ],
     [ "operator<", "classindigox_1_1_element.html#a47185026d5d4eeeec00cc3428fb4dbaa", null ],
     [ "operator<=", "classindigox_1_1_element.html#ad6f9f5694a058c6c12f6ea4d2b13794a", null ],
-    [ "operator=", "classindigox_1_1_element.html#addd62f91a693238944a247c241404264", null ],
-    [ "operator=", "classindigox_1_1_element.html#a50637bc6d2d06ecea853ea310522a159", null ],
+    [ "operator=", "classindigox_1_1_element.html#a5a202001e98a7f9b5e512c078ec394a0", null ],
+    [ "operator=", "classindigox_1_1_element.html#ab9ec0496fe8bac890618c4122f1c7822", null ],
     [ "operator==", "classindigox_1_1_element.html#a423aee5ec69cba55a124f6337b0f55c6", null ],
     [ "operator==", "classindigox_1_1_element.html#aa6518c54f85f356d6c30a526b2c62ac7", null ],
     [ "operator==", "classindigox_1_1_element.html#a0c9eb5bfed56ca06c2741e57a972fa6f", null ],
     [ "operator>", "classindigox_1_1_element.html#abefce78acbb4e3a6b7c3b300fbcad930", null ],
     [ "operator>=", "classindigox_1_1_element.html#a1384c32ee40d47d17e356c902fa26b32", null ],
     [ "indigox::test::TestElement", "classindigox_1_1_element.html#a042e310959659a3ce1b3e5fb92f0499f", null ],
-    [ "PeriodicTable", "classindigox_1_1_element.html#a02c10a8f89d6b1383c110a33ff1b7916", null ],
-    [ "m_elemdat", "classindigox_1_1_element.html#a6f6c0e90c5713597cd1e5a9d65e69de0", null ]
+    [ "PeriodicTable", "classindigox_1_1_element.html#a02c10a8f89d6b1383c110a33ff1b7916", null ]
 ];

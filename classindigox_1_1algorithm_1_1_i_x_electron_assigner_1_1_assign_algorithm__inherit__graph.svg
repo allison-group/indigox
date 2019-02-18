@@ -12,14 +12,17 @@
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
+<g id="a_node1"><a xlink:title="Base class for an electron assignment algorithm.">
 <polygon fill="#bfbfbf" stroke="#000000" points="63.4976,-55.5 63.4976,-83.5 164.5366,-83.5 164.5366,-55.5 63.4976,-55.5"/>
 <text text-anchor="start" x="71.4976" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">IXElectronAssigner</text>
 <text text-anchor="middle" x="114.0171" y="-61.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::AssignAlgorithm</text>
+</a>
+</g>
 </g>
 <!-- Node1 -->
 <g id="node2" class="node">
 <title>Node1</title>
-<g id="a_node2"><a xlink:href="classindigox_1_1algorithm_1_1_i_x_a_star_optimisation.html" target="_top" xlink:title="IXAStarOptimisation">
+<g id="a_node2"><a xlink:href="classindigox_1_1algorithm_1_1_i_x_a_star_optimisation.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-18.5 106.0342,-18.5 106.0342,-.5 0,-.5"/>
 <text text-anchor="middle" x="53.0171" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">IXAStarOptimisation</text>
 </a>
@@ -34,7 +37,7 @@
 <!-- Node2 -->
 <g id="node3" class="node">
 <title>Node2</title>
-<g id="a_node3"><a xlink:href="classindigox_1_1algorithm_1_1_i_x_local_optimisation.html" target="_top" xlink:title="Local optimisation electron assignment algorithm. ">
+<g id="a_node3"><a xlink:href="classindigox_1_1algorithm_1_1_i_x_local_optimisation.html" target="_top" xlink:title="Local optimisation electron assignment algorithm.">
 <polygon fill="#ffffff" stroke="#000000" points="123.5518,-.5 123.5518,-18.5 228.4824,-18.5 228.4824,-.5 123.5518,-.5"/>
 <text text-anchor="middle" x="176.0171" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">IXLocalOptimisation</text>
 </a>

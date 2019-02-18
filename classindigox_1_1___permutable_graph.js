@@ -7,6 +7,5 @@ var classindigox_1_1___permutable_graph =
     [ "GetSourceGraph", "classindigox_1_1___permutable_graph.html#a40d0faaaa6abb00a0a728768b145a8d3", null ],
     [ "PGVToMGVTable", "classindigox_1_1___permutable_graph.html#a0e3ec36d265f281c43f9c11c63eee60c", null ],
     [ "SetInput", "classindigox_1_1___permutable_graph.html#a33ff39b6e754ffd5268160247701ee7d", null ],
-    [ "ToDGFString", "classindigox_1_1___permutable_graph.html#a7eeafa6c6a609a42c63052a98ba29fcf", null ],
-    [ "source_", "classindigox_1_1___permutable_graph.html#a1f94ef089d8b13c3d4c84a0c6caf8f6b", null ]
+    [ "ToDGFString", "classindigox_1_1___permutable_graph.html#a7eeafa6c6a609a42c63052a98ba29fcf", null ]
 ];

@@ -12,14 +12,20 @@
 <!-- Node1 -->
 <g id="node1" class="node">
 <title>Node1</title>
+<g id="a_node1"><a xlink:title=" ">
 <polygon fill="#bfbfbf" stroke="#000000" points="15.2881,-.5 15.2881,-18.5 83.5342,-18.5 83.5342,-.5 15.2881,-.5"/>
 <text text-anchor="middle" x="49.4111" y="-6.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">TDVertProp</text>
+</a>
+</g>
 </g>
 <!-- Node2 -->
 <g id="node2" class="node">
 <title>Node2</title>
+<g id="a_node2"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="0,-65.5 0,-83.5 98.8223,-83.5 98.8223,-65.5 0,-65.5"/>
 <text text-anchor="middle" x="49.4111" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">set&lt; PermVertex &gt;</text>
+</a>
+</g>
 </g>
 <!-- Node2&#45;&gt;Node1 -->
 <g id="edge1" class="edge">
@@ -31,7 +37,7 @@
 <!-- Node3 -->
 <g id="node3" class="node">
 <title>Node3</title>
-<g id="a_node3"><a xlink:title="STL class. ">
+<g id="a_node3"><a xlink:title="STL class.">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="22.7881,-130.5 22.7881,-148.5 76.0342,-148.5 76.0342,-130.5 22.7881,-130.5"/>
 <text text-anchor="middle" x="49.4111" y="-136.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">set&lt; K &gt;</text>
 </a>
@@ -47,8 +53,11 @@
 <!-- Node4 -->
 <g id="node4" class="node">
 <title>Node4</title>
+<g id="a_node4"><a xlink:title=" ">
 <polygon fill="#ffffff" stroke="#bfbfbf" points="34.9111,-195.5 34.9111,-213.5 63.9111,-213.5 63.9111,-195.5 34.9111,-195.5"/>
 <text text-anchor="middle" x="49.2461" y="-201.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">K</text>
+</a>
+</g>
 </g>
 <!-- Node4&#45;&gt;Node3 -->
 <g id="edge3" class="edge">

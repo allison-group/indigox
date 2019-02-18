@@ -1,7 +1,5 @@
 <map id="include/indigox/algorithm/electron_assignment/assigner.hpp" name="include/indigox/algorithm/electron_assignment/assigner.hpp">
-<area shape="rect" id="node2" href="$astar__optimisation_8hpp.html" title="include/indigox/algorithm\l/electron_assignment/astar\l_optimisation.hpp" alt="" coords="360,92,541,144"/>
-<area shape="rect" id="node3" href="$assigner_8cpp.html" title="src/algorithm/electron\l_assignment/assigner.cpp" alt="" coords="5,192,181,231"/>
-<area shape="rect" id="node4" href="$astar__optimisation_8cpp.html" title="src/algorithm/electron\l_assignment/astar_optimisation.cpp" alt="" coords="461,192,695,231"/>
-<area shape="rect" id="node5" href="$local__optimisation_8hpp.html" title="include/indigox/algorithm\l/electron_assignment/local\l_optimisation.hpp" alt="" coords="106,92,285,144"/>
-<area shape="rect" id="node6" href="$local__optimisation_8cpp.html" title="src/algorithm/electron\l_assignment/local_optimisation.cpp" alt="" coords="205,192,437,231"/>
+<area shape="rect" id="node1" title=" " alt="" coords="84,5,311,44"/>
+<area shape="rect" id="node2" href="$astar__optimisation_8hpp.html" title=" " alt="" coords="5,92,187,144"/>
+<area shape="rect" id="node3" href="$local__optimisation_8hpp.html" title=" " alt="" coords="210,92,390,144"/>
 </map>

@@ -10,13 +10,12 @@ var classindigox_1_1_residue =
       [ "Lipid", "classindigox_1_1_residue.html#a1d1cfd8ffb84e947f82999c682b666a7a9241f23cbe23b4d02d1bbbd991b6f4cb", null ],
       [ "NonSpecific", "classindigox_1_1_residue.html#a1d1cfd8ffb84e947f82999c682b666a7a1ec2f098b6dfd7637fa34b8b3aff0f00", null ]
     ] ],
-    [ "Residue", "classindigox_1_1_residue.html#acfa5315e37d32c72cfccb3bfefffe95a", null ],
     [ "Residue", "classindigox_1_1_residue.html#a4f93914f615c6a854ad5d7b929b4d8b0", null ],
     [ "Residue", "classindigox_1_1_residue.html#ae13f9e68cd5e8e378673639ef88e4579", null ],
     [ "Residue", "classindigox_1_1_residue.html#a8b53303c6dca06433f372bb5e47473b8", null ],
     [ "~ Residue", "classindigox_1_1_residue.html#acfc9d98f1f88738d6f043292ce08fe21", null ],
-    [ "GetAtoms", "classindigox_1_1_residue.html#a6e40613b18cf3063848eb7cc08af0803", null ],
-    [ "GetType", "classindigox_1_1_residue.html#ac087d6767ff6f50d896ce845f21a83af", null ],
+    [ "GetAtoms", "classindigox_1_1_residue.html#a545c7700075574d804d61c97e1f66e92", null ],
+    [ "GetType", "classindigox_1_1_residue.html#aa8bd28fe7e01cf269120688995df7ef0", null ],
     [ "HasAtom", "classindigox_1_1_residue.html#a381c72232c6b71cf76e912ef85ebe65c", null ],
     [ "IsAlphaAminoAcid", "classindigox_1_1_residue.html#a65be9bbff1a0af31e6ae43f897aac391", null ],
     [ "IsAminoAcid", "classindigox_1_1_residue.html#ac9d1ceecfaadd83be98586935557e340", null ],
@@ -35,9 +34,7 @@ var classindigox_1_1_residue =
     [ "operator==", "classindigox_1_1_residue.html#a687079cd54348cc218c5102457e30ded", null ],
     [ "operator>", "classindigox_1_1_residue.html#aae2d980a5be4a8e6aa4b20a820a4e440", null ],
     [ "operator>=", "classindigox_1_1_residue.html#a60a2607e1f07d258218076653c12bd70", null ],
-    [ "serialise", "classindigox_1_1_residue.html#a1182fd2f75ad4326dcbc602dd630e746", null ],
     [ "cereal::access", "classindigox_1_1_residue.html#ab2f44cbb59a08132f4c843e5225bba0e", null ],
     [ "Molecule", "classindigox_1_1_residue.html#ae0d120b8bbafe454abebd374e2402082", null ],
-    [ "operator<<", "classindigox_1_1_residue.html#a0d788dc6c22a2ee3de0e0ecdd5aecbd5", null ],
-    [ "m_data", "classindigox_1_1_residue.html#a1dfac05e3397ecc6e3f46f27299e8751", null ]
+    [ "operator<<", "classindigox_1_1_residue.html#a0d788dc6c22a2ee3de0e0ecdd5aecbd5", null ]
 ];

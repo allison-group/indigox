@@ -58,13 +58,16 @@ var sectionId = 'dynsection-1';
 <!-- Node4 -->
 <g id="node1" class="node">
 <title>Node4</title>
+<g id="a_node1"><a xlink:title=" ">
 <polygon fill="#bfbfbf" stroke="#000000" points="642.9219,-20.5 642.9219,-38.5 741.1631,-38.5 741.1631,-20.5 642.9219,-20.5"/>
 <text text-anchor="middle" x="692.0425" y="-26.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">CMGPrintCallback</text>
+</a>
+</g>
 </g>
 <!-- Node5 -->
 <g id="node2" class="node">
 <title>Node5</title>
-<g id="a_node2"><a xlink:href="structindigox_1_1algorithm_1_1_c_m_g_callback.html" target="_top" xlink:title="CMGCallback">
+<g id="a_node2"><a xlink:href="structindigox_1_1algorithm_1_1_c_m_g_callback.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="528.2422,-20.5 528.2422,-38.5 605.9219,-38.5 605.9219,-20.5 528.2422,-20.5"/>
 <text text-anchor="middle" x="567.082" y="-26.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">CMGCallback</text>
 </a>
@@ -79,7 +82,7 @@ var sectionId = 'dynsection-1';
 <!-- Node6 -->
 <g id="node3" class="node">
 <title>Node6</title>
-<g id="a_node3"><a xlink:href="structindigox_1_1algorithm_1_1_mapping_callback.html" target="_top" xlink:title="MappingCallback\&lt; graph\l::CMGVertex, graph::CMGEdge,\l graph::CondensedMolecularGraph,\l graph::Undirected, graph::GraphLabel,\l graph::GraphLabel \&gt;">
+<g id="a_node3"><a xlink:href="structindigox_1_1algorithm_1_1_mapping_callback.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="301.2432,-.5 301.2432,-58.5 491.2422,-58.5 491.2422,-.5 301.2432,-.5"/>
 <text text-anchor="start" x="309.2432" y="-46.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">MappingCallback&lt; graph</text>
 <text text-anchor="start" x="309.2432" y="-36.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::CMGVertex, graph::CMGEdge,</text>
@@ -98,7 +101,7 @@ var sectionId = 'dynsection-1';
 <!-- Node7 -->
 <g id="node4" class="node">
 <title>Node7</title>
-<g id="a_node4"><a xlink:href="structindigox_1_1algorithm_1_1_mapping_callback.html" target="_top" xlink:title="MappingCallback\&lt; V,\l E, S, D, VP, EP \&gt;">
+<g id="a_node4"><a xlink:href="structindigox_1_1algorithm_1_1_mapping_callback.html" target="_top" xlink:title=" ">
 <polygon fill="#ffffff" stroke="#000000" points="0,-15.5 0,-43.5 109.8574,-43.5 109.8574,-15.5 0,-15.5"/>
 <text text-anchor="start" x="8" y="-31.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">MappingCallback&lt; V,</text>
 <text text-anchor="middle" x="54.9287" y="-21.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> E, S, D, VP, EP &gt;</text>

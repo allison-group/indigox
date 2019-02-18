@@ -1,8 +1,0 @@
-<map id="MolecularGraph::Impl" name="MolecularGraph::Impl">
-<area shape="rect" id="node2" href="$classindigox_1_1graph_1_1_molecular_graph.html" title="Class containing a graph representation of a molecule. " alt="" coords="680,16,796,41"/>
-<area shape="rect" id="node3" href="$classindigox_1_1graph_1_1_base_graph.html" title="BaseGraph\&lt; MGVertex,\l MGEdge, MolecularGraph \&gt;" alt="" coords="390,5,582,44"/>
-<area shape="rect" id="node4" href="$classindigox_1_1graph_1_1_base_graph.html" title="Template base class for all graphs used in the indigoX library. " alt="" coords="5,41,150,80"/>
-<area shape="rect" id="node7" href="$classindigox_1_1graph_1_1_base_graph.html" title="BaseGraph\&lt; CMGVertex,\l CMGEdge, CondensedMolecular\lGraph \&gt;" alt="" coords="376,68,597,120"/>
-<area shape="rect" id="node5" href="$classindigox_1_1_molecule.html" title="Molecule" alt="" coords="701,124,775,149"/>
-<area shape="rect" id="node6" href="$classindigox_1_1graph_1_1_condensed_molecular_graph.html" title="CondensedMolecularGraph" alt="" coords="646,75,830,100"/>
-</map>

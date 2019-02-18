@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['option',['Option',['../namespaceindigox_1_1utils.html#a0e65ad13124ea2cb5e255b640464e35f',1,'indigox::utils']]],
-  ['order',['Order',['../classindigox_1_1_bond.html#afbb7a18945a0832b5189bbe768dd0c51',1,'indigox::Bond']]],
-  ['overlaptype',['OverlapType',['../classindigox_1_1_fragment.html#aadda79d10876621f6d849e367f3e85a3',1,'indigox::Fragment']]]
+  ['settings',['Settings',['../classindigox_1_1algorithm_1_1_cherry_picker.html#a4c05250977b08f4d2fe1fe19dd1df0fa',1,'indigox::algorithm::CherryPicker::Settings()'],['../classindigox_1_1_athenaeum.html#a4c05250977b08f4d2fe1fe19dd1df0fa',1,'indigox::Athenaeum::Settings()']]],
+  ['stereo',['Stereo',['../classindigox_1_1_atom.html#a0efd4e24b2435aff80b5a5bac9b6cff1',1,'indigox::Atom::Stereo()'],['../classindigox_1_1_bond.html#a0efd4e24b2435aff80b5a5bac9b6cff1',1,'indigox::Bond::Stereo()']]]
 ];

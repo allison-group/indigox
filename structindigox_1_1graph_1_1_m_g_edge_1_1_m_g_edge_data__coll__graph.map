@@ -1,6 +1,0 @@
-<map id="MGEdge::MGEdgeData" name="MGEdge::MGEdgeData">
-<area shape="rect" id="node2" href="$classindigox_1_1graph_1_1_molecular_graph.html" title="Class containing a graph representation of a molecule. " alt="" coords="43,207,159,232"/>
-<area shape="rect" id="node3" href="$classindigox_1_1graph_1_1_base_graph.html" title="BaseGraph\&lt; MGVertex,\l MGEdge, MolecularGraph \&gt;" alt="" coords="5,119,197,157"/>
-<area shape="rect" id="node4" href="$classindigox_1_1graph_1_1_base_graph.html" title="Template base class for all graphs used in the indigoX library. " alt="" coords="29,5,173,44"/>
-<area shape="rect" id="node5" href="$classindigox_1_1_bond.html" title="Bond" alt="" coords="183,207,235,232"/>
-</map>

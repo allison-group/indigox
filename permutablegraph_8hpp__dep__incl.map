@@ -1,7 +1,5 @@
 <map id="include/indigox/classes/permutablegraph.hpp" name="include/indigox/classes/permutablegraph.hpp">
-<area shape="rect" id="node2" href="$treedecomp_8hpp.html" title="include/indigox/classes\l/treedecomp.hpp" alt="" coords="231,92,388,131"/>
-<area shape="rect" id="node5" href="$permutablegraph_8cpp.html" title="src/classes/permutablegraph.cpp" alt="" coords="273,185,490,211"/>
-<area shape="rect" id="node6" href="$treedecomp_8cpp.html" title="src/classes/treedecomp.cpp" alt="" coords="514,185,700,211"/>
-<area shape="rect" id="node3" href="$nicetreedecomp_8hpp.html" title="include/indigox/classes\l/nicetreedecomp.hpp" alt="" coords="91,179,248,217"/>
-<area shape="rect" id="node4" href="$nicetreedecomp_8cpp.html" title="src/classes/nicetreedecomp.cpp" alt="" coords="5,265,216,291"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,5,163,44"/>
+<area shape="rect" id="node2" href="$treedecomp_8hpp.html" title=" " alt="" coords="5,92,163,131"/>
+<area shape="rect" id="node3" href="$nicetreedecomp_8hpp.html" title=" " alt="" coords="5,179,163,217"/>
 </map>

@@ -1,22 +1,5 @@
 var classindigox_1_1_f_f_dihedral =
 [
-    [ "Impl", "structindigox_1_1_f_f_dihedral_1_1_impl.html", "structindigox_1_1_f_f_dihedral_1_1_impl" ],
-    [ "AllowedMask", "classindigox_1_1_f_f_dihedral.html#af4a528bef7d3a7ba8d3024c86e98804c", null ],
-    [ "DataStore", "classindigox_1_1_f_f_dihedral.html#a6bcf5ec2b8d00b38d6da85e8aaf3feb4", null ],
-    [ "AllowEnum", "classindigox_1_1_f_f_dihedral.html#a53924f382be64a3285bac944aa8c4eee", [
-      [ "Allow_PhaseShift", "classindigox_1_1_f_f_dihedral.html#a53924f382be64a3285bac944aa8c4eeea12b36aea8cc2c60b3d9054470e1252d8", null ],
-      [ "Allow_ForceConstant", "classindigox_1_1_f_f_dihedral.html#a53924f382be64a3285bac944aa8c4eeea2528ea01825bb2641e8a03dbc6b224fb", null ],
-      [ "Allow_Multiplicity", "classindigox_1_1_f_f_dihedral.html#a53924f382be64a3285bac944aa8c4eeead376a0ae6a639cf109cb36f3484515ef", null ],
-      [ "Allow_IdealAngle", "classindigox_1_1_f_f_dihedral.html#a53924f382be64a3285bac944aa8c4eeea02dc9f3801cafd45723e33ea7d767420", null ],
-      [ "num_allow_positions", "classindigox_1_1_f_f_dihedral.html#a53924f382be64a3285bac944aa8c4eeea5f0a8f0be52caa052ac1be5a11ac4c64", null ]
-    ] ],
-    [ "StoreEnum", "classindigox_1_1_f_f_dihedral.html#a297802c675dbfbe6e29e1d1c0f678ef1", [
-      [ "Store_PhaseShift", "classindigox_1_1_f_f_dihedral.html#a297802c675dbfbe6e29e1d1c0f678ef1a66926293dbada8bf6ccca277fdc60137", null ],
-      [ "Store_ForceConstant", "classindigox_1_1_f_f_dihedral.html#a297802c675dbfbe6e29e1d1c0f678ef1a911e5b36cf6452aaf6040eaa662646bb", null ],
-      [ "Store_Multiplicity", "classindigox_1_1_f_f_dihedral.html#a297802c675dbfbe6e29e1d1c0f678ef1ad3ccdc16478078a0d253ffe1ff267ff1", null ],
-      [ "Store_IdealAngle", "classindigox_1_1_f_f_dihedral.html#a297802c675dbfbe6e29e1d1c0f678ef1af0ad37c23f4957798a67762fd6a22257", null ],
-      [ "STORE_SIZE", "classindigox_1_1_f_f_dihedral.html#a297802c675dbfbe6e29e1d1c0f678ef1a1b90f27d071daa9c0457c3f1074b7131", null ]
-    ] ],
     [ "Type", "classindigox_1_1_f_f_dihedral.html#a1d1cfd8ffb84e947f82999c682b666a7", [
       [ "Empty", "classindigox_1_1_f_f_dihedral.html#a1d1cfd8ffb84e947f82999c682b666a7ace2c8aed9c2fa0cfbed56cbda4d8bf07", null ],
       [ "Proper", "classindigox_1_1_f_f_dihedral.html#a1d1cfd8ffb84e947f82999c682b666a7a482da74d7594524acd1cd9de5d5fb0dc", null ],
@@ -30,26 +13,23 @@ var classindigox_1_1_f_f_dihedral =
     [ "FFDihedral", "classindigox_1_1_f_f_dihedral.html#a6a1003a74455ccc0f6bbdbf932b5a351", null ],
     [ "FFDihedral", "classindigox_1_1_f_f_dihedral.html#a89537180e6c4a502d5516d54b04a96b2", null ],
     [ "~ FFDihedral", "classindigox_1_1_f_f_dihedral.html#a69ccafe9b97ab7c67a531243275d886a", null ],
-    [ "FFDihedral", "classindigox_1_1_f_f_dihedral.html#a35afa5e4e422f23c17545d78c99b2512", null ],
     [ "GetForceConstant", "classindigox_1_1_f_f_dihedral.html#a23cad91fa0b6131c3385385323a5813d", null ],
     [ "GetForcefield", "classindigox_1_1_f_f_dihedral.html#a83daf7ae154057e12081a4bd1fb2c0af", null ],
     [ "GetID", "classindigox_1_1_f_f_dihedral.html#ab7bd9ec245b53aeada5f659e1003557e", null ],
     [ "GetIdealAngle", "classindigox_1_1_f_f_dihedral.html#ab021b69b9cb6d0a0e8dd4ca277859204", null ],
     [ "GetMultiplicity", "classindigox_1_1_f_f_dihedral.html#aff95f0bbef5d7096edd659c1546c0d78", null ],
     [ "GetPhaseShift", "classindigox_1_1_f_f_dihedral.html#aa627902a5b8e3efb3c03e8db16616f5c", null ],
-    [ "GetType", "classindigox_1_1_f_f_dihedral.html#a19041e891abe7b5066e7281ff27b7c1b", null ],
+    [ "GetType", "classindigox_1_1_f_f_dihedral.html#a485decc00facb0972f8775a8a20851fa", null ],
     [ "operator bool", "classindigox_1_1_f_f_dihedral.html#a67b76affb3b5d35fa419ac234144038b", null ],
     [ "operator!=", "classindigox_1_1_f_f_dihedral.html#af61a1143bbcab66f3a006536cbad20aa", null ],
     [ "operator<", "classindigox_1_1_f_f_dihedral.html#a9e06c7b2d1cd0812b2bdb165bd555f96", null ],
     [ "operator<=", "classindigox_1_1_f_f_dihedral.html#a1e1c4a92cea40fc8a0e27f9f410b443d", null ],
-    [ "operator=", "classindigox_1_1_f_f_dihedral.html#ae12f989033337422ea1a662a3d303fa0", null ],
     [ "operator=", "classindigox_1_1_f_f_dihedral.html#a692f47dd55fcd775ec6dfa66c6265164", null ],
+    [ "operator=", "classindigox_1_1_f_f_dihedral.html#ae12f989033337422ea1a662a3d303fa0", null ],
     [ "operator==", "classindigox_1_1_f_f_dihedral.html#aaadc9b1e59e0d160a101e570b1b696ad", null ],
     [ "operator>", "classindigox_1_1_f_f_dihedral.html#a20187ed4a01581bfe6d02a357f20ce4d", null ],
     [ "operator>=", "classindigox_1_1_f_f_dihedral.html#a935df374c1a8d7b6b2e2e902ddddc187", null ],
-    [ "serialise", "classindigox_1_1_f_f_dihedral.html#a1182fd2f75ad4326dcbc602dd630e746", null ],
     [ "cereal::access", "classindigox_1_1_f_f_dihedral.html#ab2f44cbb59a08132f4c843e5225bba0e", null ],
     [ "Forcefield", "classindigox_1_1_f_f_dihedral.html#a26524d7109b40a43349a0185d27d0e59", null ],
-    [ "operator<<", "classindigox_1_1_f_f_dihedral.html#a505306331c0e2d30fea25e039013adc9", null ],
-    [ "m_data", "classindigox_1_1_f_f_dihedral.html#a1dfac05e3397ecc6e3f46f27299e8751", null ]
+    [ "operator<<", "classindigox_1_1_f_f_dihedral.html#a505306331c0e2d30fea25e039013adc9", null ]
 ];

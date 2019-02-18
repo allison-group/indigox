@@ -1,10 +1,5 @@
 var classindigox_1_1_forcefield =
 [
-    [ "Impl", "structindigox_1_1_forcefield_1_1_impl.html", "structindigox_1_1_forcefield_1_1_impl" ],
-    [ "AngleTypes", "classindigox_1_1_forcefield.html#a35e60169bc86878e5391b6b39323ee19", null ],
-    [ "AtomTypes", "classindigox_1_1_forcefield.html#ac3521d79b887ce7c8351173afde6eba9", null ],
-    [ "BondTypes", "classindigox_1_1_forcefield.html#a01747036221420ad6c277d77a88ec96b", null ],
-    [ "DihedralTypes", "classindigox_1_1_forcefield.html#a705de3721d5594a4d6a79a618c3a0955", null ],
     [ "Family", "classindigox_1_1_forcefield.html#a699d1af4b7105b14fb7d5db72e3ad6f0", [
       [ "Empty", "classindigox_1_1_forcefield.html#a699d1af4b7105b14fb7d5db72e3ad6f0ace2c8aed9c2fa0cfbed56cbda4d8bf07", null ],
       [ "GROMOS", "classindigox_1_1_forcefield.html#a699d1af4b7105b14fb7d5db72e3ad6f0adc94cf21a4d4302322339039c4a4b6a0", null ],
@@ -25,16 +20,13 @@ var classindigox_1_1_forcefield =
     [ "GetBondType", "classindigox_1_1_forcefield.html#a75af729244c9f562182c864c3a6e050e", null ],
     [ "GetDihedralType", "classindigox_1_1_forcefield.html#a057e7442c73919d8d4e156cf65e9d86c", null ],
     [ "GetDihedralType", "classindigox_1_1_forcefield.html#a99d4e06783fd0266998035a2dc1dd7e6", null ],
-    [ "GetFamily", "classindigox_1_1_forcefield.html#a9972146c584cbc7e5f9afa39e0580aa4", null ],
+    [ "GetFamily", "classindigox_1_1_forcefield.html#abcb820d0b70dbde56aabfcf55a486d01", null ],
     [ "GetName", "classindigox_1_1_forcefield.html#a9a98946a64f3893b085f650932c9dfee", null ],
     [ "LinkAngleTypes", "classindigox_1_1_forcefield.html#a04dc20004b0d82888caa283ac1d6cf5f", null ],
     [ "LinkBondTypes", "classindigox_1_1_forcefield.html#ad5ee2c88f5d7cb3bfddf3d4d9f8a6873", null ],
-    [ "NewAngleType", "classindigox_1_1_forcefield.html#a8176cc6bafdeb9548d8a1323cf451281", null ],
     [ "NewAngleType", "classindigox_1_1_forcefield.html#a38c1b359027745a0e23ca1bef50f3cd8", null ],
     [ "NewAtomType", "classindigox_1_1_forcefield.html#adb83defc5aae716dc2a10704022f14db", null ],
-    [ "NewBondType", "classindigox_1_1_forcefield.html#a4ca78c725d61fb48c8f3c8a015de4bc5", null ],
     [ "NewBondType", "classindigox_1_1_forcefield.html#adadfade0028040b42a7a00ee592e986a", null ],
-    [ "NewDihedralType", "classindigox_1_1_forcefield.html#aabfd011bb6bfeda616f0663785561e37", null ],
     [ "NewDihedralType", "classindigox_1_1_forcefield.html#a39fc03cf3c9233c4670cc124414199b4", null ],
     [ "NewDihedralType", "classindigox_1_1_forcefield.html#a4eca94226f3d4e68b96ba77ee933b955", null ],
     [ "NumAngleTypes", "classindigox_1_1_forcefield.html#a8717f30904d2f935303ab11ebbee3d72", null ],
@@ -57,8 +49,6 @@ var classindigox_1_1_forcefield =
     [ "ReserveAtomTypes", "classindigox_1_1_forcefield.html#a470452f332fa6d6b44f1b091f4d881e2", null ],
     [ "ReserveBondTypes", "classindigox_1_1_forcefield.html#a42b0d7364288de0a2a6681a6d1aed241", null ],
     [ "ReserveDihedralTypes", "classindigox_1_1_forcefield.html#a67abfd0eaadf739dd7b0e4ae4d0652a3", null ],
-    [ "serialise", "classindigox_1_1_forcefield.html#a1182fd2f75ad4326dcbc602dd630e746", null ],
     [ "cereal::access", "classindigox_1_1_forcefield.html#ab2f44cbb59a08132f4c843e5225bba0e", null ],
-    [ "operator<<", "classindigox_1_1_forcefield.html#a64ab09aeb16bbbdb6d0ca6d62430d111", null ],
-    [ "m_data", "classindigox_1_1_forcefield.html#a1dfac05e3397ecc6e3f46f27299e8751", null ]
+    [ "operator<<", "classindigox_1_1_forcefield.html#a64ab09aeb16bbbdb6d0ca6d62430d111", null ]
 ];
