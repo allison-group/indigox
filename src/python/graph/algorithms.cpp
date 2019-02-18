@@ -118,46 +118,43 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
   //  m.def("SubgraphIsomorphisms", py::overload_cast<MG&, MG&,
   //  MGCallback&>(&SubgraphIsomorphisms));
 
-  using VParam = CherryPicker::VertexParameters;
-  using EParam = CherryPicker::EdgeParameters;
   using CPSet = CherryPicker::Settings;
 
-  py::class_<CherryPicker> cp(m, "CherryPicker");
+  py::class_<CherryPicker> cherrypicker(m, "CherryPicker");
 
-  py::enum_<VParam>(cp, "VertexParameters", py::arithmetic())
-      .value("None", VParam::None)
-      .value("ElementType", VParam::ElementType)
-      .value("FormalCharge", VParam::FormalCharge)
-      .value("CondensedVertices", VParam::CondensedVertices)
-      .value("CyclicNature", VParam::CyclicNature)
-      .value("Stereochemistry", VParam::Stereochemistry)
-      .value("Aromaticity", VParam::Aromaticity)
-      .value("Degree", VParam::Degree);
+  py::enum_<CPSet>(cherrypicker, "Settings")
+      // Boolean settings
+      .value("VertexElement", CPSet::VertexElement)
+      .value("VertexFormalCharge", CPSet::VertexFormalCharge)
+      .value("VertexCondensed", CPSet::VertexCondensed)
+      .value("VertexCyclic", CPSet::VertexCyclic)
+      .value("VertexCyclicSize", CPSet::VertexCyclicSize)
+      .value("VertexAromaticity", CPSet::VertexAromaticity)
+      .value("VertexDegree", CPSet::VertexDegree)
+      .value("EdgeBondOrder", CPSet::EdgeBondOrder)
+      .value("EdgeStereochemistry", CPSet::EdgeStereochemistry)
+      .value("EdgeCyclic", CPSet::EdgeCyclic)
+      .value("EdgeCyclicSize", CPSet::EdgeCyclicSize)
+      .value("EdgeDegree", CPSet::EdgeDegree)
+      .value("AllowDanglingBonds", CPSet::AllowDanglingBonds)
+      .value("AllowDanglingAngles", CPSet::AllowDanglingAngles)
+      .value("AllowDanglingDihedrals", CPSet::AllowDanglingDihedrals)
+      .value("ParameteriseFromAllPermutations",
+             CPSet::ParameteriseFromAllPermutations)
+      // Integer settings
+      .value("MinimumFragmentSize", CPSet::MinimumFragmentSize)
+      .value("MaximumFragmentSize", CPSet::MaximumFragmentSize);
 
-  py::enum_<EParam>(cp, "EdgeParameters", py::arithmetic())
-      .value("None", EParam::None)
-      .value("BondOrder", EParam::BondOrder)
-      .value("Stereochemistry", EParam::Stereochemistry)
-      .value("CyclicNature", EParam::CyclicNature)
-      .value("Aromaticity", EParam::Aromaticity)
-      .value("Degree", EParam::Degree);
-
-  py::class_<CPSet>(cp, "Settings")
-      .def_readwrite_static("AllowDanglingBonds", &CPSet::AllowDanglingBonds)
-      .def_readwrite_static("AllowDanglingAngles", &CPSet::AllowDanglingAngles)
-      .def_readwrite_static("AllowDanglingDihedrals",
-                            &CPSet::AllowDanglingDihedrals)
-      .def_readwrite_static("VertexMapping", &CPSet::VertexMapping)
-      .def_readwrite_static("EdgeMapping", &CPSet::EdgeMapping)
-      .def_readwrite_static("MinimumFragmentSize", &CPSet::MinimumFragmentSize)
-      .def_readwrite_static("MaximumFragmentSize", &CPSet::MaximumFragmentSize)
-      .def_readwrite_static("ParameteriseFromAllPermutations",
-                            &CPSet::ParameteriseFromAllPermutations);
-
-  cp.def(py::init<const Forcefield &>())
+  cherrypicker.def(py::init<Forcefield &>())
       .def("AddAthenaeum", &CherryPicker::AddAthenaeum)
       .def("RemoveAthenaeum", &CherryPicker::RemoveAthenaeum)
       .def("NumAthenaeums", &CherryPicker::NumAthenaeums)
       .def("ParameteriseMolecule", &CherryPicker::ParameteriseMolecule)
-      .def("GetForcefield", &CherryPicker::GetForcefield);
+      .def("GetForcefield", &CherryPicker::GetForcefield)
+      .def("GetBool", &CherryPicker::GetBool)
+      .def("SetBool", &CherryPicker::SetBool)
+      .def("UnsetBool", &CherryPicker::UnsetBool)
+      .def("GetInt", &CherryPicker::GetInt)
+      .def("SetInt", &CherryPicker::SetInt)
+      .def("DefaultSettings", &CherryPicker::DefaultSettings);
 }

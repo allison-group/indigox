@@ -28,6 +28,7 @@ namespace indigox {
   // ===========================================================================
 
   struct Fragment::FragmentData {
+    Molecule source_molecule;
     graph::CondensedMolecularGraph graph;
     std::vector<graph::CMGVertex> frag;
     std::vector<Fragment::OverlapVertex> overlap;
@@ -41,7 +42,8 @@ namespace indigox {
     FragmentData() = default;
 
     template <class Archive> void serialise(Archive &archive, const uint32_t) {
-      archive(INDIGOX_SERIAL_NVP("graph", graph),
+      archive(INDIGOX_SERIAL_NVP("mol", source_molecule),
+              INDIGOX_SERIAL_NVP("graph", graph),
               INDIGOX_SERIAL_NVP("frag_verts", frag),
               INDIGOX_SERIAL_NVP("overlap_verts", overlap),
               INDIGOX_SERIAL_NVP("atoms", atoms),
@@ -114,6 +116,8 @@ namespace indigox {
                      std::vector<graph::MGVertex> &overlap)
       : m_data(std::make_shared<FragmentData>()) {
     if (frag.empty()) throw std::runtime_error("A fragment needs vertices");
+
+    m_data->source_molecule = G.GetMolecule();
 
     // Induce a new subgraph
     graph::MolecularGraph g = G;
@@ -296,45 +300,85 @@ namespace indigox {
   // == Athenaeum implementation ===============================================
   // ===========================================================================
 
-  struct Athenaeum::AthenaeumData {
+  using ATSet = Athenaeum::Settings;
+
+  struct Athenaeum::Impl {
+
+    std::bitset<(uint8_t)Settings::BoolCount> bool_parameters;
+    std::array<int32_t,
+               (uint8_t)Settings::IntCount - (uint8_t)Settings::BoolCount - 1>
+        int_parameters;
+
     Forcefield ff;
-    uint32_t overlap;
-    uint32_t ring_overlap;
-    bool self_consistent;
     MoleculeFragments fragments;
 
-    AthenaeumData() = default;
-    AthenaeumData(const Forcefield &f, uint32_t o, uint32_t r)
-        : ff(f), overlap(o), ring_overlap(r), self_consistent(false) {}
+    Impl() = default;
+    Impl(const Forcefield &f) : bool_parameters(0), ff(f) {}
 
     template <class Archive> void serialise(Archive &archive, const uint32_t) {
-      archive(INDIGOX_SERIAL_NVP("forcefield", ff),
-              INDIGOX_SERIAL_NVP("overlap", overlap),
-              INDIGOX_SERIAL_NVP("ring_overlap", ring_overlap),
-              INDIGOX_SERIAL_NVP("self_consistent", self_consistent),
+      archive(INDIGOX_SERIAL_NVP("bool_settings", bool_parameters),
+              INDIGOX_SERIAL_NVP("int_settings", int_parameters),
+              INDIGOX_SERIAL_NVP("forcefield", ff),
               INDIGOX_SERIAL_NVP("fragments", fragments));
     }
   };
 
   // Default settings
-  uint32_t Athenaeum::Settings::AtomLimit = 40;
-  uint32_t Athenaeum::Settings::MinimumFragmentSize = 1;
-  uint32_t Athenaeum::Settings::MaximumFragmentSize = 40;
-  bool Athenaeum::Settings::FragmentCycles = false;
-  uint32_t Athenaeum::Settings::MaximumCycleSize = 8;
-  uint32_t Athenaeum::Settings::DefaultOverlap = 2;
-  uint32_t Athenaeum::Settings::DefaultCycleOverlap = 2;
 
-  Athenaeum::Athenaeum(const Forcefield &ff)
-      : Athenaeum(ff, Settings::DefaultOverlap, Settings::DefaultCycleOverlap) {
+  void Athenaeum::DefaultSettings() {
+    SetInt(ATSet::MoleculeSizeLimit, 40);
+    SetInt(ATSet::MinimumFragmentSize, 1);
+    SetInt(ATSet::MaximumFragmentSize, 40);
+    SetInt(ATSet::OverlapLength, 2);
+    SetInt(ATSet::CycleSize, 8);
   }
 
-  Athenaeum::Athenaeum(const Forcefield &ff, uint32_t overlap)
-      : Athenaeum(ff, overlap, Settings::DefaultCycleOverlap) {}
+  bool Athenaeum::GetBool(ATSet param) {
+    if (param >= ATSet::BoolCount)
+      throw std::runtime_error("Not a boolean parameter");
+    return m_data->bool_parameters.test((uint8_t)param);
+  }
 
-  Athenaeum::Athenaeum(const Forcefield &ff, uint32_t overlap,
-                       uint32_t cycleoverlap)
-      : m_data(std::make_shared<AthenaeumData>(ff, overlap, cycleoverlap)) {}
+  void Athenaeum::SetBool(ATSet param) {
+    if (param >= ATSet::BoolCount)
+      throw std::runtime_error("Not a boolean parameter");
+    m_data->bool_parameters.set((uint8_t)param);
+  }
+
+  void Athenaeum::UnsetBool(ATSet param) {
+    if (param >= ATSet::BoolCount)
+      throw std::runtime_error("Not a boolean parameter");
+    m_data->bool_parameters.reset((uint8_t)param);
+  }
+
+  int32_t Athenaeum::GetInt(ATSet param) {
+    uint8_t offset = 1 + (uint8_t)ATSet::BoolCount;
+    if (param <= ATSet::BoolCount || param >= ATSet::IntCount)
+      throw std::runtime_error("Not an integer parameter");
+    return m_data->int_parameters[(uint8_t)param - offset];
+  }
+
+  void Athenaeum::SetInt(ATSet param, int32_t value) {
+    uint8_t offset = 1 + (uint8_t)ATSet::BoolCount;
+    if (param <= ATSet::BoolCount || param >= ATSet::IntCount)
+      throw std::runtime_error("Not an integer parameter");
+    m_data->int_parameters[(uint8_t)param - offset] = value;
+  }
+
+  Athenaeum::Athenaeum(const Forcefield &ff)
+      : m_data(std::make_shared<Impl>(ff)) {
+    DefaultSettings();
+  }
+
+  Athenaeum::Athenaeum(const Forcefield &ff, int32_t overlap) : Athenaeum(ff) {
+    SetInt(ATSet::OverlapLength, overlap);
+  }
+
+  // cycle overlap currently ignored
+  Athenaeum::Athenaeum(const Forcefield &ff, int32_t overlap, int32_t)
+      : Athenaeum(ff) {
+    SetInt(ATSet::OverlapLength, overlap);
+  }
 
   template <class Archive>
   void Athenaeum::serialise(Archive &archive, const uint32_t) {
@@ -372,10 +416,6 @@ namespace indigox {
 
   const Forcefield &Athenaeum::GetForcefield() const { return m_data->ff; }
 
-  bool Athenaeum::IsSelfConsistent() const { return m_data->self_consistent; }
-
-  void Athenaeum::SetSelfConsistent() { m_data->self_consistent = true; }
-
   void Athenaeum::SortAndMask(const Molecule &mol) {
     auto pos = m_data->fragments.find(mol);
     FragContain &frags = pos->second;
@@ -396,8 +436,9 @@ namespace indigox {
     }
   }
 
-  bool Athenaeum::AddFragment(const Molecule &mol, const Fragment &frag) {
+  bool Athenaeum::AddFragment(const Fragment &frag) {
     // Check that the fragment matches the molecule
+    Molecule mol = frag.m_data->source_molecule;
     graph::MolecularGraph MG = mol.GetGraph();
     graph::CondensedMolecularGraph CG = MG.GetCondensedGraph();
     graph::CondensedMolecularGraph fg = frag.GetGraph();
@@ -437,7 +478,7 @@ namespace indigox {
           "Attempting to fragment unparameterised molecule");
     if (mol.GetForcefield() != GetForcefield())
       throw std::runtime_error("Forcefield mismatch");
-    if (mol.NumAtoms() > Settings::AtomLimit)
+    if (mol.NumAtoms() > GetInt(ATSet::MoleculeSizeLimit))
       throw std::runtime_error("Molecule too large to automagically fragment");
 
     auto pos = m_data->fragments.emplace(mol, FragContain());
@@ -499,7 +540,8 @@ namespace indigox {
         for (CMGVertex u : other_vertices) {
           if (overlap_vertices.find(u) != overlap_vertices.end()) continue;
           auto path = algorithm::ShortestPath(CG, u, v);
-          if (!path.empty() && path.size() <= m_data->overlap)
+          if (!path.empty() &&
+              (int32_t)path.size() <= GetInt(ATSet::OverlapLength))
             overlap_vertices.emplace(u);
         }
       }
@@ -518,7 +560,8 @@ namespace indigox {
         if (withoverlap.Degree(u) > 1) continue;
         for (CMGVertex v : sub_vertices) {
           auto path = algorithm::ShortestPath(withoverlap, u, v);
-          if (path.size() < m_data->overlap) bad_overlaps = true;
+          if ((int32_t)path.size() < GetInt(ATSet::OverlapLength))
+            bad_overlaps = true;
         }
       }
       if (bad_overlaps) continue;

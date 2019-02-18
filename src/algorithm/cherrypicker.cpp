@@ -18,29 +18,68 @@
 #include <vector>
 
 namespace indigox::algorithm {
-  using VParam = CherryPicker::VertexParameters;
-  using EParam = CherryPicker::EdgeParameters;
   using CPSet = CherryPicker::Settings;
 
-  bool CPSet::AllowDanglingBonds = true;
-  bool CPSet::AllowDanglingAngles = true;
-  bool CPSet::AllowDanglingDihedrals = true;
-  bool CPSet::ParameteriseFromAllPermutations = false;
-  VParam CPSet::VertexMapping = (VParam::ElementType | VParam::FormalCharge |
-                                 VParam::CondensedVertices | VParam::Degree);
-  EParam CPSet::EdgeMapping = (EParam::BondOrder | EParam::Degree);
-  uint32_t CPSet::MinimumFragmentSize = 4;
-  uint32_t CPSet::MaximumFragmentSize = 0; // no maximum size
+  CherryPicker::CherryPicker(Forcefield &ff) : _ff(ff), bool_parameters(0) {
+    DefaultSettings();
+  }
 
-  CherryPicker::CherryPicker(const Forcefield &ff) : _ff(ff) {}
+  void CherryPicker::DefaultSettings() {
+    SetBool(CPSet::VertexElement);
+    SetBool(CPSet::VertexFormalCharge);
+    SetBool(CPSet::VertexCondensed);
+    SetBool(CPSet::VertexDegree);
 
-  bool CherryPicker::AddAthenaeum(const Athenaeum &library) {
+    SetBool(CPSet::EdgeBondOrder);
+    SetBool(CPSet::EdgeDegree);
+
+    SetBool(CPSet::AllowDanglingBonds);
+    SetBool(CPSet::AllowDanglingAngles);
+    SetBool(CPSet::AllowDanglingDihedrals);
+
+    SetInt(CPSet::MinimumFragmentSize, 4);
+    SetInt(CPSet::MaximumFragmentSize, -1);
+  }
+
+  bool CherryPicker::GetBool(CPSet param) {
+    if (param >= CPSet::BoolCount)
+      throw std::runtime_error("Not a boolean parameter");
+    return bool_parameters.test((uint8_t)param);
+  }
+
+  void CherryPicker::SetBool(CPSet param) {
+    if (param >= CPSet::BoolCount)
+      throw std::runtime_error("Not a boolean parameter");
+    bool_parameters.set((uint8_t)param);
+  }
+
+  void CherryPicker::UnsetBool(CPSet param) {
+    if (param >= CPSet::BoolCount)
+      throw std::runtime_error("Not a boolean parameter");
+    bool_parameters.reset((uint8_t)param);
+  }
+
+  int32_t CherryPicker::GetInt(CPSet param) {
+    uint8_t offset = 1 + (uint8_t)CPSet::BoolCount;
+    if (param <= CPSet::BoolCount || param >= CPSet::IntCount)
+      throw std::runtime_error("Not an integer parameter");
+    return int_parameters[(uint8_t)param - offset];
+  }
+
+  void CherryPicker::SetInt(CPSet param, int32_t value) {
+    uint8_t offset = 1 + (uint8_t)CPSet::BoolCount;
+    if (param <= CPSet::BoolCount || param >= CPSet::IntCount)
+      throw std::runtime_error("Not an integer parameter");
+    int_parameters[(uint8_t)param - offset] = value;
+  }
+
+  bool CherryPicker::AddAthenaeum(Athenaeum &library) {
     if (library.GetForcefield() != _ff) return false;
     _libs.push_back(library);
     return true;
   }
 
-  bool CherryPicker::RemoveAthenaeum(const Athenaeum &library) {
+  bool CherryPicker::RemoveAthenaeum(Athenaeum &library) {
     auto pos = std::find(_libs.begin(), _libs.end(), library);
     if (pos != _libs.end()) _libs.erase(pos);
     return pos != _libs.end();
@@ -60,6 +99,7 @@ namespace indigox::algorithm {
     using VertMasks = eastl::vector_map<CMGV, graph::VertexIsoMask>;
     using EdgeMasks = eastl::vector_map<CMGE, graph::EdgeIsoMask>;
 
+    CherryPicker &cherrypicker;
     GraphType small;
     GraphType large;
     VertMasks &vmasks_large;
@@ -70,12 +110,12 @@ namespace indigox::algorithm {
     Fragment frag;
     bool has_mapping;
 
-    CherryPickerCallback(GraphType &l, VertMasks &vl, EdgeMasks &el,
-                         ParamMolecule &p, Fragment &f,
+    CherryPickerCallback(CherryPicker &cp, GraphType &l, VertMasks &vl,
+                         EdgeMasks &el, ParamMolecule &p, Fragment &f,
                          graph::VertexIsoMask vertmask,
                          graph::EdgeIsoMask edgemask)
-        : small(f.GetGraph()), large(l), vmasks_large(vl), emasks_large(el),
-          pmol(p), frag(f), has_mapping(false) {
+        : cherrypicker(cp), small(f.GetGraph()), large(l), vmasks_large(vl),
+          emasks_large(el), pmol(p), frag(f), has_mapping(false) {
       for (CMGV v : small.GetVertices())
         vmasks_small.emplace(v, v.GetIsomorphismMask() & vertmask);
       for (CMGE e : small.GetEdges())
@@ -83,7 +123,6 @@ namespace indigox::algorithm {
     }
 
     bool operator()(const CorrespondenceMap &map) override {
-      using Settings = CherryPicker::Settings;
       using ConSym = graph::CMGVertex::ContractedSymmetry;
       has_mapping = true;
       std::vector<graph::MGVertex> frag_v, target_v;
@@ -131,7 +170,7 @@ namespace indigox::algorithm {
         // Parameterise the bonds
         for (auto bnd : frag.GetBonds()) {
           graph::MGVertex v1 = bnd.first, v2 = bnd.second;
-          if (!Settings::AllowDanglingBonds &&
+          if (!cherrypicker.GetBool(CPSet::AllowDanglingBonds) &&
               (std::find(patms.begin(), patms.end(), v1) == patms.end() ||
                std::find(patms.begin(), patms.end(), v2) == patms.end()))
             break;
@@ -146,7 +185,7 @@ namespace indigox::algorithm {
         // Parameterise the angles
         for (auto ang : frag.GetAngles()) {
           graph::MGVertex v1 = ang.first, v2 = ang.second, v3 = ang.third;
-          if (!Settings::AllowDanglingAngles &&
+          if (!cherrypicker.GetBool(CPSet::AllowDanglingAngles) &&
               (std::find(patms.begin(), patms.end(), v1) == patms.end() ||
                std::find(patms.begin(), patms.end(), v2) == patms.end() ||
                std::find(patms.begin(), patms.end(), v3) == patms.end()))
@@ -166,7 +205,7 @@ namespace indigox::algorithm {
         for (auto dhd : frag.GetDihedrals()) {
           graph::MGVertex v1 = dhd.first, v2 = dhd.second, v3 = dhd.third,
                           v4 = dhd.fourth;
-          if (!Settings::AllowDanglingDihedrals &&
+          if (!cherrypicker.GetBool(CPSet::AllowDanglingDihedrals) &&
               (std::find(patms.begin(), patms.end(), v1) == patms.end() ||
                std::find(patms.begin(), patms.end(), v2) == patms.end() ||
                std::find(patms.begin(), patms.end(), v3) == patms.end() ||
@@ -184,7 +223,8 @@ namespace indigox::algorithm {
           pdhd.MappedWith(fragMol.GetDihedral(v1.GetAtom(), v2.GetAtom(),
                                               v3.GetAtom(), v4.GetAtom()));
         }
-        if (!CPSet::ParameteriseFromAllPermutations) { break; }
+        if (!cherrypicker.GetBool(CPSet::ParameteriseFromAllPermutations))
+          break;
       }
       return true;
     }
@@ -198,10 +238,9 @@ namespace indigox::algorithm {
     }
   };
 
-  ParamMolecule CherryPicker::ParameteriseMolecule(const Molecule &m) {
+  ParamMolecule CherryPicker::ParameteriseMolecule(Molecule &mol) {
     if (_libs.empty())
       throw std::runtime_error("No Athenaeums to parameterise from");
-    Molecule mol = m;
     graph::MolecularGraph G = mol.GetGraph();
     if (!G.IsConnected())
       throw std::runtime_error("CherryPicker requires a connected molecule");
@@ -213,22 +252,21 @@ namespace indigox::algorithm {
     // Populate the masks
     graph::VertexIsoMask vertmask;
     vertmask.reset();
-    if ((CPSet::VertexMapping & VParam::ElementType) != VParam::None)
-      vertmask |= graph::VertexIsoMask(0x7F);
-    if ((CPSet::VertexMapping & VParam::FormalCharge) != VParam::None)
+    if (GetBool(CPSet::VertexElement)) vertmask |= graph::VertexIsoMask(0x7F);
+    if (GetBool(CPSet::VertexFormalCharge))
       vertmask |= graph::VertexIsoMask(0x780);
-    if ((CPSet::VertexMapping & VParam::CondensedVertices) != VParam::None) {
+    if (GetBool(CPSet::VertexCondensed)) {
       graph::VertexIsoMask tmp;
       tmp.from_uint64(0x1C03FFF800);
       vertmask |= tmp;
     }
-    if ((CPSet::VertexMapping & VParam::CyclicNature) != VParam::None)
+    if (GetBool(CPSet::VertexCyclic))
       vertmask |= graph::VertexIsoMask(0xC000000);
-    if ((CPSet::VertexMapping & VParam::Stereochemistry) != VParam::None)
+    if (GetBool(CPSet::VertexStereochemistry))
       vertmask |= graph::VertexIsoMask(0x30000000);
-    if ((CPSet::VertexMapping & VParam::Aromaticity) != VParam::None)
+    if (GetBool(CPSet::VertexAromaticity))
       vertmask |= graph::VertexIsoMask(0x40000000);
-    if ((CPSet::VertexMapping & VParam::Degree) != VParam::None) {
+    if (GetBool(CPSet::VertexDegree)) {
       graph::VertexIsoMask tmp;
       tmp.from_uint64(0x380000000);
       vertmask |= tmp;
@@ -236,16 +274,12 @@ namespace indigox::algorithm {
 
     graph::EdgeIsoMask edgemask;
     edgemask.reset();
-    if ((CPSet::EdgeMapping & EParam::BondOrder) != EParam::None)
-      edgemask |= graph::EdgeIsoMask(7);
-    if ((CPSet::EdgeMapping & EParam::Stereochemistry) != EParam::None)
-      edgemask |= graph::EdgeIsoMask(24);
-    if ((CPSet::EdgeMapping & EParam::CyclicNature) != EParam::None)
-      edgemask |= graph::EdgeIsoMask(96);
-    if ((CPSet::EdgeMapping & EParam::Aromaticity) != EParam::None)
-      edgemask |= graph::EdgeIsoMask(128);
-    if ((CPSet::EdgeMapping & EParam::Degree) != EParam::None)
-      edgemask |= graph::EdgeIsoMask(16128);
+    if (GetBool(CPSet::EdgeBondOrder)) edgemask |= graph::EdgeIsoMask(7);
+    if (GetBool(CPSet::EdgeStereochemistry)) edgemask |= graph::EdgeIsoMask(24);
+    if (GetBool(CPSet::EdgeCyclic)) edgemask |= graph::EdgeIsoMask(96);
+    //    if (GetBool(CPSet::EdgeAromaticity)) edgemask |=
+    //    graph::EdgeIsoMask(128);
+    if (GetBool(CPSet::EdgeDegree)) edgemask |= graph::EdgeIsoMask(16128);
 
     CherryPickerCallback::VertMasks vmasks;
     for (CMGV v : CMG.GetVertices())
@@ -264,19 +298,21 @@ namespace indigox::algorithm {
         for (size_t pos = 0; pos < fragments.size();
              pos = fragments.find_next(pos)) {
           Fragment frag = g_frag.second[pos];
-          if (frag.Size() < CPSet::MinimumFragmentSize) continue;
-          if (CPSet::MaximumFragmentSize &&
-              frag.Size() > CPSet::MaximumFragmentSize)
+          if ((int32_t)frag.Size() < GetInt(CPSet::MinimumFragmentSize))
+            continue;
+          if (GetInt(CPSet::MaximumFragmentSize) > 0 &&
+              (int32_t)frag.Size() > GetInt(CPSet::MaximumFragmentSize))
             continue;
           if (frag.GetGraph().NumVertices() > CMG.NumVertices()) continue;
-          CherryPickerCallback callback(CMG, vmasks, emasks, pmol, frag,
+          CherryPickerCallback callback(*this, CMG, vmasks, emasks, pmol, frag,
                                         vertmask, edgemask);
           graph::CondensedMolecularGraph FG = frag.GetGraph();
           SubgraphIsomorphisms(FG, CMG, callback);
           if (!callback.has_mapping) { fragments -= frag.GetSupersets(); }
         }
       }
-      pmol.ApplyParameteristion(lib.IsSelfConsistent());
+      using ATSet = Athenaeum::Settings;
+      pmol.ApplyParameteristion(lib.GetBool(ATSet::SelfConsistent));
     }
     return pmol;
   }

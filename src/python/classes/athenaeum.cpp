@@ -51,11 +51,29 @@ void GeneratePyAthenaeum(py::module &m) {
   // ===========================================================================
   // == Athenaeum class bindings ===============================================
   // ===========================================================================
-  py::class_<Athenaeum> PyAthenaeum(m, "Athenaeum");
-  PyAthenaeum.def(py::init<>())
-      .def(py::init<Forcefield &>())
-      .def(py::init<Forcefield &, uint32_t>())
-      .def(py::init<Forcefield &, uint32_t, uint32_t>())
+  using ATSet = Athenaeum::Settings;
+  py::class_<Athenaeum> athenaeum(m, "Athenaeum");
+
+  py::enum_<ATSet>(athenaeum, "Settings")
+      // Bool Settings
+      .value("FragmentCycles", ATSet::FragmentCycles)
+      .value("SelfConsistent", ATSet::SelfConsistent)
+      // Int settings
+      .value("MoleculeSizeLimit", ATSet::MoleculeSizeLimit)
+      .value("MinimumFragmentSize", ATSet::MinimumFragmentSize)
+      .value("MaximumFragmentSize", ATSet::MaximumFragmentSize)
+      .value("OverlapLength", ATSet::OverlapLength)
+      .value("CycleSize", ATSet::CycleSize);
+
+  athenaeum.def(py::init<const Forcefield &>())
+      .def(py::init<const Forcefield &, int32_t>())
+      .def(py::init<const Forcefield &, int32_t, int32_t>())
+      .def("GetBool", &Athenaeum::GetBool)
+      .def("SetBool", &Athenaeum::SetBool)
+      .def("UnsetBool", &Athenaeum::UnsetBool)
+      .def("GetInt", &Athenaeum::GetInt)
+      .def("SetInt", &Athenaeum::SetInt)
+      .def("DefaultSettings", &Athenaeum::DefaultSettings)
       .def("NumFragments",
            py::overload_cast<>(&Athenaeum::NumFragments, py::const_))
       .def("NumFragments", py::overload_cast<const Molecule &>(
@@ -68,8 +86,6 @@ void GeneratePyAthenaeum(py::module &m) {
            Ref)
       .def("HasFragments", &Athenaeum::HasFragments)
       .def("GetForcefield", &Athenaeum::GetForcefield)
-      .def("IsSelfConsistent", &Athenaeum::IsSelfConsistent)
-      .def("SetSelfConsistent", &Athenaeum::SetSelfConsistent)
       .def("AddFragment", &Athenaeum::AddFragment)
       .def("AddAllFragments", &Athenaeum::AddAllFragments)
       .def(py::self == py::self)
@@ -79,19 +95,6 @@ void GeneratePyAthenaeum(py::module &m) {
       .def(py::self <= py::self)
       .def(py::self >= py::self)
       .def("__bool__", &Athenaeum::operator bool);
-
-  // ===========================================================================
-  // == Athenaeum settings bindings ============================================
-  // ===========================================================================
-  using AtSet = Athenaeum::Settings;
-  py::class_<AtSet>(PyAthenaeum, "Settings")
-      .def_readwrite_static("AtomLimit", &AtSet::AtomLimit)
-      .def_readwrite_static("MinimumFragmentSize", &AtSet::MinimumFragmentSize)
-      .def_readwrite_static("MaximumFragmentSize", &AtSet::MaximumFragmentSize)
-      .def_readwrite_static("FragmentCycles", &AtSet::FragmentCycles)
-      .def_readwrite_static("MaximumCycleSize", &AtSet::MaximumCycleSize)
-      .def_readwrite_static("DefaultOverlap", &AtSet::DefaultOverlap)
-      .def_readwrite_static("DefaultCycleOverlap", &AtSet::DefaultCycleOverlap);
 
   // ===========================================================================
   // == Module level function bindings =========================================

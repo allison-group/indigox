@@ -37,8 +37,10 @@ namespace indigox {
     void serialise(Archive &archive, const uint32_t version);
 
   public:
+    //! \cond ignored
     INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(Fragment);
     INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(Fragment, frag);
+    //! \endcond
 
     /*! \brief Normal constructor
      *  \details Constructs a fragment of the given graph from the combined
@@ -75,18 +77,28 @@ namespace indigox {
     friend class cereal::access;
 
   public:
-    struct Settings {
-      // Maximum vertex count for automatic fragment generation
-      static uint32_t AtomLimit;
-      static uint32_t MinimumFragmentSize;
-      static uint32_t MaximumFragmentSize;
-      // Fully fragment cycles
-      static bool FragmentCycles;
-      // Maximum cycle size to be regarded as a cycle
-      static uint32_t MaximumCycleSize;
-      static uint32_t DefaultOverlap;
-      static uint32_t DefaultCycleOverlap;
+    enum class Settings : uint8_t {
+      FragmentCycles,
+      SelfConsistent,
+      BoolCount,
+      MoleculeSizeLimit,
+      MinimumFragmentSize,
+      MaximumFragmentSize,
+      OverlapLength,
+      CycleSize,
+      IntCount
     };
+
+    // Settings
+    bool GetBool(Settings param);
+    void SetBool(Settings param);
+    void UnsetBool(Settings param);
+
+    int32_t GetInt(Settings param);
+    void SetInt(Settings param, int32_t value);
+
+    void DefaultSettings();
+    // End Settings
 
     using FragContain = std::vector<Fragment>;
     using MoleculeFragments = std::map<Molecule, FragContain>;
@@ -96,12 +108,14 @@ namespace indigox {
     void serialise(Archive &archive, const uint32_t version);
 
   public:
+    //! \cond ignored
     INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(Athenaeum);
     INDIGOX_GENERIC_PIMPL_CLASS_OPERATORS(Athenaeum, ath);
+    //! \endcond
 
     Athenaeum(const Forcefield &ff);
-    Athenaeum(const Forcefield &ff, uint32_t overlap);
-    Athenaeum(const Forcefield &ff, uint32_t overlap, uint32_t ring_overlap);
+    Athenaeum(const Forcefield &ff, int32_t overlap);
+    Athenaeum(const Forcefield &ff, int32_t overlap, int32_t ring_overlap);
 
     size_t NumFragments() const;
     size_t NumFragments(const Molecule &mol) const;
@@ -111,13 +125,11 @@ namespace indigox {
     bool HasFragments(const Molecule &mol) const;
 
     const Forcefield &GetForcefield() const;
-    bool IsSelfConsistent() const;
-    void SetSelfConsistent();
     //    bool CheckSelfConsistent();
 
     /*! \brief Adds the given fragment.
      *  \returns if the fragment was added or not. */
-    bool AddFragment(const Molecule &mol, const Fragment &frag);
+    bool AddFragment(const Fragment &frag);
 
     /*! \brief Determines all the fragments of a molecule and adds them.
      *  \returns the number of fragments added. */
@@ -127,8 +139,8 @@ namespace indigox {
     void SortAndMask(const Molecule &mol);
 
   private:
-    struct AthenaeumData;
-    std::shared_ptr<AthenaeumData> m_data;
+    struct Impl;
+    std::shared_ptr<Impl> m_data;
   };
 
   void SaveAthenaeum(const Athenaeum &ath, std::string path);

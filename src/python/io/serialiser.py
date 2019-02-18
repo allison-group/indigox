@@ -28,7 +28,7 @@ TEST   3
               "residx": atom.GetResidueID(),
               "resname": atom.GetResidueName(),
               "name": atom.GetName(),
-              "chargegroup": atom.GetTag(),
+              "chargegroup": atom.GetChargeGroupID() + 1,
               "charge": atom.GetPartialCharge(),
               "mass": atom.GetElement().GetAtomicMass() + atom.GetImplicitCount() * h_mass
               }

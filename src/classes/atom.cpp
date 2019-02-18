@@ -79,7 +79,7 @@ namespace indigox {
                    double z, std::string n)
       : molecule(m), element(e), formal_charge(0), charge_group_id(-1),
         residue_id(-1), implicit_hydrogens(0), position(x, y, z), name(n),
-        residue_name(""), partial_charge(0.0),
+        residue_name("TMP"), partial_charge(0.0),
         stereochemistry(AtomStereo::UNDEFINED) {}
 
   Atom::Atom(const Molecule &m, const Element &e, double x, double y, double z,
