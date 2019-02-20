@@ -1,0 +1,3 @@
+[submodule "external/RI"]
+	path = external/RI
+	url = git@github.com:allison-group/RI.git
