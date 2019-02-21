@@ -48,13 +48,38 @@ namespace indigox::algorithm {
    Parameters assigned to these components in the fragment source molecule are
    accounted for by adding them to the corresponding component within the
    ParamMolecule created from the target molecule. Once all fragments within an
-   Athenaeum have been checked, any component within the ParamMolecule which has been mapped by at least one component from a fragment applies a parameter back to the corresponding component within the target molecule. In the case of discrete parameters, such as bond types, the parameter applied is the mode of all mapped parameters. In the case of continuous parameters, such as atomic partial charges, the parameter applied is the mean of all mapped parameters. If an Athenaeum is marked as being self-consistent, it is at the point of applying these parameters that the self-consistency is checked. For discrete parameters, self-consistent is defined as having only one mapped type on the ParamMolecule component. For continuous parameters, it is defined as having a difference of no greater than \f$10^{-10}\f$ between the largest and smallest mapped values.
+   Athenaeum have been checked, any component within the ParamMolecule which has
+   been mapped by at least one component from a fragment applies a parameter
+   back to the corresponding component within the target molecule. In the case
+   of discrete parameters, such as bond types, the parameter applied is the mode
+   of all mapped parameters. In the case of continuous parameters, such as
+   atomic partial charges, the parameter applied is the mean of all mapped
+   parameters. If an Athenaeum is marked as being self-consistent, it is at the
+   point of applying these parameters that the self-consistency is checked. For
+   discrete parameters, self-consistent is defined as having only one mapped
+   type on the ParamMolecule component. For continuous parameters, it is defined
+   as having a difference of no greater than \f$10^{-10}\f$ between the largest
+   and smallest mapped values.
 
    CherryPicker is designed to support multiple Athenaeums. This is handled in a
    first in-first out (FIFO). That is, Athenaeums are iterated through in the
-   order in which they were assigned to the CherryPicker instance. When multiple Athenaeums are provided, parameterisation occurs as above for each Athenaeum. Additionally, once all fragments within an Athenaeum have been checked and parameters applied, any components which had a parameter applied is removed from the set of parameterisable components so that no further Athenaeums will be able to parameterise it. The reasoning for this FIFO methadology is so that portions of a molecule can be parameterised by a smaller set of well tested fragments. For example, a protein with a few unnatural or unique residues can initially be parameterised with fragments matching the natural amino acids, thus covering the majority of the molecule quickly, before a more shotgun approach to parameterising the remaining portions is utilised.
-   
-   An exception to the rule of not further parameterising a component which has been parameterised by a previous Athenaeum is when any excess charge is to redistributed across the molecule. In this case, all atoms which were not parameterised by a self-consistent Athenaeum are available to have extra charge added.
+   order in which they were assigned to the CherryPicker instance. When multiple
+   Athenaeums are provided, parameterisation occurs as above for each Athenaeum.
+   Additionally, once all fragments within an Athenaeum have been checked and
+   parameters applied, any components which had a parameter applied is removed
+   from the set of parameterisable components so that no further Athenaeums will
+   be able to parameterise it. The reasoning for this FIFO methadology is so
+   that portions of a molecule can be parameterised by a smaller set of well
+   tested fragments. For example, a protein with a few unnatural or unique
+   residues can initially be parameterised with fragments matching the natural
+   amino acids, thus covering the majority of the molecule quickly, before a
+   more shotgun approach to parameterising the remaining portions is utilised.
+
+   An exception to the rule of not further parameterising a component which has
+   been parameterised by a previous Athenaeum is when any excess charge is to
+   redistributed across the molecule. In this case, all atoms which were not
+   parameterised by a self-consistent Athenaeum are available to have extra
+   charge added.
 
    The primary working component of the algorithm is <a
    href="https://en.wikipedia.org/wiki/Subgraph_isomorphism_problem">subgraph
@@ -191,6 +216,9 @@ namespace indigox::algorithm {
        \note Enabling this option will cause computational requirements to
        increase dramatically. */
       ParameteriseFromAllPermutations,
+      /*! When performing subgraph isomorphism testing, use the RI algorithm
+         instead of the VF2 algorithm. The RI algorithm is more efficient. */
+      UseRISubgraphMatching,
       /*! Marks the end of the boolean settings. As there is no external use for
          this value, it is not exposed to Python. */
       BoolCount,
@@ -256,8 +284,8 @@ namespace indigox::algorithm {
      Settings::VertexDegree VertexDegree\endlink, \link Settings::EdgeBondOrder
      EdgeBondOrder\endlink, \link Settings::EdgeDegree EdgeDegree\endlink, \link
      Settings::AllowDanglingBonds AllowDanglingBonds\endlink, \link
-     Settings::AllowDanglingAngles AllowDanglingAngles\endlink, and \link
-     Settings::AllowDanglingDihedrals AllowDanglingDihedrals\endlink. All other
+     Settings::AllowDanglingAngles AllowDanglingAngles\endlink, \link
+     Settings::AllowDanglingDihedrals AllowDanglingDihedrals\endlink, and \link Settings::UseRISubgraphMatching UseRISubgraphMatching\endlink. All other
      boolean values default to false. The default \link
      Settings::MinimumFragmentSize MinimumFragmentSize\endlink is \f$4\f$ and
      the default \link Settings::MaximumFragmentSize MaximumFragmentSize\endlink

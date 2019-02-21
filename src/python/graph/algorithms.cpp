@@ -141,6 +141,7 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
       .value("AllowDanglingDihedrals", CPSet::AllowDanglingDihedrals)
       .value("ParameteriseFromAllPermutations",
              CPSet::ParameteriseFromAllPermutations)
+      .value("UseRISubgraphMatching", CPSet::UseRISubgraphMatching)
       // Integer settings
       .value("MinimumFragmentSize", CPSet::MinimumFragmentSize)
       .value("MaximumFragmentSize", CPSet::MaximumFragmentSize);

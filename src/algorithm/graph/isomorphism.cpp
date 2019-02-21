@@ -12,6 +12,10 @@
 namespace indigox::algorithm {
   using namespace indigox::graph;
 
+  // =========================================================================
+  // ==== Boost VF2 based subgraph isomorphism implementation ================
+  // =========================================================================
+
   bool CMGPrintCallback::operator()(const CorrespondenceMap &cmap) {
     std::cout << "Mapping instance " << ++count << ":\n";
     for (auto &ab : cmap) std::cout << ab.first << " -- " << ab.second << "\n";
@@ -78,10 +82,9 @@ namespace indigox::algorithm {
   };
 
   template <class V, class E, class S, class D, class VP, class EP>
-  void
-  SubgraphIsomorphismsRunner(graph::BaseGraph<V, E, S, D, VP, EP> &G1,
-                             graph::BaseGraph<V, E, S, D, VP, EP> &G2,
-                             MappingCallback<V, E, S, D, VP, EP> &callback) {
+  void VF2SubgraphIsoRunner(graph::BaseGraph<V, E, S, D, VP, EP> &G1,
+                            graph::BaseGraph<V, E, S, D, VP, EP> &G2,
+                            MappingCallback<V, E, S, D, VP, EP> &callback) {
 
     using GraphType = graph::BaseGraph<V, E, S, D, VP, EP>;
     using BoostGraph = typename GraphType::graph_type;
@@ -90,7 +93,7 @@ namespace indigox::algorithm {
     using VertexMap = eastl::vector_map<Vertex, size_t>;
 
     if (G2.NumVertices() < G1.NumVertices()) {
-      SubgraphIsomorphismsRunner(G2, G1, callback);
+      VF2SubgraphIsoRunner(G2, G1, callback);
       return;
     }
 
@@ -125,11 +128,11 @@ namespace indigox::algorithm {
 
   void SubgraphIsomorphisms(CondensedMolecularGraph &G1,
                             CondensedMolecularGraph &G2, CMGCallback &CB) {
-    SubgraphIsomorphismsRunner(G1, G2, CB);
+    VF2SubgraphIsoRunner(G1, G2, CB);
   }
 
   void SubgraphIsomorphisms(MolecularGraph &G1, MolecularGraph &G2,
                             MGCallback &CB) {
-    SubgraphIsomorphismsRunner(G1, G2, CB);
+    VF2SubgraphIsoRunner(G1, G2, CB);
   }
 } // namespace indigox::algorithm

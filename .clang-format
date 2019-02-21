@@ -64,10 +64,12 @@ IncludeBlocks:   Regroup
 IncludeCategories:
   - Regex:           '^(<|")indigox'
     Priority:        1
-  - Regex:           '^.*\.hpp'
+  - Regex:           '^(<|")rilib'
     Priority:        2
-  - Regex:           '.*'
+  - Regex:           '^.*\.hpp'
     Priority:        3
+  - Regex:           '.*'
+    Priority:        4
 IncludeIsMainRegex: '(Test)?$'
 IndentCaseLabels: false
 IndentPPDirectives: None

@@ -5,6 +5,7 @@
 #include <indigox/classes/forcefield.hpp>
 #include <indigox/classes/molecule.hpp>
 #include <indigox/classes/residue.hpp>
+#include <indigox/graph/condensed.hpp>
 #include <indigox/graph/molecular.hpp>
 #include <indigox/python/interface.hpp>
 
@@ -257,6 +258,7 @@ void GeneratePyMolecule(pybind11::module &m) {
       .def("GetDihedralTag", &Molecule::GetDihedralTag)
       .def("GetFormula", &Molecule::GetFormula)
       .def("GetGraph", &Molecule::GetGraph)
+      .def("GetCondensedGraph", &Molecule::GetCondensedGraph)
       .def("GetName", &Molecule::GetName)
       .def("GetMolecularCharge", &Molecule::GetMolecularCharge)
       .def("SetName", &Molecule::SetName)

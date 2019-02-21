@@ -11,6 +11,7 @@ __all__ = ["LoadIFPFile", "LoadPDBFile", "LoadMTBFile", "LoadIXDFile",
 #  \param path the path to the IFP file
 #  \return the loaded forcefield
 def LoadIFPFile(path):
+  pt = ix.GetPeriodicTable()
   data = list(ix.LoadFile(path.expanduser()))
   blocks = [data[0]]
   for i in range(len(data) - 1):
@@ -67,7 +68,7 @@ def LoadIFPFile(path):
                    'c12_1_4':float(dat[7])**2,
                    'interactions':dict(),
                   }
-        ff.NewAtomType(int(dat[0]), dat[1])
+        ff.NewAtomType(int(dat[0]), dat[1], pt[dat[1][0]])
   return ff
 
 ## \brief Loads the given PDB file into a Molecule
@@ -380,7 +381,6 @@ def LoadFragmentFile(path, ff):
   detail_path = path.parent / file_data[3].strip()
   
   mol = LoadParameterisedMolecule(coord_path, param_path, ff, detail_path)
-  mol.FreezeModifications()
 
   fragments = []
   current_block = None

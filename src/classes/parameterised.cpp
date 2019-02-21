@@ -51,7 +51,8 @@ namespace indigox {
     if (self_consistent) {
       if (m_data->types.size() > 1)
         throw std::runtime_error("Types not self-consistent");
-      auto min_max = std::minmax_element(m_data->charges.begin(), m_data->charges.end());
+      auto min_max =
+          std::minmax_element(m_data->charges.begin(), m_data->charges.end());
       if ((*min_max.second - *min_max.first) > 1e-10)
         throw std::runtime_error("Charges not self-consistent");
     }
