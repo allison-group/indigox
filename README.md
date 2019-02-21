@@ -12,6 +12,10 @@ Package containing the CherryPicker algorithm. It is intended that indigox is us
 ## Installation
 Tested on macOS and Linux. If you're on Windows, you're on your own. We have no means of testing on a Windows system.
 
+To correctly obtain everything for compilation, you will need to clone recursively, that is:
+
+git clone --recurse-submodules https://github.com/allison-group/indigox.git
+
 mkdir build && cd build
 
 cmake .. && make
