@@ -1,3 +1,9 @@
 [submodule "external/RI"]
 	path = external/RI
 	url = git@github.com:allison-group/RI.git
+[submodule "external/json"]
+	path = external/json
+	url = https://github.com/nlohmann/json.git
+[submodule "external/pybind11"]
+	path = external/pybind11
+	url = https://github.com/pybind/pybind11.git
