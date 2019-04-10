@@ -1,6 +1,8 @@
 #include <indigox/classes/periodictable.hpp>
 #include <indigox/utils/common.hpp>
+#include <indigox/utils/json.hpp>
 
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -14,19 +16,22 @@ namespace indigox {
   struct Element::ElementImpl {
     std::string name, symbol;
     int32_t group, period, atomic_number, valence, octet, hyper_octet;
-    double mass, radius, covalent, vanderwaals, chi;
+    double mass, radius, vanderwaals, chi;
+    std::array<double, 3> covalent;
+    ElementImpl() : name("Undefined"), symbol("XX"), group(-1), period(-1), atomic_number(-1), valence(-1), octet(-1), hyper_octet(-1), mass(-1), radius(-1), vanderwaals(-1), chi(-1) {
+      covalent.fill(-1);
+    }
     ElementImpl(std::string nme, std::string sym, int32_t grp, int32_t prd,
                 int32_t num, int32_t val, int32_t oct, int32_t hyp, double mas,
-                double rad, double cov, double vdw, double eln)
+                double rad, std::array<double, 3>& cov, double vdw, double eln)
         : name(nme), symbol(sym), group(grp), period(prd), atomic_number(num),
           valence(val), octet(oct), hyper_octet(hyp), mass(mas), radius(rad),
-          covalent(cov), vanderwaals(vdw), chi(eln) {}
+           vanderwaals(vdw), chi(eln), covalent(cov) {}
 
     static std::shared_ptr<ElementImpl> GetNullState() {
       static std::shared_ptr<ElementImpl> state;
       if (!state)
-        state = std::make_shared<ElementImpl>("Undefined", "XX", -1, -1, -1, -1,
-                                              -1, -1, -1, -1, -1, -1, -1);
+        state = std::make_shared<ElementImpl>();
       return state;
     }
   };
@@ -35,52 +40,54 @@ namespace indigox {
   // == Element Construction and Assignment ====================================
   // ===========================================================================
 
-  Element::Element() : m_elemdat(ElementImpl::GetNullState()) {}
-  Element::Element(const Element &e2) : m_elemdat(e2.m_elemdat) {}
-  Element::Element(Element &&e2) : m_elemdat(std::move(e2.m_elemdat)) {}
+  Element::Element() : m_data(ElementImpl::GetNullState()) {}
+  Element::Element(const Element &e2) : m_data(e2.m_data) {}
+  Element::Element(Element &&e2) : m_data(std::move(e2.m_data)) {}
   Element &Element::operator=(const Element &e2) {
-    if (&e2 != this) m_elemdat = e2.m_elemdat;
+    if (&e2 != this) m_data = e2.m_data;
     return *this;
   }
   Element &Element::operator=(Element &&e2) {
-    m_elemdat = std::move(e2.m_elemdat);
+    m_data = std::move(e2.m_data);
     return *this;
   }
   Element::Element(uint8_t Z, std::string name, std::string sym, double mass,
                    uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct,
-                   uint8_t hyp, double rad, double cov, double vdw, double chi)
-      : m_elemdat(std::make_shared<ElementImpl>(
+                   uint8_t hyp, double rad, std::array<double, 3>& cov, double vdw, double chi)
+      : m_data(std::make_shared<ElementImpl>(
             name, sym, grp, prd, Z, val, oct, hyp, mass, rad, cov, vdw, chi)) {}
 
   // ===========================================================================
   // == Element Data Retrevial =================================================
   // ===========================================================================
 
-  double Element::GetAtomicMass() const { return m_elemdat->mass; }
-  int32_t Element::GetAtomicNumber() const { return m_elemdat->atomic_number; }
-  double Element::GetAtomicRadius() const { return m_elemdat->radius; }
-  double Element::GetCovalentRadius() const { return m_elemdat->covalent; }
+  double Element::GetAtomicMass() const { return m_data->mass; }
+  int32_t Element::GetAtomicNumber() const { return m_data->atomic_number; }
+  double Element::GetAtomicRadius() const { return m_data->radius; }
+  double Element::GetCovalentRadius() const { return m_data->covalent[0]; }
+  double Element::GetDoubleCovalentRadius() const { return m_data->covalent[1]; }
+  double Element::GetTripleCovalentRadius() const { return m_data->covalent[2]; }
   double Element::GetVanDerWaalsRadius() const {
-    return m_elemdat->vanderwaals;
+    return m_data->vanderwaals;
   }
-  std::string Element::GetName() const { return m_elemdat->name; }
-  std::string Element::GetSymbol() const { return m_elemdat->symbol; }
-  int32_t Element::GetGroup() const { return m_elemdat->group; }
-  int32_t Element::GetPeriod() const { return m_elemdat->period; }
+  std::string Element::GetName() const { return m_data->name; }
+  std::string Element::GetSymbol() const { return m_data->symbol; }
+  int32_t Element::GetGroup() const { return m_data->group; }
+  int32_t Element::GetPeriod() const { return m_data->period; }
   int32_t Element::GetValenceElectronCount() const {
-    return m_elemdat->valence;
+    return m_data->valence;
   }
-  int32_t Element::GetOctet() const { return m_elemdat->octet; }
+  int32_t Element::GetOctet() const { return m_data->octet; }
   int32_t Element::GetHypervalentOctet() const {
-    return m_elemdat->hyper_octet;
+    return m_data->hyper_octet;
   }
-  double Element::GetElectronegativity() const { return m_elemdat->chi; }
+  double Element::GetElectronegativity() const { return m_data->chi; }
 
   // ===========================================================================
   // == Element Operators ======================================================
   // ===========================================================================
 
-  Element::operator bool() { return m_elemdat->atomic_number != -1; }
+  Element::operator bool() { return m_data->atomic_number != -1; }
   std::ostream &operator<<(std::ostream &os, const Element &element) {
     return (os << element.GetSymbol());
   }
@@ -90,7 +97,7 @@ namespace indigox {
                              : utils::ToUpperFirst(name) == GetName());
   }
   bool Element::operator==(const Element &element) const {
-    return element.m_elemdat == m_elemdat;
+    return element.m_data == m_data;
   }
   bool Element::operator!=(int32_t Z) const { return !(*this == Z); }
   bool Element::operator!=(const std::string &Z) const { return !(*this == Z); }
@@ -115,244 +122,53 @@ namespace indigox {
   PeriodicTable::PeriodicTable() {}
 
   void PeriodicTable::GeneratePeriodicTable() {
-    _elems[0] = Element();
-    _elems[1] = Element(1, "Hydrogen", "H", 1.007970, 1, 1, 1, 2, 2, 0.78, 0.30,
-                        1.20, 2.20);
-    _elems[2] = Element(2, "Helium", "He", 4.002602, 18, 1, 2, 2, 2, 1.28, 0.00,
-                        1.22, 0.00);
-    _elems[3] = Element(3, "Lithium", "Li", 6.941000, 1, 2, 1, 2, 2, 1.52, 1.23,
-                        0.00, 0.98);
-    _elems[4] = Element(4, "Beryllium", "Be", 9.012182, 2, 2, 2, 4, 4, 1.13,
-                        0.89, 0.00, 1.57);
-    _elems[5] = Element(5, "Boron", "B", 10.811000, 13, 2, 3, 6, 6, 0.83, 0.88,
-                        2.08, 2.04);
-    _elems[6] = Element(6, "Carbon", "C", 12.011000, 14, 2, 4, 8, 8, 0.77, 0.77,
-                        1.85, 2.55);
-    _elems[7] = Element(7, "Nitrogen", "N", 14.006740, 15, 2, 5, 8, 8, 0.71,
-                        0.70, 1.54, 3.04);
-    _elems[8] = Element(8, "Oxygen", "O", 15.999400, 16, 2, 6, 8, 8, 0.60, 0.66,
-                        1.40, 3.44);
-    _elems[9] = Element(9, "Fluorine", "F", 18.998403, 17, 2, 7, 8, 8, 0.71,
-                        0.58, 1.35, 3.98);
-    _elems[10] = Element(10, "Neon", "Ne", 20.179700, 18, 2, 8, 8, 8, 0.00,
-                         0.00, 1.60, 0.00);
-    _elems[11] = Element(11, "Sodium", "Na", 22.989768, 1, 3, 1, 2, 2, 1.54,
-                         0.00, 2.31, 0.93);
-    _elems[12] = Element(12, "Magnesium", "Mg", 24.305060, 2, 3, 2, 4, 4, 1.60,
-                         1.36, 0.00, 1.31);
-    _elems[13] = Element(13, "Aluminum", "Al", 26.981539, 13, 3, 3, 6, 6, 1.43,
-                         1.25, 2.05, 1.61);
-    _elems[14] = Element(14, "Silicon", "Si", 28.085500, 14, 3, 4, 8, 8, 1.17,
-                         1.17, 2.00, 1.90);
-    _elems[15] = Element(15, "Phosphorus", "P", 30.973762, 15, 3, 5, 8, 10,
-                         1.15, 1.10, 1.90, 2.19);
-    _elems[16] = Element(16, "Sulfur", "S", 32.066000, 16, 3, 6, 8, 12, 1.04,
-                         1.04, 1.85, 2.58);
-    _elems[17] = Element(17, "Chlorine", "Cl", 35.452700, 17, 3, 7, 8, 8, 0.00,
-                         0.99, 1.81, 3.16);
-    _elems[18] = Element(18, "Argon", "Ar", 39.948000, 18, 3, 8, 8, 8, 1.74,
-                         0.00, 1.91, 0.00);
-    _elems[19] = Element(19, "Potassium", "K", 39.098300, 1, 4, 1, 2, 2, 2.27,
-                         2.03, 2.31, 0.82);
-    _elems[20] = Element(20, "Calcium", "Ca", 40.078000, 2, 4, 2, 4, 4, 1.97,
-                         1.74, 0.00, 1.00);
-    _elems[21] = Element(21, "Scandium", "Sc", 44.955910, 3, 4, 3, 8, 8, 1.61,
-                         1.44, 0.00, 1.36);
-    _elems[22] = Element(22, "Titanium", "Ti", 47.867000, 4, 4, 4, 8, 8, 1.45,
-                         1.32, 0.00, 1.54);
-    _elems[23] = Element(23, "Vanadium", "V", 50.941500, 5, 4, 5, 8, 8, 1.32,
-                         0.00, 0.00, 1.63);
-    _elems[24] = Element(24, "Chromium", "Cr", 51.996100, 6, 4, 6, 8, 8, 1.25,
-                         0.00, 0.00, 1.66);
-    _elems[25] = Element(25, "Manganese", "Mn", 54.938050, 7, 4, 7, 8, 8, 1.24,
-                         1.77, 0.00, 1.55);
-    _elems[26] = Element(26, "Iron", "Fe", 55.845000, 8, 4, 8, 8, 8, 1.24, 1.16,
-                         0.00, 1.83);
-    _elems[27] = Element(27, "Cobalt", "Co", 58.933200, 9, 4, 9, 8, 8, 1.25,
-                         1.16, 0.00, 1.88);
-    _elems[28] = Element(28, "Nickel", "Ni", 58.693400, 10, 4, 10, 8, 8, 1.25,
-                         1.15, 0.00, 1.91);
-    _elems[29] = Element(29, "Copper", "Cu", 63.546000, 11, 4, 11, 8, 8, 1.28,
-                         1.17, 0.00, 1.90);
-    _elems[30] = Element(30, "Zinc", "Zn", 65.390000, 12, 4, 12, 8, 8, 1.33,
-                         1.25, 0.00, 1.65);
-    _elems[31] = Element(31, "Gallium", "Ga", 69.723000, 13, 4, 3, 6, 6, 1.22,
-                         1.25, 0.00, 1.81);
-    _elems[32] = Element(32, "Germanium", "Ge", 72.610000, 14, 4, 4, 8, 8, 1.23,
-                         1.22, 0.00, 2.01);
-    _elems[33] = Element(33, "Arsenic", "As", 74.921590, 15, 4, 5, 8, 8, 1.25,
-                         1.21, 2.00, 2.18);
-    _elems[34] = Element(34, "Selenium", "Se", 78.960000, 16, 4, 6, 8, 8, 2.15,
-                         1.17, 2.00, 2.55);
-    _elems[35] = Element(35, "Bromine", "Br", 79.904000, 17, 4, 7, 8, 12, 0.00,
-                         1.14, 1.95, 2.96);
-    _elems[36] = Element(36, "Krypton", "Kr", 83.800000, 18, 4, 8, 8, 8, 0.00,
-                         1.89, 1.98, 0.00);
-    _elems[37] = Element(37, "Rubidium", "Rb", 85.467800, 1, 5, 1, 2, 2, 1.48,
-                         0.00, 2.44, 0.82);
-    _elems[38] = Element(38, "Strontium", "Sr", 87.620000, 2, 5, 2, 4, 4, 2.15,
-                         1.92, 0.00, 0.95);
-    _elems[39] = Element(39, "Yttrium", "Y", 88.905850, 3, 5, 3, 8, 8, 1.81,
-                         1.62, 0.00, 1.22);
-    _elems[40] = Element(40, "Zirconium", "Zr", 91.224000, 4, 5, 4, 8, 8, 1.60,
-                         1.45, 0.00, 1.30);
-    _elems[41] = Element(41, "Niobium", "Nb", 92.906380, 5, 5, 5, 8, 8, 1.43,
-                         1.34, 0.00, 1.60);
-    _elems[42] = Element(42, "Molybdenum", "Mo", 95.940000, 6, 5, 6, 8, 8, 1.36,
-                         1.29, 0.00, 2.16);
-    _elems[43] = Element(43, "Technetium", "Tc", 98.907200, 7, 5, 7, 8, 8, 1.36,
-                         0.00, 0.00, 1.90);
-    _elems[44] = Element(44, "Ruthenium", "Ru", 101.070000, 8, 5, 8, 8, 8, 1.34,
-                         1.24, 0.00, 2.20);
-    _elems[45] = Element(45, "Rhodium", "Rh", 102.905500, 9, 5, 9, 8, 8, 1.34,
-                         1.25, 0.00, 2.28);
-    _elems[46] = Element(46, "Palladium", "Pd", 106.420000, 10, 5, 10, 8, 8,
-                         1.38, 1.28, 0.00, 2.20);
-    _elems[47] = Element(47, "Silver", "Ag", 107.868200, 11, 5, 11, 8, 8, 1.44,
-                         1.34, 0.00, 1.93);
-    _elems[48] = Element(48, "Cadmium", "Cd", 112.411000, 12, 5, 12, 8, 8, 1.49,
-                         1.41, 0.00, 1.69);
-    _elems[49] = Element(49, "Indium", "In", 114.818000, 13, 5, 3, 6, 6, 1.63,
-                         1.50, 0.00, 1.78);
-    _elems[50] = Element(50, "Tin", "Sn", 118.710000, 14, 5, 4, 8, 8, 1.41,
-                         1.40, 2.00, 1.96);
-    _elems[51] = Element(51, "Antimony", "Sb", 121.760000, 15, 5, 5, 8, 8, 1.82,
-                         1.41, 2.20, 2.05);
-    _elems[52] = Element(52, "Tellurium", "Te", 127.600000, 16, 5, 6, 8, 8,
-                         1.43, 1.37, 2.20, 2.10);
-    _elems[53] = Element(53, "Iodine", "I", 126.904470, 17, 5, 7, 8, 8, 0.00,
-                         1.33, 2.15, 2.66);
-    _elems[54] = Element(54, "Xenon", "Xe", 131.290000, 18, 5, 8, 8, 8, 2.18,
-                         2.09, 2.16, 2.60);
-    _elems[55] = Element(55, "Caesium", "Cs", 132.905430, 1, 6, 1, 2, 2, 2.65,
-                         2.35, 2.62, 0.79);
-    _elems[56] = Element(56, "Barium", "Ba", 137.327000, 2, 6, 2, 4, 4, 2.17,
-                         1.98, 0.00, 0.89);
-    _elems[57] = Element(57, "Lanthanum", "La", 138.905500, 3, 6, 3, 8, 8, 1.88,
-                         1.69, 0.00, 1.10);
-    _elems[58] = Element(58, "Cerium", "Ce", 140.115000, 0, 6, 0, 8, 8, 1.82,
-                         1.65, 0.00, 1.12);
-    _elems[59] = Element(59, "Praseodymium", "Pr", 140.907650, 0, 6, 0, 8, 8,
-                         1.83, 1.65, 0.00, 1.13);
-    _elems[60] = Element(60, "Neodymium", "Nd", 144.240000, 0, 6, 0, 8, 8, 1.82,
-                         1.64, 0.00, 1.14);
-    _elems[61] = Element(61, "Promethium", "Pm", 144.912700, 0, 6, 0, 8, 8,
-                         1.81, 0.00, 0.00, 0.94);
-    _elems[62] = Element(62, "Samarium", "Sm", 150.360000, 0, 6, 0, 8, 8, 1.80,
-                         1.66, 0.00, 1.17);
-    _elems[63] = Element(63, "Europium", "Eu", 151.965000, 0, 6, 0, 8, 8, 2.04,
-                         1.85, 0.00, 1.20);
-    _elems[64] = Element(64, "Gadolinium", "Gd", 157.250000, 0, 6, 0, 8, 8,
-                         1.80, 1.61, 0.00, 0.94);
-    _elems[65] = Element(65, "Terbium", "Tb", 158.925340, 0, 6, 0, 8, 8, 1.78,
-                         1.59, 0.00, 1.22);
-    _elems[66] = Element(66, "Dysprosium", "Dy", 162.500000, 0, 6, 0, 8, 8,
-                         1.77, 1.59, 0.00, 1.23);
-    _elems[67] = Element(67, "Holmium", "Ho", 164.930320, 0, 6, 0, 8, 8, 1.77,
-                         1.58, 0.00, 1.24);
-    _elems[68] = Element(68, "Erbium", "Er", 167.260000, 0, 6, 0, 8, 8, 1.76,
-                         1.57, 0.00, 1.25);
-    _elems[69] = Element(69, "Thulium", "Tm", 168.934210, 0, 6, 0, 8, 8, 1.75,
-                         1.56, 0.00, 0.96);
-    _elems[70] = Element(70, "Ytterbium", "Yb", 173.040000, 0, 6, 0, 8, 8, 1.94,
-                         1.70, 0.00, 1.27);
-    _elems[71] = Element(71, "Lutetium", "Lu", 174.967000, 3, 6, 3, 8, 8, 1.72,
-                         1.56, 0.00, 1.30);
-    _elems[72] = Element(72, "Hafnium", "Hf", 178.490000, 4, 6, 4, 8, 8, 1.56,
-                         1.44, 0.00, 1.50);
-    _elems[73] = Element(73, "Tantalum", "Ta", 180.947900, 5, 6, 5, 8, 8, 1.43,
-                         1.34, 0.00, 2.36);
-    _elems[74] = Element(74, "Tungsten", "W", 183.840000, 6, 6, 6, 8, 8, 1.37,
-                         1.30, 0.00, 1.90);
-    _elems[75] = Element(75, "Rhenium", "Re", 186.207000, 7, 6, 7, 8, 8, 1.37,
-                         1.28, 0.00, 2.20);
-    _elems[76] = Element(76, "Osmium", "Os", 190.230000, 8, 6, 8, 8, 8, 1.35,
-                         1.26, 0.00, 2.20);
-    _elems[77] = Element(77, "Iridium", "Ir", 192.217000, 9, 6, 9, 8, 8, 1.36,
-                         1.26, 0.00, 2.28);
-    _elems[78] = Element(78, "Platinum", "Pt", 195.080000, 10, 6, 10, 8, 8,
-                         1.38, 1.29, 0.00, 2.54);
-    _elems[79] = Element(79, "Gold", "Au", 196.966540, 11, 6, 11, 8, 8, 1.44,
-                         1.34, 0.00, 2.00);
-    _elems[80] = Element(80, "Mercury", "Hg", 200.590000, 12, 6, 12, 8, 8, 1.60,
-                         1.44, 0.00, 1.80);
-    _elems[81] = Element(81, "Thallium", "Tl", 204.383300, 13, 6, 3, 6, 6, 1.70,
-                         1.55, 0.00, 2.33);
-    _elems[82] = Element(82, "Lead", "Pb", 207.200000, 14, 6, 4, 8, 8, 1.75,
-                         1.54, 0.00, 2.02);
-    _elems[83] = Element(83, "Bismuth", "Bi", 208.980370, 15, 6, 5, 8, 8, 1.55,
-                         1.52, 2.40, 2.00);
-    _elems[84] = Element(84, "Polonium", "Po", 208.982400, 16, 6, 6, 8, 8, 1.67,
-                         1.53, 0.00, 2.20);
-    _elems[85] = Element(85, "Astatine", "At", 209.987100, 17, 6, 7, 8, 8, 0.00,
-                         0.00, 0.00, 1.96);
-    _elems[86] = Element(86, "Radon", "Rn", 222.017600, 18, 6, 8, 8, 8, 0.00,
-                         0.00, 0.00, 0.70);
-    _elems[87] = Element(87, "Francium", "Fr", 223.019700, 1, 7, 1, 2, 2, 2.70,
-                         0.00, 0.00, 0.70);
-    _elems[88] = Element(88, "Radium", "Ra", 226.025400, 2, 7, 2, 4, 4, 2.23,
-                         0.00, 0.00, 0.89);
-    _elems[89] = Element(89, "Actinium", "Ac", 227.027800, 3, 7, 3, 8, 8, 1.88,
-                         0.00, 0.00, 1.30);
-    _elems[90] = Element(90, "Thorium", "Th", 232.038100, 0, 7, 0, 8, 8, 1.80,
-                         0.00, 0.00, 0.00);
-    _elems[91] = Element(91, "Protactinium", "Pa", 231.035880, 0, 7, 0, 8, 8,
-                         1.61, 0.00, 0.00, 1.38);
-    _elems[92] = Element(92, "Uranium", "U", 238.028900, 0, 7, 0, 8, 8, 1.54,
-                         0.00, 0.00, 1.26);
-    _elems[93] = Element(93, "Neptunium", "Np", 237.048200, 0, 7, 0, 8, 8, 1.50,
-                         0.00, 0.00, 1.28);
-    _elems[94] = Element(94, "Plutonium", "Pu", 244.064200, 7, 0, 7, 8, 8, 0.00,
-                         0.00, 0.00, 1.30);
-    _elems[95] = Element(95, "Americium", "Am", 243.061400, 0, 7, 0, 8, 8, 1.73,
-                         0.00, 0.00, 1.30);
-    _elems[96] = Element(96, "Curium", "Cm", 247.070300, 0, 7, 0, 8, 8, 1.74,
-                         0.00, 0.00, 1.30);
-    _elems[97] = Element(97, "Berkelium", "Bk", 247.070300, 0, 7, 0, 8, 8, 1.70,
-                         0.00, 0.00, 1.30);
-    _elems[98] = Element(98, "Californium", "Cf", 251.079600, 0, 7, 0, 8, 8,
-                         1.69, 0.00, 0.00, 1.30);
-    _elems[99] = Element(99, "Einsteinium", "Es", 252.083000, 0, 7, 0, 8, 8,
-                         2.03, 0.00, 0.00, 1.30);
-    _elems[100] = Element(100, "Fermium", "Fm", 257.095100, 0, 7, 0, 8, 8, 0.00,
-                          0.00, 0.00, 1.30);
-    _elems[101] = Element(101, "Mendelevium", "Md", 258.100000, 0, 7, 0, 8, 8,
-                          0.00, 0.00, 0.00, 1.30);
-    _elems[102] = Element(102, "Nobelium", "No", 259.100900, 0, 7, 0, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[103] = Element(103, "Lawrencium", "Lr", 262.110000, 3, 7, 3, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[104] = Element(104, "Dubnium", "Db", 261.110000, 4, 7, 4, 8, 8, 0.00,
-                          0.00, 0.00, 0.00);
-    _elems[105] = Element(105, "Joliotium", "Jl", 262.114000, 5, 7, 5, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[106] = Element(106, "Rutherfordium", "Rf", 263.118000, 6, 7, 6, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[107] = Element(107, "Bohrium", "Bh", 262.120000, 7, 7, 7, 8, 8, 0.00,
-                          0.00, 0.00, 0.00);
-    _elems[108] = Element(108, "Hahnium", "Hn", 0.000000, 8, 7, 8, 8, 8, 0.00,
-                          0.00, 0.00, 0.00);
-    _elems[109] = Element(109, "Meitnerium", "Mt", 0.000000, 9, 7, 9, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[110] = Element(110, "Darmstadtium", "Ds", 0.000000, 10, 7, 10, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[111] = Element(111, "Roentgenium", "Rg", 0.000000, 11, 7, 11, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[112] = Element(112, "Copernicium", "Cn", 0.000000, 12, 7, 12, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[113] = Element(113, "Nihonium", "Nh", 0.000000, 13, 7, 3, 8, 8, 0.00,
-                          0.00, 0.00, 0.00);
-    _elems[114] = Element(114, "Flerovium", "Fl", 0.000000, 14, 7, 4, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[115] = Element(115, "Moscovium", "Mc", 0.000000, 15, 7, 5, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[116] = Element(116, "Livermorium", "Lv", 0.000000, 16, 7, 6, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[117] = Element(117, "Tennessine", "Ts", 0.000000, 17, 7, 7, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
-    _elems[118] = Element(118, "Oganesson", "Og", 0.000000, 18, 7, 8, 8, 8,
-                          0.00, 0.00, 0.00, 0.00);
+    using json = nlohmann::json;
 
+    std::string pt_path = std::string(IX_DATA_DIRECTORY);
+    if (pt_path.back() != '/') pt_path.append("/");
+    pt_path.append("periodictable.json");
+
+    std::ifstream pt_file(pt_path);
+    json pt_dat;
+    pt_file >> pt_dat;
+
+    // Check that the json data is 119 items with the first being
+    if (pt_dat.size() != 119) throw std::runtime_error("Expected 119 items in periodic table file.");
+    
+    _elems[0] = Element();
+    
+    int32_t count = 1;
+    for (json::iterator begin = pt_dat.begin() + 1; begin != pt_dat.end(); ++begin, ++count) {
+      std::vector<std::string> required_keys = {"Z", "atomicradius", "covalentradius_1", "covalentradius_2", "covalentradius_3", "electronegativity", "group", "mass", "name", "octet_hypervalent", "octet_normal", "period", "symbol", "valence", "vanderwaalsradius"}, optional_keys;
+      
+      std::string name, symbol, error_str;
+      int32_t group, period, atomic_number, valence, octet, hyper_octet;
+      double mass, radius, vanderwaals, chi;
+      std::array<double, 3> covalent;
+      error_str = utils::JSONKeyChecker(required_keys, optional_keys, *begin);
+      if (!error_str.empty()) throw std::runtime_error(error_str);
+      json data = *begin;
+      
+      name = data["name"];
+      symbol = data["symbol"];
+      group = data["group"];
+      period = data["period"];
+      atomic_number = data["Z"];
+      valence = data["valence"];
+      octet = data["octet_normal"];
+      hyper_octet = data["octet_hypervalent"];
+      mass = data["mass"];
+      radius = data["atomicradius"];
+      vanderwaals = data["vanderwaalsradius"];
+      chi = data["electronegativity"];
+      covalent[0] = data["covalentradius_1"];
+      covalent[1] = data["covalentradius_2"];
+      covalent[2] = data["covalentradius_3"];
+      
+      if (atomic_number != count) throw std::runtime_error("Unexpected element number");
+      _elems[atomic_number] = Element(atomic_number, name, symbol, mass, group, period, valence, octet, hyper_octet, radius, covalent, vanderwaals, chi);
+    }
+    
     for (Element &e : _elems) {
       _name_to_idx.emplace(e.GetSymbol(), e.GetAtomicNumber());
       _name_to_idx.emplace(e.GetName(), e.GetAtomicNumber());

@@ -76,6 +76,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/cereal/include)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/doctest)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/eigen)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/RI)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/json/single_include)
 
 # We provide a boost version so only use system boost if it is newer than
 # provided boost

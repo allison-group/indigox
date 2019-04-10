@@ -56,7 +56,7 @@ namespace indigox {
      *  \param chi electronegativity. */
     Element(uint8_t Z, std::string name, std::string sym, double mass,
             uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct, uint8_t hyp,
-            double rad, double cov, double vdw, double chi);
+            double rad, std::array<double, 3>& cov, double vdw, double chi);
 
   public:
     /*! \brief Get atomic mass.
@@ -76,6 +76,9 @@ namespace indigox {
      *  \details Radius is in angstroms.
      *  \return the covalent radius of the element. */
     double GetCovalentRadius() const;
+    double GetSingleCovalentRadius() const { return GetCovalentRadius(); }
+    double GetDoubleCovalentRadius() const;
+    double GetTripleCovalentRadius() const;
 
     /*! \brief Get van der Waals radius.
      *  \details Radius is in angstroms.
@@ -130,7 +133,7 @@ namespace indigox {
 
   private:
     struct ElementImpl;
-    std::shared_ptr<ElementImpl> m_elemdat;
+    std::shared_ptr<ElementImpl> m_data;
   };
 
   std::ostream &operator<<(std::ostream &, const Element &);
