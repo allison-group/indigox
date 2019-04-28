@@ -3,9 +3,9 @@
 #ifndef INDIGOX_CLASSES_ATOM_HPP
 #define INDIGOX_CLASSES_ATOM_HPP
 
+#include "../utils/atomic_coordinates.hpp"
 #include "../utils/fwd_declares.hpp"
 
-#include <Eigen/Dense>
 #include <memory>
 #include <vector>
 
@@ -45,8 +45,7 @@ namespace indigox {
     /*! \brief Normal constructor.
      *  \details Links the constructed atom to the given Molecule.
      *  \param m the molecule to assign this atom to. */
-    Atom(const Molecule &molecule, const Element &element, double x, double y,
-         double z, std::string name);
+    Atom(const Molecule &molecule, const Element &element, std::string name);
 
   public:
     /*! \brief Number of valid bonds this atom is part of.
@@ -124,7 +123,7 @@ namespace indigox {
 
     /*! \brief Vector of the atom's position.
      *  \return the atoms position. */
-    const Eigen::Vector3d &GetPosition() const;
+    Coordinates GetPosition() const;
 
     /*! \brief Add an implicit hydrogen.
      *  \return the new number of implicit hydrogens in the atom. */

@@ -3,6 +3,7 @@
 #include <indigox/algorithm/graph/cycles.hpp>
 #include <indigox/algorithm/graph/isomorphism.hpp>
 #include <indigox/algorithm/graph/paths.hpp>
+#include <indigox/algorithm/perception.hpp>
 #include <indigox/classes/athenaeum.hpp>
 #include <indigox/classes/atom.hpp>
 #include <indigox/classes/forcefield.hpp>
@@ -158,4 +159,25 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
       .def("GetInt", &CherryPicker::GetInt)
       .def("SetInt", &CherryPicker::SetInt)
       .def("DefaultSettings", &CherryPicker::DefaultSettings);
+  
+  using PerSet = Perceptatron::Settings;
+  
+  py::class_<Perceptatron> perceptatron(m, "Perceptatron");
+  
+  py::enum_<PerSet>(perceptatron, "Settings")
+    // Boolean settings
+  .value("CreateMissing", PerSet::CreateMissing)
+    // Integer settings
+    // Real settings
+  .value("MinimumDistance", PerSet::MinimumDistance)
+  .value("RadiusTolerance", PerSet::RadiusTolerance);
+  
+  perceptatron.def(py::init<>())
+  .def("GetBool", &Perceptatron::GetBool)
+  .def("SetBool", &Perceptatron::SetBool)
+  .def("GetInt", &Perceptatron::GetInt)
+  .def("SetInt", &Perceptatron::SetInt)
+  .def("GetReal", &Perceptatron::GetReal)
+  .def("SetReal", &Perceptatron::SetReal)
+  .def("PerceiveBonds", &Perceptatron::PerceiveBonds);
 }

@@ -1,4 +1,5 @@
 /*! \file molecule.hpp */
+#include "../utils/atomic_coordinates.hpp"
 #include "../utils/fwd_declares.hpp"
 
 #include <bitset>
@@ -383,6 +384,8 @@ namespace indigox {
     void ReorderAtoms(MoleculeAtoms &new_order);
 
     void ModificationMade();
+
+    AtomicCoordinates &GetAtomicCoordinates();
 
   private:
     struct Impl;

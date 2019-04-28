@@ -75,16 +75,14 @@ namespace indigox {
   // == CONSTRUCTION =======================================================
   // =======================================================================
 
-  Atom::Impl::Impl(const Molecule &m, const Element &e, double x, double y,
-                   double z, std::string n)
+  Atom::Impl::Impl(const Molecule &m, const Element &e, std::string n)
       : molecule(m), element(e), formal_charge(0), charge_group_id(-1),
-        residue_id(-1), implicit_hydrogens(0), position(x, y, z), name(n),
+        residue_id(-1), implicit_hydrogens(0), position(-1), name(n),
         residue_name("TMP"), partial_charge(0.0),
         stereochemistry(AtomStereo::UNDEFINED) {}
 
-  Atom::Atom(const Molecule &m, const Element &e, double x, double y, double z,
-             std::string n)
-      : m_data(std::make_shared<Impl>(m, e, x, y, z, n)) {}
+  Atom::Atom(const Molecule &m, const Element &e, std::string n)
+      : m_data(std::make_shared<Impl>(m, e, n)) {}
 
   void Atom::Reset() {
     m_data->element = GetPeriodicTable().GetUndefined();
@@ -95,7 +93,7 @@ namespace indigox {
     m_data->charge_group_id = -1;
     m_data->implicit_hydrogens = UINT32_MAX;
     m_data->name = "";
-    m_data->position = {HUGE_VAL, HUGE_VAL, HUGE_VAL};
+    m_data->position = -1;
     m_data->partial_charge = HUGE_VAL;
     m_data->stereochemistry = AtomStereo::UNDEFINED;
     m_data->forcefield_type = FFAtom();
@@ -206,17 +204,17 @@ namespace indigox {
 
   double Atom::GetX() const {
     _sanity_check_(*this);
-    return m_data->position[0];
+    return m_data->molecule.GetAtomicCoordinates()[m_data->position].x;
   }
 
   double Atom::GetY() const {
     _sanity_check_(*this);
-    return m_data->position[1];
+    return m_data->molecule.GetAtomicCoordinates()[m_data->position].y;
   }
 
   double Atom::GetZ() const {
     _sanity_check_(*this);
-    return m_data->position[2];
+    return m_data->molecule.GetAtomicCoordinates()[m_data->position].z;
   }
 
   AtomStereo Atom::GetStereochemistry() const {
@@ -224,9 +222,9 @@ namespace indigox {
     return m_data->stereochemistry;
   }
 
-  const Eigen::Vector3d &Atom::GetPosition() const {
+  Coordinates Atom::GetPosition() const {
     _sanity_check_(*this);
-    return m_data->position;
+    return m_data->molecule.GetAtomicCoordinates()[m_data->position];
   }
 
   const Atom::AtomBonds &Atom::GetBonds() const {
@@ -246,11 +244,7 @@ namespace indigox {
 
   int64_t Atom::GetIndex() const {
     _sanity_check_(*this);
-    if (!m_data->molecule) { return -1; }
-
-    const Molecule::MoleculeAtoms &atoms = m_data->molecule.GetAtoms();
-    auto found = std::find(atoms.begin(), atoms.end(), *this);
-    return found != atoms.end() ? std::distance(atoms.begin(), found) : -1;
+    return bool(m_data->molecule) ? m_data->position : -1;
   }
 
   const FFAtom &Atom::GetType() const {
@@ -358,7 +352,8 @@ namespace indigox {
 
   void Atom::SetPosition(double x, double y, double z) {
     _sanity_check_(*this);
-    m_data->position = {x, y, z};
+    m_data->molecule.GetAtomicCoordinates().SetCoordinates(m_data->position, x,
+                                                           y, z);
   }
 
   void Atom::SetStereochemistry(AtomStereo stereo) {

@@ -49,7 +49,8 @@ namespace indigox {
             INDIGOX_SERIAL_NVP("forcefield", forcefield),
             INDIGOX_SERIAL_NVP("graph", molecular_graph),
             INDIGOX_SERIAL_NVP("formula", cached_formula),
-            INDIGOX_SERIAL_NVP("calculated", calculated_data));
+            INDIGOX_SERIAL_NVP("calculated", calculated_data),
+            INDIGOX_SERIAL_NVP("coordinates", coordinates));
   }
 
   template <typename Archive>
@@ -451,9 +452,10 @@ namespace indigox {
 
   Atom Molecule::NewAtom(const Element &element, double x, double y, double z) {
     _sanity_check_(*this);
-    m_data->Reset();
-    Atom atom = Atom(*this, element, x, y, z, "");
+    m_data->ResetCalculatedData();
+    Atom atom = Atom(*this, element, "");
     atom.m_data->unique_id = m_data->next_unique_id++;
+    atom.m_data->position = m_data->coordinates.Append(x, y, z);
     m_data->atoms.emplace_back(atom);
     m_data->molecular_graph.AddVertex(atom);
     return atom;
@@ -468,7 +470,7 @@ namespace indigox {
       if (pos != -1) {
         bnd = a.GetBonds()[pos];
       } else {
-        m_data->Reset();
+        m_data->ResetCalculatedData();
         bnd = Bond(a, b, *this, BondOrder::SINGLE);
         bnd.m_data->unique_id = m_data->next_unique_id++;
         bnd.m_data->atoms[0].AddBond(bnd);
@@ -530,7 +532,7 @@ namespace indigox {
   bool Molecule::RemoveAtom(const Atom &atom) {
     _sanity_check_(*this);
     if (!HasAtom(atom)) return false;
-    m_data->Reset();
+    m_data->ResetCalculatedData();
     // Remove all bonds this atom is part of from molecule
     auto bnd_pred = [&atom](Bond bnd) { // Predicate checks if atom in bnd
       return !(bnd.m_data->atoms[0] == atom || bnd.m_data->atoms[1] == atom);
@@ -586,8 +588,17 @@ namespace indigox {
     Atom atm = atom;
     graph::MGVertex v = m_data->molecular_graph.GetVertex(atm);
     m_data->molecular_graph.RemoveVertex(v);
-    m_data->atoms.erase(
-        std::find(m_data->atoms.begin(), m_data->atoms.end(), atm));
+
+    uint32_t remove_idx = atm.m_data->position;
+    Atom last_atm = m_data->atoms.back();
+
+    // shift last_atm into place of atom to be removed
+    m_data->atoms[remove_idx] = last_atm;
+    last_atm.m_data->position = remove_idx;
+    m_data->atoms.back().m_data.reset();
+    m_data->coordinates.Erase(remove_idx);
+    m_data->atoms.pop_back();
+
     atm.Reset();
     return true;
   }
@@ -597,7 +608,7 @@ namespace indigox {
   bool Molecule::RemoveBond(const Bond &bond) {
     _sanity_check_(*this);
     if (!HasBond(bond)) return false;
-    m_data->Reset();
+    m_data->ResetCalculatedData();
     Atom a = bond.GetAtoms()[0];
     Atom b = bond.GetAtoms()[1];
     // Remove the bond from each atom
@@ -660,6 +671,11 @@ namespace indigox {
 
   bool Molecule::RemoveBond(const Atom &a, const Atom &b) {
     return RemoveBond(GetBond(a, b));
+  }
+
+  AtomicCoordinates &Molecule::GetAtomicCoordinates() {
+    _sanity_check_(*this);
+    return m_data->coordinates;
   }
 
   int64_t Molecule::PerceiveAngles() {
@@ -1007,7 +1023,7 @@ namespace indigox {
     return (int32_t)m_data->residues.size();
   }
 
-  void Molecule::ModificationMade() { m_data->Reset(); }
+  void Molecule::ModificationMade() { m_data->ResetCalculatedData(); }
 
   // =======================================================================
   // == STATE SETTING ======================================================
@@ -1020,7 +1036,7 @@ namespace indigox {
 
   void Molecule::SetMolecularCharge(int32_t q) {
     _sanity_check_(*this);
-    m_data->Reset();
+    m_data->ResetCalculatedData();
     m_data->molecular_charge = q;
   }
 

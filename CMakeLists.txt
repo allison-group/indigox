@@ -22,7 +22,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 # Setup some compile flags, for all versions and specific versions
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -mavx2")
 IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 ENDIF()
@@ -129,14 +129,8 @@ INSTALL(TARGETS indigox DESTINATION ${CMAKE_INSTALL_LIBDIR})
 #        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Install data files
-#INSTALL(FILES data/assignment_scores.dat
-#        data/atomenergies_def2tzvppd.txt
-#        data/bondenergies_def2svpd.txt
-#        data/bondenergies_def2svpd_withbsse.txt
-#        data/bondenergies_def2tzvppd.txt
-#        data/bondenergies_def2tzvppd_withbsse.txt
-#        data/periodictable.txt
-#        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+INSTALL(FILES data/periodictable.json
+       DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 # Install documentation
 #INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
 

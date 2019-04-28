@@ -18,20 +18,22 @@ namespace indigox {
     int32_t group, period, atomic_number, valence, octet, hyper_octet;
     double mass, radius, vanderwaals, chi;
     std::array<double, 3> covalent;
-    ElementImpl() : name("Undefined"), symbol("XX"), group(-1), period(-1), atomic_number(-1), valence(-1), octet(-1), hyper_octet(-1), mass(-1), radius(-1), vanderwaals(-1), chi(-1) {
+    ElementImpl()
+        : name("Undefined"), symbol("XX"), group(-1), period(-1),
+          atomic_number(-1), valence(-1), octet(-1), hyper_octet(-1), mass(-1),
+          radius(-1), vanderwaals(-1), chi(-1) {
       covalent.fill(-1);
     }
     ElementImpl(std::string nme, std::string sym, int32_t grp, int32_t prd,
                 int32_t num, int32_t val, int32_t oct, int32_t hyp, double mas,
-                double rad, std::array<double, 3>& cov, double vdw, double eln)
+                double rad, std::array<double, 3> &cov, double vdw, double eln)
         : name(nme), symbol(sym), group(grp), period(prd), atomic_number(num),
           valence(val), octet(oct), hyper_octet(hyp), mass(mas), radius(rad),
-           vanderwaals(vdw), chi(eln), covalent(cov) {}
+          vanderwaals(vdw), chi(eln), covalent(cov) {}
 
     static std::shared_ptr<ElementImpl> GetNullState() {
       static std::shared_ptr<ElementImpl> state;
-      if (!state)
-        state = std::make_shared<ElementImpl>();
+      if (!state) state = std::make_shared<ElementImpl>();
       return state;
     }
   };
@@ -53,9 +55,10 @@ namespace indigox {
   }
   Element::Element(uint8_t Z, std::string name, std::string sym, double mass,
                    uint8_t grp, uint8_t prd, uint8_t val, uint8_t oct,
-                   uint8_t hyp, double rad, std::array<double, 3>& cov, double vdw, double chi)
-      : m_data(std::make_shared<ElementImpl>(
-            name, sym, grp, prd, Z, val, oct, hyp, mass, rad, cov, vdw, chi)) {}
+                   uint8_t hyp, double rad, std::array<double, 3> &cov,
+                   double vdw, double chi)
+      : m_data(std::make_shared<ElementImpl>(name, sym, grp, prd, Z, val, oct,
+                                             hyp, mass, rad, cov, vdw, chi)) {}
 
   // ===========================================================================
   // == Element Data Retrevial =================================================
@@ -65,22 +68,20 @@ namespace indigox {
   int32_t Element::GetAtomicNumber() const { return m_data->atomic_number; }
   double Element::GetAtomicRadius() const { return m_data->radius; }
   double Element::GetCovalentRadius() const { return m_data->covalent[0]; }
-  double Element::GetDoubleCovalentRadius() const { return m_data->covalent[1]; }
-  double Element::GetTripleCovalentRadius() const { return m_data->covalent[2]; }
-  double Element::GetVanDerWaalsRadius() const {
-    return m_data->vanderwaals;
+  double Element::GetDoubleCovalentRadius() const {
+    return m_data->covalent[1];
   }
+  double Element::GetTripleCovalentRadius() const {
+    return m_data->covalent[2];
+  }
+  double Element::GetVanDerWaalsRadius() const { return m_data->vanderwaals; }
   std::string Element::GetName() const { return m_data->name; }
   std::string Element::GetSymbol() const { return m_data->symbol; }
   int32_t Element::GetGroup() const { return m_data->group; }
   int32_t Element::GetPeriod() const { return m_data->period; }
-  int32_t Element::GetValenceElectronCount() const {
-    return m_data->valence;
-  }
+  int32_t Element::GetValenceElectronCount() const { return m_data->valence; }
   int32_t Element::GetOctet() const { return m_data->octet; }
-  int32_t Element::GetHypervalentOctet() const {
-    return m_data->hyper_octet;
-  }
+  int32_t Element::GetHypervalentOctet() const { return m_data->hyper_octet; }
   double Element::GetElectronegativity() const { return m_data->chi; }
 
   // ===========================================================================
@@ -133,14 +134,31 @@ namespace indigox {
     pt_file >> pt_dat;
 
     // Check that the json data is 119 items with the first being
-    if (pt_dat.size() != 119) throw std::runtime_error("Expected 119 items in periodic table file.");
-    
+    if (pt_dat.size() != 119)
+      throw std::runtime_error("Expected 119 items in periodic table file.");
+
     _elems[0] = Element();
-    
+
     int32_t count = 1;
-    for (json::iterator begin = pt_dat.begin() + 1; begin != pt_dat.end(); ++begin, ++count) {
-      std::vector<std::string> required_keys = {"Z", "atomicradius", "covalentradius_1", "covalentradius_2", "covalentradius_3", "electronegativity", "group", "mass", "name", "octet_hypervalent", "octet_normal", "period", "symbol", "valence", "vanderwaalsradius"}, optional_keys;
-      
+    for (json::iterator begin = pt_dat.begin() + 1; begin != pt_dat.end();
+         ++begin, ++count) {
+      std::vector<std::string> required_keys = {"Z",
+                                                "atomicradius",
+                                                "covalentradius_1",
+                                                "covalentradius_2",
+                                                "covalentradius_3",
+                                                "electronegativity",
+                                                "group",
+                                                "mass",
+                                                "name",
+                                                "octet_hypervalent",
+                                                "octet_normal",
+                                                "period",
+                                                "symbol",
+                                                "valence",
+                                                "vanderwaalsradius"},
+                               optional_keys;
+
       std::string name, symbol, error_str;
       int32_t group, period, atomic_number, valence, octet, hyper_octet;
       double mass, radius, vanderwaals, chi;
@@ -148,7 +166,7 @@ namespace indigox {
       error_str = utils::JSONKeyChecker(required_keys, optional_keys, *begin);
       if (!error_str.empty()) throw std::runtime_error(error_str);
       json data = *begin;
-      
+
       name = data["name"];
       symbol = data["symbol"];
       group = data["group"];
@@ -164,11 +182,14 @@ namespace indigox {
       covalent[0] = data["covalentradius_1"];
       covalent[1] = data["covalentradius_2"];
       covalent[2] = data["covalentradius_3"];
-      
-      if (atomic_number != count) throw std::runtime_error("Unexpected element number");
-      _elems[atomic_number] = Element(atomic_number, name, symbol, mass, group, period, valence, octet, hyper_octet, radius, covalent, vanderwaals, chi);
+
+      if (atomic_number != count)
+        throw std::runtime_error("Unexpected element number");
+      _elems[atomic_number] =
+          Element(atomic_number, name, symbol, mass, group, period, valence,
+                  octet, hyper_octet, radius, covalent, vanderwaals, chi);
     }
-    
+
     for (Element &e : _elems) {
       _name_to_idx.emplace(e.GetSymbol(), e.GetAtomicNumber());
       _name_to_idx.emplace(e.GetName(), e.GetAtomicNumber());

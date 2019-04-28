@@ -51,6 +51,14 @@ void GeneratePyMolecule(pybind11::module &m) {
       .value("NonSpecific", ResidueType::NonSpecific);
 
   // ===========================================================================
+  // == Coordinates bindings ===================================================
+  // ===========================================================================
+  py::class_<Coordinates>(m, "Coordinates")
+      .def_readonly("x", &Coordinates::x)
+      .def_readonly("y", &Coordinates::y)
+      .def_readonly("z", &Coordinates::z);
+
+  // ===========================================================================
   // == Atom class bindings ====================================================
   // ===========================================================================
   py::class_<Atom>(m, "Atom")
@@ -127,6 +135,7 @@ void GeneratePyMolecule(pybind11::module &m) {
       .def("HasType", &Bond::HasType)
       .def("IsAmideBond", &Bond::IsAmideBond)
       .def("IsCarbonylBond", &Bond::IsCarbonylBond)
+      .def("Length", &Bond::Length)
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)

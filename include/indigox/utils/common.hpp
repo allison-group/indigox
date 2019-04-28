@@ -4,6 +4,8 @@
 #ifndef INDIGOX_UTILS_COMMON_HPP
 #define INDIGOX_UTILS_COMMON_HPP
 
+#include <array>
+#include <bitset>
 #include <algorithm>
 #include <iterator>
 #include <memory>
@@ -98,4 +100,51 @@ namespace indigox::utils {
 
 } // namespace indigox::utils
 
+  
+#define b_cnt (uint32_t)Settings::BoolCount
+#define i_cnt (uint32_t)Settings::IntCount
+#define f_cnt (uint32_t)Settings::RealCount
+#define p_cnt (uint32_t)param
+  
+#define DEFAULT_SETTINGS(...) \
+private: \
+  std::bitset<b_cnt> p_bool; \
+  std::array<double, f_cnt - b_cnt - 2> p_num; \
+  \
+void ResetSettings() { \
+  p_bool.reset(); \
+  p_num.fill(0.); \
+} \
+  \
+public: \
+  bool GetBool(Settings param) { \
+    if (p_cnt >= b_cnt) throw std::runtime_error("Not a boolean parameter"); \
+    return p_bool.test(p_cnt); \
+  } \
+  void SetBool(Settings param, bool value) { \
+    if (p_cnt >= b_cnt) throw std::runtime_error("Not a boolean parameter"); \
+    p_bool[p_cnt] = value; \
+  } \
+  int64_t GetInt(Settings param) { \
+    uint32_t offset = 1 + b_cnt; \
+    if (p_cnt <= b_cnt || p_cnt >= i_cnt) throw std::runtime_error("Not an integer parameter"); \
+    return int64_t(p_num[p_cnt - offset]); \
+  } \
+  void SetInt(Settings param, int64_t value) { \
+    uint32_t offset = 1 + b_cnt; \
+    if (p_cnt <= b_cnt || p_cnt >= i_cnt) throw std::runtime_error("Not an integer parameter"); \
+    p_num[p_cnt - offset] = double(value); \
+  } \
+  double GetReal(Settings param) { \
+    uint32_t offset =  2 + b_cnt; \
+    if (p_cnt <= i_cnt || p_cnt >= f_cnt) throw std::runtime_error("Not a real parameter"); \
+    return p_num[p_cnt - offset]; \
+  } \
+  void SetReal(Settings param, double value) { \
+    uint32_t offset = 2 + b_cnt; \
+    if (p_cnt <= i_cnt || p_cnt >= f_cnt) throw std::runtime_error("Not a real parameter"); \
+    p_num[p_cnt - offset] = value; \
+  } \
+  void DefaultSettings()
+  
 #endif /* INDIGOX_UTILS_COMMON_HPP */

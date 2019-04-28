@@ -122,6 +122,8 @@ namespace indigox {
     bool IsAmideBond() const;
     bool IsCarbonylBond() const;
 
+    double Length();
+
   private:
     void Reset();
 

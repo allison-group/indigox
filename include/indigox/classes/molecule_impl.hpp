@@ -3,6 +3,7 @@
 
 #include "../graph/condensed.hpp"
 #include "../graph/molecular.hpp"
+#include "../utils/atomic_coordinates.hpp"
 #include "../utils/fwd_declares.hpp"
 #include "angle.hpp"
 #include "atom.hpp"
@@ -48,7 +49,7 @@ namespace indigox {
     int32_t charge_group_id;
     int32_t residue_id;
     int32_t implicit_hydrogens;
-    Eigen::Vector3d position;
+    uint32_t position; // index in the molecule and atomiccoordinates
     std::string name;
     std::string residue_name;
     double partial_charge;
@@ -62,8 +63,7 @@ namespace indigox {
     void serialise(Archive &archive, const uint32_t);
 
     Impl() = default;
-    Impl(const Molecule &mol, const Element &elem, double x, double y, double z,
-         std::string n);
+    Impl(const Molecule &mol, const Element &elem, std::string n);
   };
 
   // =======================================================================
@@ -147,6 +147,7 @@ namespace indigox {
     int64_t next_unique_id;
     int32_t molecular_charge;
     MoleculeAtoms atoms;
+    AtomicCoordinates coordinates;
     MoleculeBonds bonds;
     MoleculeAngles angles;
     MoleculeDihedrals dihedrals;
@@ -180,10 +181,10 @@ namespace indigox {
     inline void Set(CalculatedData dat) {
       calculated_data.set(static_cast<uint8_t>(dat));
     }
-    inline void Reset(CalculatedData dat) {
+    inline void ResetCalculatedData(CalculatedData dat) {
       calculated_data.reset(static_cast<uint8_t>(dat));
     }
-    inline void Reset() { calculated_data.reset(); }
+    inline void ResetCalculatedData() { calculated_data.reset(); }
   };
 } // namespace indigox
 

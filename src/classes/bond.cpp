@@ -6,6 +6,7 @@
 #include <indigox/utils/serialise.hpp>
 
 #include <array>
+#include <cmath>
 #include <memory>
 
 #ifndef INDIGOX_DISABLE_SANITY_CHECKS
@@ -131,6 +132,18 @@ namespace indigox {
     if (o.NumBonds() + o.GetImplicitCount() != 1) return false;
     if (c.NumBonds() + c.GetImplicitCount() != 3) return false;
     return true;
+  }
+
+  double Bond::Length() {
+    _sanity_check_(*this);
+    Coordinates a = GetAtoms()[0].GetPosition();
+    Coordinates b = GetAtoms()[1].GetPosition();
+
+    double x = a.x - b.x;
+    double y = a.y - b.y;
+    double z = a.z - b.z;
+
+    return sqrt(x * x + y * y + z * z);
   }
 
   // =======================================================================
