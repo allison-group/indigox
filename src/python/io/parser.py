@@ -302,6 +302,7 @@ def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
   for atom in mol_params.GetAtoms():
     c_atom = mol_coords.GetAtomTag(atom.GetTag())
     atom.SetPosition(c_atom.GetX(), c_atom.GetY(), c_atom.GetZ())
+    atom.SetElement(c_atom.GetElement())
   return mol_params
 
 def LoadITPFile(path, ff, details=None):
