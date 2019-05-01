@@ -429,6 +429,47 @@ namespace indigox {
     m_data->atoms = swap_order;
   }
 
+  /// \todo Make unique on per residue basis
+  void Molecule::UniquifyAtomNames() {
+    eastl::vector_set<std::string> names, duplicate_names;
+    for (Atom atm : m_data->atoms) {
+      if (names.find(atm.GetName()) != names.end()) duplicate_names.insert(atm.GetName());
+      names.insert(atm.GetName());
+    }
+    
+    if (duplicate_names.empty()) return;
+    
+    eastl::vector_map<Element, uint32_t> element_counts;
+    std::stringstream ss;
+    for (Atom atm : m_data->atoms) {
+      if (duplicate_names.find(atm.GetName()) == duplicate_names.end()) continue;
+      do {
+        ss.str("");
+        element_counts[atm.GetElement()] += 1;
+        ss << atm.GetElement().GetSymbol() << element_counts[atm.GetElement()];
+      } while (names.find(ss.str())!= names.end());
+      names.insert(ss.str());
+      atm.SetName(ss.str());
+    }
+    
+  }
+  
+  void Molecule::GiveAromaticBondsImpropers() {
+    Forcefield ff = GetForcefield();
+    for (Dihedral dhd : m_data->dihedrals) {
+      auto assigned_types = dhd.GetTypes();
+      if (assigned_types.empty()) continue;
+      if (assigned_types[0].GetType() == DihedralType::Improper) continue;
+      Bond bnd = GetBond(dhd.GetAtoms()[1], dhd.GetAtoms()[2]);
+      if (!bnd) continue;
+      if (bnd.GetOrder() == BondOrder::AROMATIC) {
+        assigned_types.clear();
+        assigned_types.push_back(ff.GetDihedralType(DihedralType::Improper, 1));
+        dhd.SetTypes(assigned_types);
+      }
+    }
+  }
+  
   void Molecule::OptimiseChargeGroups() {
     std::vector<std::vector<Atom>> charge_groups =
         algorithm::OptimalChargeGroups(*this);

@@ -382,6 +382,13 @@ namespace indigox::algorithm {
       CMG_ri = CMGToRIGraph(CMG, edgemask, vertmask);
 
     // Run the matching
+    if (GetInt(CPSet::ChargeRounding) > 3) {
+      ParamMolecule::charge_rounding = 1;
+      for (int32_t i = 0; i < GetInt(CPSet::ChargeRounding); ++i)
+        ParamMolecule::charge_rounding *= 10;
+    } else {
+      ParamMolecule::charge_rounding = 1000;
+    }
     for (Athenaeum &lib : _libs) {
       for (auto &g_frag : lib.GetFragments()) {
         // Initially all fragments are to be searched
@@ -430,6 +437,47 @@ namespace indigox::algorithm {
       using ATSet = Athenaeum::Settings;
       pmol.ApplyParameteristion(lib.GetBool(ATSet::SelfConsistent));
     }
+    
+    // Redistribute any excess charge, but only if all atoms have been mapped
+    bool redistribute = true;
+    for (ParamAtom patm : pmol.GetAtoms()) {
+      if (patm.GetMappedCharges().empty()) {
+        redistribute = false;
+        break;
+      }
+    }
+    
+    if (redistribute) {
+      std::vector<ParamAtom> addable_atoms = pmol.GetChargeAddableAtoms();
+      std::sort(addable_atoms.begin(), addable_atoms.end(), [](ParamAtom& a, ParamAtom& b) { return a.MeanCharge() < b.MeanCharge(); });
+      
+      
+      double target_charge = mol.GetMolecularCharge();
+      double total_charge = 0.;
+      for (Atom atm : mol.GetAtoms()) total_charge += atm.GetPartialCharge();
+      double to_add = target_charge - total_charge;
+      uint64_t count = (uint64_t)abs(round(to_add * ParamMolecule::charge_rounding));
+      if (count && addable_atoms.empty()) {
+        std::cout << "WARNING: Total charge does not match target charge but no atoms are available for charge redistribution.\n";
+        return pmol;
+      }
+      if (abs(to_add) > 0.1) std::cout << "WARNING: CherryPicker redistributing a large charge imbalance: " << to_add << "\n";
+      
+      if (to_add < 0) {
+        double charge_delta = -1. / ParamMolecule::charge_rounding;
+        for (int64_t pos = 0; count; count -= 1, pos += 1) {
+          if (pos == (int64_t)addable_atoms.size()) pos = 0;
+          addable_atoms[pos].AddRedistributedCharge(charge_delta);
+        }
+      } else {
+        double charge_delta = 1. / ParamMolecule::charge_rounding;
+        for (int64_t pos = addable_atoms.size() - 1; count; count -= 1, pos -= 1) {
+          if (!pos) pos = addable_atoms.size() - 1;
+          addable_atoms[pos].AddRedistributedCharge(charge_delta);
+        }
+      }
+    } else std::cout << "WARNING: Not all atoms mapped so charge cannot be redistributed.\n";
+    
     return pmol;
   }
 

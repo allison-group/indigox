@@ -145,7 +145,8 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
       .value("UseRISubgraphMatching", CPSet::UseRISubgraphMatching)
       // Integer settings
       .value("MinimumFragmentSize", CPSet::MinimumFragmentSize)
-      .value("MaximumFragmentSize", CPSet::MaximumFragmentSize);
+      .value("MaximumFragmentSize", CPSet::MaximumFragmentSize)
+      .value("ChargeRounding", CPSet::ChargeRounding);
 
   cherrypicker.def(py::init<Forcefield &>())
       .def("AddAthenaeum", &CherryPicker::AddAthenaeum)

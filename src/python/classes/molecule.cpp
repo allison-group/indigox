@@ -291,6 +291,8 @@ void GeneratePyMolecule(pybind11::module &m) {
       .def("PerceiveResidues", &Molecule::PerceiveResidues)
       .def("OptimiseChargeGroups", &Molecule::OptimiseChargeGroups)
       .def("ReorderAtoms", &Molecule::ReorderAtoms)
+      .def("UniquifyAtomNames", &Molecule::UniquifyAtomNames)
+  .def("GiveAromaticBondsImpropers", &Molecule::GiveAromaticBondsImpropers)
       .def("ReserveAtoms", &Molecule::ReserveAtoms)
       .def("ReserveBonds", &Molecule::ReserveBonds)
       .def("GetAtoms", &Molecule::GetAtoms, Ref)

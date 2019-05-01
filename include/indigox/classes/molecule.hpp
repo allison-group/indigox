@@ -386,6 +386,10 @@ namespace indigox {
     void ModificationMade();
 
     AtomicCoordinates &GetAtomicCoordinates();
+    
+    void UniquifyAtomNames();
+    
+    void GiveAromaticBondsImpropers();
 
   private:
     struct Impl;

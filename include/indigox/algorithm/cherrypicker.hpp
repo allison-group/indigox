@@ -232,6 +232,8 @@ namespace indigox::algorithm {
          fragment in an athenaeum which has a size larger than this will be
          skipped. A negative value means all fragments will be tested. */
       MaximumFragmentSize,
+      /*! The number of decmal points to round assigned charges to. Rounding to less than three decimal places, or no rounding, is not supported. */
+      ChargeRounding,
       /*! Marks the end of the integer settings. As there is no external use for
          this value, it is not exposed to Python. */
       IntCount
@@ -285,7 +287,8 @@ namespace indigox::algorithm {
      EdgeBondOrder\endlink, \link Settings::EdgeDegree EdgeDegree\endlink, \link
      Settings::AllowDanglingBonds AllowDanglingBonds\endlink, \link
      Settings::AllowDanglingAngles AllowDanglingAngles\endlink, \link
-     Settings::AllowDanglingDihedrals AllowDanglingDihedrals\endlink, and \link Settings::UseRISubgraphMatching UseRISubgraphMatching\endlink. All other
+     Settings::AllowDanglingDihedrals AllowDanglingDihedrals\endlink, and \link
+     Settings::UseRISubgraphMatching UseRISubgraphMatching\endlink. All other
      boolean values default to false. The default \link
      Settings::MinimumFragmentSize MinimumFragmentSize\endlink is \f$4\f$ and
      the default \link Settings::MaximumFragmentSize MaximumFragmentSize\endlink

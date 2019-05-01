@@ -31,6 +31,7 @@ void GeneratePyParameterisedMolecule(pybind11::module &m) {
       .def("MeanCharge", &ParamAtom::MeanCharge)
       .def("MedianCharge", &ParamAtom::MeadianCharge)
       .def("StandardDeviationCharge", &ParamAtom::StandardDeviationCharge)
+      .def("RedistributedChargeAdded", &ParamAtom::RedistributedChargeAdded)
       .def("GetMostCommonType", &ParamAtom::GetMostCommonType)
       .def("GetMappedTypeCounts", &ParamAtom::GetMappedTypeCounts, Ref)
       .def("GetMappedCharges", &ParamAtom::GetMappedCharges, Ref)

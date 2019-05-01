@@ -17,6 +17,7 @@ namespace indigox {
     TypeCounts types;
     MappedCharge charges;
     bool applied;
+    double added_charge = 0.;
 
     ParamAtomImpl(const Atom &atm) : atom(atm), applied(false) {}
   };
@@ -45,6 +46,7 @@ namespace indigox {
     m_data->charges.push_back(mapped.GetPartialCharge());
   }
 
+  int64_t ParamMolecule::charge_rounding = 0;
   bool ParamAtom::ApplyParameterisation(bool self_consistent) {
     if (m_data->applied) return false;
     if (m_data->charges.empty()) return false;
@@ -58,14 +60,25 @@ namespace indigox {
     }
     if (!m_data->atom) throw std::runtime_error("Mapped atom missing");
     m_data->atom.SetType(GetMostCommonType());
-    if (!self_consistent)
-      m_data->atom.SetPartialCharge(MeanCharge());
+    if (!self_consistent) {
+      double charge = MeanCharge();
+      if (ParamMolecule::charge_rounding > 0) {
+        charge = round(charge * ParamMolecule::charge_rounding) / ParamMolecule::charge_rounding;
+      }
+      m_data->atom.SetPartialCharge(charge);
+    }
     else
       m_data->atom.SetPartialCharge(MeadianCharge());
+      
     m_data->applied = true;
     return true;
   }
 
+  void ParamAtom::AddRedistributedCharge(double amount) {
+    m_data->atom.SetPartialCharge(m_data->atom.GetPartialCharge() + amount);
+    m_data->added_charge += amount;
+  }
+  
   // ===========================================================================
   // == ParamAtom Data Retrevial ===============================================
   // ===========================================================================
@@ -81,6 +94,9 @@ namespace indigox {
   double ParamAtom::StandardDeviationCharge() const {
     return CalculateStandardDeviation(m_data->charges.begin(),
                                       m_data->charges.end());
+  }
+  double ParamAtom::RedistributedChargeAdded() const {
+    return m_data->added_charge;
   }
   const FFAtom &ParamAtom::GetMostCommonType() const {
     using T = TypeCounts::value_type;
@@ -551,6 +567,10 @@ namespace indigox {
 
   const std::vector<ParamDihedral> &ParamMolecule::GetDihedrals() const {
     return m_data->dihedrals;
+  }
+  
+  const std::vector<ParamAtom>& ParamMolecule::GetChargeAddableAtoms() const {
+    return m_data->nonsc_atoms;
   }
 
   // ===========================================================================

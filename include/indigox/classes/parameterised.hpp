@@ -45,6 +45,8 @@ namespace indigox {
      *  \param self_consistent if the parameterisation needs to be self
      *  consistent. */
     bool ApplyParameterisation(bool self_consistent);
+    
+    void AddRedistributedCharge(double amount);
 
   public:
     /*! \brief Calculates the number of mapped atoms
@@ -66,6 +68,10 @@ namespace indigox {
     /*! \brief Get the standard deviation of the charges.
      *  \return the standard deviation of the charges. */
     double StandardDeviationCharge() const;
+    
+    /*! \brief Get the amount of redistributed charge added.
+     *  \return the amount of redistributed charge added. */
+    double RedistributedChargeAdded() const;
 
     /*! \brief Get the mode of mapped atom types.
      *  \return the most commonly mapped atom type. */
@@ -276,7 +282,8 @@ namespace indigox {
     /*! \brief Normal constructor
      *  \param mol the molecule to parameterise. */
     ParamMolecule(const Molecule &mol);
-
+    static int64_t charge_rounding;
+    
   public:
     /*! \brief Applies the current parameterisation state.
      *  \details Goes through all parameterised parts and calls the apply
@@ -330,6 +337,7 @@ namespace indigox {
     const std::vector<ParamBond> &GetBonds() const;
     const std::vector<ParamAngle> &GetAngles() const;
     const std::vector<ParamDihedral> &GetDihedrals() const;
+    const std::vector<ParamAtom>& GetChargeAddableAtoms() const;
 
   private:
     struct ParamMoleculeImpl;

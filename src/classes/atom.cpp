@@ -77,7 +77,7 @@ namespace indigox {
 
   Atom::Impl::Impl(const Molecule &m, const Element &e, std::string n)
       : molecule(m), element(e), formal_charge(0), charge_group_id(-1),
-        residue_id(-1), implicit_hydrogens(0), position(-1), name(n),
+        residue_id(0), implicit_hydrogens(0), position(-1), name(n),
         residue_name("TMP"), partial_charge(0.0),
         stereochemistry(AtomStereo::UNDEFINED) {}
 
@@ -177,13 +177,13 @@ namespace indigox {
 
   int32_t Atom::GetResidueID() {
     _sanity_check_(*this);
-    m_data->molecule.PerceiveResidues();
+//    m_data->molecule.PerceiveResidues();
     return m_data->residue_id;
   }
 
   std::string Atom::GetResidueName() {
     _sanity_check_(*this);
-    m_data->molecule.PerceiveResidues();
+//    m_data->molecule.PerceiveResidues();
     return m_data->residue_name;
   }
 
@@ -244,7 +244,11 @@ namespace indigox {
 
   int64_t Atom::GetIndex() const {
     _sanity_check_(*this);
-    return bool(m_data->molecule) ? m_data->position : -1;
+    if (!m_data->molecule) return -1;
+    auto mol_atoms = m_data->molecule.GetAtoms();
+    auto idx = std::find(mol_atoms.begin(), mol_atoms.end(), *this);
+    return (idx == mol_atoms.end()) ? -1 : std::distance(mol_atoms.begin(), idx);
+//    return bool(m_data->molecule) ? m_data->position : -1;
   }
 
   const FFAtom &Atom::GetType() const {
