@@ -349,6 +349,11 @@ namespace indigox {
     m_data->charge_group_id = id;
   }
 
+  void Atom::SetResidueName(std::string name) {
+    _sanity_check_(*this);
+    m_data->residue_name = name;
+  }
+  
   void Atom::SetName(std::string name) {
     _sanity_check_(*this);
     m_data->name = name;

@@ -85,6 +85,7 @@ namespace indigox {
     int32_t GetResidueID();
 
     std::string GetResidueName();
+    void SetResidueName(std::string name);
 
     int32_t GetChargeGroupID() const;
 

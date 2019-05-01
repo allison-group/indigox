@@ -77,6 +77,7 @@ void GeneratePyMolecule(pybind11::module &m) {
       .def("GetID", &Atom::GetID)
       .def("GetResidueID", &Atom::GetResidueID)
       .def("GetResidueName", &Atom::GetResidueName)
+      .def("SetResidueName", &Atom::SetResidueName)
       .def("GetImplicitCount", &Atom::GetImplicitCount)
       .def("GetMolecule", &Atom::GetMolecule)
       .def("GetName", &Atom::GetName)
