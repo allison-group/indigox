@@ -152,10 +152,10 @@ def SaveRTPFile(path, mol, pmol=None):
       print(dhd_fmt_str.format(**dhd_dat), file=file)
     else:
       for t in dhd.GetTypes():
-        dhd_dat = {"atoma" : atoms[0].GetIndex() + 1,
-                   "atomb" : atoms[1].GetIndex() + 1,
-                   "atomc" : atoms[2].GetIndex() + 1,
-                   "atomd" : atoms[3].GetIndex() + 1,
+        dhd_dat = {"atoma" : atoms[0].GetName(),
+                   "atomb" : atoms[1].GetName(),
+                   "atomc" : atoms[2].GetName(),
+                   "atomd" : atoms[3].GetName(),
                    "extra" : "" }
         if t.GetType() == ix.DihedralType.Proper:
           dhd_dat["typeid"] = "{:.4f}  {:.4f}  {}".format(t.GetPhaseShift(), t.GetForceConstant(), t.GetMultiplicity())
