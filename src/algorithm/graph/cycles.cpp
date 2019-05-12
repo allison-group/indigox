@@ -105,7 +105,7 @@ namespace indigox::algorithm {
     e_basis.clear();
     if (v_basis.size() == 0) return 0;
     for (VertContain &path : v_basis) {
-      path.emplace(path.end(), path.back());
+      path.emplace(path.end(), path.front());
       EdgeContain path_edge;
       for (size_t i = 1; i < path.size(); ++i)
         path_edge.emplace(path_edge.end(), G.GetEdge(path[i - 1], path[i]));
