@@ -11,6 +11,8 @@
 #include <type_traits>
 #include <vector>
 
+#include <EASTL/vector_set.h>
+
 namespace indigox::algorithm {
 
   using namespace indigox::graph;
@@ -130,6 +132,21 @@ namespace indigox::algorithm {
   // == All cycles implementation ==============================================
   // ===========================================================================
 
+  template <class V, class E, class S, class D, class VP, class EP>
+  bool __ring_connectivity_check(BaseGraph<V, E, S, D, VP, EP> &G,
+                                 std::vector<E>& edges) {
+    eastl::vector_set<V> all_vertices;
+    all_vertices.reserve(edges.size());
+    for (E e: edges) {
+      all_vertices.insert(G.GetSourceVertex(e));
+      all_vertices.insert(G.GetTargetVertex(e));
+    }
+    
+    std::vector<V> tmp(all_vertices.begin(), all_vertices.end());
+    S subG = G.Subgraph(tmp, edges);
+    return subG.IsConnected();
+  }
+  
   template <class V, class E, class S, class D, class VP, class EP,
             class Container>
   int64_t AllCycles(BaseGraph<V, E, S, D, VP, EP> &G, Container &ecycles) {
@@ -137,25 +154,58 @@ namespace indigox::algorithm {
         typename BaseGraph<V, E, S, D, VP, EP>::CycleEdgeContain;
     using EdgeContain = typename BaseGraph<V, E, S, D, VP, EP>::EdgeContain;
 
+    ecycles.clear();
     CycleEdgeContain basis_edge;
     CycleBasis(G, basis_edge);
+    
+    //  Group indices into connected groups.
+    //  Only do combinations of connected groups
     std::vector<size_t> indices(basis_edge.size());
     std::iota(indices.begin(), indices.end(), 0);
-    for (size_t r = 1; r <= basis_edge.size(); ++r) {
-      std::vector<std::vector<size_t>> combs;
-      Combinations(indices.begin(), indices.end(), r, combs);
-      for (std::vector<size_t> &combo : combs) {
-        EdgeContain xor_set, tmp;
-        while (!combo.empty()) {
-          tmp.clear();
-          size_t i = combo.back();
-          combo.pop_back();
-          std::set_symmetric_difference(
-              xor_set.begin(), xor_set.end(), basis_edge[i].begin(),
-              basis_edge[i].end(), std::back_inserter(tmp));
-          xor_set.swap(tmp);
+    eastl::vector_set<size_t> idxs(indices.begin(), indices.end());
+    
+    std::vector<std::vector<size_t>> index_grouping;
+    while (idxs.size()) {
+      index_grouping.push_back(std::vector<size_t>());
+      index_grouping.back().push_back(idxs.back()); idxs.pop_back();
+      bool added_new = true;
+      while (added_new) {
+        added_new = false;
+        std::vector<E> current_e;
+        for (size_t i : index_grouping.back()) current_e.insert(current_e.end(), basis_edge[i].begin(), basis_edge[i].end());
+        for (size_t i : idxs) {
+          std::vector<E> test_e(current_e.begin(), current_e.end());
+          test_e.insert(test_e.end(), basis_edge[i].begin(), basis_edge[i].end());
+          if (__ring_connectivity_check(G, test_e)) {
+            added_new = true;
+            idxs.erase(i);
+            index_grouping.back().push_back(i);
+            break;
+          }
         }
-        ecycles.emplace(ecycles.end(), xor_set.begin(), xor_set.end());
+      }
+    }
+    
+    for (std::vector<size_t>& group : index_grouping) {
+      for (size_t r = 1; r <= group.size(); ++r) {
+        std::vector<std::vector<size_t>> combs;
+        Combinations(group.begin(), group.end(), r, combs);
+        for (std::vector<size_t> &combo : combs) {
+          EdgeContain xor_set, tmp;
+          while (!combo.empty()) {
+            tmp.clear();
+            size_t i = combo.back();
+            combo.pop_back();
+            std::set_symmetric_difference(
+                                          xor_set.begin(), xor_set.end(), basis_edge[i].begin(),
+                                          basis_edge[i].end(), std::back_inserter(tmp));
+            xor_set.swap(tmp);
+          }
+          
+          // Only add the cycle if its connected
+          if (__ring_connectivity_check(G, xor_set))
+            ecycles.emplace(ecycles.end(), xor_set.begin(), xor_set.end());
+        }
       }
     }
     return ecycles.size();
