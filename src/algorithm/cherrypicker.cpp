@@ -21,78 +21,6 @@
 
 namespace indigox::algorithm {
 
-  struct Uint64AttrComparator : public rilib::AttributeComparator {
-    Uint64AttrComparator(){};
-    virtual bool compare(void *attr1, void *attr2) {
-      return (*((uint64_t *)attr1) - *((uint64_t *)attr2)) == 0;
-    }
-    virtual int compareint(void *attr1, void *attr2) {
-      return *((uint64_t *)attr1) - *((uint64_t *)attr2);
-    }
-  };
-
-  struct Uint32AttrComparator : public rilib::AttributeComparator {
-    Uint32AttrComparator(){};
-    virtual bool compare(void *attr1, void *attr2) {
-      return (*((uint32_t *)attr1) - *((uint32_t *)attr2)) == 0;
-    }
-    virtual int compareint(void *attr1, void *attr2) {
-      return *((uint32_t *)attr1) - *((uint32_t *)attr2);
-    }
-  };
-
-  std::unique_ptr<rilib::Graph>
-  CMGToRIGraph(graph::CondensedMolecularGraph &cmg, graph::EdgeIsoMask emask,
-               graph::VertexIsoMask vmask) {
-    std::unique_ptr<rilib::Graph> G = std::make_unique<rilib::Graph>();
-
-    std::vector<graph::CMGVertex> cmg_v = cmg.GetVertices();
-
-    // Build the vertices
-    G->nof_nodes = cmg_v.size();
-    G->nodes_attrs = (void **)malloc(G->nof_nodes * sizeof(void *));
-    G->out_adj_sizes = (int *)calloc(G->nof_nodes, sizeof(int));
-    G->in_adj_sizes = (int *)calloc(G->nof_nodes, sizeof(int));
-    for (int i = 0; i < G->nof_nodes; ++i) {
-      G->nodes_attrs[i] = (uint64_t *)malloc(sizeof(uint64_t));
-      *((uint64_t *)G->nodes_attrs[i]) =
-          (cmg_v[i].GetIsomorphismMask() & vmask).to_uint64();
-      G->out_adj_sizes[i] += cmg.Degree(cmg_v[i]);
-      G->in_adj_sizes[i] += cmg.Degree(cmg_v[i]);
-    }
-
-    // Build the edges
-    G->out_adj_list = (int **)malloc(G->nof_nodes * sizeof(int *));
-    G->in_adj_list = (int **)malloc(G->nof_nodes * sizeof(int *));
-    G->out_adj_attrs = (void ***)malloc(G->nof_nodes * sizeof(void **));
-
-    int *ink = (int *)calloc(G->nof_nodes, sizeof(int));
-    for (int i = 0; i < G->nof_nodes; ++i) {
-      G->in_adj_list[i] = (int *)calloc(G->in_adj_sizes[i], sizeof(int));
-    }
-
-    for (int i = 0; i < G->nof_nodes; ++i) {
-      G->out_adj_list[i] = (int *)calloc(G->in_adj_sizes[i], sizeof(int));
-      G->out_adj_attrs[i] =
-          (void **)malloc(G->out_adj_sizes[i] * sizeof(void *));
-      std::vector<graph::CMGVertex> nbrs = cmg.GetNeighbours(cmg_v[i]);
-      for (int j = 0; j < G->out_adj_sizes[i]; ++j) {
-        int idx = std::distance(cmg_v.begin(),
-                                std::find(cmg_v.begin(), cmg_v.end(), nbrs[j]));
-        G->out_adj_list[i][j] = idx;
-        G->out_adj_attrs[i][j] = (uint32_t *)malloc(sizeof(uint32_t));
-        *((uint32_t *)G->out_adj_attrs[i][j]) =
-            (cmg.GetEdge(cmg_v[i], nbrs[j]).GetIsomorphismMask() & emask)
-                .to_uint32();
-        G->in_adj_list[idx][ink[idx]] = i;
-        ink[idx]++;
-      }
-    }
-
-    free(ink);
-    return G;
-  }
-
   using CPSet = CherryPicker::Settings;
 
   CherryPicker::CherryPicker(Forcefield &ff) : _ff(ff), bool_parameters(0) {
@@ -410,26 +338,17 @@ namespace indigox::algorithm {
           if (!GetBool(CPSet::UseRISubgraphMatching)) {
             SubgraphIsomorphisms(FG, CMG, callback);
           } else {
-            std::unique_ptr<rilib::Graph> FG_ri =
-                CMGToRIGraph(FG, edgemask, vertmask);
-            rilib::AttributeComparator *vert_compare =
-                new Uint64AttrComparator();
-            rilib::AttributeComparator *edge_compare =
-                new Uint32AttrComparator();
-            rilib::MatchListener *listener =
-                new RICherryPickerMatcher(callback);
-            rilib::MaMaConstrFirst *mama = new rilib::MaMaConstrFirst(*FG_ri);
+            std::unique_ptr<rilib::Graph> FG_ri = CMGToRIGraph(FG, edgemask, vertmask);
+            std::unique_ptr<rilib::AttributeComparator> vert_compare = std::make_unique<Uint64AttrComparator>();
+            std::unique_ptr<rilib::AttributeComparator> edge_compare = std::make_unique<Uint32AttrComparator>();
+            std::unique_ptr<rilib::MatchListener> listener = std::make_unique<RICherryPickerMatcher>(callback);
+            std::unique_ptr<rilib::MaMaConstrFirst> mama = std::make_unique<rilib::MaMaConstrFirst>(*FG_ri);
             mama->build(*FG_ri);
             long tmp_1, tmp_2, tmp_3;
             // run the matching
             rilib::match(*CMG_ri, *FG_ri, *mama, *listener,
                          rilib::MATCH_TYPE::MT_INDSUB, *vert_compare,
                          *edge_compare, &tmp_1, &tmp_2, &tmp_3);
-
-            delete mama;
-            delete listener;
-            delete vert_compare;
-            delete edge_compare;
           }
           if (!callback.has_mapping) { fragments -= frag.GetSupersets(); }
         }
