@@ -4,7 +4,8 @@ from collections import defaultdict
 import indigox as ix
 
 __all__ = ["LoadIFPFile", "LoadPDBFile", "LoadMTBFile", "LoadIXDFile",
-           "LoadParameterisedMolecule", "LoadITPFile" , "LoadFragmentFile"]
+           "LoadParameterisedMolecule", "LoadITPFile" , "LoadFragmentFile",
+           "LoadSDFFile"]
 
 ## \brief Loads a GROMOS IFP file as a forcefield
 #  \details See the GROMOS Manual for definition of the IFP file format.
@@ -407,6 +408,53 @@ def LoadFragmentFile(path, ff):
 
 
 ## \cond
+
+def LoadSDFFile(path):
+  bond_orders = {1: ix.BondOrder.Single,
+                 2: ix.BondOrder.Double,
+                 3: ix.BondOrder.Triple}
+  molecules = []
+  pt = ix.GetPeriodicTable()
+  data = list(ix.LoadFile(path.expanduser(), comment=None, blanks=True))
+  i = 0
+  new_molecule = True
+  num_atoms = 0
+  num_bonds = 0
+  while i < len(data):
+    if data[i] == "$$$$": 
+      i += 1
+      new_molecule = True
+    elif new_molecule:
+      molecules.append(ix.Molecule(data[i]))
+      counts = data[i+3].split()
+      num_atoms = int(counts[0])
+      num_bonds = int(counts[1])
+      i += 4
+      new_molecule = False
+    elif num_atoms:
+      atom_line = data[i].split()
+      x, y, z = map(float, atom_line[0:3])
+      element = pt[atom_line[3]]
+      fc = int(atom_line[4])
+      atm = molecules[-1].NewAtom(element, x, y, z)
+      atm.SetName("{}{}".format(element.GetSymbol(), molecules[-1].NumAtoms()))
+      atm.SetFormalCharge(fc)
+      atm.SetTag(molecules[-1].NumAtoms())
+      num_atoms -= 1
+      i += 1
+    elif num_bonds:
+      bond_line = data[i].split()
+      a, b, order, stero = map(int, bond_line)
+      atma = molecules[-1].GetAtomTag(a)
+      atmb = molecules[-1].GetAtomTag(b)
+      molecules[-1].NewBond(atma, atmb).SetOrder(bond_orders[order])
+      i+= 1
+      num_bonds -= 1
+    else:
+      i += 1
+      
+  return molecules
+
 if __name__ == "__main__":
   p = Path('~/tmp/itchy-wookie-data/Input/ForceFields/54A7_original.ifp')
   ff = LoadGromosInteractionFunctionParameterFile(p.expanduser())

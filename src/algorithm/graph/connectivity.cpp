@@ -75,6 +75,7 @@ namespace indigox::algorithm {
     Impl(GraphType &G, size_t min, size_t max)
         : graph(G), min_subgraph_size(min), max_subgraph_size(max),
           vertices(G.GetVertices()) {}
+    ~Impl() { }
 
     void BuildNeighboursBitsets() {
       for (size_t i = 0; i < vertices.size(); ++i) {

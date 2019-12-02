@@ -118,6 +118,28 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
         });
   //  m.def("SubgraphIsomorphisms", py::overload_cast<MG&, MG&,
   //  MGCallback&>(&SubgraphIsomorphisms));
+  m.def("LargestCommonSubgraph",
+        [](CMG & small, CMG & large, size_t smallest) {
+          eastl::vector_map<graph::CMGVertex, eastl::vector<std::pair<graph::CMGVertex, graph::CMGVertex>>> largest;
+          LargestCommonSubgraph(small, large, smallest, largest);
+          
+          std::map<CMGV, std::vector<std::pair<CMGV, CMGV>>> return_val;
+          for (auto& item : largest) {
+            return_val[item.first] = std::vector<std::pair<CMGV, CMGV>>(item.second.begin(), item.second.end());
+          }
+          return return_val;
+        });
+  m.def("LargestCommonSubgraph",
+        [](MG & small, MG & large, size_t smallest) {
+          eastl::vector_map<MGV, eastl::vector<std::pair<MGV, MGV>>> largest;
+          LargestCommonSubgraph(small, large, smallest, largest);
+          
+          std::map<MGV, std::vector<std::pair<MGV, MGV>>> return_val;
+          for (auto& item : largest) {
+            return_val[item.first] = std::vector<std::pair<MGV, MGV>>(item.second.begin(), item.second.end());
+          }
+          return return_val;
+        });
 
   using CPSet = CherryPicker::Settings;
 
