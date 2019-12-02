@@ -300,7 +300,7 @@ namespace indigox {
   // == Athenaeum implementation ===============================================
   // ===========================================================================
 
-  using ATSet = Athenaeum::Settings;
+  using AthSettings = Athenaeum::Settings;
 
   struct Athenaeum::Impl {
 
@@ -326,41 +326,41 @@ namespace indigox {
   // Default settings
 
   void Athenaeum::DefaultSettings() {
-    SetInt(ATSet::MoleculeSizeLimit, 40);
-    SetInt(ATSet::MinimumFragmentSize, 1);
-    SetInt(ATSet::MaximumFragmentSize, 40);
-    SetInt(ATSet::OverlapLength, 2);
-    SetInt(ATSet::CycleSize, 8);
+    SetInt(AthSettings::MoleculeSizeLimit, 40);
+    SetInt(AthSettings::MinimumFragmentSize, 1);
+    SetInt(AthSettings::MaximumFragmentSize, 40);
+    SetInt(AthSettings::OverlapLength, 2);
+    SetInt(AthSettings::CycleSize, 8);
   }
 
-  bool Athenaeum::GetBool(ATSet param) {
-    if (param >= ATSet::BoolCount)
+  bool Athenaeum::GetBool(AthSettings param) {
+    if (param >= AthSettings::BoolCount)
       throw std::runtime_error("Not a boolean parameter");
     return m_data->bool_parameters.test((uint8_t)param);
   }
 
-  void Athenaeum::SetBool(ATSet param) {
-    if (param >= ATSet::BoolCount)
+  void Athenaeum::SetBool(AthSettings param) {
+    if (param >= AthSettings::BoolCount)
       throw std::runtime_error("Not a boolean parameter");
     m_data->bool_parameters.set((uint8_t)param);
   }
 
-  void Athenaeum::UnsetBool(ATSet param) {
-    if (param >= ATSet::BoolCount)
+  void Athenaeum::UnsetBool(AthSettings param) {
+    if (param >= AthSettings::BoolCount)
       throw std::runtime_error("Not a boolean parameter");
     m_data->bool_parameters.reset((uint8_t)param);
   }
 
-  int32_t Athenaeum::GetInt(ATSet param) {
-    uint8_t offset = 1 + (uint8_t)ATSet::BoolCount;
-    if (param <= ATSet::BoolCount || param >= ATSet::IntCount)
+  int32_t Athenaeum::GetInt(AthSettings param) {
+    uint8_t offset = 1 + (uint8_t)AthSettings::BoolCount;
+    if (param <= AthSettings::BoolCount || param >= AthSettings::IntCount)
       throw std::runtime_error("Not an integer parameter");
     return m_data->int_parameters[(uint8_t)param - offset];
   }
 
-  void Athenaeum::SetInt(ATSet param, int32_t value) {
-    uint8_t offset = 1 + (uint8_t)ATSet::BoolCount;
-    if (param <= ATSet::BoolCount || param >= ATSet::IntCount)
+  void Athenaeum::SetInt(AthSettings param, int32_t value) {
+    uint8_t offset = 1 + (uint8_t)AthSettings::BoolCount;
+    if (param <= AthSettings::BoolCount || param >= AthSettings::IntCount)
       throw std::runtime_error("Not an integer parameter");
     m_data->int_parameters[(uint8_t)param - offset] = value;
   }
@@ -371,13 +371,13 @@ namespace indigox {
   }
 
   Athenaeum::Athenaeum(const Forcefield &ff, int32_t overlap) : Athenaeum(ff) {
-    SetInt(ATSet::OverlapLength, overlap);
+    SetInt(AthSettings::OverlapLength, overlap);
   }
 
   // cycle overlap currently ignored
   Athenaeum::Athenaeum(const Forcefield &ff, int32_t overlap, int32_t)
       : Athenaeum(ff) {
-    SetInt(ATSet::OverlapLength, overlap);
+    SetInt(AthSettings::OverlapLength, overlap);
   }
 
   template <class Archive>
@@ -476,10 +476,20 @@ namespace indigox {
     if (!mol.HasForcefield())
       throw std::runtime_error(
           "Attempting to fragment unparameterised molecule");
-    if (mol.GetForcefield() != GetForcefield())
-      throw std::runtime_error("Forcefield mismatch");
-    if (mol.NumAtoms() > GetInt(ATSet::MoleculeSizeLimit))
-      throw std::runtime_error("Molecule too large to automagically fragment");
+    if (mol.GetForcefield() != GetForcefield()) {
+      std::stringstream message;
+      message << "Forcefield mismatch. Expected " << GetForcefield().GetName()
+              << " but molecule uses " << mol.GetForcefield().GetName();
+      throw std::runtime_error(message.str());
+    }
+
+    int32_t mol_size_lim = GetInt(AthSettings::MoleculeSizeLimit);
+    if (mol.NumAtoms() > mol_size_lim) {
+      std::stringstream message;
+      message << "Molecule too large to automagically fragment. Mol atoms: " << mol.NumAtoms()
+              << ", Max atoms allowed: " << mol_size_lim;
+      throw std::runtime_error(message.str());
+    }
 
     auto pos = m_data->fragments.emplace(mol, FragContain());
     size_t initial_count = pos.first->second.size();
@@ -541,7 +551,7 @@ namespace indigox {
           if (overlap_vertices.find(u) != overlap_vertices.end()) continue;
           auto path = algorithm::ShortestPath(CG, u, v);
           if (!path.empty() &&
-              (int32_t)path.size() <= GetInt(ATSet::OverlapLength))
+              (int32_t)path.size() <= GetInt(AthSettings::OverlapLength))
             overlap_vertices.emplace(u);
         }
       }
@@ -560,7 +570,7 @@ namespace indigox {
         if (withoverlap.Degree(u) > 1) continue;
         for (CMGVertex v : sub_vertices) {
           auto path = algorithm::ShortestPath(withoverlap, u, v);
-          if ((int32_t)path.size() < GetInt(ATSet::OverlapLength))
+          if ((int32_t)path.size() < GetInt(AthSettings::OverlapLength))
             bad_overlaps = true;
         }
       }
@@ -587,7 +597,7 @@ namespace indigox {
     return pos.first->second.size() - initial_count;
   }
 
-  void SaveAthenaeum(const Athenaeum &a, std::string path) {
+  void SaveAthenaeum(const Athenaeum &a, const std::string& path) {
     using Archive = cereal::PortableBinaryOutputArchive;
     std::ofstream os(path);
     if (!os.is_open()) throw std::runtime_error("Unable to open output stream");

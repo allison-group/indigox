@@ -445,7 +445,7 @@ namespace indigox {
     ParamDihedrals dihedral_indices;
     std::vector<ParamAtom> nonsc_atoms;
 
-    ParamMoleculeImpl(const Molecule &m) : mol(m) {
+    explicit ParamMoleculeImpl(const Molecule &m) : mol(m) {
       for (const Atom &atm : mol.GetAtoms()) {
         atoms.emplace_back(atm);
         atom_indices.emplace(atm, atom_indices.size());
