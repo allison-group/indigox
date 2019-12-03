@@ -63,7 +63,7 @@ SET(INDIGOX_LIB_SRCS
     src/graph/condensed.cpp
     src/graph/molecular.cpp
     src/utils/common.cpp
-)
+    )
 
 # Build the library
 ADD_LIBRARY(indigox STATIC ${INDIGOX_LIB_SRCS})
@@ -77,6 +77,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/doctest)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/eigen)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/RI)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/json/single_include)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/indigo-bondorder)
 
 # We provide a boost version so only use system boost if it is newer than
 # provided boost

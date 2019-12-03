@@ -10,3 +10,7 @@
 [submodule "external/cereal"]
 	path = external/cereal
 	url = https://github.com/USCiLab/cereal.git
+[submodule "external/indigo-bondorder"]
+	path = external/indigo-bondorder
+	url = https://github.com/Cuboxylate/indigo-bondorder
+	branch = seb/change-namespace
