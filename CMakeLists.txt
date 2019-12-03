@@ -12,7 +12,7 @@ SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 # Set defaults for available options
 OPTION(BUILD_PYTHON "Build Python bindings" ON)
-OPTION(BUILD_EXAMPLES "Build a few example programs" OFF)
+#OPTION(BUILD_EXAMPLES "Build C++ example targets" ON) # Currently not used - examples always built
 OPTION(INSTALL_BOOST "Install boost headers if using provided" OFF)
 
 # Default to release mode build. Does Debug actually do anything?
@@ -63,10 +63,16 @@ SET(INDIGOX_LIB_SRCS
     src/graph/condensed.cpp
     src/graph/molecular.cpp
     src/utils/common.cpp
+    examples/CherryPicker/load_athenaeum_example.cpp
     )
 
 # Build the library
 ADD_LIBRARY(indigox STATIC ${INDIGOX_LIB_SRCS})
+
+# Build examples
+ADD_EXECUTABLE(load_athenaeum_example examples/CherryPicker/load_athenaeum_example.cpp)
+TARGET_LINK_LIBRARIES(load_athenaeum_example indigox)
+
 TARGET_COMPILE_FEATURES(indigox PRIVATE cxx_std_17)
 TARGET_COMPILE_FEATURES(indigox PRIVATE cxx_inline_namespaces)
 

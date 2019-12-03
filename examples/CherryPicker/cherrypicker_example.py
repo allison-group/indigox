@@ -15,10 +15,6 @@ total_ff = time.time() - t_ff
 manualAthPath = "ManualAthenaeum.ath"
 autoAthPath = "AutomaticAthenaeum.ath"
 
-
-# Generate and save the Athenaeums used in the paper
-# On our system this takes approximately 6.5 minutes to execute and uses a maximum of 3.5GB of memory.
-# The saved files are 463 kB and 684.2 MB respectively.
 def LoadAndSaveAthenaeums():
     """ Generate and save the Athenaeums used in the paper
     On our system this takes approximately 6.5 minutes to execute and uses a maximum of 3.5GB of memory.
@@ -83,8 +79,6 @@ def LoadAndSaveAthenaeums():
     ix.SaveAthenaeum(auto_ath, autoAthPath)
     print("Saved Athenaeums to file in  {:10.3f} s\n".format((time.time_ns() - pre_save)/(10**9)))
 
-# Load athenaeums and run the cherrypicker algorithm on the 3 molecules used in the paper
-# On our system, loading the Athenaeums takes about 12 seconds, then running Loading, Running CherryPicker, and Saving the test molecules takes about 5 seconds.
 def RunCherryPicker():
     """ Load athenaeums and run the cherrypicker algorithm on the 3 molecules used in the paper
     On our system, loading the Athenaeums takes about 12 seconds,

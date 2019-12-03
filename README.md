@@ -20,9 +20,11 @@ mkdir build && cd build
 
 cmake .. && make
 
-make install
+make install  (depending on where your python packages are installed, this may need sudo)
 
 Examples are provided in the examples directory. Documentation can be built by make doc. Alternatively, a version of the documentation up to date with the most recent release is available at https://allison-group.github.io/indigox/
+
+If you are developing using the python examples, note that a full build and reinstallation of indigox is needed for the example to pick up on changes. The example relies on the installed indigox version. 
 
 ## File formats
 
