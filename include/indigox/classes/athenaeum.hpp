@@ -101,7 +101,7 @@ namespace indigox {
     // End Settings
 
     using FragContain = std::vector<Fragment>;
-    using MoleculeFragments = std::map<Molecule, FragContain>;
+    using MoleculeFragments = std::map<Molecule, FragContain>; //map of molecule to vectors of fragments
 
   private:
     template <class Archive>
@@ -143,7 +143,7 @@ namespace indigox {
     std::shared_ptr<Impl> m_data;
   };
 
-  void SaveAthenaeum(const Athenaeum &ath, std::string path);
+  void SaveAthenaeum(const Athenaeum &ath, const std::string& path);
   Athenaeum LoadAthenaeum(std::string path);
 
 } // namespace indigox

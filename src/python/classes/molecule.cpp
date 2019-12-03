@@ -14,6 +14,117 @@
 
 namespace py = pybind11;
 
+namespace special {
+  indigox::Molecule Methionine() {
+    using namespace indigox;
+    
+    PeriodicTable pt = GetPeriodicTable();
+    Molecule mol("Methionine");
+    
+    Atom N = mol.NewAtom(pt["N"]); N.SetFormalCharge(1); N.SetName("N");
+    Atom H1 = mol.NewAtom(pt["H"]); H1.SetFormalCharge(0); H1.SetName("H1");
+    Atom H2 = mol.NewAtom(pt["H"]); H2.SetFormalCharge(0); H2.SetName("H2");
+    Atom H3 = mol.NewAtom(pt["H"]); H3.SetFormalCharge(0); H3.SetName("H3");
+    Atom CA = mol.NewAtom(pt["C"]); CA.SetFormalCharge(0); CA.SetName("CA");
+    Atom HA1 = mol.NewAtom(pt["H"]); HA1.SetFormalCharge(0); HA1.SetName("HA1");
+    Atom C = mol.NewAtom(pt["C"]); C.SetFormalCharge(0); C.SetName("C");
+    Atom O1 = mol.NewAtom(pt["O"]); O1.SetFormalCharge(0); O1.SetName("O1");
+    Atom O2 = mol.NewAtom(pt["O"]); O2.SetFormalCharge(-1); O2.SetName("O2");
+    Atom CB = mol.NewAtom(pt["C"]); CB.SetFormalCharge(0); CB.SetName("CB");
+    Atom HB1 = mol.NewAtom(pt["H"]); HB1.SetFormalCharge(0); HB1.SetName("HB2");
+    Atom HB2 = mol.NewAtom(pt["H"]); HB2.SetFormalCharge(0); HB2.SetName("HB1");
+    Atom CG = mol.NewAtom(pt["C"]); CG.SetFormalCharge(0); CG.SetName("CG");
+    Atom HG1 = mol.NewAtom(pt["H"]); HG1.SetFormalCharge(0); HG1.SetName("HG2");
+    Atom HG2 = mol.NewAtom(pt["H"]); HG2.SetFormalCharge(0); HG2.SetName("HG1");
+    Atom SD = mol.NewAtom(pt["S"]); SD.SetFormalCharge(0); SD.SetName("SD");
+    Atom CE = mol.NewAtom(pt["C"]); CE.SetFormalCharge(0); CE.SetName("CE");
+    Atom HE1 = mol.NewAtom(pt["H"]); HE1.SetFormalCharge(0); HE1.SetName("HE2");
+    Atom HE2 = mol.NewAtom(pt["H"]); HE2.SetFormalCharge(0); HE2.SetName("HE1");
+    Atom HE3 = mol.NewAtom(pt["H"]); HE3.SetFormalCharge(0); HE3.SetName("HE3");
+    
+    mol.NewBond(N, H1);
+    mol.NewBond(N, H2);
+    mol.NewBond(N, H3);
+    mol.NewBond(N, CA);
+    mol.NewBond(CA, HA1);
+    mol.NewBond(CA, C);
+    mol.NewBond(CA, CB);
+    mol.NewBond(C, O1).SetOrder(BondOrder::DOUBLE);
+    mol.NewBond(C, O2);
+    mol.NewBond(CB, HB1);
+    mol.NewBond(CB, HB2);
+    mol.NewBond(CB, CG);
+    mol.NewBond(CG, HG1);
+    mol.NewBond(CG, HG2);
+    mol.NewBond(CG, SD);
+    mol.NewBond(SD, CE);
+    mol.NewBond(CE, HE1);
+    mol.NewBond(CE, HE2);
+    mol.NewBond(CE, HE3);
+    
+    return mol;
+  }
+  
+  indigox::Molecule ProtonatedLysine() {
+    using namespace indigox;
+    PeriodicTable pt = GetPeriodicTable();
+    Molecule mol("Lysine");
+    
+    Atom N = mol.NewAtom(pt["N"]); N.SetFormalCharge(1); N.SetName("N");
+    Atom H1 = mol.NewAtom(pt["H"]); H1.SetFormalCharge(0); H1.SetName("H1");
+    Atom H2 = mol.NewAtom(pt["H"]); H2.SetFormalCharge(0); H2.SetName("H2");
+    Atom H3 = mol.NewAtom(pt["H"]); H3.SetFormalCharge(0); H3.SetName("H3");
+    Atom CA = mol.NewAtom(pt["C"]); CA.SetFormalCharge(0); CA.SetName("CA");
+    Atom HA1 = mol.NewAtom(pt["H"]); HA1.SetFormalCharge(0); HA1.SetName("HA1");
+    Atom C = mol.NewAtom(pt["C"]); C.SetFormalCharge(0); C.SetName("C");
+    Atom O1 = mol.NewAtom(pt["O"]); O1.SetFormalCharge(0); O1.SetName("O1");
+    Atom O2 = mol.NewAtom(pt["O"]); O2.SetFormalCharge(-1); O2.SetName("O2");
+    Atom CB = mol.NewAtom(pt["C"]); CB.SetFormalCharge(0); CB.SetName("CB");
+    Atom HB1 = mol.NewAtom(pt["H"]); HB1.SetFormalCharge(0); HB1.SetName("HB2");
+    Atom HB2 = mol.NewAtom(pt["H"]); HB2.SetFormalCharge(0); HB2.SetName("HB1");
+    Atom CG = mol.NewAtom(pt["C"]); CG.SetFormalCharge(0); CG.SetName("CG");
+    Atom HG1 = mol.NewAtom(pt["H"]); HG1.SetFormalCharge(0); HG1.SetName("HG2");
+    Atom HG2 = mol.NewAtom(pt["H"]); HG2.SetFormalCharge(0); HG2.SetName("HG1");
+    Atom CD = mol.NewAtom(pt["C"]); CD.SetFormalCharge(0); CD.SetName("CD");
+    Atom HD1 = mol.NewAtom(pt["H"]); HD1.SetFormalCharge(0); HD1.SetName("HD1");
+    Atom HD2 = mol.NewAtom(pt["H"]); HD2.SetFormalCharge(0); HD2.SetName("HD2");
+    Atom CE = mol.NewAtom(pt["C"]); CE.SetFormalCharge(0); CE.SetName("CE");
+    Atom HE1 = mol.NewAtom(pt["H"]); HE1.SetFormalCharge(0); HE1.SetName("HE2");
+    Atom HE2 = mol.NewAtom(pt["H"]); HE2.SetFormalCharge(0); HE2.SetName("HE1");
+    Atom NZ = mol.NewAtom(pt["N"]); NZ.SetFormalCharge(1); NZ.SetName("NZ");
+    Atom HZ1 = mol.NewAtom(pt["H"]); HZ1.SetFormalCharge(0); HZ1.SetName("HZ1");
+    Atom HZ2 = mol.NewAtom(pt["H"]); HZ2.SetFormalCharge(0); HZ2.SetName("HZ2");
+    Atom HZ3 = mol.NewAtom(pt["H"]); HZ3.SetFormalCharge(0); HZ3.SetName("HZ3");
+    
+    mol.NewBond(N, H1);
+    mol.NewBond(N, H2);
+    mol.NewBond(N, H3);
+    mol.NewBond(N, CA);
+    mol.NewBond(CA, HA1);
+    mol.NewBond(CA, C);
+    mol.NewBond(CA, CB);
+    mol.NewBond(C, O1).SetOrder(BondOrder::DOUBLE);
+    mol.NewBond(C, O2);
+    mol.NewBond(CB, HB1);
+    mol.NewBond(CB, HB2);
+    mol.NewBond(CB, CG);
+    mol.NewBond(CG, HG1);
+    mol.NewBond(CG, HG2);
+    mol.NewBond(CG, CD);
+    mol.NewBond(CD, HD1);
+    mol.NewBond(CD, HD2);
+    mol.NewBond(CD, CE);
+    mol.NewBond(CE, HE1);
+    mol.NewBond(CE, HE2);
+    mol.NewBond(CE, NZ);
+    mol.NewBond(NZ, HZ1);
+    mol.NewBond(NZ, HZ2);
+    mol.NewBond(NZ, HZ3);
+    
+    return mol;
+  }
+}
+
 void GeneratePyMolecule(pybind11::module &m) {
   using namespace indigox;
   py::return_value_policy Ref = py::return_value_policy::reference;
@@ -62,7 +173,6 @@ void GeneratePyMolecule(pybind11::module &m) {
   // == Atom class bindings ====================================================
   // ===========================================================================
   py::class_<Atom>(m, "Atom")
-      .def(py::init<>())
       .def("NumBonds", &Atom::NumBonds)
       .def("NumAngles", &Atom::NumAngles)
       .def("NumDihedrals", &Atom::NumDihedrals)
@@ -120,7 +230,6 @@ void GeneratePyMolecule(pybind11::module &m) {
   // ===========================================================================
 
   py::class_<Bond>(m, "Bond")
-      .def(py::init<>())
       .def("GetTag", &Bond::GetTag)
       .def("GetID", &Bond::GetID)
       .def("GetMolecule", &Bond::GetMolecule)
@@ -152,7 +261,6 @@ void GeneratePyMolecule(pybind11::module &m) {
   // ===========================================================================
 
   py::class_<Angle>(m, "Angle")
-      .def(py::init<>())
       .def("HasType", &Angle::HasType)
       .def("NumAtoms", &Angle::NumAtoms)
       .def("GetTag", &Angle::GetTag)
@@ -224,7 +332,6 @@ void GeneratePyMolecule(pybind11::module &m) {
   // == Molecule class bindings ================================================
   // ===========================================================================
   py::class_<Molecule>(m, "Molecule")
-      .def(py::init<>())
       .def(py::init<std::string>())
       .def("HasAtom", &Molecule::HasAtom)
       .def("HasBond",
@@ -313,35 +420,9 @@ void GeneratePyMolecule(pybind11::module &m) {
   // ===========================================================================
   m.def("SaveMolecule", &SaveMolecule);
   m.def("LoadMolecule", &LoadMolecule);
-  m.def("Benzene", []() -> Molecule {
-    Molecule mol("Benzene");
-    Atom C1 = mol.NewAtom(GetPeriodicTable().GetElement("C"));
-    Atom C2 = mol.NewAtom(GetPeriodicTable().GetElement("C"));
-    Atom C3 = mol.NewAtom(GetPeriodicTable().GetElement("C"));
-    Atom C4 = mol.NewAtom(GetPeriodicTable().GetElement("C"));
-    Atom C5 = mol.NewAtom(GetPeriodicTable().GetElement("C"));
-    Atom C6 = mol.NewAtom(GetPeriodicTable().GetElement("C"));
-    Atom H1 = mol.NewAtom(GetPeriodicTable().GetElement("H"));
-    Atom Cl = mol.NewAtom(GetPeriodicTable().GetElement("Cl"));
-    Atom F1 = mol.NewAtom(GetPeriodicTable().GetElement("F"));
-    Atom Br = mol.NewAtom(GetPeriodicTable().GetElement("Br"));
-    Atom I1 = mol.NewAtom(GetPeriodicTable().GetElement("I"));
-    Atom H2 = mol.NewAtom(GetPeriodicTable().GetElement("H"));
-    mol.NewBond(C1, C2).SetOrder(BondOrder::AROMATIC);
-    mol.NewBond(C2, C3).SetOrder(BondOrder::AROMATIC);
-    mol.NewBond(C3, C4).SetOrder(BondOrder::AROMATIC);
-    mol.NewBond(C4, C5).SetOrder(BondOrder::AROMATIC);
-    mol.NewBond(C5, C6).SetOrder(BondOrder::AROMATIC);
-    mol.NewBond(C6, C1).SetOrder(BondOrder::AROMATIC);
-    mol.NewBond(C1, H1).SetOrder(BondOrder::SINGLE);
-    mol.NewBond(C2, Cl).SetOrder(BondOrder::SINGLE);
-    mol.NewBond(C3, F1).SetOrder(BondOrder::SINGLE);
-    mol.NewBond(C4, Br).SetOrder(BondOrder::SINGLE);
-    mol.NewBond(C5, I1).SetOrder(BondOrder::SINGLE);
-    mol.NewBond(C6, H2).SetOrder(BondOrder::SINGLE);
-    return mol;
-  });
-
+  m.def("ProtonatedLysine", &special::ProtonatedLysine);
+  m.def("Methionine", &special::Methionine);
+  
   // Container bindings
   py::bind_vector<std::vector<Atom>>(m, "VecAtom");
   py::bind_vector<std::vector<Bond>>(m, "VecBond");

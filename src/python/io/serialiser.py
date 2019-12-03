@@ -5,6 +5,9 @@ import indigox as ix
 
 __all__ = ["SaveITPFile", "SavePDBFile", "SaveIXDFile", "SaveRTPFile"]
 
+# Correction required to convert GROMOS improper units to GROMACS improper units
+improper_correction = 1. / (0.0174532925 * 0.0174532925)
+
 def SaveRTPFile(path, mol, pmol=None):
   h_mass = ix.GetPeriodicTable()["H"].GetAtomicMass()
   path.parent.mkdir(parents=True, exist_ok=True)
@@ -126,7 +129,7 @@ def SaveRTPFile(path, mol, pmol=None):
         "atomb" : atoms[1].GetName(),
         "atomc" : atoms[2].GetName(),
         "atomd" : atoms[3].GetName(),
-        "typeid": "{:>.5f}   {:>.5f}".format(t.GetIdealAngle(), t.GetForceConstant()),
+        "typeid": "{:>.5f}   {:>.5f}".format(t.GetIdealAngle(), t.GetForceConstant() * improper_correction),
         "extra" : "" }
       print(dhd_fmt_str.format(**imp_dat), file=file)
 
