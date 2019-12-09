@@ -12,6 +12,8 @@
 #include <indigox/graph/molecular.hpp>
 #include <indigox/utils/serialise.hpp>
 
+#include <indigo-bondorder/indigo-bondorder.hpp>
+
 #include <algorithm>
 #include <array>
 #include <fstream>
@@ -848,6 +850,122 @@ namespace indigox {
       }
     }
     return count;
+  }
+
+  //Use formal charge and bond order algo to assign electron, formal charge and bond order
+  int64_t Molecule::PerceiveElectrons() {
+    if (m_data->Test(Data::ElectronPerception)) { return 0; }
+    m_data->Set(Data::ElectronPerception);
+
+    //todo detect if the atom has charges or bond orders yet
+    //may also need to make sure bond orders are part of the cherrypicker calculation. I have a feeling he didnt implement it
+
+    std::cout << "\nStarting bond order and formal charge assignment.\n";
+    
+    using namespace indigo_bondorder;
+
+    //todo check these options - they were settings from the c++ example
+    Options::AssignElectrons::ALGORITHM = Options::AssignElectrons::Algorithm::FPT;
+    Options::AssignElectrons::FPT::ADD_EDGES_TO_TD = false;
+    Options::AssignElectrons::FPT::MINIMUM_PROPAGATION_DEPTH = 1;
+    Options::AssignElectrons::USE_ELECTRON_PAIRS = false;
+
+    // Build the indigo-bondorder molecule
+
+    std::cout << "Constructing bondorder molecule...\n";
+    Molecule_p BO_mol = std::make_shared<indigo_bondorder::Molecule>();
+    BO_mol->SetTotalCharge(-1); //todo why? Check paper?
+
+    //Initialise a periodic table todo may need to set an options for this?
+    PeriodicTable_p PT = indigo_bondorder::PeriodicTable::GetInstance();
+    std::map<std::string, Element_p> common_elements;
+    common_elements["H"] = PT->GetElement("H");
+    common_elements["C"] = PT->GetElement("C");
+    common_elements["O"] = PT->GetElement("O");
+    common_elements["N"] = PT->GetElement("N");
+
+    //maps of original molecule entity
+    std::map<std::shared_ptr<indigox::Atom>, Atom_p> atom_map;
+    std::map<std::shared_ptr<indigox::Bond>, Bond_p> bond_map;
+
+    //Bondorder maps will be needed later
+    std::map<indigo_bondorder::BondOrder, indigox::Bond::Order> BO_enum_map = GetBondorderEnumMap();
+    std::map<indigox::Bond::Order, std::string> BO_name_map = GetBondorderNameMap();
+
+    for (const Atom& atom : m_data->atoms) {
+      //Create a bondorder atom copy of each atom, and add them to the bondorder molecule
+      String symbol = atom.GetElement().GetSymbol();
+      Element_p element = common_elements[symbol] ? common_elements[symbol] : PT->GetElement(symbol);
+      auto BO_atom = BO_mol->NewAtom(element);
+      BO_atom->SetName(atom.GetName());
+      atom_map[std::make_shared<indigox::Atom>(atom)] = BO_atom;
+    }
+
+    for (const indigox::Bond& bond : m_data->bonds) {
+      //Create a bondorder copy of each bond as well, adding them to the bondorder molecule
+      auto atom0 = std::make_shared<indigox::Atom>(bond.GetAtoms()[0]); //todo check these pointers are the SAME or the map wont work
+      auto atom1 = std::make_shared<indigox::Atom>(bond.GetAtoms()[1]);
+      auto BO_bond = BO_mol->NewBond(atom_map.find(atom0)->second, atom_map.find(atom1)->second);
+      bond_map[std::make_shared<indigox::Bond>(bond)] = BO_bond;
+    }
+    
+    std::cout << "Molecule constructed. Starting electron placement calculation...\n";
+
+    Uint count = BO_mol->AssignElectrons();
+
+    //todo allow smart choosing of resonance structures. Declaration of aromatics?
+    std::cout << "Found " << count << " resonance structure(s) with minimum score. Using the first (for now).\n";
+    BO_mol->ApplyElectronAssignment(0);
+
+    for (auto const& [atom, BO_atom] : atom_map) {
+      int FC_current = atom->GetFormalCharge();
+      int FC_new = BO_atom->GetFormalCharge();
+
+      if (FC_current != FC_new) {
+        std::cout << "Overwriting formal charge of atom " << atom->GetID() << " from " << FC_current << " to " << FC_new << "\n";
+      }
+      atom->SetFormalCharge(BO_atom->GetFormalCharge());
+    }
+
+    for (auto const& [bond, BO_bond] : bond_map) {
+      BondOrder BO_current = bond->GetOrder();
+      BondOrder BO_new = BO_enum_map.find(BO_bond->GetOrder())->second;
+
+      if (BO_current != BO_new) {
+        std::cout << "Overwriting bond order of bond " << bond->GetID() << " from " << BO_name_map.find(BO_current)->second << " to " << BO_name_map.find(BO_new)->second << "\n";
+      }
+      bond->SetOrder(BO_new);
+    }
+
+    std::cout << "Finished assigning formal charges and bond orders.\n";
+
+    return count;
+  }
+
+  std::map<indigo_bondorder::BondOrder, indigox::Bond::Order> Molecule::GetBondorderEnumMap() {
+    std::map<indigo_bondorder::BondOrder, indigox::Bond::Order> BO_enum_map;
+    BO_enum_map[indigo_bondorder::SINGLE_BOND] = indigox::BondOrder::SINGLE;
+    BO_enum_map[indigo_bondorder::DOUBLE_BOND] = indigox::BondOrder::DOUBLE;
+    BO_enum_map[indigo_bondorder::TRIPLE_BOND] = indigox::BondOrder::TRIPLE;
+    BO_enum_map[indigo_bondorder::QUADRUPLE_BOND] = indigox::BondOrder::QUADRUPLE;
+    BO_enum_map[indigo_bondorder::AROMATIC_BOND] = indigox::BondOrder::AROMATIC;
+    BO_enum_map[indigo_bondorder::ONEANDAHALF_BOND] = indigox::BondOrder::ONEANDAHALF;
+    BO_enum_map[indigo_bondorder::TWOANDAHALF_BOND] = indigox::BondOrder::TWOANDAHALF;
+    BO_enum_map[indigo_bondorder::UNDEFINED_BOND] = indigox::BondOrder::UNDEFINED;
+    return BO_enum_map;
+  }
+
+  std::map<indigox::Bond::Order, std::string> Molecule::GetBondorderNameMap() {
+    std::map<indigox::Bond::Order, std::string> BO_names;
+    BO_names[indigox::Bond::Order::SINGLE] = "Single";
+    BO_names[indigox::Bond::Order::DOUBLE] = "Double";
+    BO_names[indigox::Bond::Order::TRIPLE] = "Triple";
+    BO_names[indigox::Bond::Order::QUADRUPLE] = "Quadruple";
+    BO_names[indigox::Bond::Order::AROMATIC] = "Aromatic";
+    BO_names[indigox::Bond::Order::ONEANDAHALF] = "One and a half";
+    BO_names[indigox::Bond::Order::TWOANDAHALF] = "Two and a half";
+    BO_names[indigox::Bond::Order::UNDEFINED] = "Undefined";
+    return BO_names;
   }
 
   // Finds the edges of a graph corresponding to peptide bonds in a molecule

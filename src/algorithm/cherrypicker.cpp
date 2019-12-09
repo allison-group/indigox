@@ -14,6 +14,7 @@
 #include <rilib/RI.h>
 
 #include <boost/dynamic_bitset.hpp>
+#include <indigo-bondorder/indigo-bondorder.hpp>
 
 #include <algorithm>
 #include <map>
@@ -263,6 +264,8 @@ namespace indigox::algorithm {
       throw std::runtime_error("CherryPicker requires a connected molecule");
     mol.PerceiveAngles();
     mol.PerceiveDihedrals();
+
+    mol.PerceiveElectrons();
 
     //todo somewhere in here apply bond order. See python lib to see how
     //create bond-order molecule. Parameterise it. Copy over to this molecule

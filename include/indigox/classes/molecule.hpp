@@ -1,12 +1,14 @@
 /*! \file molecule.hpp */
 #include "../utils/atomic_coordinates.hpp"
 #include "../utils/fwd_declares.hpp"
+#include "bond.hpp"
 
 #include <bitset>
 #include <cstdint>
 #include <map>
 #include <unordered_map>
 #include <vector>
+#include <indigo-bondorder/indigo-bondorder.hpp>
 
 #ifndef INDIGOX_CLASSES_MOLECULE_HPP
 #define INDIGOX_CLASSES_MOLECULE_HPP
@@ -340,6 +342,11 @@ namespace indigox {
      *  \return the number of dihedrals added. */
     int64_t PerceiveDihedrals();
 
+    /*! \brief Determine bond order and formal charges in the molecule.
+     *  \details todo
+     *  \return the number of resonance structures found. */
+    int64_t PerceiveElectrons();
+
     int32_t PerceiveResidues();
     //    size_t AssignElectrons();
     //    bool ApplyElectronAssignment(size_t);
@@ -394,6 +401,9 @@ namespace indigox {
   private:
     struct Impl;
     std::shared_ptr<Impl> m_data;
+
+    static std::map<indigo_bondorder::BondOrder, indigox::Bond::Order> GetBondorderEnumMap();
+    static std::map<indigox::Bond::Order, std::string> GetBondorderNameMap();
   };
 
   void SaveMolecule(const Molecule &mol, std::string path);

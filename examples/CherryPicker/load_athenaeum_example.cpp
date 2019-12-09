@@ -5,6 +5,7 @@
 #include <indigox/indigox.hpp>
 #include <indigox/classes/athenaeum.hpp>
 #include <indigox/classes/forcefield.hpp>
+#include <indigo-bondorder/indigo-bondorder.hpp>
 
 
 int main() {

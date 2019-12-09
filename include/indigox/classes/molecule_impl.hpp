@@ -136,6 +136,7 @@ namespace indigox {
     Formula,
     AnglePerception,
     DihedralPerception,
+    ElectronPerception,
     ResiduePerception,
     ChargeGroupDetermination,
     CondensedGraph,

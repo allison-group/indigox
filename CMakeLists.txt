@@ -63,15 +63,15 @@ SET(INDIGOX_LIB_SRCS
     src/graph/condensed.cpp
     src/graph/molecular.cpp
     src/utils/common.cpp
-    examples/CherryPicker/load_athenaeum_example.cpp
+#    examples/CherryPicker/load_athenaeum_example.cpp
     )
 
 # Build the library
 ADD_LIBRARY(indigox STATIC ${INDIGOX_LIB_SRCS})
 
 # Build examples
-ADD_EXECUTABLE(load_athenaeum_example examples/CherryPicker/load_athenaeum_example.cpp)
-TARGET_LINK_LIBRARIES(load_athenaeum_example indigox)
+#ADD_EXECUTABLE(load_athenaeum_example examples/CherryPicker/load_athenaeum_example.cpp)
+#TARGET_LINK_LIBRARIES(load_athenaeum_example indigox)
 
 TARGET_COMPILE_FEATURES(indigox PRIVATE cxx_std_17)
 TARGET_COMPILE_FEATURES(indigox PRIVATE cxx_inline_namespaces)
@@ -83,7 +83,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/doctest)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/eigen)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/RI)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/json/single_include)
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/indigo-bondorder)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/indigo-bondorder/include)
 
 # We provide a boost version so only use system boost if it is newer than
 # provided boost
