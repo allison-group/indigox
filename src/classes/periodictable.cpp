@@ -125,7 +125,8 @@ namespace indigox {
   void PeriodicTable::GeneratePeriodicTable() {
     using json = nlohmann::json;
 
-    std::string pt_path = std::string(IX_DATA_DIRECTORY);
+//    std::string pt_path = std::string(IX_DATA_DIRECTORY); //todo fix this to be automatic
+    std::string pt_path = "/usr/local/opt/indigox/share";
     if (pt_path.back() != '/') pt_path.append("/");
     pt_path.append("periodictable.json");
 

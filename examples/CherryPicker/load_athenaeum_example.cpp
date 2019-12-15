@@ -5,7 +5,6 @@
 #include <indigox/indigox.hpp>
 #include <indigox/classes/athenaeum.hpp>
 #include <indigox/classes/forcefield.hpp>
-#include <indigo-bondorder/indigo-bondorder.hpp>
 
 
 int main() {
@@ -47,9 +46,29 @@ int main() {
   Atom o15 = mol.NewAtom(O); o15.SetName("O15");
   Atom o16 = mol.NewAtom(O); o16.SetName("O16");
 
+  mol.NewBond(c1,c2);
+  mol.NewBond(c1,c6);
+  mol.NewBond(c1,h7);
+  mol.NewBond(c2,c3);
+  mol.NewBond(c2,h8);
+  mol.NewBond(c3,c4);
+  mol.NewBond(c3,n9);
+  mol.NewBond(c4,c5);
+  mol.NewBond(c4,h10);
+  mol.NewBond(c5,c6);
+  mol.NewBond(c5,h11);
+  mol.NewBond(c6,c12);
+  mol.NewBond(n9,o13);
+  mol.NewBond(n9,o14);
+  mol.NewBond(c12,o15);
+  mol.NewBond(c12,o16);
+
   auto_ath.AddAllFragments(mol);
 
-  SaveAthenaeum(auto_ath, "attemptedLib.ath");
+  std::cout << "Found this number of fragments: " << auto_ath.GetFragments().find(mol)->second.size() << "\n";
+
+  std::string out_path = std::string(IX_DATA_DIRECTORY).append("attemptedLib.ath");
+  SaveAthenaeum(auto_ath, out_path);
 
   std::cout << "Done!";
 }

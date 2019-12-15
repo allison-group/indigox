@@ -63,15 +63,10 @@ SET(INDIGOX_LIB_SRCS
     src/graph/condensed.cpp
     src/graph/molecular.cpp
     src/utils/common.cpp
-#    examples/CherryPicker/load_athenaeum_example.cpp
     )
 
 # Build the library
 ADD_LIBRARY(indigox STATIC ${INDIGOX_LIB_SRCS})
-
-# Build examples
-#ADD_EXECUTABLE(load_athenaeum_example examples/CherryPicker/load_athenaeum_example.cpp)
-#TARGET_LINK_LIBRARIES(load_athenaeum_example indigox)
 
 TARGET_COMPILE_FEATURES(indigox PRIVATE cxx_std_17)
 TARGET_COMPILE_FEATURES(indigox PRIVATE cxx_inline_namespaces)
@@ -124,12 +119,28 @@ ELSE(DOXYGEN_FOUND)
   MESSAGE(STATUS "Unable to locate doxygen. Documentation will NOT be built.")
 ENDIF(DOXYGEN_FOUND)
 
+# Install the indigo-bondorder library too
+ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/external/indigo-bondorder)
+TARGET_LINK_LIBRARIES(indigox indigo-bondorder)
+
+#INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/indigo-bondorder/include)
+#INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/external/indigo-bondorder/include/indigo-bondorder
+#        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+ADD_EXECUTABLE(load_athenaeum_example examples/CherryPicker/load_athenaeum_example.cpp)
+TARGET_LINK_LIBRARIES(load_athenaeum_example indigox)
+
+#TARGET_INCLUDE_DIRECTORIES(load_athenaeum_example BEFORE PRIVATE ${PROJECT_SOURCE_DIR}/external/indigo-bondorder/include)
+#ADD_DEPENDENCIES(load_athenaeum_example indigox)
+
 FILE(COPY data DESTINATION .)
 #FILE(COPY examples/python_example.py DESTINATION examples)
 
-# Install examples
 # Install library
 INSTALL(TARGETS indigox DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+# Install example
+INSTALL(TARGETS load_athenaeum_example DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Install header files. This should includes boost if the repo version is being used
 #INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/include/indigox

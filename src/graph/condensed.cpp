@@ -313,8 +313,8 @@ namespace indigox::graph {
         CG.AddVertex(v);
         continue;
       }
-      Atom atm = v.GetAtom();
-      Element e = atm.GetElement();
+      const Atom& atm = v.GetAtom();
+      const Element& e = atm.GetElement();
       // Add vertex if leaf vertex is not in __con_elem
       if (__con_elem.find(e) == __con_elem.end()) {
         CG.AddVertex(v);

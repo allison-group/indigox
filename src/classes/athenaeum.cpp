@@ -406,7 +406,7 @@ namespace indigox {
   Athenaeum::GetFragments(const Molecule &mol) const {
     auto pos = m_data->fragments.find(mol);
     if (pos == m_data->fragments.end())
-      throw std::runtime_error("No fragmenst for molecule available");
+      throw std::runtime_error("No fragments for molecule available");
     return pos->second;
   }
 
