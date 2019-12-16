@@ -67,8 +67,7 @@ int main() {
 
   std::cout << "Found this number of fragments: " << auto_ath.GetFragments().find(mol)->second.size() << "\n";
 
-  std::string out_path = std::string(IX_DATA_DIRECTORY).append("attemptedLib.ath");
-  SaveAthenaeum(auto_ath, out_path);
+  SaveAthenaeum(auto_ath, "./attemptedLib.ath");
 
-  std::cout << "Done!";
+  std::cout << "Done!\n";
 }

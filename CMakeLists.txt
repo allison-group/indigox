@@ -31,12 +31,8 @@ SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
 # Set default install prefix to /usr/local/opt/indigox
-IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)    # Requires Cmake >= 3.7
-  # Becuase I don't like populating /usr/local, make it in /usr/local/opt by default
-  SET(CMAKE_INSTALL_PREFIX /usr/local/opt/${PROJECT_NAME} CACHE PATH "..." FORCE)
-ELSE()
-  SET(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "..." FORCE)
-ENDIF()
+SET(CMAKE_INSTALL_PREFIX /usr/local/opt/${PROJECT_NAME})
+
 # Setup install directories
 INCLUDE(GNUInstallDirs)
 ADD_DEFINITIONS(-DIX_DATA_DIRECTORY="${CMAKE_INSTALL_FULL_DATAROOTDIR}")

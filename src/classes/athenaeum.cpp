@@ -600,7 +600,7 @@ namespace indigox {
   void SaveAthenaeum(const Athenaeum &a, const std::string& path) {
     using Archive = cereal::PortableBinaryOutputArchive;
     std::ofstream os(path);
-    if (!os.is_open()) throw std::runtime_error("Unable to open output stream");
+    if (!os.is_open()) throw std::runtime_error("Unable to save Athenaeum to path: " + path + "\nDo you have write permissions?");
     Archive archive(os);
     std::string stype("Athenaeum");
     archive(stype, a);
