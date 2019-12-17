@@ -9,6 +9,8 @@
 #include <indigox/graph/molecular.hpp>
 #include <indigox/python/interface.hpp>
 
+#include <indigo-bondorder/indigo-bondorder.hpp>
+
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 
@@ -396,11 +398,12 @@ void GeneratePyMolecule(pybind11::module &m) {
            py::overload_cast<const Atom &, const Atom &>(&Molecule::RemoveBond))
       .def("PerceiveAngles", &Molecule::PerceiveAngles)
       .def("PerceiveDihedrals", &Molecule::PerceiveDihedrals)
+      .def("PerceiveElectrons", &Molecule::PerceiveElectrons)
       .def("PerceiveResidues", &Molecule::PerceiveResidues)
       .def("OptimiseChargeGroups", &Molecule::OptimiseChargeGroups)
       .def("ReorderAtoms", &Molecule::ReorderAtoms)
       .def("UniquifyAtomNames", &Molecule::UniquifyAtomNames)
-  .def("GiveAromaticBondsImpropers", &Molecule::GiveAromaticBondsImpropers)
+      .def("GiveAromaticBondsImpropers", &Molecule::GiveAromaticBondsImpropers)
       .def("ReserveAtoms", &Molecule::ReserveAtoms)
       .def("ReserveBonds", &Molecule::ReserveBonds)
       .def("GetAtoms", &Molecule::GetAtoms, Ref)
