@@ -43,7 +43,7 @@ namespace indigox {
     /*! \brief Default constructor
      *  \details Is private to enforce that IXMolecules should only be used
      *  via the Molecule shared_ptr. */
-    Molecule(std::string name);
+    Molecule(const std::string& name);
 
   public:
     INDIGOX_GENERIC_PIMPL_CLASS_DEFAULTS(Molecule);

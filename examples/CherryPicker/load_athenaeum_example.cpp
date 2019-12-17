@@ -5,11 +5,16 @@
 #include <indigox/indigox.hpp>
 #include <indigox/classes/athenaeum.hpp>
 #include <indigox/classes/forcefield.hpp>
+#include <indigox/classes/parameterised.hpp>
+#include <indigox/algorithm/cherrypicker.hpp>
+#include <experimental/filesystem>
 
 
 int main() {
 
   using namespace indigox;
+  namespace fs = std::experimental::filesystem;
+  using settings = indigox::algorithm::CherryPicker::Settings;
 
   auto forceField = GenerateGROMOS54A7();
 //  auto athSettings = Athenaeum::Settings();
@@ -65,9 +70,19 @@ int main() {
 
   auto_ath.AddAllFragments(mol);
 
-  std::cout << "Found this number of fragments: " << auto_ath.GetFragments().find(mol)->second.size() << "\n";
+  std::cout << "Found this number of fragments in Athenaeum: " << auto_ath.GetFragments().find(mol)->second.size() << std::endl;
 
   SaveAthenaeum(auto_ath, "./attemptedLib.ath");
+
+//  std::cout << fs::current_path() << std::endl;
+
+  algorithm::CherryPicker cherryPicker(forceField);
+  cherryPicker.AddAthenaeum(auto_ath);
+  
+  cherryPicker.SetInt(settings::MinimumFragmentSize, 2);
+  cherryPicker.SetInt(settings::MaximumFragmentSize, 20);
+
+  const indigox::ParamMolecule &molecule = cherryPicker.ParameteriseMolecule(mol);
 
   std::cout << "Done!\n";
 }

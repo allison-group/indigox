@@ -91,7 +91,8 @@ namespace indigox {
       : name(n), next_unique_id(0), molecular_charge(0), calculated_data(0),
         cached_formula("") {}
 
-  Molecule::Molecule(std::string n) : m_data(std::make_shared<Impl>(n)) {
+  Molecule::Molecule(const std::string& n) : m_data(std::make_shared<Impl>(n)) {
+    std::cout << "Constructing new molecule " << n << std::endl;
     m_data->molecular_graph = graph::MolecularGraph(*this);
   }
 
@@ -865,14 +866,14 @@ namespace indigox {
     using namespace indigo_bondorder;
 
     //todo check these options - they were settings from the c++ example
-    Options::AssignElectrons::ALGORITHM = Options::AssignElectrons::Algorithm::FPT;
+    Options::AssignElectrons::ALGORITHM = Options::AssignElectrons::Algorithm::FPT; //todo add as an option
     Options::AssignElectrons::FPT::ADD_EDGES_TO_TD = false;
     Options::AssignElectrons::FPT::MINIMUM_PROPAGATION_DEPTH = 1;
     Options::AssignElectrons::USE_ELECTRON_PAIRS = false;
 
     // Build the indigo-bondorder molecule
 
-    std::cout << "Constructing bondorder molecule...\n";
+    std::cout << "Constructing bondorder molecule..." << std::endl;
     Molecule_p BO_mol = std::make_shared<indigo_bondorder::Molecule>();
     BO_mol->SetTotalCharge(-1); //todo why? Check paper?
 

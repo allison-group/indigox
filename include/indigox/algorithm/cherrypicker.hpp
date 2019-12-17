@@ -36,7 +36,7 @@ namespace indigox::algorithm {
    To parameterise a novel molecule using CherryPicker, first an Athenaeum must
    be created (see the Athenaeum documentation). For a given Athenaeum, the
    process of parameterisation is as follows. Fragments within the Athenaeum are
-   iterated through in an arbitary order. The CMG of each fragment is checked
+   iterated through in an arbitrary order. The CMG of each fragment is checked
    against the CMG of the target molecule for subgraph isomorphism. All subgraph
    isomorphisms between the two graphs are enumerated, giving a series of
    one-to-one mappings between the vertices of each graph. These mappings are
@@ -142,10 +142,10 @@ namespace indigox::algorithm {
          match if the assocaited atoms have the same stereochemistry. */
       VertexStereochemistry,
       /*! When performing subgraph isomorphism testing, two vertices will only
-         match if the assocaited atoms have the same aromaaticity. */
+         match if the assocaited atoms have the same aromaticity. */
       VertexAromaticity,
       /*! When performing subgraph isomorphism testing, two vertices will only
-         match if the assocaited atoms have the same number of bonds. */
+         match if the associated atoms have the same number of bonds. */
       VertexDegree,
       // Edge
       /*! When performing subgraph isomorphism testing, two \link graph::CMGEdge
@@ -300,7 +300,7 @@ namespace indigox::algorithm {
 
      \param ff defines what forcefield will be used for parameterisation.
      */
-    CherryPicker(Forcefield &ff);
+    explicit CherryPicker(Forcefield &ff);
 
     /*! \brief Add an Athenaeum for parameterisation purposes.
 
@@ -329,7 +329,7 @@ namespace indigox::algorithm {
 
     /*! \brief Apply the CherryPicker algorithm to a molecule.
 
-     Fill in the details here.
+     Fill in the details here. //todo
 
      \param mol the molecule to parameterise.
      \returns a ParamMolecule for all the matched parameters.

@@ -79,12 +79,14 @@ namespace indigox::algorithm {
   }
 
   bool CherryPicker::AddAthenaeum(Athenaeum &library) {
+    std::cout << "Adding new Athenaeum..." << std::endl;
     if (library.GetForcefield() != _ff) return false;
     _libs.push_back(library);
     return true;
   }
 
   bool CherryPicker::RemoveAthenaeum(Athenaeum &library) {
+    std::cout << "Removing Athenaeum..." << std::endl;
     auto pos = std::find(_libs.begin(), _libs.end(), library);
     if (pos != _libs.end()) _libs.erase(pos);
     return pos != _libs.end();
@@ -264,14 +266,12 @@ namespace indigox::algorithm {
       throw std::runtime_error("CherryPicker requires a connected molecule");
     mol.PerceiveAngles();
     mol.PerceiveDihedrals();
-
-    mol.PerceiveElectrons();
-
-    //todo somewhere in here apply bond order. See python lib to see how
-    //create bond-order molecule. Parameterise it. Copy over to this molecule
+    //todo before here, check there are no electrons assigned
+    mol.PerceiveElectrons(); //here
 
     graph::CondensedMolecularGraph CMG = graph::Condense(G);
     ParamMolecule pmol(mol);
+    //todo check after here there are electrons
 
     // Populate the masks
     graph::VertexIsoMask vertmask;

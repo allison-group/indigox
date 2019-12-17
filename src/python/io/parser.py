@@ -12,6 +12,7 @@ __all__ = ["LoadIFPFile", "LoadPDBFile", "LoadMTBFile", "LoadIXDFile",
 #  \param path the path to the IFP file
 #  \return the loaded forcefield
 def LoadIFPFile(path):
+  print("Loading IFP file:", path.stem)
   pt = ix.GetPeriodicTable()
   data = list(ix.LoadFile(path.expanduser()))
   blocks = [data[0]]
@@ -75,6 +76,7 @@ def LoadIFPFile(path):
 ## \brief Loads the given PDB file into a Molecule
 #  \return the loaded molecule
 def LoadPDBFile(path, details = None):
+  print("Loading molecule from PDB file:", path.stem)
   mol = ix.Molecule(path.stem)
   got_atoms = False
   for line in ix.LoadFile(path.expanduser()):
@@ -143,7 +145,8 @@ def LoadPDBFile(path, details = None):
     LoadIXDFile(details, mol)
   return mol
 
-def LoadIXDFile(path, mol):
+def LoadIXDFile(path, mol): # todo THIS is formal charges and bond orders! we should create and output these as part of paramerisation
+  print("Loading formal charges and bond orders from IXD file:", path.stem)
   set_implicits = []
   for line in ix.LoadFile(path.expanduser()):
     line = line.split()

@@ -506,7 +506,7 @@ namespace indigox {
   }
 
   // ===========================================================================
-  // == ParamMolecule Data Retrevial ===========================================
+  // == ParamMolecule Data Retrieval ===========================================
   // ===========================================================================
 
   const ParamAtom &ParamMolecule::GetAtom(const Atom &atm) const {

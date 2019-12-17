@@ -35,12 +35,12 @@ namespace indigox {
     void MappedWith(const Atom &mapped);
 
     /*! \brief Apply the parameterisation.
-     *  \details Applies the parameteristion. Doing so sets the partial charge
+     *  \details Applies the parameterisation. Doing so sets the partial charge
      *  on the atom to the mean of the charge, and the atom type to the most
      *  common type. Additionally, doing so will mean that no more atoms can be
      *  mapped with. If the \p self_consistent flag is true, there is a
      *  requirement that all the mapped atoms have the same parameters. As such,
-     *  if there arises a situtation where this requirement is not met, an
+     *  if there arises a situation where this requirement is not met, an
      *  exception will be thrown.
      *  \param self_consistent if the parameterisation needs to be self
      *  consistent. */
@@ -281,7 +281,7 @@ namespace indigox {
 
     /*! \brief Normal constructor
      *  \param mol the molecule to parameterise. */
-    ParamMolecule(const Molecule &mol);
+    explicit ParamMolecule(const Molecule &mol);
     static int64_t charge_rounding;
     
   public:
