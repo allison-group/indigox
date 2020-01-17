@@ -9,6 +9,7 @@ __all__ = ["SaveITPFile", "SavePDBFile", "SaveIXDFile", "SaveRTPFile"]
 improper_correction = 1. / (0.0174532925 * 0.0174532925)
 
 def SaveRTPFile(path, mol, pmol=None):
+  path = Path(path)
   h_mass = ix.GetPeriodicTable()["H"].GetAtomicMass()
   path.parent.mkdir(parents=True, exist_ok=True)
   file = path.open('w')
@@ -167,6 +168,7 @@ def SaveRTPFile(path, mol, pmol=None):
 
 
 def SaveITPFile(path, mol, pmol=None):
+  path = Path(path)
   h_mass = ix.GetPeriodicTable()["H"].GetAtomicMass()
   path.parent.mkdir(parents=True, exist_ok=True)
   file = path.open('w')
@@ -340,6 +342,7 @@ def _GetBondDihedrals(bond):
 
 
 def SavePDBFile(path, mol):
+  path = Path(path)
   path.parent.mkdir(parents=True, exist_ok=True)
   file = path.open('w')
   header = """TITLE  Structure for molecule {}""".format(mol.GetName())
@@ -375,6 +378,7 @@ def SavePDBFile(path, mol):
 
 
 def SaveIXDFile(path, mol):
+  path = Path(path)
   path.parent.mkdir(parents=True, exist_ok=True)
   file = path.open('w')
   tot_fc = 0

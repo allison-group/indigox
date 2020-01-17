@@ -12,6 +12,7 @@ __all__ = ["LoadIFPFile", "LoadPDBFile", "LoadMTBFile", "LoadIXDFile",
 #  \param path the path to the IFP file
 #  \return the loaded forcefield
 def LoadIFPFile(path):
+  path = Path(path)
   pt = ix.GetPeriodicTable()
   data = list(ix.LoadFile(path.expanduser()))
   blocks = [data[0]]
@@ -75,6 +76,7 @@ def LoadIFPFile(path):
 ## \brief Loads the given PDB file into a Molecule
 #  \return the loaded molecule
 def LoadPDBFile(path, details = None):
+  path = Path(path)
   mol = ix.Molecule(path.stem)
   got_atoms = False
   for line in ix.LoadFile(path.expanduser()):
@@ -145,6 +147,7 @@ def LoadPDBFile(path, details = None):
 
 def LoadIXDFile(path, mol):
   set_implicits = []
+  path = Path(path)
   for line in ix.LoadFile(path.expanduser()):
     line = line.split()
     l = list(map(int, line[1:]))
@@ -213,6 +216,7 @@ def LoadIXDFile(path, mol):
     raise ValueError("Sum of atom formal charges does not match molecular charge")
 
 def LoadMTBFile(path, ff, details=None):
+  path = Path(path)
   file = list(ix.LoadFile(path.expanduser()))
 
   blocks = [file[0]]
@@ -286,6 +290,8 @@ def LoadMTBFile(path, ff, details=None):
 
 
 def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
+  coord_path = Path(coord_path)
+  param_path = Path(param_path)
   if set(coord_path.suffixes) not in [{".pdb"}, {".aa",".pdb"}, {".ua",".pdb"}]:
     raise FileNotFoundError("Unable to handle file: {}".format(coord_path.name))
   if set(param_path.suffixes) not in [{".mtb"}, {".aa",".mtb"}, {".ua",".mtb"},
@@ -307,6 +313,7 @@ def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
   return mol_params
 
 def LoadITPFile(path, ff, details=None):
+  path = Path(path)
   mol = ix.Molecule(path.stem)
   
   bondtype = ix.BondType.Harmonic
@@ -368,6 +375,7 @@ def LoadITPFile(path, ff, details=None):
   return mol
 
 def LoadFragmentFile(path, ff):
+  path = Path(path)
   file_data = list(ix.LoadFile(path.expanduser()))
   if file_data.count("MOLECULE") != 1:
     raise InputError("Expect only one molecule per file")
@@ -410,6 +418,7 @@ def LoadFragmentFile(path, ff):
 ## \cond
 
 def LoadSDFFile(path):
+  path = Path(path)
   bond_orders = {1: ix.BondOrder.Single,
                  2: ix.BondOrder.Double,
                  3: ix.BondOrder.Triple}
