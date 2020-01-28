@@ -165,10 +165,12 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
       .value("ParameteriseFromAllPermutations",
              CPSet::ParameteriseFromAllPermutations)
       .value("UseRISubgraphMatching", CPSet::UseRISubgraphMatching)
+      .value("CalculateElectrons", CPSet::CalculateElectrons)
       // Integer settings
       .value("MinimumFragmentSize", CPSet::MinimumFragmentSize)
       .value("MaximumFragmentSize", CPSet::MaximumFragmentSize)
-      .value("ChargeRounding", CPSet::ChargeRounding);
+      .value("ChargeRounding", CPSet::ChargeRounding)
+      .value("ElectronMethod", CPSet::ElectronMethod);
 
   cherrypicker.def(py::init<Forcefield &>())
       .def("AddAthenaeum", &CherryPicker::AddAthenaeum)
@@ -182,9 +184,9 @@ void GeneratePyGraphAlgorithms(pybind11::module &m) {
       .def("GetInt", &CherryPicker::GetInt)
       .def("SetInt", &CherryPicker::SetInt)
       .def("DefaultSettings", &CherryPicker::DefaultSettings);
-  
+
   using PerSet = Perceptatron::Settings;
-  
+
   py::class_<Perceptatron> perceptatron(m, "Perceptatron");
   
   py::enum_<PerSet>(perceptatron, "Settings")

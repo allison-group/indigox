@@ -26,7 +26,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -mavx2")
 IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 ENDIF()
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og -DDEBUG")
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG -O0")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
@@ -119,15 +119,13 @@ ENDIF(DOXYGEN_FOUND)
 ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/external/indigo-bondorder)
 TARGET_LINK_LIBRARIES(indigox indigo-bondorder)
 
-#INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/external/indigo-bondorder/include)
-#INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/external/indigo-bondorder/include/indigo-bondorder
-#        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+ADD_EXECUTABLE(nitrobenzoate_example examples/CherryPicker/nitrobenzoate_example.cpp)
+TARGET_LINK_LIBRARIES(nitrobenzoate_example indigox)
+TARGET_LINK_LIBRARIES(nitrobenzoate_example stdc++fs) # needed for std:filesystem
 
-ADD_EXECUTABLE(load_athenaeum_example examples/CherryPicker/load_athenaeum_example.cpp)
-TARGET_LINK_LIBRARIES(load_athenaeum_example indigox)
-
-#TARGET_INCLUDE_DIRECTORIES(load_athenaeum_example BEFORE PRIVATE ${PROJECT_SOURCE_DIR}/external/indigo-bondorder/include)
-#ADD_DEPENDENCIES(load_athenaeum_example indigox)
+ADD_EXECUTABLE(general_example examples/CherryPicker/general_example.cpp)
+TARGET_LINK_LIBRARIES(general_example indigox)
+TARGET_LINK_LIBRARIES(general_example stdc++fs) # needed for std:filesystem
 
 FILE(COPY data DESTINATION .)
 #FILE(COPY examples/python_example.py DESTINATION examples)
@@ -136,7 +134,8 @@ FILE(COPY data DESTINATION .)
 INSTALL(TARGETS indigox DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Install example
-INSTALL(TARGETS load_athenaeum_example DESTINATION ${CMAKE_INSTALL_LIBDIR})
+INSTALL(TARGETS nitrobenzoate_example DESTINATION ${CMAKE_INSTALL_LIBDIR})
+INSTALL(TARGETS general_example DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Install header files. This should includes boost if the repo version is being used
 #INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/include/indigox

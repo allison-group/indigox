@@ -343,9 +343,12 @@ namespace indigox {
     int64_t PerceiveDihedrals();
 
     /*! \brief Determine bond order and formal charges in the molecule.
-     *  \details todo
+     *  \details Assign electrons to the molecule and determine bond order and
+     *  formal charges. Uses the algorithm described at https://jcheminf.biomedcentral.com/articles/10.1186/s13321-019-0340-0
+     *  \param algorithmOption Integer option representing the algorithm to use.
+     *  0 = Local Optimisation, 1 = A*, 2 = FPT (fixed parameter tractable)
      *  \return the number of resonance structures found. */
-    int64_t PerceiveElectrons();
+    int64_t PerceiveElectrons(int32_t algorithmOption);
 
     int32_t PerceiveResidues();
     //    size_t AssignElectrons();
@@ -404,6 +407,11 @@ namespace indigox {
 
     static std::map<indigo_bondorder::BondOrder, indigox::Bond::Order> GetBondorderEnumMap();
     static std::map<indigox::Bond::Order, std::string> GetBondorderNameMap();
+
+    /*!
+     * Translate CherryPicker settings into indigo-bondorder settings for the electron calculation
+     */
+    void setElectronSettings(int32_t algorithmOption);
   };
 
   void SaveMolecule(const Molecule &mol, std::string path);

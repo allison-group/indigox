@@ -607,6 +607,7 @@ namespace indigox {
   }
 
   Athenaeum LoadAthenaeum(std::string path) {
+    std::cout << "Loading Athenaeum at path " << path << std::endl;
     using Archive = cereal::PortableBinaryInputArchive;
     std::ifstream is(path);
     if (!is.is_open()) throw std::runtime_error("Unable to open input stream");

@@ -20,7 +20,6 @@
 #include <iostream>
 #include <map>
 #include <numeric>
-#include <sstream>
 
 #ifndef INDIGOX_DISABLE_SANITY_CHECKS
 #define _sanity_check_(x)                                                      \
@@ -94,6 +93,7 @@ namespace indigox {
   Molecule::Molecule(const std::string& n) : m_data(std::make_shared<Impl>(n)) {
     std::cout << "Constructing new molecule " << n << std::endl;
     m_data->molecular_graph = graph::MolecularGraph(*this);
+    std::cout << "Finished constructing " << n << std::endl;
   }
 
   // =======================================================================
@@ -854,25 +854,19 @@ namespace indigox {
   }
 
   //Use formal charge and bond order algo to assign electron, formal charge and bond order
-  int64_t Molecule::PerceiveElectrons() {
+  int64_t Molecule::PerceiveElectrons(int32_t algorithmOption) {
     if (m_data->Test(Data::ElectronPerception)) { return 0; }
     m_data->Set(Data::ElectronPerception);
 
     //todo detect if the atom has charges or bond orders yet
     //may also need to make sure bond orders are part of the cherrypicker calculation. I have a feeling he didnt implement it
-
     std::cout << "\nStarting bond order and formal charge assignment.\n";
-    
+
     using namespace indigo_bondorder;
 
-    //todo check these options - they were settings from the c++ example
-    Options::AssignElectrons::ALGORITHM = Options::AssignElectrons::Algorithm::FPT; //todo add as an option
-    Options::AssignElectrons::FPT::ADD_EDGES_TO_TD = false;
-    Options::AssignElectrons::FPT::MINIMUM_PROPAGATION_DEPTH = 1;
-    Options::AssignElectrons::USE_ELECTRON_PAIRS = false;
+    setElectronSettings(algorithmOption);
 
     // Build the indigo-bondorder molecule
-
     std::cout << "Constructing bondorder molecule..." << std::endl;
     Molecule_p BO_mol = std::make_shared<indigo_bondorder::Molecule>();
     BO_mol->SetTotalCharge(-1); //todo why? Check paper?
@@ -899,48 +893,82 @@ namespace indigox {
       Element_p element = common_elements[symbol] ? common_elements[symbol] : PT->GetElement(symbol);
       auto BO_atom = BO_mol->NewAtom(element);
       BO_atom->SetName(atom.GetName());
+      BO_atom->SetIndex(atom.GetIndex());
       atom_map[std::make_shared<indigox::Atom>(atom)] = BO_atom;
     }
 
     for (const indigox::Bond& bond : m_data->bonds) {
       //Create a bondorder copy of each bond as well, adding them to the bondorder molecule
-      auto atom0 = std::make_shared<indigox::Atom>(bond.GetAtoms()[0]); //todo check these pointers are the SAME or the map wont work
-      auto atom1 = std::make_shared<indigox::Atom>(bond.GetAtoms()[1]);
-      auto BO_bond = BO_mol->NewBond(atom_map.find(atom0)->second, atom_map.find(atom1)->second);
+      auto atom0 = BO_mol->GetAtomIndex(bond.GetAtoms()[0].GetIndex()); //I've verified the indices are consistent at this point, even though they are volatile
+      auto atom1 = BO_mol->GetAtomIndex(bond.GetAtoms()[1].GetIndex());
+      auto BO_bond = BO_mol->NewBond(atom0, atom1);
       bond_map[std::make_shared<indigox::Bond>(bond)] = BO_bond;
     }
-    
-    std::cout << "Molecule constructed. Starting electron placement calculation...\n";
+
+    std::cout << "Molecule constructed. Starting electron placement calculation. This may take some time...\n";
 
     Uint count = BO_mol->AssignElectrons();
 
     //todo allow smart choosing of resonance structures. Declaration of aromatics?
-    std::cout << "Found " << count << " resonance structure(s) with minimum score. Using the first (for now).\n";
+    std::cout << "Found " << count << " resonance structure(s) with minimum score. Using the first (for now)." << std::endl << std::endl;
     BO_mol->ApplyElectronAssignment(0);
 
+    bool formal_charge_overwritten = false;
     for (auto const& [atom, BO_atom] : atom_map) {
       int FC_current = atom->GetFormalCharge();
       int FC_new = BO_atom->GetFormalCharge();
 
       if (FC_current != FC_new) {
-        std::cout << "Overwriting formal charge of atom " << atom->GetID() << " from " << FC_current << " to " << FC_new << "\n";
+        std::cout << "Overwriting formal charge of atom " << atom->GetName() << " from " << FC_current << " to " << FC_new << std::endl;
+        formal_charge_overwritten = true;
       }
       atom->SetFormalCharge(BO_atom->GetFormalCharge());
     }
 
+    if (formal_charge_overwritten) {
+      std::cout << std::endl;
+    }
+
+    bool bond_order_overwritten = false;
     for (auto const& [bond, BO_bond] : bond_map) {
       BondOrder BO_current = bond->GetOrder();
       BondOrder BO_new = BO_enum_map.find(BO_bond->GetOrder())->second;
 
       if (BO_current != BO_new) {
-        std::cout << "Overwriting bond order of bond " << bond->GetID() << " from " << BO_name_map.find(BO_current)->second << " to " << BO_name_map.find(BO_new)->second << "\n";
+        std::cout << "Overwriting bond order of bond between " << bond->GetAtoms()[0].GetName() << " and " << bond->GetAtoms()[1].GetName() << " from " << BO_name_map.find(BO_current)->second << " to " << BO_name_map.find(BO_new)->second << std::endl;
+        bond_order_overwritten = true;
       }
       bond->SetOrder(BO_new);
     }
+    if (bond_order_overwritten) {
+      std::cout << std::endl;
+    }
 
-    std::cout << "Finished assigning formal charges and bond orders.\n";
+    std::cout << "Finished assigning formal charges and bond orders.\n" << std::endl;
 
     return count;
+  }
+
+  void Molecule::setElectronSettings(int32_t algorithmOption) {
+    using namespace indigo_bondorder;
+    using ElecOps = Options::AssignElectrons;
+
+    switch (algorithmOption) {
+      case 0:
+        ElecOps::ALGORITHM = ElecOps::Algorithm::LOCAL_OPTIMISATION;
+        break;
+      case 1:
+        ElecOps::ALGORITHM = ElecOps::Algorithm::ASTAR;
+        break;
+      case 2:
+      default: //default to FPT
+        ElecOps::ALGORITHM = ElecOps::Algorithm::FPT;
+    }
+    //Not sure what the first two options are for
+    ElecOps::FPT::ADD_EDGES_TO_TD = true; //add edges to tree decomposition
+    ElecOps::FPT::MINIMUM_PROPAGATION_DEPTH = 1;
+    ElecOps::USE_ELECTRON_PAIRS = true; // is default. Electrons calc'd as pairs
+    ElecOps::PREPLACE_ELECTRONS = true; // Puts 6 electrons on singly bonded halogens by default
   }
 
   std::map<indigo_bondorder::BondOrder, indigox::Bond::Order> Molecule::GetBondorderEnumMap() {

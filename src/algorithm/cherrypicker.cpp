@@ -41,9 +41,11 @@ namespace indigox::algorithm {
     SetBool(CPSet::AllowDanglingAngles);
     SetBool(CPSet::AllowDanglingDihedrals);
     SetBool(CPSet::UseRISubgraphMatching);
+    SetBool(CPSet::CalculateElectrons);
 
     SetInt(CPSet::MinimumFragmentSize, 4);
     SetInt(CPSet::MaximumFragmentSize, -1);
+    SetInt(CPSet::ElectronMethod, 2); // Default to FPT for high accuracy and speed
   }
 
   bool CherryPicker::GetBool(CPSet param) {
@@ -266,12 +268,13 @@ namespace indigox::algorithm {
       throw std::runtime_error("CherryPicker requires a connected molecule");
     mol.PerceiveAngles();
     mol.PerceiveDihedrals();
-    //todo before here, check there are no electrons assigned
-    mol.PerceiveElectrons(); //here
+
+    if (GetBool(CPSet::CalculateElectrons)) {
+      mol.PerceiveElectrons(GetInt(CPSet::ElectronMethod));
+    }
 
     graph::CondensedMolecularGraph CMG = graph::Condense(G);
     ParamMolecule pmol(mol);
-    //todo check after here there are electrons
 
     // Populate the masks
     graph::VertexIsoMask vertmask;

@@ -219,6 +219,9 @@ namespace indigox::algorithm {
       /*! When performing subgraph isomorphism testing, use the RI algorithm
          instead of the VF2 algorithm. The RI algorithm is more efficient. */
       UseRISubgraphMatching,
+      /*! Before parameterising with CherryPicker, calculate electron positions
+       * to determine formal charges and bond orders. */
+      CalculateElectrons,
       /*! Marks the end of the boolean settings. As there is no external use for
          this value, it is not exposed to Python. */
       BoolCount,
@@ -234,6 +237,13 @@ namespace indigox::algorithm {
       MaximumFragmentSize,
       /*! The number of decmal points to round assigned charges to. Rounding to less than three decimal places, or no rounding, is not supported. */
       ChargeRounding,
+      /*! The method to use if calculating electrons for formal charge and
+       * bond order assignment.
+       * 0 = Local Optimisation
+       * 1 = A*
+       * 2 = FPT (Fixed Parameter Tractable)
+       */
+      ElectronMethod,
       /*! Marks the end of the integer settings. As there is no external use for
          this value, it is not exposed to Python. */
       IntCount

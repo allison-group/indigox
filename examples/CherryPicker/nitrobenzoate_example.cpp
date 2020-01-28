@@ -17,13 +17,13 @@ int main() {
   using settings = indigox::algorithm::CherryPicker::Settings;
 
   auto forceField = GenerateGROMOS54A7();
-//  auto athSettings = Athenaeum::Settings();
+  auto athSettings = Athenaeum::Settings();
 
   auto auto_ath = Athenaeum(forceField, 1);
   auto_ath.SetInt(Athenaeum::Settings::MoleculeSizeLimit, 60);
 
   //construct molecule. Simple is fine.
-  
+
   // Prepare elements
   const PeriodicTable& PT = GetPeriodicTable();
   Element H = PT.GetElement("H");
@@ -74,8 +74,6 @@ int main() {
 
   SaveAthenaeum(auto_ath, "./attemptedLib.ath");
 
-//  std::cout << fs::current_path() << std::endl;
-
   algorithm::CherryPicker cherryPicker(forceField);
   cherryPicker.AddAthenaeum(auto_ath);
   
@@ -83,6 +81,8 @@ int main() {
   cherryPicker.SetInt(settings::MaximumFragmentSize, 20);
 
   const indigox::ParamMolecule &molecule = cherryPicker.ParameteriseMolecule(mol);
+
+  SaveMolecule(mol, "/home/sdun067/AllisonGroup/indigox/examples/CherryPicker/TestMolecules/nitrobenzoate.out");
 
   std::cout << "Done!\n";
 }
