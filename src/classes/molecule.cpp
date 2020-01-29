@@ -858,8 +858,6 @@ namespace indigox {
     if (m_data->Test(Data::ElectronPerception)) { return 0; }
     m_data->Set(Data::ElectronPerception);
 
-    //todo detect if the atom has charges or bond orders yet
-    //may also need to make sure bond orders are part of the cherrypicker calculation. I have a feeling he didnt implement it
     std::cout << "\nStarting bond order and formal charge assignment.\n";
 
     using namespace indigo_bondorder;
@@ -869,9 +867,9 @@ namespace indigox {
     // Build the indigo-bondorder molecule
     std::cout << "Constructing bondorder molecule..." << std::endl;
     Molecule_p BO_mol = std::make_shared<indigo_bondorder::Molecule>();
-    BO_mol->SetTotalCharge(-1); //todo why? Check paper?
+    BO_mol->SetTotalCharge(GetMolecularCharge());
 
-    //Initialise a periodic table todo may need to set an options for this?
+    //Initialise a periodic table
     PeriodicTable_p PT = indigo_bondorder::PeriodicTable::GetInstance();
     std::map<std::string, Element_p> common_elements;
     common_elements["H"] = PT->GetElement("H");
@@ -909,7 +907,7 @@ namespace indigox {
 
     Uint count = BO_mol->AssignElectrons();
 
-    //todo allow smart choosing of resonance structures. Declaration of aromatics?
+    //todo allow smart choosing of resonance structures. Declaration of aromatics? No, do it naively like the python example
     std::cout << "Found " << count << " resonance structure(s) with minimum score. Using the first (for now)." << std::endl << std::endl;
     BO_mol->ApplyElectronAssignment(0);
 
@@ -1251,6 +1249,7 @@ namespace indigox {
     if (!os.is_open()) throw std::runtime_error("Unable to open output stream");
     Archive archive(os);
     std::string stype("Molecule");
+    std::cout << "Saving molecule in binary format to location " << path << std::endl;
     archive(stype, mol);
   }
 

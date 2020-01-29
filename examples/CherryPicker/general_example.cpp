@@ -34,6 +34,8 @@ int main() {
 
   const indigox::ParamMolecule &molecule = cherryPicker.ParameteriseMolecule(mol);
 
+  //We can't save the parameterisation directly in ITP format from C++, but we save the binary molecule output
+  //which can be imported by the python module and outputted in ITP, IXD, PDB and RTP formats
   SaveMolecule(mol, "/home/sdun067/AllisonGroup/indigox/examples/CherryPicker/TestMolecules/general.out.param");
 
   std::cout << "Done!\n";

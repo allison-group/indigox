@@ -22,7 +22,7 @@ cmake .. && make
 
 make install  (depending on where your python packages are installed, this may need sudo)
 
-Examples are provided in the examples directory. Documentation can be built by make doc. Alternatively, a version of the documentation up to date with the most recent release is available at https://allison-group.github.io/indigox/
+Examples are provided in the examples directory, with a worked explanation of the code in the [tutorial](https://allison-group.github.io/indigox/tutorials.html). Documentation can be built by make doc, or a full version is available online at https://allison-group.github.io/indigox/
 
 If you are developing using the python examples, note that a full build and reinstallation of indigox is needed for the example to pick up on changes. The example relies on the installed indigox version. 
 
@@ -38,3 +38,57 @@ The second file format is the fragment definition file. This format contains thr
 - The 'FRAGMENT' block contains the list of atom indices to use for the core region in fragment generation. This is a free-form block taking any number of lines with any number of indices per line.
 - The 'OVERLAP' block contains the list of atom inidices to use for the overlap region in fragment generation. Like the 'FRAGMENT' block, this is free form. Each occurance of a 'FRAGMENT' block requires the next block to be an 'OVERLAP' block, even if the 'OVERLAP' block is empty.
 
+## Options
+
+Indigox exposes a number of customisation and optimisation options. To set options using the python module:
+
+```
+import indigox as ix
+
+force_field = ix.GenerateGROMOS54A7() # always need a force field first
+
+# Settings for Athenaeum generation
+ath_settings = ix.Athenaeum.Settings
+example_ath = ix.Athenaeum(force_field)
+
+example_ath.SetInt(ath_settings.MoleculeSizeLimit, 60)
+example_ath.SetBool(ath_settings.SelfConsistent)
+
+# Settings for Cherry Picker
+cp_settings = ix.algorithm.CherryPicker.Settings
+cherrypicker = ix.algorithm.CherryPicker(force_field)
+
+# Set fragment size boundaries
+cherrypicker.SetInt(settings.MinimumFragmentSize, 2)
+cherrypicker.SetInt(settings.MaximumFragmentSize, 20)
+```
+
+### Available options
+
+#### Athenaeum generation:
+
+
+#### Molecule parameterisation
+
+
+#### Formal Charge and Bond Order assignment
+
+If CalculateElectrons is set to true, CherryPicker will run the indigo-bondorder electron assignment algorithm detailed [here](https://jcheminf.biomedcentral.com/articles/10.1186/s13321-019-0340-0) to calculate bond orders and formal charges, before running the CherryPicker algorithm.
+
+Use the option ElectronMethod to set the underlying search algorithm:
+0 = Local Optimisation
+1 = A*
+2 = FPT (Fixed Parameter Tractable)
+
+By default FPT is used and recommended as the most accurate method. If time is the limiting resource and accuracy can be sacrificed, Local Optimisation is the fastest.
+
+This implementation uses a set of default options outlined below. If you need to use other settings, you can use the standalone algorithm to parameterise and export your molecule first. It has a more accessible python binding library for its options. Find the source code [here](https://github.com/allison-group/indigo-bondorder).
+
+##### Default Formal Charge and Bond Order options
+
+Option name | Value | Note
+------ | :------: | ------------
+USE_ELECTRON_PAIRS | true | Calculate electrons as pairs to reduce search space
+PREPLACE_ELECTRONS | true | Preplace 6 electrons on halogens singly bonded to carbons to reduce search space
+ALLOWED_ELEMENTS | H, C, N, O, S, P, F, Cl, Br | Encountering elements outside this list will cause electron assignment to fail
+MAXIMUM_BOND_ORDER | 3 | 

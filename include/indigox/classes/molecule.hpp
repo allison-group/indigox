@@ -411,7 +411,7 @@ namespace indigox {
     /*!
      * Translate CherryPicker settings into indigo-bondorder settings for the electron calculation
      */
-    void setElectronSettings(int32_t algorithmOption);
+    static void setElectronSettings(int32_t algorithmOption);
   };
 
   void SaveMolecule(const Molecule &mol, std::string path);
