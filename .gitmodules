@@ -13,4 +13,4 @@
 [submodule "external/indigo-bondorder"]
 	path = external/indigo-bondorder
 	url = https://github.com/allison-group/indigo-bondorder.git
-	branch = seb/change-namespace
+	branch = bondorder-namespace
