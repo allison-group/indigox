@@ -412,6 +412,21 @@ namespace indigox {
      * Translate CherryPicker settings into indigo-bondorder settings for the electron calculation
      */
     static void setElectronSettings(int32_t algorithmOption);
+
+    uint chooseResonanceStructure(indigo_bondorder::Molecule_p &mol,
+                                  const std::map<indigo_bondorder::BondOrder, indigox::Bond::Order> &enum_map,
+                                  const std::map<indigox::Bond::Order, std::string> &name_map,
+                                  indigo_bondorder::Uint num_structures);
+
+    static void displayResonanceStructures(const indigo_bondorder::Molecule_p &mol, indigo_bondorder::Uint num_structures,
+                                              std::map<indigo_bondorder::BondOrder, indigox::Bond::Order> enum_map,
+                                              std::map<indigox::Bond::Order, std::string> string_map);
+
+    static int32_t getChoiceOfStructure();
+
+    static std::string trimOrFill(std::string str, int length);
+
+    static std::string getNameAndIndex(const std::shared_ptr<indigo_bondorder::Atom> &atom);
   };
 
   void SaveMolecule(const Molecule &mol, std::string path);

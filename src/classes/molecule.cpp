@@ -20,6 +20,8 @@
 #include <iostream>
 #include <map>
 #include <numeric>
+#include <boost/algorithm/string.hpp>
+#include <iomanip>
 
 #ifndef INDIGOX_DISABLE_SANITY_CHECKS
 #define _sanity_check_(x)                                                      \
@@ -905,11 +907,22 @@ namespace indigox {
 
     std::cout << "Molecule constructed. Starting electron placement calculation. This may take some time...\n";
 
-    Uint count = BO_mol->AssignElectrons();
+    Uint num_resonance_structures = BO_mol->AssignElectrons();
 
-    //todo allow smart choosing of resonance structures. Declaration of aromatics? No, do it naively like the python example
-    std::cout << "Found " << count << " resonance structure(s) with minimum score. Using the first (for now)." << std::endl << std::endl;
-    BO_mol->ApplyElectronAssignment(0);
+    uint structure = 0;
+    if (num_resonance_structures > 1) {
+      structure = chooseResonanceStructure(BO_mol, BO_enum_map, BO_name_map, num_resonance_structures);
+    }
+
+    BO_mol->ApplyElectronAssignment(structure);
+
+    int longest_name = 5;
+    for (indigo_bondorder::Uint a = 0; a < BO_mol->NumAtoms(); a++) {
+      std::shared_ptr <indigo_bondorder::Atom> atom = BO_mol->GetAtomIndex(a);
+
+      std::string name = getNameAndIndex(atom);
+      if ((int) name.length() > longest_name) longest_name = name.length();
+    }
 
     bool formal_charge_overwritten = false;
     for (auto const& [atom, BO_atom] : atom_map) {
@@ -917,7 +930,8 @@ namespace indigox {
       int FC_new = BO_atom->GetFormalCharge();
 
       if (FC_current != FC_new) {
-        std::cout << "Overwriting formal charge of atom " << atom->GetName() << " from " << FC_current << " to " << FC_new << std::endl;
+        std::string name = trimOrFill(getNameAndIndex(BO_atom), longest_name);
+        std::cout << "Overwriting charge of " << name << " from  " << trimOrFill(std::to_string(FC_current), 3) << " to  " << trimOrFill(std::to_string(FC_new), 3) << std::endl;
         formal_charge_overwritten = true;
       }
       atom->SetFormalCharge(BO_atom->GetFormalCharge());
@@ -933,7 +947,9 @@ namespace indigox {
       BondOrder BO_new = BO_enum_map.find(BO_bond->GetOrder())->second;
 
       if (BO_current != BO_new) {
-        std::cout << "Overwriting bond order of bond between " << bond->GetAtoms()[0].GetName() << " and " << bond->GetAtoms()[1].GetName() << " from " << BO_name_map.find(BO_current)->second << " to " << BO_name_map.find(BO_new)->second << std::endl;
+        std::string from_name = trimOrFill(getNameAndIndex(BO_bond->GetSourceAtom()), longest_name);
+        std::string to_name = trimOrFill(getNameAndIndex(BO_bond->GetTargetAtom()), longest_name);
+        std::cout << "Overwriting bond order between  " << from_name << " and  " << to_name << " from  " << trimOrFill(BO_name_map.find(BO_current)->second, 14) << " to  " << trimOrFill(BO_name_map.find(BO_new)->second, 14) << std::endl;
         bond_order_overwritten = true;
       }
       bond->SetOrder(BO_new);
@@ -944,7 +960,7 @@ namespace indigox {
 
     std::cout << "Finished assigning formal charges and bond orders.\n" << std::endl;
 
-    return count;
+    return num_resonance_structures;
   }
 
   void Molecule::setElectronSettings(int32_t algorithmOption) {
@@ -993,6 +1009,95 @@ namespace indigox {
     BO_names[indigox::Bond::Order::TWOANDAHALF] = "Two and a half";
     BO_names[indigox::Bond::Order::UNDEFINED] = "Undefined";
     return BO_names;
+  }
+
+  uint Molecule::chooseResonanceStructure(indigo_bondorder::Molecule_p &mol,
+                                          const std::map<indigo_bondorder::BondOrder, indigox::Bond::Order> &enum_map,
+                                          const std::map<indigox::Bond::Order, std::string> &name_map,
+                                          indigo_bondorder::Uint num_structures) {
+    std::cout << std::endl << "Found " << num_structures << " resonance structure(s) with minimum score of " << mol->GetMinimumElectronAssignmentScore() << std::endl << std::endl;
+
+    //Make this stand out so people hopefully don't miss it
+    std::string phrase = "Would you like to print the structures and choose between them? If not, the first discovered structure will be used. Y/n?";
+    std::cout << "|" << std::string(phrase.length() + 6, '=') << "|" << std::endl;
+    std::cout << "|== " << phrase << " ==|" << std::endl;
+    std::cout << "|" << std::string(phrase.length() + 6, '=') << "|" << std::endl;
+
+    std::string yesOrNo;
+    getline(std::cin, yesOrNo);
+
+    boost::algorithm::to_lower(yesOrNo);
+    uint i = yesOrNo.rfind('y');
+
+    uint structure = 0; // index of resonance structure to use
+
+    if (i == 0) { //If user typed Y or Yes (or anything else starting with Y)
+      displayResonanceStructures(mol, num_structures, enum_map, name_map);
+      structure = getChoiceOfStructure();
+    } else if (yesOrNo.rfind('n') == -1) {
+      std::cout << "Could not interpret the input. ";
+    }
+
+    std::cout << "Using resonance structure number " << structure << "." << std::endl << std::endl;
+    return structure;
+  }
+
+
+  void Molecule::displayResonanceStructures(const indigo_bondorder::Molecule_p &mol, indigo_bondorder::Uint num_structures,
+                                            std::map<indigo_bondorder::BondOrder, indigox::Bond::Order> enum_map,
+                                            std::map<indigox::Bond::Order, std::string> string_map) {
+    using namespace std;
+    
+    int longest_name = 5;
+    for (indigo_bondorder::Uint a = 0; a < mol->NumAtoms(); a++) {
+      shared_ptr <indigo_bondorder::Atom> atom = mol->GetAtomIndex(a);
+
+      string name = getNameAndIndex(atom);
+      if (atom->GetFormalCharge() != 0 && (int) name.length() > longest_name) longest_name = name.length();
+    }
+
+    for (indigo_bondorder::Uint i = 0; i < num_structures; i++) {
+      cout << "Printing resonance structure " << i << "." << endl << endl;
+      mol->ApplyElectronAssignment(i);
+      bool printed = false;
+      for (indigo_bondorder::Uint a = 0; a < mol->NumAtoms(); a++) { //Print all atoms with charge != 0
+        shared_ptr <indigo_bondorder::Atom> atom = mol->GetAtomIndex(a);
+        if (atom->GetFormalCharge() != 0) {
+          string name = trimOrFill(atom->GetName() + "(" + to_string(atom->GetIndex()) + ")", longest_name);
+          cout << "Atom " << name << " has charge  " << atom->GetFormalCharge() << endl;
+          printed = true;
+        }
+      }
+      if (printed) { cout << endl; }
+
+      printed = false;
+      for (indigo_bondorder::Uint b = 0; b < mol->NumBonds(); b++) { //Print all bonds with order != 1
+        shared_ptr <indigo_bondorder::Bond> bond = mol->GetBondIndex(b);
+        if (bond->GetOrder() != 1) {
+          string source = trimOrFill(getNameAndIndex(bond->GetSourceAtom()), longest_name);
+          string target = trimOrFill(getNameAndIndex(bond->GetTargetAtom()), longest_name);
+          cout << "Bond from  " << source << " to  " << target << " has bond order: " << string_map.find(enum_map.find(bond->GetOrder())->second)->second << endl;
+          printed = true;
+        }
+      }
+      if (printed) { cout << endl; }
+    }
+  }
+
+  std::string Molecule::getNameAndIndex(const std::shared_ptr<indigo_bondorder::Atom> &atom) {
+    return atom->GetName() + "(" + std::__cxx11::to_string(atom->GetIndex()) + ")";
+  }
+
+  int32_t Molecule::getChoiceOfStructure() {
+    std::cout << "Please type the number of the resonance structure you want to use, and then press enter." << std::endl;
+
+    std::string number;
+    std::getline(std::cin, number);
+
+    int32_t structure_to_use;
+    std::stringstream(number) >> structure_to_use; //if string can't be converted to int, defaults to 0.
+
+    return structure_to_use;
   }
 
   // Finds the edges of a graph corresponding to peptide bonds in a molecule
@@ -1237,6 +1342,17 @@ namespace indigox {
   void Molecule::ResetForcefield(const Forcefield &ff) {
     _sanity_check_(*this);
     m_data->forcefield = ff;
+  }
+
+  std::string Molecule::trimOrFill(std::string str, int length) {
+    std::string to_return = str;
+    int paddingNeeded = length - (int) str.length();
+    if (paddingNeeded > 0) {
+      to_return = to_return + std::string(paddingNeeded, ' ');
+    } else if (paddingNeeded < 0) {
+      to_return = to_return.substr(0, length);
+    }
+    return to_return;
   }
 
   // =======================================================================
