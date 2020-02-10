@@ -222,6 +222,15 @@ namespace indigox::algorithm {
       /*! Before parameterising with CherryPicker, calculate electron positions
        * to determine formal charges and bond orders. */
       CalculateElectrons,
+      /*!
+       * If CalculateElectrons is true, multiple resonance structures may be found
+       * and the algorithm will pause for the user to choose one.
+       * If this setting is true, the first resonance structure found will be used
+       * by default. This means the algorithm won't pause for input, but the chosen
+       * structure isn't deterministic. Therefore this is not recommended for any
+       * but the simplest molecules.
+       */
+      NoInput,
       /*! Marks the end of the boolean settings. As there is no external use for
          this value, it is not exposed to Python. */
       BoolCount,
@@ -297,8 +306,9 @@ namespace indigox::algorithm {
      EdgeBondOrder\endlink, \link Settings::EdgeDegree EdgeDegree\endlink, \link
      Settings::AllowDanglingBonds AllowDanglingBonds\endlink, \link
      Settings::AllowDanglingAngles AllowDanglingAngles\endlink, \link
-     Settings::AllowDanglingDihedrals AllowDanglingDihedrals\endlink, and \link
-     Settings::UseRISubgraphMatching UseRISubgraphMatching\endlink. All other
+     Settings::AllowDanglingDihedrals AllowDanglingDihedrals\endlink, \link
+     Settings::UseRISubgraphMatching UseRISubgraphMatching\endlink, and \link
+     Settings::CalculateElectrons CalculateElectrons\endlink. All other
      boolean values default to false. The default \link
      Settings::MinimumFragmentSize MinimumFragmentSize\endlink is \f$4\f$ and
      the default \link Settings::MaximumFragmentSize MaximumFragmentSize\endlink

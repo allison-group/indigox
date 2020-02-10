@@ -348,7 +348,7 @@ namespace indigox {
      *  \param algorithmOption Integer option representing the algorithm to use.
      *  0 = Local Optimisation, 1 = A*, 2 = FPT (fixed parameter tractable)
      *  \return the number of resonance structures found. */
-    int64_t PerceiveElectrons(int32_t algorithmOption);
+    int64_t PerceiveElectrons(int32_t algorithmOption, bool silent);
 
     int32_t PerceiveResidues();
     //    size_t AssignElectrons();

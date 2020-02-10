@@ -2,6 +2,7 @@
 from pathlib import Path
 from collections import defaultdict
 import indigox as ix
+import os
 
 __all__ = ["LoadIFPFile", "LoadPDBFile", "LoadMTBFile", "LoadIXDFile",
            "LoadParameterisedMolecule", "LoadITPFile" , "LoadFragmentFile",
@@ -12,7 +13,7 @@ __all__ = ["LoadIFPFile", "LoadPDBFile", "LoadMTBFile", "LoadIXDFile",
 #  \param path the path to the IFP file
 #  \return the loaded forcefield
 def LoadIFPFile(path):
-  print("Loading IFP file:", path.stem)
+  print("Loading IFP file from path %s." % str(os.path.join(os.getcwd(), path)))
   pt = ix.GetPeriodicTable()
   data = list(ix.LoadFile(path.expanduser()))
   blocks = [data[0]]
@@ -76,7 +77,7 @@ def LoadIFPFile(path):
 ## \brief Loads the given PDB file into a Molecule
 #  \return the loaded molecule
 def LoadPDBFile(path, details = None):
-  print("Loading molecule from PDB file:", path.stem)
+  print("Loading molecule from PDB file at path %s." % str(os.path.join(os.getcwd(), path)))
   mol = ix.Molecule(path.stem)
   got_atoms = False
   for line in ix.LoadFile(path.expanduser()):
@@ -145,8 +146,8 @@ def LoadPDBFile(path, details = None):
     LoadIXDFile(details, mol)
   return mol
 
-def LoadIXDFile(path, mol): # todo THIS is formal charges and bond orders! we should create and output these as part of paramerisation
-  print("Loading formal charges and bond orders from IXD file:", path.stem)
+def LoadIXDFile(path, mol):
+  print("Loading formal charges and bond orders from IXD file at path %s." % str(os.path.join(os.getcwd(), path)))
   set_implicits = []
   for line in ix.LoadFile(path.expanduser()):
     line = line.split()
@@ -216,6 +217,7 @@ def LoadIXDFile(path, mol): # todo THIS is formal charges and bond orders! we sh
     raise ValueError("Sum of atom formal charges does not match molecular charge")
 
 def LoadMTBFile(path, ff, details=None):
+  print("Loading MTB file at path %s." % str(os.path.join(os.getcwd(), path)))
   file = list(ix.LoadFile(path.expanduser()))
 
   blocks = [file[0]]
@@ -310,6 +312,7 @@ def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
   return mol_params
 
 def LoadITPFile(path, ff, details=None):
+  print("Loading ITP file at path %s." % str(os.path.join(os.getcwd(), path)))
   mol = ix.Molecule(path.stem)
   
   bondtype = ix.BondType.Harmonic
@@ -371,6 +374,7 @@ def LoadITPFile(path, ff, details=None):
   return mol
 
 def LoadFragmentFile(path, ff):
+  print("Loading fragment file at path %s." % str(os.path.join(os.getcwd(), path)))
   file_data = list(ix.LoadFile(path.expanduser()))
   if file_data.count("MOLECULE") != 1:
     raise InputError("Expect only one molecule per file")
@@ -413,6 +417,7 @@ def LoadFragmentFile(path, ff):
 ## \cond
 
 def LoadSDFFile(path):
+  print("Loading SDF file at path %s." % str(os.path.join(os.getcwd(), path)))
   bond_orders = {1: ix.BondOrder.Single,
                  2: ix.BondOrder.Double,
                  3: ix.BondOrder.Triple}

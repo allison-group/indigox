@@ -15,6 +15,7 @@ total_ff = time.time() - t_ff
 manualAthPath = "ManualAthenaeum.ath"
 autoAthPath = "AutomaticAthenaeum.ath"
 
+
 def LoadAndSaveAthenaeums():
     """ Generate and save the Athenaeums used in the paper
     On our system this takes approximately 6.5 minutes to execute and uses a maximum of 3.5GB of memory.
@@ -68,19 +69,20 @@ def LoadAndSaveAthenaeums():
         man_ath_times.append(post_man_ath - post_loadfrag)
         auto_ath_times.append(post_auto_ath - post_man_ath)
 
-    print("\nFinished loading Athenaeums in {:10.3f} s".format((time.time_ns() - pre_loading)/(10**9)))
-    print("\tTotal loading from file: {:10.3f} s".format(sum(load_times)/(10**9)))
-    print("\tTotal Manual Athenaeum:\t {:10.3f} s".format(sum(man_ath_times)/(10**9)))
-    print("\tTotal Automatic Athenaeum: {:10.3f} s".format(sum(auto_ath_times)/(10**9)))
+    print("\nFinished loading Athenaeums in {:10.3f} s".format((time.time_ns() - pre_loading) / (10 ** 9)))
+    print("\tTotal loading from file: {:10.3f} s".format(sum(load_times) / (10 ** 9)))
+    print("\tTotal Manual Athenaeum:\t {:10.3f} s".format(sum(man_ath_times) / (10 ** 9)))
+    print("\tTotal Automatic Athenaeum: {:10.3f} s".format(sum(auto_ath_times) / (10 ** 9)))
 
     pre_save = time.time_ns()
     # Save the athenaeums
     ix.SaveAthenaeum(man_ath, manualAthPath)
     ix.SaveAthenaeum(auto_ath, autoAthPath)
-    print("Saved Athenaeums to file in  {:10.3f} s\n".format((time.time_ns() - pre_save)/(10**9)))
+    print("Saved Athenaeums to file in  {:10.3f} s\n".format((time.time_ns() - pre_save) / (10 ** 9)))
+
 
 def RunCherryPicker():
-    """ Load athenaeums and run the cherrypicker algorithm on the 3 molecules used in the paper
+    """ Load athenaeums and run the cherrypicker algorithm on the 3 molecules used in the paper.
     On our system, loading the Athenaeums takes about 12 seconds,
     then running Loading, Running CherryPicker, and Saving the test molecules takes about 5 seconds.
     :return:
@@ -99,6 +101,7 @@ def RunCherryPicker():
     # Set the CherryPicker options we want
     cherrypicker.SetInt(settings.MinimumFragmentSize, 2)
     cherrypicker.SetInt(settings.MaximumFragmentSize, 20)
+    cherrypicker.UnsetBool(settings.CalculateElectrons)
 
     # Load each of the test molecules and run cherrypicker
     for test in Path("TestMolecules").glob("*.pdb"):
@@ -111,7 +114,7 @@ def RunCherryPicker():
 
 if __name__ == "__main__":
     before_loadAth = time.time()
-    if not(Path(manualAthPath).is_file() and Path(autoAthPath).is_file()):
+    if not (Path(manualAthPath).is_file() and Path(autoAthPath).is_file()):
         LoadAndSaveAthenaeums()
 
     before_CP = time.time()

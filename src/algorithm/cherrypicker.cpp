@@ -261,6 +261,8 @@ namespace indigox::algorithm {
   };
 
   ParamMolecule CherryPicker::ParameteriseMolecule(Molecule &mol) {
+    std::cout << "Parameterising molecule " << mol.GetName() << "." << std::endl;
+
     if (_libs.empty())
       throw std::runtime_error("No Athenaeums to parameterise from");
     graph::MolecularGraph G = mol.GetGraph();
@@ -270,7 +272,7 @@ namespace indigox::algorithm {
     mol.PerceiveDihedrals();
 
     if (GetBool(CPSet::CalculateElectrons)) {
-      mol.PerceiveElectrons(GetInt(CPSet::ElectronMethod));
+      mol.PerceiveElectrons(GetInt(CPSet::ElectronMethod), GetBool(CPSet::NoInput));
     }
 
     graph::CondensedMolecularGraph CMG = graph::Condense(G);
@@ -406,6 +408,8 @@ namespace indigox::algorithm {
         }
       }
     } else std::cout << "WARNING: Not all atoms mapped so charge cannot be redistributed.\n";
+
+    std::cout << "Finished parameterising molecule " << mol.GetName() << ".\n" << std::endl;
     
     return pmol;
   }

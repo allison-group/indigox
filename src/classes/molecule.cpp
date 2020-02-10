@@ -93,9 +93,8 @@ namespace indigox {
         cached_formula("") {}
 
   Molecule::Molecule(const std::string& n) : m_data(std::make_shared<Impl>(n)) {
-    std::cout << "Constructing new molecule " << n << std::endl;
+    std::cout << "Constructing new molecule " << n << "." << std::endl;
     m_data->molecular_graph = graph::MolecularGraph(*this);
-    std::cout << "Finished constructing " << n << std::endl;
   }
 
   // =======================================================================
@@ -856,7 +855,7 @@ namespace indigox {
   }
 
   //Use formal charge and bond order algo to assign electron, formal charge and bond order
-  int64_t Molecule::PerceiveElectrons(int32_t algorithmOption) {
+  int64_t Molecule::PerceiveElectrons(int32_t algorithmOption, bool silent) {
     if (m_data->Test(Data::ElectronPerception)) { return 0; }
     m_data->Set(Data::ElectronPerception);
 
@@ -910,7 +909,7 @@ namespace indigox {
     Uint num_resonance_structures = BO_mol->AssignElectrons();
 
     uint structure = 0;
-    if (num_resonance_structures > 1) {
+    if (!silent && num_resonance_structures > 1) {
       structure = chooseResonanceStructure(BO_mol, BO_enum_map, BO_name_map, num_resonance_structures);
     }
 
@@ -1019,9 +1018,9 @@ namespace indigox {
 
     //Make this stand out so people hopefully don't miss it
     std::string phrase = "Would you like to print the structures and choose between them? If not, the first discovered structure will be used. Type Y or N and hit enter.";
-    std::cout << "|" << std::string(phrase.length() + 6, '=') << "|" << std::endl;
-    std::cout << "|== " << phrase << " ==|" << std::endl;
-    std::cout << "|" << std::string(phrase.length() + 6, '=') << "|" << std::endl;
+    std::cout << "|" << std::string(phrase.length() + 4, '=') << "|" << std::endl;
+    std::cout << "|= " << phrase << " =|" << std::endl;
+    std::cout << "|" << std::string(phrase.length() + 4, '=') << "|" << std::endl;
 
     std::string yesOrNo;
     getline(std::cin, yesOrNo);
@@ -1036,6 +1035,11 @@ namespace indigox {
       structure = getChoiceOfStructure();
     } else if ((int) yesOrNo.rfind('n') == -1) {
       std::cout << "Could not interpret the input. ";
+    }
+
+    if (structure < 0 || structure > num_structures) {
+      std::cout << "Index " << structure << " is out of range. ";
+      structure = 0;
     }
 
     std::cout << "Using resonance structure number " << structure << "." << std::endl << std::endl;
