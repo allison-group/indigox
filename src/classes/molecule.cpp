@@ -917,8 +917,8 @@ namespace indigox {
     BO_mol->ApplyElectronAssignment(structure);
 
     int longest_name = 5;
-    for (indigo_bondorder::Uint a = 0; a < BO_mol->NumAtoms(); a++) {
-      std::shared_ptr <indigo_bondorder::Atom> atom = BO_mol->GetAtomIndex(a);
+    for (auto it = BO_mol->BeginAtom(); it != BO_mol->EndAtom(); ++it) {
+      std::shared_ptr <indigo_bondorder::Atom> atom = *it;
 
       std::string name = getNameAndIndex(atom);
       if ((int) name.length() > longest_name) longest_name = name.length();
@@ -1018,7 +1018,7 @@ namespace indigox {
     std::cout << std::endl << "Found " << num_structures << " resonance structure(s) with minimum score of " << mol->GetMinimumElectronAssignmentScore() << std::endl << std::endl;
 
     //Make this stand out so people hopefully don't miss it
-    std::string phrase = "Would you like to print the structures and choose between them? If not, the first discovered structure will be used. Y/n?";
+    std::string phrase = "Would you like to print the structures and choose between them? If not, the first discovered structure will be used. Type Y or N and hit enter.";
     std::cout << "|" << std::string(phrase.length() + 6, '=') << "|" << std::endl;
     std::cout << "|== " << phrase << " ==|" << std::endl;
     std::cout << "|" << std::string(phrase.length() + 6, '=') << "|" << std::endl;
@@ -1034,7 +1034,7 @@ namespace indigox {
     if (i == 0) { //If user typed Y or Yes (or anything else starting with Y)
       displayResonanceStructures(mol, num_structures, enum_map, name_map);
       structure = getChoiceOfStructure();
-    } else if (yesOrNo.rfind('n') == -1) {
+    } else if ((int) yesOrNo.rfind('n') == -1) {
       std::cout << "Could not interpret the input. ";
     }
 
@@ -1060,8 +1060,8 @@ namespace indigox {
       cout << "Printing resonance structure " << i << "." << endl << endl;
       mol->ApplyElectronAssignment(i);
       bool printed = false;
-      for (indigo_bondorder::Uint a = 0; a < mol->NumAtoms(); a++) { //Print all atoms with charge != 0
-        shared_ptr <indigo_bondorder::Atom> atom = mol->GetAtomIndex(a);
+      for (auto it = mol->BeginAtom(); it != mol->EndAtom(); ++it) { //Print all atoms with charge != 0
+        shared_ptr <indigo_bondorder::Atom> atom = *it;
         if (atom->GetFormalCharge() != 0) {
           string name = trimOrFill(atom->GetName() + "(" + to_string(atom->GetIndex()) + ")", longest_name);
           cout << "Atom " << name << " has charge  " << atom->GetFormalCharge() << endl;
@@ -1071,8 +1071,8 @@ namespace indigox {
       if (printed) { cout << endl; }
 
       printed = false;
-      for (indigo_bondorder::Uint b = 0; b < mol->NumBonds(); b++) { //Print all bonds with order != 1
-        shared_ptr <indigo_bondorder::Bond> bond = mol->GetBondIndex(b);
+      for (auto it = mol->BeginBond(); it != mol->EndBond(); ++it) { //Print all bonds with order != 1
+        shared_ptr <indigo_bondorder::Bond> bond = *it;
         if (bond->GetOrder() != 1) {
           string source = trimOrFill(getNameAndIndex(bond->GetSourceAtom()), longest_name);
           string target = trimOrFill(getNameAndIndex(bond->GetTargetAtom()), longest_name);
