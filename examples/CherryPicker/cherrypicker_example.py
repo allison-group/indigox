@@ -1,16 +1,27 @@
 #!/usr/bin/env python3
 
+"""
+This example creates two Athenaeums out of the amino acid files in ./SourceMolecules:
+- AutomaticAthenaem: contains all possible fragments of the amino acids, with 1 atom
+overlaps
+- ManualAthenaeum: contains fragments as defined by the .frag files in ./SourceMolecules.
+
+This example runs CherryPicker using these Athenaeums to parameterise the molecules
+in ./TestMolecules. The parameters are saved in the same folder in .itp format.
+
+Note that ManualAthenaeum is added to CherryPicker first, meaning full amino acids will
+be preferentially identified before the algorithm resorts to smaller fragments in the
+AutomaticAthenaeum.
+"""
+
 import indigox as ix
 from pathlib import Path
 import time
 import fnmatch
 import os
 
-t_ff = time.time()
-
 # You always need a forcefield
 ff = ix.GenerateGROMOS54A7()
-total_ff = time.time() - t_ff
 
 manualAthPath = "ManualAthenaeum.ath"
 autoAthPath = "AutomaticAthenaeum.ath"
@@ -22,7 +33,6 @@ def LoadAndSaveAthenaeums():
     The saved files are 463 kB and 684.2 MB respectively.
     :return:
     """
-    pre_init_aths = time.time_ns()
 
     settings = ix.Athenaeum.Settings
     man_ath = ix.Athenaeum(ff)
@@ -32,53 +42,32 @@ def LoadAndSaveAthenaeums():
     # Need to set a larger than default limit as some of the amino acid molecules are large
     auto_ath.SetInt(settings.MoleculeSizeLimit, 60)
 
-    print("Initialised Athenaeums in %d ns" % (time.time_ns() - pre_init_aths))
-
     mol_path = "SourceMolecules"
     mol_extn = "*.frag"
 
     index = 1
     mol_count = len(fnmatch.filter(os.listdir(mol_path), mol_extn))
-    load_times, man_ath_times, auto_ath_times = [], [], []
 
     print("Loading molecules into Athenaeums...")
-    pre_loading = time.time_ns()
 
     # Load all the molecules
     for aa in Path(mol_path).glob(mol_extn):
         print("\tLoading Amino acid #{} of {}".format(index, mol_count))
         index += 1
 
-        pre_loadfrag = time.time_ns()
-
         mol, fragments = ix.LoadFragmentFile(aa, ff)
         mol.SetName(aa.stem)
-
-        post_loadfrag = time.time_ns()
 
         # add the fragments to the manual Athenaeum
         for frag in fragments:
             man_ath.AddFragment(frag)
-        post_man_ath = time.time_ns()
 
         # add the molecule to the automatic Athenaeum
         auto_ath.AddAllFragments(mol)
-        post_auto_ath = time.time_ns()
 
-        load_times.append(post_loadfrag - pre_loadfrag)
-        man_ath_times.append(post_man_ath - post_loadfrag)
-        auto_ath_times.append(post_auto_ath - post_man_ath)
-
-    print("\nFinished loading Athenaeums in {:10.3f} s".format((time.time_ns() - pre_loading) / (10 ** 9)))
-    print("\tTotal loading from file: {:10.3f} s".format(sum(load_times) / (10 ** 9)))
-    print("\tTotal Manual Athenaeum:\t {:10.3f} s".format(sum(man_ath_times) / (10 ** 9)))
-    print("\tTotal Automatic Athenaeum: {:10.3f} s".format(sum(auto_ath_times) / (10 ** 9)))
-
-    pre_save = time.time_ns()
     # Save the athenaeums
     ix.SaveAthenaeum(man_ath, manualAthPath)
     ix.SaveAthenaeum(auto_ath, autoAthPath)
-    print("Saved Athenaeums to file in  {:10.3f} s\n".format((time.time_ns() - pre_save) / (10 ** 9)))
 
 
 def RunCherryPicker():
@@ -101,7 +90,6 @@ def RunCherryPicker():
     # Set the CherryPicker options we want
     cherrypicker.SetInt(settings.MinimumFragmentSize, 2)
     cherrypicker.SetInt(settings.MaximumFragmentSize, 20)
-    cherrypicker.UnsetBool(settings.CalculateElectrons)
 
     # Load each of the test molecules and run cherrypicker
     for test in Path("TestMolecules").glob("*.pdb"):
@@ -120,6 +108,5 @@ if __name__ == "__main__":
     before_CP = time.time()
     RunCherryPicker()
 
-    print("\nForce field: {:10.3f} s".format(total_ff))
-    print("Load Athenaeums: {:10.3f} s".format(before_CP - before_loadAth))
+    print("\nLoad Athenaeums: {:10.3f} s".format(before_CP - before_loadAth))
     print("Run CherryPicker: {:10.3f} s".format(time.time() - before_CP))

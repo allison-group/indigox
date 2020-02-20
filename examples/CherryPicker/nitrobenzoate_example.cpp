@@ -1,5 +1,7 @@
 //
-// Created by sdun067 on 12/11/19.
+// Pure C++ example, useful for if you need to debug small issues in C++.
+// Relies on the Python example having been run first so there is an Athenaeum to match the 4-Nitrobenzoate molecule to.
+// Also assumes you are running from a build folder in the project root. If not, change example_folder_path below
 //
 
 #include <indigox/indigox.hpp>
@@ -16,13 +18,12 @@ int main() {
   namespace fs = std::experimental::filesystem;
   using settings = indigox::algorithm::CherryPicker::Settings;
 
+  std::string example_folder_path = "../examples/CherryPicker/";
+
+  // Always need a forcefield. The molecule, Athenaeum and CherryPicker forcefields must all match
   auto forceField = GenerateGROMOS54A7();
-  auto athSettings = Athenaeum::Settings();
 
-  auto auto_ath = Athenaeum(forceField, 1);
-  auto_ath.SetInt(Athenaeum::Settings::MoleculeSizeLimit, 60);
-
-  //construct molecule. Simple is fine.
+  //construct a simple molecule
 
   // Prepare elements
   const PeriodicTable& PT = GetPeriodicTable();
@@ -68,12 +69,10 @@ int main() {
   mol.NewBond(c12,o15);
   mol.NewBond(c12,o16);
 
-  auto_ath.AddAllFragments(mol);
+  // Load the Athenaeum
+  auto auto_ath = LoadAthenaeum(example_folder_path + "AutomaticAthenaeum.ath");
 
-  std::cout << "Found this number of fragments in Athenaeum: " << auto_ath.GetFragments().find(mol)->second.size() << std::endl;
-
-  SaveAthenaeum(auto_ath, "./attemptedLib.ath");
-
+  // Set up CherryPicker
   algorithm::CherryPicker cherryPicker(forceField);
   cherryPicker.AddAthenaeum(auto_ath);
   
@@ -82,7 +81,7 @@ int main() {
 
   const indigox::ParamMolecule &molecule = cherryPicker.ParameteriseMolecule(mol);
 
-  SaveMolecule(mol, "/home/sdun067/AllisonGroup/indigox/examples/CherryPicker/TestMolecules/nitrobenzoate.out");
+  SaveMolecule(mol, "../examples/CherryPicker/TestMolecules/nitrobenzoate.out");
 
   std::cout << "Done!\n";
 }

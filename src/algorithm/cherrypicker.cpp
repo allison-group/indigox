@@ -41,7 +41,6 @@ namespace indigox::algorithm {
     SetBool(CPSet::AllowDanglingAngles);
     SetBool(CPSet::AllowDanglingDihedrals);
     SetBool(CPSet::UseRISubgraphMatching);
-    SetBool(CPSet::CalculateElectrons);
 
     SetInt(CPSet::MinimumFragmentSize, 4);
     SetInt(CPSet::MaximumFragmentSize, -1);

@@ -306,9 +306,8 @@ namespace indigox::algorithm {
      EdgeBondOrder\endlink, \link Settings::EdgeDegree EdgeDegree\endlink, \link
      Settings::AllowDanglingBonds AllowDanglingBonds\endlink, \link
      Settings::AllowDanglingAngles AllowDanglingAngles\endlink, \link
-     Settings::AllowDanglingDihedrals AllowDanglingDihedrals\endlink, \link
-     Settings::UseRISubgraphMatching UseRISubgraphMatching\endlink, and \link
-     Settings::CalculateElectrons CalculateElectrons\endlink. All other
+     Settings::AllowDanglingDihedrals AllowDanglingDihedrals\endlink, and \link
+     Settings::UseRISubgraphMatching UseRISubgraphMatching\endlink. All other
      boolean values default to false. The default \link
      Settings::MinimumFragmentSize MinimumFragmentSize\endlink is \f$4\f$ and
      the default \link Settings::MaximumFragmentSize MaximumFragmentSize\endlink

@@ -128,12 +128,11 @@ TARGET_LINK_LIBRARIES(general_example indigox)
 TARGET_LINK_LIBRARIES(general_example stdc++fs) # needed for std:filesystem
 
 FILE(COPY data DESTINATION .)
-#FILE(COPY examples/python_example.py DESTINATION examples)
 
 # Install library
 INSTALL(TARGETS indigox DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-# Install example
+# Install examples
 INSTALL(TARGETS nitrobenzoate_example DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL(TARGETS general_example DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
