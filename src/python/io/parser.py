@@ -14,6 +14,7 @@ __all__ = ["LoadIFPFile", "LoadPDBFile", "LoadMTBFile", "LoadIXDFile",
 #  \return the loaded forcefield
 def LoadIFPFile(path):
   print("Loading IFP file from path %s." % str(os.path.join(os.getcwd(), path)))
+  path = Path(path)
   pt = ix.GetPeriodicTable()
   data = list(ix.LoadFile(path.expanduser()))
   blocks = [data[0]]
@@ -78,6 +79,7 @@ def LoadIFPFile(path):
 #  \return the loaded molecule
 def LoadPDBFile(path, details = None):
   print("Loading molecule from PDB file at path %s." % str(os.path.join(os.getcwd(), path)))
+  path = Path(path)
   mol = ix.Molecule(path.stem)
   got_atoms = False
   for line in ix.LoadFile(path.expanduser()):
@@ -149,6 +151,7 @@ def LoadPDBFile(path, details = None):
 def LoadIXDFile(path, mol):
   print("Loading formal charges and bond orders from IXD file at path %s." % str(os.path.join(os.getcwd(), path)))
   set_implicits = []
+  path = Path(path)
   for line in ix.LoadFile(path.expanduser()):
     line = line.split()
     l = list(map(int, line[1:]))
@@ -218,6 +221,7 @@ def LoadIXDFile(path, mol):
 
 def LoadMTBFile(path, ff, details=None):
   print("Loading MTB file at path %s." % str(os.path.join(os.getcwd(), path)))
+  path = Path(path)
   file = list(ix.LoadFile(path.expanduser()))
 
   blocks = [file[0]]
@@ -291,6 +295,8 @@ def LoadMTBFile(path, ff, details=None):
 
 
 def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
+  coord_path = Path(coord_path)
+  param_path = Path(param_path)
   if set(coord_path.suffixes) not in [{".pdb"}, {".aa",".pdb"}, {".ua",".pdb"}]:
     raise FileNotFoundError("Unable to handle file: {}".format(coord_path.name))
   if set(param_path.suffixes) not in [{".mtb"}, {".aa",".mtb"}, {".ua",".mtb"},
@@ -313,6 +319,7 @@ def LoadParameterisedMolecule(coord_path, param_path, ff, details=None):
 
 def LoadITPFile(path, ff, details=None):
   print("Loading ITP file at path %s." % str(os.path.join(os.getcwd(), path)))
+  path = Path(path)
   mol = ix.Molecule(path.stem)
   
   bondtype = ix.BondType.Harmonic
@@ -375,6 +382,7 @@ def LoadITPFile(path, ff, details=None):
 
 def LoadFragmentFile(path, ff):
   print("Loading fragment file at path %s." % str(os.path.join(os.getcwd(), path)))
+  path = Path(path)
   file_data = list(ix.LoadFile(path.expanduser()))
   if file_data.count("MOLECULE") != 1:
     raise InputError("Expect only one molecule per file")
@@ -418,6 +426,7 @@ def LoadFragmentFile(path, ff):
 
 def LoadSDFFile(path):
   print("Loading SDF file at path %s." % str(os.path.join(os.getcwd(), path)))
+  path = Path(path)
   bond_orders = {1: ix.BondOrder.Single,
                  2: ix.BondOrder.Double,
                  3: ix.BondOrder.Triple}
