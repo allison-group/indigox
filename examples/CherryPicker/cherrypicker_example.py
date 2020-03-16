@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 """
+Construct Athenaeum and Parameterise molecule example.
+
 This example creates two Athenaeums out of the amino acid files in ./SourceMolecules:
 - AutomaticAthenaem: contains all possible fragments of the amino acids, with 1 atom
 overlaps
@@ -77,7 +79,6 @@ def RunCherryPicker():
     :return:
     """
 
-    settings = ix.algorithm.CherryPicker.Settings
     # Load the athenaeums
     man_ath = ix.LoadAthenaeum(manualAthPath)
     auto_ath = ix.LoadAthenaeum(autoAthPath)  # Is a large file so may take a few seconds to load
@@ -88,6 +89,7 @@ def RunCherryPicker():
     cherrypicker.AddAthenaeum(auto_ath)
 
     # Set the CherryPicker options we want
+    settings = ix.algorithm.CherryPicker.Settings
     cherrypicker.SetInt(settings.MinimumFragmentSize, 2)
     cherrypicker.SetInt(settings.MaximumFragmentSize, 20)
 
@@ -98,6 +100,7 @@ def RunCherryPicker():
 
         # save the parameterisation in ITP format
         ix.SaveITPFile(test.with_suffix(".itp"), mol, parameterised)
+        print()
 
 
 if __name__ == "__main__":
